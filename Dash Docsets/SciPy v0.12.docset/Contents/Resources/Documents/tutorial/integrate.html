@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Integration (scipy.integrate) &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Optimization (scipy.optimize)" href="optimize.html" />
+    <link rel="prev" title="Special functions (scipy.special)" href="special.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="optimize.html" title="Optimization (scipy.optimize)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="special.html" title="Special functions (scipy.special)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="integration-scipy-integrate">
+<h1>Integration (<a class="reference internal" href="../integrate.html#module-scipy.integrate" title="scipy.integrate"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.integrate</span></tt></a>)<a class="headerlink" href="#integration-scipy-integrate" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="../integrate.html#module-scipy.integrate" title="scipy.integrate"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.integrate</span></tt></a> sub-package provides several integration
+techniques including an ordinary differential equation integrator. An
+overview of the module is provided by the help command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">integrate</span><span class="p">)</span>
+<span class="go"> Methods for Integrating Functions given function object.</span>
+
+<span class="go">   quad          -- General purpose integration.</span>
+<span class="go">   dblquad       -- General purpose double integration.</span>
+<span class="go">   tplquad       -- General purpose triple integration.</span>
+<span class="go">   fixed_quad    -- Integrate func(x) using Gaussian quadrature of order n.</span>
+<span class="go">   quadrature    -- Integrate with given tolerance using Gaussian quadrature.</span>
+<span class="go">   romberg       -- Integrate func using Romberg integration.</span>
+
+<span class="go"> Methods for Integrating Functions given fixed samples.</span>
+
+<span class="go">   trapz         -- Use trapezoidal rule to compute integral from samples.</span>
+<span class="go">   cumtrapz      -- Use trapezoidal rule to cumulatively compute integral.</span>
+<span class="go">   simps         -- Use Simpson&#39;s rule to compute integral from samples.</span>
+<span class="go">   romb          -- Use Romberg Integration to compute integral from</span>
+<span class="go">                    (2**k + 1) evenly-spaced samples.</span>
+
+<span class="go">   See the special module&#39;s orthogonal polynomials (special) for Gaussian</span>
+<span class="go">      quadrature roots and weights for other weighting factors and regions.</span>
+
+<span class="go"> Interface to numerical integrators of ODE systems.</span>
+
+<span class="go">   odeint        -- General integration of ordinary differential equations.</span>
+<span class="go">   ode           -- Integrate ODE using VODE and ZVODE routines.</span>
+</pre></div>
+</div>
+<div class="section" id="general-integration-quad">
+<h2>General integration (<a class="reference internal" href="../generated/scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-func docutils literal"><span class="pre">quad</span></tt></a>)<a class="headerlink" href="#general-integration-quad" title="Permalink to this headline">¶</a></h2>
+<p>The function <a class="reference internal" href="../generated/scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a> is provided to integrate a function of one
+variable between two points. The points can be <img class="math" src="../_images/math/8af1f71e79a631b7a140aa5c875384e32fa01dd1.png" alt="\pm\infty" style="vertical-align: -1px"/>
+(<img class="math" src="../_images/math/91205e81c98c486418902c88d5c396f5355491f1.png" alt="\pm" style="vertical-align: 0px"/> <tt class="docutils literal"><span class="pre">inf</span></tt>) to indicate infinite limits. For example,
+suppose you wish to integrate a bessel function <tt class="docutils literal"><span class="pre">jv(2.5,x)</span></tt> along
+the interval <img class="math" src="../_images/math/73720cb7c9b7ea4330aaf0961a5b8960d43a690b.png" alt="[0,4.5]." style="vertical-align: -5px"/></p>
+<div class="math">
+<p><img src="../_images/math/e9cc1af190b123670346bb43295a18825595bd6e.png" alt="\[ I=\int_{0}^{4.5}J_{2.5}\left(x\right)\, dx.\]"/></p>
+</div><p>This could be computed using <a class="reference internal" href="../generated/scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">special</span><span class="o">.</span><span class="n">jv</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">result</span>
+<span class="go">(1.1178179380783249, 7.8663172481899801e-09)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">18.0</span><span class="o">/</span><span class="mi">27</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="mf">4.5</span><span class="p">)</span><span class="o">-</span><span class="mf">4.0</span><span class="o">/</span><span class="mi">27</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="mf">4.5</span><span class="p">)</span><span class="o">+</span>
+<span class="go">    sqrt(2*pi)*special.fresnel(3/sqrt(pi))[0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">I</span>
+<span class="go">1.117817938088701</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">abs</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">I</span><span class="p">)</span>
+<span class="go">1.03761443881e-11</span>
+</pre></div>
+</div>
+<p>The first argument to quad is a &#8220;callable&#8221; Python object (<em>i.e</em> a
+function, method, or class instance). Notice the use of a lambda-
+function in this case as the argument. The next two arguments are the
+limits of integration. The return value is a tuple, with the first
+element holding the estimated value of the integral and the second
+element holding an upper bound on the error. Notice, that in this
+case, the true value of this integral is</p>
+<div class="math">
+<p><img src="../_images/math/ff35592c52122f70c57464417e42e643d24dffa6.png" alt="\[ I=\sqrt{\frac{2}{\pi}}\left(\frac{18}{27}\sqrt{2}\cos\left(4.5\right)-\frac{4}{27}\sqrt{2}\sin\left(4.5\right)+\sqrt{2\pi}\textrm{Si}\left(\frac{3}{\sqrt{\pi}}\right)\right),\]"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="../_images/math/b6b581503e9085847e26ca64e3f5e0a8078e6568.png" alt="\[ \textrm{Si}\left(x\right)=\int_{0}^{x}\sin\left(\frac{\pi}{2}t^{2}\right)\, dt.\]"/></p>
+</div><p>is the Fresnel sine integral. Note that the numerically-computed
+integral is within <img class="math" src="../_images/math/c17608099b72a47b6895a882eabc6a057b5f84e4.png" alt="1.04\times10^{-11}" style="vertical-align: -1px"/> of the exact result &#8212; well below the reported error bound.</p>
+<p>Infinite inputs are also allowed in <a class="reference internal" href="../generated/scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a> by using <img class="math" src="../_images/math/91205e81c98c486418902c88d5c396f5355491f1.png" alt="\pm" style="vertical-align: 0px"/>
+<tt class="docutils literal"><span class="pre">inf</span></tt> as one of the arguments. For example, suppose that a numerical
+value for the exponential integral:</p>
+<div class="math">
+<p><img src="../_images/math/76605ae9b290dcb0191556221744aaabd5ef9f44.png" alt="\[ E_{n}\left(x\right)=\int_{1}^{\infty}\frac{e^{-xt}}{t^{n}}\, dt.\]"/></p>
+</div><p>is desired (and the fact that this integral can be computed as
+<tt class="docutils literal"><span class="pre">special.expn(n,x)</span></tt> is forgotten). The functionality of the function
+<tt class="xref py py-obj docutils literal"><span class="pre">special.expn</span></tt> can be replicated by defining a new function
+<tt class="xref py py-obj docutils literal"><span class="pre">vec_expint</span></tt> based on the routine <a class="reference internal" href="../generated/scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">integrand</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span><span class="o">**</span><span class="n">n</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">expint</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">quad</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Inf</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vec_expint</span> <span class="o">=</span> <span class="n">vectorize</span><span class="p">(</span><span class="n">expint</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vec_expint</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">4.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">array([ 0.1097,  0.0567,  0.0301,  0.0163,  0.0089,  0.0049])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">special</span><span class="o">.</span><span class="n">expn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">4.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">array([ 0.1097,  0.0567,  0.0301,  0.0163,  0.0089,  0.0049])</span>
+</pre></div>
+</div>
+<p>The function which is integrated can even use the quad argument
+(though the error bound may underestimate the error due to possible
+numerical error in the integrand from the use of <a class="reference internal" href="../generated/scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a> ). The integral in this case is</p>
+<div class="math">
+<p><img src="../_images/math/11ba2120e7710aeb71591f77561f8c483d451324.png" alt="\[ I_{n}=\int_{0}^{\infty}\int_{1}^{\infty}\frac{e^{-xt}}{t^{n}}\, dt\, dx=\frac{1}{n}.\]"/></p>
+</div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">expint</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">result</span>
+<span class="go">(0.33333333324560266, 2.8548934485373678e-09)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I3</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">I3</span>
+<span class="go">0.333333333333</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">I3</span> <span class="o">-</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">8.77306560731e-11</span>
+</pre></div>
+</div>
+<p>This last example shows that multiple integration can be handled using
+repeated calls to <a class="reference internal" href="../generated/scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-func docutils literal"><span class="pre">quad</span></tt></a>. The mechanics of this for double and
+triple integration have been wrapped up into the functions
+<a class="reference internal" href="../generated/scipy.integrate.dblquad.html#scipy.integrate.dblquad" title="scipy.integrate.dblquad"><tt class="xref py py-obj docutils literal"><span class="pre">dblquad</span></tt></a> and <a class="reference internal" href="../generated/scipy.integrate.tplquad.html#scipy.integrate.tplquad" title="scipy.integrate.tplquad"><tt class="xref py py-obj docutils literal"><span class="pre">tplquad</span></tt></a>. The function, <a class="reference internal" href="../generated/scipy.integrate.dblquad.html#scipy.integrate.dblquad" title="scipy.integrate.dblquad"><tt class="xref py py-obj docutils literal"><span class="pre">dblquad</span></tt></a>
+performs double integration. Use the help function to be sure that the
+arguments are defined in the correct order. In addition, the limits on
+all inner integrals are actually functions which can be constant
+functions. An example of using double integration to compute several
+values of <img class="math" src="../_images/math/f5ae77d9cd1245919dcbce7fb243494df047b699.png" alt="I_{n}" style="vertical-align: -3px"/> is shown below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span><span class="p">,</span> <span class="n">dblquad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">I</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">dblquad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">t</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Inf</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Inf</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">I</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">(0.25000000000435768, 1.0518245707751597e-09)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">I</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">(0.33333333325010883, 2.8604069919261191e-09)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">I</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">(0.49999999999857514, 1.8855523253868967e-09)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="gaussian-quadrature-integrate-gauss-quadtol">
+<h2>Gaussian quadrature (integrate.gauss_quadtol)<a class="headerlink" href="#gaussian-quadrature-integrate-gauss-quadtol" title="Permalink to this headline">¶</a></h2>
+<p>A few functions are also provided in order to perform simple Gaussian
+quadrature over a fixed interval. The first is <a class="reference internal" href="../generated/scipy.integrate.fixed_quad.html#scipy.integrate.fixed_quad" title="scipy.integrate.fixed_quad"><tt class="xref py py-obj docutils literal"><span class="pre">fixed_quad</span></tt></a> which
+performs fixed-order Gaussian quadrature. The second function is
+<a class="reference internal" href="../generated/scipy.integrate.quadrature.html#scipy.integrate.quadrature" title="scipy.integrate.quadrature"><tt class="xref py py-obj docutils literal"><span class="pre">quadrature</span></tt></a> which performs Gaussian quadrature of multiple
+orders until the difference in the integral estimate is beneath some
+tolerance supplied by the user. These functions both use the module
+<tt class="xref py py-mod docutils literal"><span class="pre">special.orthogonal</span></tt> which can calculate the roots and quadrature
+weights of a large variety of orthogonal polynomials (the polynomials
+themselves are available as special functions returning instances of
+the polynomial class &#8212; e.g. <a class="reference internal" href="../generated/scipy.special.legendre.html#scipy.special.legendre" title="scipy.special.legendre"><tt class="xref py py-obj docutils literal"><span class="pre">special.legendre</span></tt></a>).</p>
+</div>
+<div class="section" id="integrating-using-samples">
+<h2>Integrating using samples<a class="headerlink" href="#integrating-using-samples" title="Permalink to this headline">¶</a></h2>
+<p>There are three functions for computing integrals given only samples:
+<tt class="xref py py-obj docutils literal"><span class="pre">trapz</span></tt> , <a class="reference internal" href="../generated/scipy.integrate.simps.html#scipy.integrate.simps" title="scipy.integrate.simps"><tt class="xref py py-obj docutils literal"><span class="pre">simps</span></tt></a>, and <a class="reference internal" href="../generated/scipy.integrate.romb.html#scipy.integrate.romb" title="scipy.integrate.romb"><tt class="xref py py-obj docutils literal"><span class="pre">romb</span></tt></a> . The first two
+functions use Newton-Coates formulas of order 1 and 2 respectively to
+perform integration. These two functions can handle,
+non-equally-spaced samples. The trapezoidal rule approximates the
+function as a straight line between adjacent points, while Simpson&#8217;s
+rule approximates the function between three adjacent points as a
+parabola.</p>
+<p>If the samples are equally-spaced and the number of samples available
+is <img class="math" src="../_images/math/bb95b4e03b516b2e78a6a6a35af1fb38be3ff5da.png" alt="2^{k}+1" style="vertical-align: -1px"/> for some integer <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/>, then Romberg
+integration can be used to obtain high-precision estimates of the
+integral using the available samples. Romberg integration uses the
+trapezoid rule at step-sizes related by a power of two and then
+performs Richardson extrapolation on these estimates to approximate
+the integral with a higher-degree of accuracy. (A different interface
+to Romberg integration useful when the function can be provided is
+also available as <a class="reference internal" href="../generated/scipy.integrate.romberg.html#scipy.integrate.romberg" title="scipy.integrate.romberg"><tt class="xref py py-func docutils literal"><span class="pre">romberg</span></tt></a>).</p>
+</div>
+<div class="section" id="ordinary-differential-equations-odeint">
+<h2>Ordinary differential equations (<a class="reference internal" href="../generated/scipy.integrate.odeint.html#scipy.integrate.odeint" title="scipy.integrate.odeint"><tt class="xref py py-func docutils literal"><span class="pre">odeint</span></tt></a>)<a class="headerlink" href="#ordinary-differential-equations-odeint" title="Permalink to this headline">¶</a></h2>
+<p>Integrating a set of ordinary differential equations (ODEs) given
+initial conditions is another useful example. The function
+<a class="reference internal" href="../generated/scipy.integrate.odeint.html#scipy.integrate.odeint" title="scipy.integrate.odeint"><tt class="xref py py-obj docutils literal"><span class="pre">odeint</span></tt></a> is available in SciPy for integrating a first-order
+vector differential equation:</p>
+<div class="math">
+<p><img src="../_images/math/313cd84a50bd39f5650114d928bff4df901969dc.png" alt="\[ \frac{d\mathbf{y}}{dt}=\mathbf{f}\left(\mathbf{y},t\right),\]"/></p>
+</div><p>given initial conditions <img class="math" src="../_images/math/55064e8d6715c050a093d89affcd6b0fd6dc92be.png" alt="\mathbf{y}\left(0\right)=y_{0}" style="vertical-align: -4px"/>, where
+<img class="math" src="../_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}" style="vertical-align: -3px"/> is a length <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> vector and <img class="math" src="../_images/math/f20a87983c6a583e4eaa77faf8010461c9aa55e0.png" alt="\mathbf{f}" style="vertical-align: -1px"/>
+is a mapping from <img class="math" src="../_images/math/e10ab28a1218d7bd441b47a82b79ad2e611641b6.png" alt="\mathcal{R}^{N}" style="vertical-align: 0px"/> to <img class="math" src="../_images/math/2821a5b36e363c28593573b91d1d6308dde1455f.png" alt="\mathcal{R}^{N}." style="vertical-align: 0px"/>
+A higher-order ordinary differential equation can always be reduced to
+a differential equation of this type by introducing intermediate
+derivatives into the <img class="math" src="../_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}" style="vertical-align: -3px"/> vector.</p>
+<p>For example suppose it is desired to find the solution to the
+following second-order differential equation:</p>
+<div class="math">
+<p><img src="../_images/math/1c9435be6ad832ddd06739c7a6d5a4af72a11c1a.png" alt="\[ \frac{d^{2}w}{dz^{2}}-zw(z)=0\]"/></p>
+</div><p>with initial conditions <img class="math" src="../_images/math/2373e94f7b88d026466c10a9de81db63f998dacd.png" alt="w\left(0\right)=\frac{1}{\sqrt[3]{3^{2}}\Gamma\left(\frac{2}{3}\right)}" style="vertical-align: -15px"/> and <img class="math" src="../_images/math/b497ee8cf2bb985d2211b12920f63391c3a7eb37.png" alt="\left.\frac{dw}{dz}\right|_{z=0}=-\frac{1}{\sqrt[3]{3}\Gamma\left(\frac{1}{3}\right)}." style="vertical-align: -14px"/> It is known that the solution to this differential equation with these
+boundary conditions is the Airy function</p>
+<div class="math">
+<p><img src="../_images/math/7e107442576345c85bf7198e533f9fcd55862050.png" alt="\[ w=\textrm{Ai}\left(z\right),\]"/></p>
+</div><p>which gives a means to check the integrator using <a class="reference internal" href="../generated/scipy.special.airy.html#scipy.special.airy" title="scipy.special.airy"><tt class="xref py py-func docutils literal"><span class="pre">special.airy</span></tt></a>.</p>
+<p>First, convert this ODE into standard form by setting
+<img class="math" src="../_images/math/4acd56b96e822e31b7dbd4960431444f3d318ea2.png" alt="\mathbf{y}=\left[\frac{dw}{dz},w\right]" style="vertical-align: -6px"/> and <img class="math" src="../_images/math/d6dfe1e280d70b81862698e910bbe2a7cd310adb.png" alt="t=z" style="vertical-align: 0px"/>. Thus,
+the differential equation becomes</p>
+<div class="math">
+<p><img src="../_images/math/76894bea5baa6c2a7599f7209b4809687c3ceb61.png" alt="\[ \frac{d\mathbf{y}}{dt}=\left[\begin{array}{c} ty_{1}\\ y_{0}\end{array}\right]=\left[\begin{array}{cc} 0 &amp; t\\ 1 &amp; 0\end{array}\right]\left[\begin{array}{c} y_{0}\\ y_{1}\end{array}\right]=\left[\begin{array}{cc} 0 &amp; t\\ 1 &amp; 0\end{array}\right]\mathbf{y}.\]"/></p>
+</div><p>In other words,</p>
+<div class="math">
+<p><img src="../_images/math/1f721cbb5e2c4254b476b79d1d9a87f5ee70e52d.png" alt="\[ \mathbf{f}\left(\mathbf{y},t\right)=\mathbf{A}\left(t\right)\mathbf{y}.\]"/></p>
+</div><p>As an interesting reminder, if <img class="math" src="../_images/math/11f56dc715addca8f69e24fa30fbe7efacb9c188.png" alt="\mathbf{A}\left(t\right)" style="vertical-align: -4px"/>
+commutes with <img class="math" src="../_images/math/84651b2bed54ef781b36dcd91091dcb0aec9a627.png" alt="\int_{0}^{t}\mathbf{A}\left(\tau\right)\, d\tau" style="vertical-align: -6px"/>
+under matrix multiplication, then this linear differential equation
+has an exact solution using the matrix exponential:</p>
+<div class="math">
+<p><img src="../_images/math/2eeacfbf7aefd9556248c87c99e1b438fca04f22.png" alt="\[ \mathbf{y}\left(t\right)=\exp\left(\int_{0}^{t}\mathbf{A}\left(\tau\right)d\tau\right)\mathbf{y}\left(0\right),\]"/></p>
+</div><p>However, in this case, <img class="math" src="../_images/math/11f56dc715addca8f69e24fa30fbe7efacb9c188.png" alt="\mathbf{A}\left(t\right)" style="vertical-align: -4px"/> and its integral do not commute.</p>
+<p>There are many optional inputs and outputs available when using odeint
+which can help tune the solver. These additional inputs and outputs
+are not needed much of the time, however, and the three required input
+arguments and the output solution suffice. The required inputs are the
+function defining the derivative, <em>fprime</em>, the initial conditions
+vector, <em>y0</em>, and the time points to obtain a solution, <em>t</em>, (with
+the initial value point as the first element of this sequence).  The
+output to <a class="reference internal" href="../generated/scipy.integrate.odeint.html#scipy.integrate.odeint" title="scipy.integrate.odeint"><tt class="xref py py-obj docutils literal"><span class="pre">odeint</span></tt></a> is a matrix where each row contains the
+solution vector at each requested time point (thus, the initial
+conditions are given in the first output row).</p>
+<p>The following example illustrates the use of odeint including the
+usage of the <em>Dfun</em> option which allows the user to specify a gradient
+(with respect to <img class="math" src="../_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}" style="vertical-align: -3px"/> ) of the function,
+<img class="math" src="../_images/math/7cf7fbc25bef9e230e1540bd340bd38c50347667.png" alt="\mathbf{f}\left(\mathbf{y},t\right)" style="vertical-align: -4px"/>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">odeint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">airy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y1_0</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mi">3</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y0_0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="o">/</span><span class="mi">3</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y0</span> <span class="o">=</span> <span class="p">[</span><span class="n">y0_0</span><span class="p">,</span> <span class="n">y1_0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">[</span><span class="n">t</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">gradient</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">t</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="n">t</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ychk</span> <span class="o">=</span> <span class="n">airy</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y2</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">Dfun</span><span class="o">=</span><span class="n">gradient</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ychk</span><span class="p">[:</span><span class="mi">36</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+<span class="go">[ 0.355028  0.339511  0.324068  0.308763  0.293658  0.278806]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">y</span><span class="p">[:</span><span class="mi">36</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">[ 0.355028  0.339511  0.324067  0.308763  0.293658  0.278806]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">y2</span><span class="p">[:</span><span class="mi">36</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">[ 0.355028  0.339511  0.324067  0.308763  0.293658  0.278806]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Integration (<tt class="docutils literal"><span class="pre">scipy.integrate</span></tt>)</a><ul>
+<li><a class="reference internal" href="#general-integration-quad">General integration (<tt class="docutils literal"><span class="pre">quad</span></tt>)</a></li>
+<li><a class="reference internal" href="#gaussian-quadrature-integrate-gauss-quadtol">Gaussian quadrature (integrate.gauss_quadtol)</a></li>
+<li><a class="reference internal" href="#integrating-using-samples">Integrating using samples</a></li>
+<li><a class="reference internal" href="#ordinary-differential-equations-odeint">Ordinary differential equations (<tt class="docutils literal"><span class="pre">odeint</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="special.html"
+                        title="previous chapter">Special functions (<tt class="docutils literal docutils literal"><span class="pre">scipy.special</span></tt>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="optimize.html"
+                        title="next chapter">Optimization (<tt class="docutils literal"><span class="pre">scipy.optimize</span></tt>)</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="optimize.html" title="Optimization (scipy.optimize)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="special.html" title="Special functions (scipy.special)"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" >SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

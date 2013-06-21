@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.interpolate.RectSphereBivariateSpline — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../interpolate.html" rel="up" title="Interpolation (scipy.interpolate)"/><link href="scipy.interpolate.RectSphereBivariateSpline.__call__.html" rel="next" title="scipy.interpolate.RectSphereBivariateSpline.__call__"/><link href="scipy.interpolate.RectBivariateSpline.integral.html" rel="prev" title="scipy.interpolate.RectBivariateSpline.integral"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.interpolate.RectSphereBivariateSpline.__call__.html" title="scipy.interpolate.RectSphereBivariateSpline.__call__">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.interpolate.RectBivariateSpline.integral.html" title="scipy.interpolate.RectBivariateSpline.integral">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a accesskey="U" href="../interpolate.html">Interpolation (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.interpolate</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-interpolate-rectspherebivariatespline">
+<h1>scipy.interpolate.RectSphereBivariateSpline<a class="headerlink" href="#scipy-interpolate-rectspherebivariatespline" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.interpolate.RectSphereBivariateSpline"><a name="//apple_ref/cpp/cl/scipy.interpolate.RectSphereBivariateSpline"></a>
+<em class="property">class </em><tt class="descclassname">scipy.interpolate.</tt><tt class="descname">RectSphereBivariateSpline</tt><big>(</big><em>u</em>, <em>v</em>, <em>r</em>, <em>s=0.0</em>, <em>pole_continuity=False</em>, <em>pole_values=None</em>, <em>pole_exact=False</em>, <em>pole_flat=False</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/interpolate/fitpack2.py#L1083"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.interpolate.RectSphereBivariateSpline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bivariate spline approximation over a rectangular mesh on a sphere.</p>
+<p>Can be used for smoothing data.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.11.0.</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>u</strong> : array_like</p>
+<blockquote>
+<div><p>1-D array of latitude coordinates in strictly ascending order.
+Coordinates must be given in radians and lie within the interval
+(0, pi).</p>
+</div></blockquote>
+<p><strong>v</strong> : array_like</p>
+<blockquote>
+<div><p>1-D array of longitude coordinates in strictly ascending order.
+Coordinates must be given in radians, and must lie within (0, 2pi).</p>
+</div></blockquote>
+<p><strong>r</strong> : array_like</p>
+<blockquote>
+<div><p>2-D array of data with shape <tt class="docutils literal"><span class="pre">(u.size,</span> <span class="pre">v.size)</span></tt>.</p>
+</div></blockquote>
+<p><strong>s</strong> : float, optional</p>
+<blockquote>
+<div><p>Positive smoothing factor defined for estimation condition
+(<tt class="docutils literal"><span class="pre">s=0</span></tt> is for interpolation).</p>
+</div></blockquote>
+<p><strong>pole_continuity</strong> : bool or (bool, bool), optional</p>
+<blockquote>
+<div><p>Order of continuity at the poles <tt class="docutils literal"><span class="pre">u=0</span></tt> (<tt class="docutils literal"><span class="pre">pole_continuity[0]</span></tt>) and
+<tt class="docutils literal"><span class="pre">u=pi</span></tt> (<tt class="docutils literal"><span class="pre">pole_continuity[1]</span></tt>).  The order of continuity at the pole
+will be 1 or 0 when this is True or False, respectively.
+Defaults to False.</p>
+</div></blockquote>
+<p><strong>pole_values</strong> : float or (float, float), optional</p>
+<blockquote>
+<div><p>Data values at the poles <tt class="docutils literal"><span class="pre">u=0</span></tt> and <tt class="docutils literal"><span class="pre">u=pi</span></tt>.  Either the whole
+parameter or each individual element can be None.  Defaults to None.</p>
+</div></blockquote>
+<p><strong>pole_exact</strong> : bool or (bool, bool), optional</p>
+<blockquote>
+<div><p>Data value exactness at the poles <tt class="docutils literal"><span class="pre">u=0</span></tt> and <tt class="docutils literal"><span class="pre">u=pi</span></tt>.  If True, the
+value is considered to be the right function value, and it will be
+fitted exactly. If False, the value will be considered to be a data
+value just like the other data values.  Defaults to False.</p>
+</div></blockquote>
+<p><strong>pole_flat</strong> : bool or (bool, bool), optional</p>
+<blockquote class="last">
+<div><p>For the poles at <tt class="docutils literal"><span class="pre">u=0</span></tt> and <tt class="docutils literal"><span class="pre">u=pi</span></tt>, specify whether or not the
+approximation has vanishing derivatives.  Defaults to False.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.interpolate.RectBivariateSpline.html#scipy.interpolate.RectBivariateSpline" title="scipy.interpolate.RectBivariateSpline"><tt class="xref py py-obj docutils literal"><span class="pre">RectBivariateSpline</span></tt></a></dt>
+<dd>bivariate spline approximation over a rectangular mesh</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>Currently, only the smoothing spline approximation (<tt class="docutils literal"><span class="pre">iopt[0]</span> <span class="pre">=</span> <span class="pre">0</span></tt> and
+<tt class="docutils literal"><span class="pre">iopt[0]</span> <span class="pre">=</span> <span class="pre">1</span></tt> in the FITPACK routine) is supported.  The exact
+least-squares spline approximation is not implemented yet.</p>
+<p>When actually performing the interpolation, the requested <em class="xref py py-obj">v</em> values must
+lie within the same length 2pi interval that the original <em class="xref py py-obj">v</em> values were
+chosen from.</p>
+<p>For more information, see the <a class="reference external" href="http://www.netlib.org/dierckx/spgrid.f">FITPACK</a> site about this function.</p>
+<p class="rubric">Examples</p>
+<p>Suppose we have global data on a coarse grid</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="mf">90.</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">80.</span><span class="p">,</span> <span class="mf">80.</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+<span class="go">                  np.atleast_2d(180. - np.abs(np.linspace(0., 350., 9)))).T</span>
+</pre></div>
+</div>
+<p>We want to interpolate it to a global one-degree grid</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">new_lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_lats</span><span class="p">,</span> <span class="n">new_lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">new_lats</span><span class="p">,</span> <span class="n">new_lons</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We need to set up the interpolator object</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">RectSphereBivariateSpline</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lut</span> <span class="o">=</span> <span class="n">RectSphereBivariateSpline</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally we interpolate the data.  The <a class="reference internal" href="#scipy.interpolate.RectSphereBivariateSpline" title="scipy.interpolate.RectSphereBivariateSpline"><tt class="xref py py-obj docutils literal"><span class="pre">RectSphereBivariateSpline</span></tt></a> object
+only takes 1-D arrays as input, therefore we need to do some reshaping.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data_interp</span> <span class="o">=</span> <span class="n">lut</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">new_lats</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+<span class="gp">... </span>                     <span class="n">new_lons</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">360</span><span class="p">,</span> <span class="mi">180</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+<p>Looking at the original and the interpolated data, one can see that the
+interpolant reproduces the original data very well:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">'nearest'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data_interp</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">'nearest'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Chosing the optimal value of <tt class="docutils literal"><span class="pre">s</span></tt> can be a delicate task. Recommended
+values for <tt class="docutils literal"><span class="pre">s</span></tt> depend on the accuracy of the data values.  If the user
+has an idea of the statistical errors on the data, she can also find a
+proper estimate for <tt class="docutils literal"><span class="pre">s</span></tt>. By assuming that, if she specifies the
+right <tt class="docutils literal"><span class="pre">s</span></tt>, the interpolator will use a spline <tt class="docutils literal"><span class="pre">f(u,v)</span></tt> which exactly
+reproduces the function underlying the data, she can evaluate
+<tt class="docutils literal"><span class="pre">sum((r(i,j)-s(u(i),v(j)))**2)</span></tt> to find a good estimate for this <tt class="docutils literal"><span class="pre">s</span></tt>.
+For example, if she knows that the statistical errors on her
+<tt class="docutils literal"><span class="pre">r(i,j)</span></tt>-values are not greater than 0.1, she may expect that a good
+<tt class="docutils literal"><span class="pre">s</span></tt> should have a value not larger than <tt class="docutils literal"><span class="pre">u.size</span> <span class="pre">*</span> <span class="pre">v.size</span> <span class="pre">*</span> <span class="pre">(0.1)**2</span></tt>.</p>
+<p>If nothing is known about the statistical error in <tt class="docutils literal"><span class="pre">r(i,j)</span></tt>, <tt class="docutils literal"><span class="pre">s</span></tt> must
+be determined by trial and error.  The best is then to start with a very
+large value of <tt class="docutils literal"><span class="pre">s</span></tt> (to determine the least-squares polynomial and the
+corresponding upper bound <tt class="docutils literal"><span class="pre">fp0</span></tt> for <tt class="docutils literal"><span class="pre">s</span></tt>) and then to progressively
+decrease the value of <tt class="docutils literal"><span class="pre">s</span></tt> (say by a factor 10 in the beginning, i.e.
+<tt class="docutils literal"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">fp0</span> <span class="pre">/</span> <span class="pre">10,</span> <span class="pre">fp0</span> <span class="pre">/</span> <span class="pre">100,</span> <span class="pre">...</span></tt>  and more carefully as the approximation
+shows more detail) to obtain closer fits.</p>
+<p>The interpolation results for different values of <tt class="docutils literal"><span class="pre">s</span></tt> give some insight
+into this process:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3e9</span><span class="p">,</span> <span class="mf">2e9</span><span class="p">,</span> <span class="mf">1e9</span><span class="p">,</span> <span class="mf">1e8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">lut</span> <span class="o">=</span> <span class="n">RectSphereBivariateSpline</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">data_interp</span> <span class="o">=</span> <span class="n">lut</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">new_lats</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+<span class="gp">... </span>                         <span class="n">new_lons</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">360</span><span class="p">,</span> <span class="mi">180</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data_interp</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">'nearest'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">"s = </span><span class="si">%g</span><span class="s">"</span> <span class="o">%</span> <span class="n">s</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.interpolate.RectSphereBivariateSpline.__call__.html#scipy.interpolate.RectSphereBivariateSpline.__call__" title="scipy.interpolate.RectSphereBivariateSpline.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(theta, phi)</td>
+<td>Evaluate the spline at the grid ponts defined by the coordinate</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.interpolate.RectSphereBivariateSpline.ev.html#scipy.interpolate.RectSphereBivariateSpline.ev" title="scipy.interpolate.RectSphereBivariateSpline.ev"><tt class="xref py py-obj docutils literal"><span class="pre">ev</span></tt></a>(thetai, phii)</td>
+<td>Evaluate the spline at the points (theta[i], phi[i]),</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.interpolate.RectSphereBivariateSpline.get_coeffs.html#scipy.interpolate.RectSphereBivariateSpline.get_coeffs" title="scipy.interpolate.RectSphereBivariateSpline.get_coeffs"><tt class="xref py py-obj docutils literal"><span class="pre">get_coeffs</span></tt></a>()</td>
+<td>Return spline coefficients.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.interpolate.RectSphereBivariateSpline.get_knots.html#scipy.interpolate.RectSphereBivariateSpline.get_knots" title="scipy.interpolate.RectSphereBivariateSpline.get_knots"><tt class="xref py py-obj docutils literal"><span class="pre">get_knots</span></tt></a>()</td>
+<td>Return a tuple (tx,ty) where tx,ty contain knots positions of the spline with respect to x-, y-variable, respectively.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.interpolate.RectSphereBivariateSpline.get_residual.html#scipy.interpolate.RectSphereBivariateSpline.get_residual" title="scipy.interpolate.RectSphereBivariateSpline.get_residual"><tt class="xref py py-obj docutils literal"><span class="pre">get_residual</span></tt></a>()</td>
+<td>Return weighted sum of squared residuals of the spline</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.interpolate.RectBivariateSpline.integral.html" title="previous chapter">scipy.interpolate.RectBivariateSpline.integral</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.interpolate.RectSphereBivariateSpline.__call__.html" title="next chapter">scipy.interpolate.RectSphereBivariateSpline.__call__</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.interpolate.RectSphereBivariateSpline.__call__.html" title="scipy.interpolate.RectSphereBivariateSpline.__call__">next</a> |</li>
+<li class="right">
+<a href="scipy.interpolate.RectBivariateSpline.integral.html" title="scipy.interpolate.RectBivariateSpline.integral">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../interpolate.html">Interpolation (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.interpolate</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

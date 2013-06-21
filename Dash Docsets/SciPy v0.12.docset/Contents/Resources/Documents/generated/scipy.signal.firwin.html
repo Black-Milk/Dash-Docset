@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.signal.firwin — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../signal.html" rel="up" title="Signal processing (scipy.signal)"/><link href="scipy.signal.firwin2.html" rel="next" title="scipy.signal.firwin2"/><link href="scipy.signal.bilinear.html" rel="prev" title="scipy.signal.bilinear"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.signal.firwin2.html" title="scipy.signal.firwin2">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.signal.bilinear.html" title="scipy.signal.bilinear">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a accesskey="U" href="../signal.html">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-signal-firwin">
+<h1>scipy.signal.firwin<a class="headerlink" href="#scipy-signal-firwin" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.signal.firwin"><a name="//apple_ref/cpp/func/scipy.signal.firwin"></a>
+<tt class="descclassname">scipy.signal.</tt><tt class="descname">firwin</tt><big>(</big><em>numtaps</em>, <em>cutoff</em>, <em>width=None</em>, <em>window='hamming'</em>, <em>pass_zero=True</em>, <em>scale=True</em>, <em>nyq=1.0</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/signal/fir_filter_design.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.signal.firwin" title="Permalink to this definition">¶</a></dt>
+<dd><p>FIR filter design using the window method.</p>
+<p>This function computes the coefficients of a finite impulse response
+filter.  The filter will have linear phase; it will be Type I if
+<em class="xref py py-obj">numtaps</em> is odd and Type II if <em class="xref py py-obj">numtaps</em> is even.</p>
+<p>Type II filters always have zero response at the Nyquist rate, so a
+ValueError exception is raised if firwin is called with <em class="xref py py-obj">numtaps</em> even and
+having a passband whose right end is at the Nyquist rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>numtaps</strong> : int</p>
+<blockquote>
+<div><p>Length of the filter (number of coefficients, i.e. the filter
+order + 1).  <em class="xref py py-obj">numtaps</em> must be even if a passband includes the
+Nyquist frequency.</p>
+</div></blockquote>
+<p><strong>cutoff</strong> : float or 1D array_like</p>
+<blockquote>
+<div><p>Cutoff frequency of filter (expressed in the same units as <em class="xref py py-obj">nyq</em>)
+OR an array of cutoff frequencies (that is, band edges). In the
+latter case, the frequencies in <em class="xref py py-obj">cutoff</em> should be positive and
+monotonically increasing between 0 and <em class="xref py py-obj">nyq</em>.  The values 0 and
+<em class="xref py py-obj">nyq</em> must not be included in <em class="xref py py-obj">cutoff</em>.</p>
+</div></blockquote>
+<p><strong>width</strong> : float or None</p>
+<blockquote>
+<div><p>If <em class="xref py py-obj">width</em> is not None, then assume it is the approximate width
+of the transition region (expressed in the same units as <em class="xref py py-obj">nyq</em>)
+for use in Kaiser FIR filter design.  In this case, the <em class="xref py py-obj">window</em>
+argument is ignored.</p>
+</div></blockquote>
+<p><strong>window</strong> : string or tuple of string and parameter values</p>
+<blockquote>
+<div><p>Desired window to use. See <a class="reference internal" href="scipy.signal.get_window.html#scipy.signal.get_window" title="scipy.signal.get_window"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.signal.get_window</span></tt></a> for a list
+of windows and required parameters.</p>
+</div></blockquote>
+<p><strong>pass_zero</strong> : bool</p>
+<blockquote>
+<div><p>If True, the gain at the frequency 0 (i.e. the “DC gain”) is 1.
+Otherwise the DC gain is 0.</p>
+</div></blockquote>
+<p><strong>scale</strong> : bool</p>
+<blockquote>
+<div><p>Set to True to scale the coefficients so that the frequency
+response is exactly unity at a certain frequency.
+That frequency is either:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>0 (DC) if the first passband starts at 0 (i.e. pass_zero</dt>
+<dd><p class="first last">is True)</p>
+</dd>
+<dt><em class="xref py py-obj">nyq</em> (the Nyquist rate) if the first passband ends at</dt>
+<dd><p class="first last"><em class="xref py py-obj">nyq</em> (i.e the filter is a single band highpass filter);
+center of first passband otherwise</p>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+<p><strong>nyq</strong> : float</p>
+<blockquote>
+<div><p>Nyquist frequency.  Each frequency in <em class="xref py py-obj">cutoff</em> must be between 0
+and <em class="xref py py-obj">nyq</em>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>h</strong> : (numtaps,) ndarray</p>
+<blockquote>
+<div><p>Coefficients of length <em class="xref py py-obj">numtaps</em> FIR filter.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>ValueError</strong> :</p>
+<blockquote class="last">
+<div><p>If any value in <em class="xref py py-obj">cutoff</em> is less than or equal to 0 or greater
+than or equal to <em class="xref py py-obj">nyq</em>, if the values in <em class="xref py py-obj">cutoff</em> are not strictly
+monotonically increasing, or if <em class="xref py py-obj">numtaps</em> is even but a passband
+includes the Nyquist frequency.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="scipy.signal.firwin2.html#scipy.signal.firwin2" title="scipy.signal.firwin2"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.signal.firwin2</span></tt></a></p>
+</div>
+<p class="rubric">Examples</p>
+<p>Low-pass from 0 to f:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">firwin</span><span class="p">(</span><span class="n">numtaps</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use a specific window function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">firwin</span><span class="p">(</span><span class="n">numtaps</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="s">'nuttall'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>High-pass (‘stop’ from 0 to f):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">firwin</span><span class="p">(</span><span class="n">numtaps</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">pass_zero</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Band-pass:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">firwin</span><span class="p">(</span><span class="n">numtaps</span><span class="p">,</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">],</span> <span class="n">pass_zero</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Band-stop:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">firwin</span><span class="p">(</span><span class="n">numtaps</span><span class="p">,</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Multi-band (passbands are [0, f1], [f2, f3] and [f4, 1]):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">firwin</span><span class="p">(</span><span class="n">numtaps</span><span class="p">,</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Multi-band (passbands are [f1, f2] and [f3,f4]):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">firwin</span><span class="p">(</span><span class="n">numtaps</span><span class="p">,</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">],</span> <span class="n">pass_zero</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.signal.bilinear.html" title="previous chapter">scipy.signal.bilinear</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.signal.firwin2.html" title="next chapter">scipy.signal.firwin2</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.signal.firwin2.html" title="scipy.signal.firwin2">next</a> |</li>
+<li class="right">
+<a href="scipy.signal.bilinear.html" title="scipy.signal.bilinear">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../signal.html">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.odr.ODR — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../odr.html" rel="up" title="Orthogonal distance regression (scipy.odr)"/><link href="scipy.odr.ODR.restart.html" rel="next" title="scipy.odr.ODR.restart"/><link href="scipy.odr.odr.html" rel="prev" title="scipy.odr.odr"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.odr.ODR.restart.html" title="scipy.odr.ODR.restart">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.odr.odr.html" title="scipy.odr.odr">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a accesskey="U" href="../odr.html">Orthogonal distance regression (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.odr</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-odr-odr">
+<h1>scipy.odr.ODR<a class="headerlink" href="#scipy-odr-odr" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.odr.ODR"><a name="//apple_ref/cpp/cl/scipy.odr.ODR"></a>
+<em class="property">class </em><tt class="descclassname">scipy.odr.</tt><tt class="descname">ODR</tt><big>(</big><em>data</em>, <em>model</em>, <em>beta0=None</em>, <em>delta0=None</em>, <em>ifixb=None</em>, <em>ifixx=None</em>, <em>job=None</em>, <em>iprint=None</em>, <em>errfile=None</em>, <em>rptfile=None</em>, <em>ndigit=None</em>, <em>taufac=None</em>, <em>sstol=None</em>, <em>partol=None</em>, <em>maxit=None</em>, <em>stpb=None</em>, <em>stpd=None</em>, <em>sclb=None</em>, <em>scld=None</em>, <em>work=None</em>, <em>iwork=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/odr/odrpack.py#L652"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.odr.ODR" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ODR class gathers all information and coordinates the running of the
+main fitting routine.</p>
+<p>Members of instances of the ODR class have the same names as the arguments
+to the initialization routine.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : Data class instance</p>
+<blockquote>
+<div><p>instance of the Data class</p>
+</div></blockquote>
+<p><strong>model</strong> : Model class instance</p>
+<blockquote>
+<div><p>instance of the Model class</p>
+</div></blockquote>
+<p><strong>beta0</strong> : array_like of rank-1</p>
+<blockquote>
+<div><p>a rank-1 sequence of initial parameter values. Optional if
+model provides an “estimate” function to estimate these values.</p>
+</div></blockquote>
+<p><strong>delta0</strong> : array_like of floats of rank-1, optional</p>
+<blockquote>
+<div><p>a (double-precision) float array to hold the initial values of
+the errors in the input variables. Must be same shape as data.x</p>
+</div></blockquote>
+<p><strong>ifixb</strong> : array_like of ints of rank-1, optional</p>
+<blockquote>
+<div><p>sequence of integers with the same length as beta0 that determines
+which parameters are held fixed. A value of 0 fixes the parameter,
+a value &gt; 0 makes the parameter free.</p>
+</div></blockquote>
+<p><strong>ifixx</strong> : array_like of ints with same shape as data.x, optional</p>
+<blockquote>
+<div><p>an array of integers with the same shape as data.x that determines
+which input observations are treated as fixed. One can use a sequence
+of length m (the dimensionality of the input observations) to fix some
+dimensions for all observations. A value of 0 fixes the observation,
+a value &gt; 0 makes it free.</p>
+</div></blockquote>
+<p><strong>job</strong> : int, optional</p>
+<blockquote>
+<div><p>an integer telling ODRPACK what tasks to perform. See p. 31 of the
+ODRPACK User’s Guide if you absolutely must set the value here. Use the
+method set_job post-initialization for a more readable interface.</p>
+</div></blockquote>
+<p><strong>iprint</strong> : int, optional</p>
+<blockquote>
+<div><p>an integer telling ODRPACK what to print. See pp. 33-34 of the
+ODRPACK User’s Guide if you absolutely must set the value here. Use the
+method set_iprint post-initialization for a more readable interface.</p>
+</div></blockquote>
+<p><strong>errfile</strong> : str, optional</p>
+<blockquote>
+<div><p>string with the filename to print ODRPACK errors to. <em>Do Not Open
+This File Yourself!</em></p>
+</div></blockquote>
+<p><strong>rptfile</strong> : str, optional</p>
+<blockquote>
+<div><p>string with the filename to print ODRPACK summaries to. <em>Do Not
+Open This File Yourself!</em></p>
+</div></blockquote>
+<p><strong>ndigit</strong> : int, optional</p>
+<blockquote>
+<div><p>integer specifying the number of reliable digits in the computation
+of the function.</p>
+</div></blockquote>
+<p><strong>taufac</strong> : float, optional</p>
+<blockquote>
+<div><p>float specifying the initial trust region. The default value is 1.
+The initial trust region is equal to taufac times the length of the
+first computed Gauss-Newton step. taufac must be less than 1.</p>
+</div></blockquote>
+<p><strong>sstol</strong> : float, optional</p>
+<blockquote>
+<div><p>float specifying the tolerance for convergence based on the relative
+change in the sum-of-squares. The default value is eps**(1/2) where eps
+is the smallest value such that 1 + eps &gt; 1 for double precision
+computation on the machine. sstol must be less than 1.</p>
+</div></blockquote>
+<p><strong>partol</strong> : float, optional</p>
+<blockquote>
+<div><p>float specifying the tolerance for convergence based on the relative
+change in the estimated parameters. The default value is eps**(2/3) for
+explicit models and eps**(1/3) for implicit models. partol must be less
+than 1.</p>
+</div></blockquote>
+<p><strong>maxit</strong> : int, optional</p>
+<blockquote>
+<div><p>integer specifying the maximum number of iterations to perform. For
+first runs, maxit is the total number of iterations performed and
+defaults to 50.  For restarts, maxit is the number of additional
+iterations to perform and defaults to 10.</p>
+</div></blockquote>
+<p><strong>stpb</strong> : array_like, optional</p>
+<blockquote>
+<div><p>sequence (len(stpb) == len(beta0)) of relative step sizes to compute
+finite difference derivatives wrt the parameters.</p>
+</div></blockquote>
+<p><strong>stpd</strong> : optional</p>
+<blockquote>
+<div><p>array (stpd.shape == data.x.shape or stpd.shape == (m,)) of relative
+step sizes to compute finite difference derivatives wrt the input
+variable errors. If stpd is a rank-1 array with length m (the
+dimensionality of the input variable), then the values are broadcast to
+all observations.</p>
+</div></blockquote>
+<p><strong>sclb</strong> : array_like, optional</p>
+<blockquote>
+<div><p>sequence (len(stpb) == len(beta0)) of scaling factors for the
+parameters.  The purpose of these scaling factors are to scale all of
+the parameters to around unity. Normally appropriate scaling factors
+are computed if this argument is not specified. Specify them yourself
+if the automatic procedure goes awry.</p>
+</div></blockquote>
+<p><strong>scld</strong> : array_like, optional</p>
+<blockquote>
+<div><p>array (scld.shape == data.x.shape or scld.shape == (m,)) of scaling
+factors for the <em>errors</em> in the input variables. Again, these factors
+are automatically computed if you do not provide them. If scld.shape ==
+(m,), then the scaling factors are broadcast to all observations.</p>
+</div></blockquote>
+<p><strong>work</strong> : ndarray, optional</p>
+<blockquote>
+<div><p>array to hold the double-valued working data for ODRPACK. When
+restarting, takes the value of self.output.work.</p>
+</div></blockquote>
+<p><strong>iwork</strong> : ndarray, optional</p>
+<blockquote>
+<div><p>array to hold the integer-valued working data for ODRPACK. When
+restarting, takes the value of self.output.iwork.</p>
+</div></blockquote>
+<p><strong>output</strong> : Output class instance</p>
+<blockquote class="last">
+<div><p>an instance if the Output class containing all of the returned
+data from an invocation of ODR.run() or ODR.restart()</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.odr.ODR.restart.html#scipy.odr.ODR.restart" title="scipy.odr.ODR.restart"><tt class="xref py py-obj docutils literal"><span class="pre">restart</span></tt></a>([iter])</td>
+<td>Restarts the run with iter more iterations.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.odr.ODR.run.html#scipy.odr.ODR.run" title="scipy.odr.ODR.run"><tt class="xref py py-obj docutils literal"><span class="pre">run</span></tt></a>()</td>
+<td>Run the fitting routine with all of the information given.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.odr.ODR.set_iprint.html#scipy.odr.ODR.set_iprint" title="scipy.odr.ODR.set_iprint"><tt class="xref py py-obj docutils literal"><span class="pre">set_iprint</span></tt></a>([init, so_init, iter, so_iter, ...])</td>
+<td>Set the iprint parameter for the printing of computation reports.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.odr.ODR.set_job.html#scipy.odr.ODR.set_job" title="scipy.odr.ODR.set_job"><tt class="xref py py-obj docutils literal"><span class="pre">set_job</span></tt></a>([fit_type, deriv, var_calc, ...])</td>
+<td>Sets the “job” parameter is a hopefully comprehensible way.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.odr.odr.html" title="previous chapter">scipy.odr.odr</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.odr.ODR.restart.html" title="next chapter">scipy.odr.ODR.restart</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.odr.ODR.restart.html" title="scipy.odr.ODR.restart">next</a> |</li>
+<li class="right">
+<a href="scipy.odr.odr.html" title="scipy.odr.odr">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../odr.html">Orthogonal distance regression (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.odr</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

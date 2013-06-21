@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SciPy 0.7.0 Release Notes &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="index.html" />
+    <link rel="up" title="Release Notes" href="release.html" />
+    <link rel="next" title="Clustering package (scipy.cluster)" href="cluster.html" />
+    <link rel="prev" title="SciPy 0.7.1 Release Notes" href="release.0.7.1.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cluster.html" title="Clustering package (scipy.cluster)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="release.0.7.1.html" title="SciPy 0.7.1 Release Notes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="release.html" accesskey="U">Release Notes</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-0-7-0-release-notes">
+<h1><a class="toc-backref" href="#id1">SciPy 0.7.0 Release Notes</a><a class="headerlink" href="#scipy-0-7-0-release-notes" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#scipy-0-7-0-release-notes" id="id1">SciPy 0.7.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#python-2-6-and-3-0" id="id2">Python 2.6 and 3.0</a></li>
+<li><a class="reference internal" href="#major-documentation-improvements" id="id3">Major documentation improvements</a></li>
+<li><a class="reference internal" href="#running-tests" id="id4">Running Tests</a></li>
+<li><a class="reference internal" href="#building-scipy" id="id5">Building SciPy</a></li>
+<li><a class="reference internal" href="#sandbox-removed" id="id6">Sandbox Removed</a></li>
+<li><a class="reference internal" href="#sparse-matrices" id="id7">Sparse Matrices</a></li>
+<li><a class="reference internal" href="#statistics-package" id="id8">Statistics package</a></li>
+<li><a class="reference internal" href="#reworking-of-io-package" id="id9">Reworking of IO package</a></li>
+<li><a class="reference internal" href="#new-hierarchical-clustering-module" id="id10">New Hierarchical Clustering module</a></li>
+<li><a class="reference internal" href="#new-spatial-package" id="id11">New Spatial package</a></li>
+<li><a class="reference internal" href="#reworked-fftpack-package" id="id12">Reworked fftpack package</a></li>
+<li><a class="reference internal" href="#new-constants-package" id="id13">New Constants package</a></li>
+<li><a class="reference internal" href="#new-radial-basis-function-module" id="id14">New Radial Basis Function module</a></li>
+<li><a class="reference internal" href="#new-complex-ode-integrator" id="id15">New complex ODE integrator</a></li>
+<li><a class="reference internal" href="#new-generalized-symmetric-and-hermitian-eigenvalue-problem-solver" id="id16">New generalized symmetric and hermitian eigenvalue problem solver</a></li>
+<li><a class="reference internal" href="#bug-fixes-in-the-interpolation-package" id="id17">Bug fixes in the interpolation package</a></li>
+<li><a class="reference internal" href="#weave-clean-up" id="id18">Weave clean up</a></li>
+<li><a class="reference internal" href="#known-problems" id="id19">Known problems</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>SciPy 0.7.0 is the culmination of 16 months of hard work. It contains
+many new features, numerous bug-fixes, improved test coverage and
+better documentation.  There have been a number of deprecations and
+API changes in this release, which are documented below.  All users
+are encouraged to upgrade to this release, as there are a large number
+of bug-fixes and optimizations.  Moreover, our development attention
+will now shift to bug-fix releases on the 0.7.x branch, and on adding
+new features on the development trunk.  This release requires Python
+2.4 or 2.5 and NumPy 1.2 or greater.</p>
+<p>Please note that SciPy is still considered to have &#8220;Beta&#8221; status, as
+we work toward a SciPy 1.0.0 release.  The 1.0.0 release will mark a
+major milestone in the development of SciPy, after which changing the
+package structure or API will be much more difficult.  Whilst these
+pre-1.0 releases are considered to have &#8220;Beta&#8221; status, we are
+committed to making them as bug-free as possible.  For example, in
+addition to fixing numerous bugs in this release, we have also doubled
+the number of unit tests since the last release.</p>
+<p>However, until the 1.0 release, we are aggressively reviewing and
+refining the functionality, organization, and interface. This is being
+done in an effort to make the package as coherent, intuitive, and
+useful as possible.  To achieve this, we need help from the community
+of users.  Specifically, we need feedback regarding all aspects of the
+project - everything - from which algorithms we implement, to details
+about our function&#8217;s call signatures.</p>
+<p>Over the last year, we have seen a rapid increase in community
+involvement, and numerous infrastructure improvements to lower the
+barrier to contributions (e.g., more explicit coding standards,
+improved testing infrastructure, better documentation tools).  Over
+the next year, we hope to see this trend continue and invite everyone
+to become more involved.</p>
+<div class="section" id="python-2-6-and-3-0">
+<h2><a class="toc-backref" href="#id2">Python 2.6 and 3.0</a><a class="headerlink" href="#python-2-6-and-3-0" title="Permalink to this headline">¶</a></h2>
+<p>A significant amount of work has gone into making SciPy compatible
+with Python 2.6; however, there are still some issues in this regard.
+The main issue with 2.6 support is NumPy.  On UNIX (including Mac OS
+X), NumPy 1.2.1 mostly works, with a few caveats.  On Windows, there
+are problems related to the compilation process.  The upcoming NumPy
+1.3 release will fix these problems.  Any remaining issues with 2.6
+support for SciPy 0.7 will be addressed in a bug-fix release.</p>
+<p>Python 3.0 is not supported at all; it requires NumPy to be ported to
+Python 3.0.  This requires immense effort, since a lot of C code has
+to be ported.  The transition to 3.0 is still under consideration;
+currently, we don&#8217;t have any timeline or roadmap for this transition.</p>
+</div>
+<div class="section" id="major-documentation-improvements">
+<h2><a class="toc-backref" href="#id3">Major documentation improvements</a><a class="headerlink" href="#major-documentation-improvements" title="Permalink to this headline">¶</a></h2>
+<p>SciPy documentation is greatly improved; you can view a HTML reference
+manual <a class="reference external" href="http://docs.scipy.org/">online</a> or download it as a PDF
+file. The new reference guide was built using the popular <a class="reference external" href="http://sphinx.pocoo.org/">Sphinx tool</a>.</p>
+<p>This release also includes an updated tutorial, which hadn&#8217;t been
+available since SciPy was ported to NumPy in 2005.  Though not
+comprehensive, the tutorial shows how to use several essential parts
+of Scipy.  It also includes the <tt class="docutils literal"><span class="pre">ndimage</span></tt> documentation from the
+<tt class="docutils literal"><span class="pre">numarray</span></tt> manual.</p>
+<p>Nevertheless, more effort is needed on the documentation front.
+Luckily, contributing to Scipy documentation is now easier than
+before: if you find that a part of it requires improvements, and want
+to help us out, please register a user name in our web-based
+documentation editor at <a class="reference external" href="http://docs.scipy.org/">http://docs.scipy.org/</a> and correct the issues.</p>
+</div>
+<div class="section" id="running-tests">
+<h2><a class="toc-backref" href="#id4">Running Tests</a><a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
+<p>NumPy 1.2 introduced a new testing framework based on <a class="reference external" href="http://somethingaboutorange.com/mrl/projects/nose/">nose</a>.  Starting with
+this release, SciPy now uses the new NumPy test framework as well.
+Taking advantage of the new testing framework requires <tt class="docutils literal"><span class="pre">nose</span></tt>
+version 0.10, or later.  One major advantage of the new framework is
+that it greatly simplifies writing unit tests - which has all ready
+paid off, given the rapid increase in tests.  To run the full test
+suite:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="s">&#39;full&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more information, please see <a class="reference external" href="http://projects.scipy.org/scipy/numpy/wiki/TestingGuidelines">The NumPy/SciPy Testing Guide</a>.</p>
+<p>We have also greatly improved our test coverage.  There were just over
+2,000 unit tests in the 0.6.0 release; this release nearly doubles
+that number, with just over 4,000 unit tests.</p>
+</div>
+<div class="section" id="building-scipy">
+<h2><a class="toc-backref" href="#id5">Building SciPy</a><a class="headerlink" href="#building-scipy" title="Permalink to this headline">¶</a></h2>
+<p>Support for NumScons has been added. NumScons is a tentative new build
+system for NumPy/SciPy, using <a class="reference external" href="http://www.scons.org/">SCons</a> at its
+core.</p>
+<p>SCons is a next-generation build system, intended to replace the
+venerable <tt class="docutils literal"><span class="pre">Make</span></tt> with the integrated functionality of
+<tt class="docutils literal"><span class="pre">autoconf</span></tt>/<tt class="docutils literal"><span class="pre">automake</span></tt> and <tt class="docutils literal"><span class="pre">ccache</span></tt>.  Scons is written in Python
+and its configuration files are Python scripts.  NumScons is meant to
+replace NumPy&#8217;s custom version of <tt class="docutils literal"><span class="pre">distutils</span></tt> providing more
+advanced functionality, such as <tt class="docutils literal"><span class="pre">autoconf</span></tt>, improved fortran
+support, more tools, and support for <tt class="docutils literal"><span class="pre">numpy.distutils</span></tt>/<tt class="docutils literal"><span class="pre">scons</span></tt>
+cooperation.</p>
+</div>
+<div class="section" id="sandbox-removed">
+<h2><a class="toc-backref" href="#id6">Sandbox Removed</a><a class="headerlink" href="#sandbox-removed" title="Permalink to this headline">¶</a></h2>
+<p>While porting SciPy to NumPy in 2005, several packages and modules
+were moved into <tt class="docutils literal"><span class="pre">scipy.sandbox</span></tt>.  The sandbox was a staging ground
+for packages that were undergoing rapid development and whose APIs
+were in flux.  It was also a place where broken code could live.  The
+sandbox has served its purpose well, but was starting to create
+confusion.  Thus <tt class="docutils literal"><span class="pre">scipy.sandbox</span></tt> was removed.  Most of the code was
+moved into <tt class="docutils literal"><span class="pre">scipy</span></tt>, some code was made into a <tt class="docutils literal"><span class="pre">scikit</span></tt>, and the
+remaining code was just deleted, as the functionality had been
+replaced by other code.</p>
+</div>
+<div class="section" id="sparse-matrices">
+<h2><a class="toc-backref" href="#id7">Sparse Matrices</a><a class="headerlink" href="#sparse-matrices" title="Permalink to this headline">¶</a></h2>
+<p>Sparse matrices have seen extensive improvements.  There is now
+support for integer dtypes such <tt class="docutils literal"><span class="pre">int8</span></tt>, <tt class="docutils literal"><span class="pre">uint32</span></tt>, etc.  Two new
+sparse formats were added:</p>
+<ul class="simple">
+<li>new class <tt class="docutils literal"><span class="pre">dia_matrix</span></tt> : the sparse DIAgonal format</li>
+<li>new class <tt class="docutils literal"><span class="pre">bsr_matrix</span></tt> : the Block CSR format</li>
+</ul>
+<p>Several new sparse matrix construction functions were added:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">sparse.kron</span></tt> : sparse Kronecker product</li>
+<li><tt class="docutils literal"><span class="pre">sparse.bmat</span></tt> : sparse version of <tt class="docutils literal"><span class="pre">numpy.bmat</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">sparse.vstack</span></tt> : sparse version of <tt class="docutils literal"><span class="pre">numpy.vstack</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">sparse.hstack</span></tt> : sparse version of <tt class="docutils literal"><span class="pre">numpy.hstack</span></tt></li>
+</ul>
+<p>Extraction of submatrices and nonzero values have been added:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">sparse.tril</span></tt> : extract lower triangle</li>
+<li><tt class="docutils literal"><span class="pre">sparse.triu</span></tt> : extract upper triangle</li>
+<li><tt class="docutils literal"><span class="pre">sparse.find</span></tt> : nonzero values and their indices</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">csr_matrix</span></tt> and <tt class="docutils literal"><span class="pre">csc_matrix</span></tt> now support slicing and fancy
+indexing (e.g., <tt class="docutils literal"><span class="pre">A[1:3,</span> <span class="pre">4:7]</span></tt> and <tt class="docutils literal"><span class="pre">A[[3,2,6,8],:]</span></tt>).  Conversions
+among all sparse formats are now possible:</p>
+<ul class="simple">
+<li>using member functions such as <tt class="docutils literal"><span class="pre">.tocsr()</span></tt> and <tt class="docutils literal"><span class="pre">.tolil()</span></tt></li>
+<li>using the <tt class="docutils literal"><span class="pre">.asformat()</span></tt> member function, e.g. <tt class="docutils literal"><span class="pre">A.asformat('csr')</span></tt></li>
+<li>using constructors <tt class="docutils literal"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">lil_matrix([[1,2]]);</span> <span class="pre">B</span> <span class="pre">=</span> <span class="pre">csr_matrix(A)</span></tt></li>
+</ul>
+<p>All sparse constructors now accept dense matrices and lists of lists.
+For example:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">csr_matrix(</span> <span class="pre">rand(3,3)</span> <span class="pre">)</span></tt> and <tt class="docutils literal"><span class="pre">B</span> <span class="pre">=</span> <span class="pre">lil_matrix(</span> <span class="pre">[[1,2],[3,4]]</span> <span class="pre">)</span></tt></li>
+</ul>
+<p>The handling of diagonals in the <tt class="docutils literal"><span class="pre">spdiags</span></tt> function has been changed.
+It now agrees with the MATLAB(TM) function of the same name.</p>
+<p>Numerous efficiency improvements to format conversions and sparse
+matrix arithmetic have been made.  Finally, this release contains
+numerous bugfixes.</p>
+</div>
+<div class="section" id="statistics-package">
+<h2><a class="toc-backref" href="#id8">Statistics package</a><a class="headerlink" href="#statistics-package" title="Permalink to this headline">¶</a></h2>
+<p>Statistical functions for masked arrays have been added, and are
+accessible through <tt class="docutils literal"><span class="pre">scipy.stats.mstats</span></tt>. The functions are similar
+to their counterparts in <tt class="docutils literal"><span class="pre">scipy.stats</span></tt> but they have not yet been
+verified for identical interfaces and algorithms.</p>
+<p>Several bugs were fixed for statistical functions, of those,
+<tt class="docutils literal"><span class="pre">kstest</span></tt> and <tt class="docutils literal"><span class="pre">percentileofscore</span></tt> gained new keyword arguments.</p>
+<p>Added deprecation warning for <tt class="docutils literal"><span class="pre">mean</span></tt>, <tt class="docutils literal"><span class="pre">median</span></tt>, <tt class="docutils literal"><span class="pre">var</span></tt>, <tt class="docutils literal"><span class="pre">std</span></tt>,
+<tt class="docutils literal"><span class="pre">cov</span></tt>, and <tt class="docutils literal"><span class="pre">corrcoef</span></tt>. These functions should be replaced by their
+numpy counterparts.  Note, however, that some of the default options
+differ between the <tt class="docutils literal"><span class="pre">scipy.stats</span></tt> and numpy versions of these
+functions.</p>
+<p>Numerous bug fixes to <tt class="docutils literal"><span class="pre">stats.distributions</span></tt>: all generic methods now
+work correctly, several methods in individual distributions were
+corrected. However, a few issues remain with higher moments (<tt class="docutils literal"><span class="pre">skew</span></tt>,
+<tt class="docutils literal"><span class="pre">kurtosis</span></tt>) and entropy.  The maximum likelihood estimator, <tt class="docutils literal"><span class="pre">fit</span></tt>,
+does not work out-of-the-box for some distributions - in some cases,
+starting values have to be carefully chosen, in other cases, the
+generic implementation of the maximum likelihood method might not be
+the numerically appropriate estimation method.</p>
+<p>We expect more bugfixes, increases in numerical precision and
+enhancements in the next release of scipy.</p>
+</div>
+<div class="section" id="reworking-of-io-package">
+<h2><a class="toc-backref" href="#id9">Reworking of IO package</a><a class="headerlink" href="#reworking-of-io-package" title="Permalink to this headline">¶</a></h2>
+<p>The IO code in both NumPy and SciPy is being extensively
+reworked. NumPy will be where basic code for reading and writing NumPy
+arrays is located, while SciPy will house file readers and writers for
+various data formats (data, audio, video, images, matlab, etc.).</p>
+<p>Several functions in <tt class="docutils literal"><span class="pre">scipy.io</span></tt> have been deprecated and will be
+removed in the 0.8.0 release including <tt class="docutils literal"><span class="pre">npfile</span></tt>, <tt class="docutils literal"><span class="pre">save</span></tt>, <tt class="docutils literal"><span class="pre">load</span></tt>,
+<tt class="docutils literal"><span class="pre">create_module</span></tt>, <tt class="docutils literal"><span class="pre">create_shelf</span></tt>, <tt class="docutils literal"><span class="pre">objload</span></tt>, <tt class="docutils literal"><span class="pre">objsave</span></tt>,
+<tt class="docutils literal"><span class="pre">fopen</span></tt>, <tt class="docutils literal"><span class="pre">read_array</span></tt>, <tt class="docutils literal"><span class="pre">write_array</span></tt>, <tt class="docutils literal"><span class="pre">fread</span></tt>, <tt class="docutils literal"><span class="pre">fwrite</span></tt>,
+<tt class="docutils literal"><span class="pre">bswap</span></tt>, <tt class="docutils literal"><span class="pre">packbits</span></tt>, <tt class="docutils literal"><span class="pre">unpackbits</span></tt>, and <tt class="docutils literal"><span class="pre">convert_objectarray</span></tt>.
+Some of these functions have been replaced by NumPy&#8217;s raw reading and
+writing capabilities, memory-mapping capabilities, or array methods.
+Others have been moved from SciPy to NumPy, since basic array reading
+and writing capability is now handled by NumPy.</p>
+<p>The Matlab (TM) file readers/writers have a number of improvements:</p>
+<ul class="simple">
+<li>default version 5</li>
+<li>v5 writers for structures, cell arrays, and objects</li>
+<li>v5 readers/writers for function handles and 64-bit integers</li>
+<li>new struct_as_record keyword argument to <tt class="docutils literal"><span class="pre">loadmat</span></tt>, which loads
+struct arrays in matlab as record arrays in numpy</li>
+<li>string arrays have <tt class="docutils literal"><span class="pre">dtype='U...'</span></tt> instead of <tt class="docutils literal"><span class="pre">dtype=object</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">loadmat</span></tt> no longer squeezes singleton dimensions, i.e.
+<tt class="docutils literal"><span class="pre">squeeze_me=False</span></tt> by default</li>
+</ul>
+</div>
+<div class="section" id="new-hierarchical-clustering-module">
+<h2><a class="toc-backref" href="#id10">New Hierarchical Clustering module</a><a class="headerlink" href="#new-hierarchical-clustering-module" title="Permalink to this headline">¶</a></h2>
+<p>This module adds new hierarchical clustering functionality to the
+<tt class="docutils literal"><span class="pre">scipy.cluster</span></tt> package. The function interfaces are similar to the
+functions provided MATLAB(TM)&#8217;s Statistics Toolbox to help facilitate
+easier migration to the NumPy/SciPy framework. Linkage methods
+implemented include single, complete, average, weighted, centroid,
+median, and ward.</p>
+<p>In addition, several functions are provided for computing
+inconsistency statistics, cophenetic distance, and maximum distance
+between descendants. The <tt class="docutils literal"><span class="pre">fcluster</span></tt> and <tt class="docutils literal"><span class="pre">fclusterdata</span></tt> functions
+transform a hierarchical clustering into a set of flat clusters. Since
+these flat clusters are generated by cutting the tree into a forest of
+trees, the <tt class="docutils literal"><span class="pre">leaders</span></tt> function takes a linkage and a flat clustering,
+and finds the root of each tree in the forest. The <tt class="docutils literal"><span class="pre">ClusterNode</span></tt>
+class represents a hierarchical clusterings as a field-navigable tree
+object. <tt class="docutils literal"><span class="pre">to_tree</span></tt> converts a matrix-encoded hierarchical clustering
+to a <tt class="docutils literal"><span class="pre">ClusterNode</span></tt> object. Routines for converting between MATLAB
+and SciPy linkage encodings are provided. Finally, a <tt class="docutils literal"><span class="pre">dendrogram</span></tt>
+function plots hierarchical clusterings as a dendrogram, using
+matplotlib.</p>
+</div>
+<div class="section" id="new-spatial-package">
+<h2><a class="toc-backref" href="#id11">New Spatial package</a><a class="headerlink" href="#new-spatial-package" title="Permalink to this headline">¶</a></h2>
+<p>The new spatial package contains a collection of spatial algorithms
+and data structures, useful for spatial statistics and clustering
+applications. It includes rapidly compiled code for computing exact
+and approximate nearest neighbors, as well as a pure-python kd-tree
+with the same interface, but that supports annotation and a variety of
+other algorithms. The API for both modules may change somewhat, as
+user requirements become clearer.</p>
+<p>It also includes a <tt class="docutils literal"><span class="pre">distance</span></tt> module, containing a collection of
+distance and dissimilarity functions for computing distances between
+vectors, which is useful for spatial statistics, clustering, and
+kd-trees.  Distance and dissimilarity functions provided include
+Bray-Curtis, Canberra, Chebyshev, City Block, Cosine, Dice, Euclidean,
+Hamming, Jaccard, Kulsinski, Mahalanobis, Matching, Minkowski,
+Rogers-Tanimoto, Russell-Rao, Squared Euclidean, Standardized
+Euclidean, Sokal-Michener, Sokal-Sneath, and Yule.</p>
+<p>The <tt class="docutils literal"><span class="pre">pdist</span></tt> function computes pairwise distance between all
+unordered pairs of vectors in a set of vectors. The <tt class="docutils literal"><span class="pre">cdist</span></tt> computes
+the distance on all pairs of vectors in the Cartesian product of two
+sets of vectors.  Pairwise distance matrices are stored in condensed
+form; only the upper triangular is stored. <tt class="docutils literal"><span class="pre">squareform</span></tt> converts
+distance matrices between square and condensed forms.</p>
+</div>
+<div class="section" id="reworked-fftpack-package">
+<h2><a class="toc-backref" href="#id12">Reworked fftpack package</a><a class="headerlink" href="#reworked-fftpack-package" title="Permalink to this headline">¶</a></h2>
+<p>FFTW2, FFTW3, MKL and DJBFFT wrappers have been removed. Only (NETLIB)
+fftpack remains. By focusing on one backend, we hope to add new
+features - like float32 support - more easily.</p>
+</div>
+<div class="section" id="new-constants-package">
+<h2><a class="toc-backref" href="#id13">New Constants package</a><a class="headerlink" href="#new-constants-package" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">scipy.constants</span></tt> provides a collection of physical constants and
+conversion factors.  These constants are taken from CODATA Recommended
+Values of the Fundamental Physical Constants: 2002. They may be found
+at physics.nist.gov/constants. The values are stored in the dictionary
+physical_constants as a tuple containing the value, the units, and the
+relative precision - in that order. All constants are in SI units,
+unless otherwise stated.  Several helper functions are provided.</p>
+</div>
+<div class="section" id="new-radial-basis-function-module">
+<h2><a class="toc-backref" href="#id14">New Radial Basis Function module</a><a class="headerlink" href="#new-radial-basis-function-module" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">scipy.interpolate</span></tt> now contains a Radial Basis Function module.
+Radial basis functions can be used for smoothing/interpolating
+scattered data in n-dimensions, but should be used with caution for
+extrapolation outside of the observed data range.</p>
+</div>
+<div class="section" id="new-complex-ode-integrator">
+<h2><a class="toc-backref" href="#id15">New complex ODE integrator</a><a class="headerlink" href="#new-complex-ode-integrator" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">scipy.integrate.ode</span></tt> now contains a wrapper for the ZVODE
+complex-valued ordinary differential equation solver (by Peter
+N. Brown, Alan C. Hindmarsh, and George D. Byrne).</p>
+</div>
+<div class="section" id="new-generalized-symmetric-and-hermitian-eigenvalue-problem-solver">
+<h2><a class="toc-backref" href="#id16">New generalized symmetric and hermitian eigenvalue problem solver</a><a class="headerlink" href="#new-generalized-symmetric-and-hermitian-eigenvalue-problem-solver" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">scipy.linalg.eigh</span></tt> now contains wrappers for more LAPACK symmetric
+and hermitian eigenvalue problem solvers. Users can now solve
+generalized problems, select a range of eigenvalues only, and choose
+to use a faster algorithm at the expense of increased memory
+usage. The signature of the <tt class="docutils literal"><span class="pre">scipy.linalg.eigh</span></tt> changed accordingly.</p>
+</div>
+<div class="section" id="bug-fixes-in-the-interpolation-package">
+<h2><a class="toc-backref" href="#id17">Bug fixes in the interpolation package</a><a class="headerlink" href="#bug-fixes-in-the-interpolation-package" title="Permalink to this headline">¶</a></h2>
+<p>The shape of return values from <tt class="docutils literal"><span class="pre">scipy.interpolate.interp1d</span></tt> used to
+be incorrect, if interpolated data had more than 2 dimensions and the
+axis keyword was set to a non-default value. This has been fixed.
+Moreover, <tt class="docutils literal"><span class="pre">interp1d</span></tt> returns now a scalar (0D-array) if the input
+is a scalar. Users of <tt class="docutils literal"><span class="pre">scipy.interpolate.interp1d</span></tt> may need to
+revise their code if it relies on the previous behavior.</p>
+</div>
+<div class="section" id="weave-clean-up">
+<h2><a class="toc-backref" href="#id18">Weave clean up</a><a class="headerlink" href="#weave-clean-up" title="Permalink to this headline">¶</a></h2>
+<p>There were numerous improvements to <tt class="docutils literal"><span class="pre">scipy.weave</span></tt>.  <tt class="docutils literal"><span class="pre">blitz++</span></tt> was
+relicensed by the author to be compatible with the SciPy license.
+<tt class="docutils literal"><span class="pre">wx_spec.py</span></tt> was removed.</p>
+</div>
+<div class="section" id="known-problems">
+<h2><a class="toc-backref" href="#id19">Known problems</a><a class="headerlink" href="#known-problems" title="Permalink to this headline">¶</a></h2>
+<p>Here are known problems with scipy 0.7.0:</p>
+<ul class="simple">
+<li>weave test failures on windows: those are known, and are being revised.</li>
+<li>weave test failure with gcc 4.3 (std::labs): this is a gcc 4.3 bug. A
+workaround is to add #include &lt;cstdlib&gt; in
+scipy/weave/blitz/blitz/funcs.h (line 27). You can make the change in
+the installed scipy (in site-packages).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">SciPy 0.7.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#python-2-6-and-3-0">Python 2.6 and 3.0</a></li>
+<li><a class="reference internal" href="#major-documentation-improvements">Major documentation improvements</a></li>
+<li><a class="reference internal" href="#running-tests">Running Tests</a></li>
+<li><a class="reference internal" href="#building-scipy">Building SciPy</a></li>
+<li><a class="reference internal" href="#sandbox-removed">Sandbox Removed</a></li>
+<li><a class="reference internal" href="#sparse-matrices">Sparse Matrices</a></li>
+<li><a class="reference internal" href="#statistics-package">Statistics package</a></li>
+<li><a class="reference internal" href="#reworking-of-io-package">Reworking of IO package</a></li>
+<li><a class="reference internal" href="#new-hierarchical-clustering-module">New Hierarchical Clustering module</a></li>
+<li><a class="reference internal" href="#new-spatial-package">New Spatial package</a></li>
+<li><a class="reference internal" href="#reworked-fftpack-package">Reworked fftpack package</a></li>
+<li><a class="reference internal" href="#new-constants-package">New Constants package</a></li>
+<li><a class="reference internal" href="#new-radial-basis-function-module">New Radial Basis Function module</a></li>
+<li><a class="reference internal" href="#new-complex-ode-integrator">New complex ODE integrator</a></li>
+<li><a class="reference internal" href="#new-generalized-symmetric-and-hermitian-eigenvalue-problem-solver">New generalized symmetric and hermitian eigenvalue problem solver</a></li>
+<li><a class="reference internal" href="#bug-fixes-in-the-interpolation-package">Bug fixes in the interpolation package</a></li>
+<li><a class="reference internal" href="#weave-clean-up">Weave clean up</a></li>
+<li><a class="reference internal" href="#known-problems">Known problems</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="release.0.7.1.html"
+                        title="previous chapter">SciPy 0.7.1 Release Notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cluster.html"
+                        title="next chapter">Clustering package (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster</span></tt>)</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cluster.html" title="Clustering package (scipy.cluster)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="release.0.7.1.html" title="SciPy 0.7.1 Release Notes"
+             >previous</a> |</li>
+        <li><a href="index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="release.html" >Release Notes</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

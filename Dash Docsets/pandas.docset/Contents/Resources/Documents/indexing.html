@@ -1,0 +1,2443 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Indexing and Selecting Data &mdash; pandas 0.11.1.dev-36c1263 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.11.1.dev-36c1263',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pandas 0.11.1.dev-36c1263 documentation" href="index.html" />
+    <link rel="next" title="Computational tools" href="computation.html" />
+    <link rel="prev" title="Essential Basic Functionality" href="basics.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="computation.html" title="Computational tools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="basics.html" title="Essential Basic Functionality"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pandas 0.11.1.dev-36c1263 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="content-wrapper">
+    <div class="content">
+        <div class="document">
+            <div class="sphinxsidebar">
+                <h3>Table Of Contents</h3>
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="whatsnew.html">What&#8217;s New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Package overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10min.html">10 Minutes to Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dsintro.html">Intro to Data Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Essential Basic Functionality</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Indexing and Selecting Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#choice">Choice</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deprecations">Deprecations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#attribute-access">Attribute Access</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slicing-ranges">Slicing ranges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selection-by-label">Selection By Label</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selection-by-position">Selection By Position</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fast-scalar-value-getting-and-setting">Fast scalar value getting and setting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#boolean-indexing">Boolean indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#where-and-masking">Where and Masking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#take-methods">Take Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#duplicate-data">Duplicate Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dictionary-like-get-method">Dictionary-like <tt class="docutils literal"><span class="pre">get</span></tt> method</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-indexing-with-ix">Advanced Indexing with <tt class="docutils literal"><span class="pre">.ix</span></tt></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-select-method">The <tt class="docutils literal"><span class="pre">select</span></tt> method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-lookup-method">The <tt class="docutils literal"><span class="pre">lookup</span></tt> method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-values-in-mixed-type-dataframe">Setting values in mixed-type DataFrame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#returning-a-view-versus-a-copy">Returning a view versus a copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fallback-indexing">Fallback indexing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#index-objects">Index objects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#set-operations-on-index-objects">Set operations on Index objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#isin-method-of-index-objects"><tt class="docutils literal"><span class="pre">isin</span></tt> method of Index objects</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#hierarchical-indexing-multiindex">Hierarchical indexing (MultiIndex)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-multiindex-hierarchical-index-object">Creating a MultiIndex (hierarchical index) object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reconstructing-the-level-labels">Reconstructing the level labels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-indexing-on-axis-with-multiindex">Basic indexing on axis with MultiIndex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-alignment-and-using-reindex">Data alignment and using <tt class="docutils literal"><span class="pre">reindex</span></tt></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-indexing-with-hierarchical-index">Advanced indexing with hierarchical index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cross-section-with-hierarchical-index">Cross-section with hierarchical index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-reindexing-and-alignment-with-hierarchical-index">Advanced reindexing and alignment with hierarchical index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-need-for-sortedness">The need for sortedness</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#swapping-levels-with-swaplevel">Swapping levels with <tt class="docutils literal"><span class="pre">swaplevel</span></tt></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reordering-levels-with-reorder-levels">Reordering levels with <tt class="docutils literal"><span class="pre">reorder_levels</span></tt></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#some-gory-internal-details">Some gory internal details</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-an-index-to-an-existing-dataframe">Adding an index to an existing DataFrame</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#add-an-index-using-dataframe-columns">Add an index using DataFrame columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-reset-the-index-reset-index">Remove / reset the index,  <tt class="docutils literal"><span class="pre">reset_index</span></tt></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-an-ad-hoc-index">Adding an ad hoc index</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#indexing-internal-details">Indexing internal details</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="computation.html">Computational tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="missing_data.html">Working with missing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="groupby.html">Group By: split-apply-combine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merging.html">Merge, join, and concatenate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshaping.html">Reshaping and Pivot Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Time Series / Date functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Plotting with matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rplot.html">Trellis plotting interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO Tools (Text, CSV, HDF5, ...)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse.html">Sparse data structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gotchas.html">Caveats and Gotchas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r_interface.html">rpy2 / R interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="related.html">Related Python libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_r.html">Comparison with R / R libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+</ul>
+
+                <h3 style="margin-top: 1.5em;">Search</h3>
+
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q" size="18"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+
+                <p>
+
+                <p>
+                    <script type="text/javascript"
+                            src="http://www.ohloh.net/p/482908/widgets/project_partner_badge.js"></script>
+                </p>
+            </div>
+             
+            <div class="documentwrapper">
+                <div class="bodywrapper">
+                    <div class="body">
+                        
+  <div class="section" id="indexing-and-selecting-data">
+<span id="indexing"></span><h1>Indexing and Selecting Data<a class="headerlink" href="#indexing-and-selecting-data" title="Permalink to this headline">¶</a></h1>
+<p>The axis labeling information in pandas objects serves many purposes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Identifies data (i.e. provides <em>metadata</em>) using known indicators,
+important for for analysis, visualization, and interactive console display</li>
+<li>Enables automatic and explicit data alignment</li>
+<li>Allows intuitive getting and setting of subsets of the data set</li>
+</ul>
+</div></blockquote>
+<p>In this section / chapter, we will focus on the final point: namely, how to
+slice, dice, and generally get and set subsets of pandas objects. The primary
+focus will be on Series and DataFrame as they have received more development
+attention in this area. Expect more work to be invested higher-dimensional data
+structures (including Panel) in the future, especially in label-based advanced
+indexing.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The Python and NumPy indexing operators <tt class="docutils literal"><span class="pre">[]</span></tt> and attribute operator <tt class="docutils literal"><span class="pre">.</span></tt> provide quick and easy access to pandas data structures
+across a wide range of use cases. This makes interactive work intuitive, as
+there&#8217;s little new to learn if you already know how to deal with Python
+dictionaries and NumPy arrays. However, since the type of the data to be accessed
+isn&#8217;t known in advance, directly using
+standard operators has some optimization limits. For production code, we recommended
+that you take advantage of the optimized pandas data access methods exposed in this chapter.</p>
+<p class="last">In addition, whether a copy or a reference is returned for a selection operation, may depend on the context.
+See <a class="reference internal" href="#indexing-view-versus-copy"><em>Returning a View versus Copy</em></a></p>
+</div>
+<p>See the <a class="reference internal" href="cookbook.html#cookbook-selection"><em>cookbook</em></a> for some advanced strategies</p>
+<div class="section" id="choice">
+<h2>Choice<a class="headerlink" href="#choice" title="Permalink to this headline">¶</a></h2>
+<p>Starting in 0.11.0, object selection has had a number of user-requested additions in
+order to support more explicit location based indexing. Pandas now supports
+three types of multi-axis indexing.</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">.loc</span></tt> is strictly label based, will raise <tt class="docutils literal"><span class="pre">KeyError</span></tt> when the items are not found, allowed inputs are:</p>
+<ul class="simple">
+<li>A single label, e.g. <tt class="docutils literal"><span class="pre">5</span></tt> or <tt class="docutils literal"><span class="pre">'a'</span></tt>, (note that <tt class="docutils literal"><span class="pre">5</span></tt> is interpreted as a <em>label</em> of the index. This use is <strong>not</strong> an integer position along the index)</li>
+<li>A list or array of labels <tt class="docutils literal"><span class="pre">['a',</span> <span class="pre">'b',</span> <span class="pre">'c']</span></tt></li>
+<li>A slice object with labels <tt class="docutils literal"><span class="pre">'a':'f'</span></tt>, (note that contrary to usual python slices, <strong>both</strong> the start and the stop are included!)</li>
+<li>A boolean array</li>
+</ul>
+<p>See more at <a class="reference internal" href="#indexing-label"><em>Selection by Label</em></a></p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">.iloc</span></tt> is strictly integer position based (from <tt class="docutils literal"><span class="pre">0</span></tt> to <tt class="docutils literal"><span class="pre">length-1</span></tt> of the axis), will raise <tt class="docutils literal"><span class="pre">IndexError</span></tt> when the requested indicies are out of bounds. Allowed inputs are:</p>
+<ul class="simple">
+<li>An integer e.g. <tt class="docutils literal"><span class="pre">5</span></tt></li>
+<li>A list or array of integers <tt class="docutils literal"><span class="pre">[4,</span> <span class="pre">3,</span> <span class="pre">0]</span></tt></li>
+<li>A slice object with ints <tt class="docutils literal"><span class="pre">1:7</span></tt></li>
+</ul>
+<p>See more at <a class="reference internal" href="#indexing-integer"><em>Selection by Position</em></a></p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">.ix</span></tt> supports mixed integer and label based access. It is primarily label based, but will fallback to integer positional access. <tt class="docutils literal"><span class="pre">.ix</span></tt> is the most general
+and will support any of the inputs to <tt class="docutils literal"><span class="pre">.loc</span></tt> and <tt class="docutils literal"><span class="pre">.iloc</span></tt>, as well as support for floating point label schemes. <tt class="docutils literal"><span class="pre">.ix</span></tt> is especially useful when dealing with mixed positional and label
+based hierarchial indexes.</p>
+<p>As using integer slices with <tt class="docutils literal"><span class="pre">.ix</span></tt> have different behavior depending on whether the slice is interpreted as position based or label based, it&#8217;s
+usually better to be explicit and use <tt class="docutils literal"><span class="pre">.iloc</span></tt> or <tt class="docutils literal"><span class="pre">.loc</span></tt>.</p>
+<p>See more at <a class="reference internal" href="#indexing-advanced"><em>Advanced Indexing</em></a>, <a class="reference internal" href="#indexing-advanced-hierarchical"><em>Advanced Hierarchical</em></a> and <a class="reference internal" href="#indexing-fallback"><em>Fallback Indexing</em></a></p>
+</li>
+</ul>
+<p>Getting values from an object with multi-axes selection uses the following
+notation (using <tt class="docutils literal"><span class="pre">.loc</span></tt> as an example, but applies to <tt class="docutils literal"><span class="pre">.iloc</span></tt> and <tt class="docutils literal"><span class="pre">.ix</span></tt> as
+well). Any of the axes accessors may be the null slice <tt class="docutils literal"><span class="pre">:</span></tt>. Axes left out of
+the specification are assumed to be <tt class="docutils literal"><span class="pre">:</span></tt>. (e.g. <tt class="docutils literal"><span class="pre">p.loc['a']</span></tt> is equiv to
+<tt class="docutils literal"><span class="pre">p.loc['a',:,:]</span></tt>)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Object Type</th>
+<th class="head">Indexers</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Series</td>
+<td><tt class="docutils literal"><span class="pre">s.loc[indexer]</span></tt></td>
+</tr>
+<tr class="row-odd"><td>DataFrame</td>
+<td><tt class="docutils literal"><span class="pre">df.loc[row_indexer,column_indexer]</span></tt></td>
+</tr>
+<tr class="row-even"><td>Panel</td>
+<td><tt class="docutils literal"><span class="pre">p.loc[item_indexer,major_indexer,minor_indexer]</span></tt></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="deprecations">
+<h3>Deprecations<a class="headerlink" href="#deprecations" title="Permalink to this headline">¶</a></h3>
+<p>Beginning with version 0.11.0, it&#8217;s recommended that you transition away from
+the following methods as they <em>may</em> be deprecated in future versions.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">irow</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">icol</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">iget_value</span></tt></li>
+</ul>
+</div></blockquote>
+<p>See the section <a class="reference internal" href="#indexing-integer"><em>Selection by Position</em></a> for substitutes.</p>
+</div>
+</div>
+<div class="section" id="basics">
+<span id="indexing-basics"></span><h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<p>As mentioned when introducing the data structures in the <a class="reference internal" href="basics.html#basics"><em>last section</em></a>, the primary function of indexing with <tt class="docutils literal"><span class="pre">[]</span></tt> (a.k.a. <tt class="docutils literal"><span class="pre">__getitem__</span></tt>
+for those familiar with implementing class behavior in Python) is selecting out
+lower-dimensional slices. Thus,</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Object Type</th>
+<th class="head">Selection</th>
+<th class="head">Return Value Type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Series</td>
+<td><tt class="docutils literal"><span class="pre">series[label]</span></tt></td>
+<td>scalar value</td>
+</tr>
+<tr class="row-odd"><td>DataFrame</td>
+<td><tt class="docutils literal"><span class="pre">frame[colname]</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">Series</span></tt> corresponding to colname</td>
+</tr>
+<tr class="row-even"><td>Panel</td>
+<td><tt class="docutils literal"><span class="pre">panel[itemname]</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">DataFrame</span></tt> corresponing to the itemname</td>
+</tr>
+</tbody>
+</table>
+<p>Here we construct a simple time series data set to use for illustrating the
+indexing functionality:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [791]: </span><span class="n">dates</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="s">&#39;1/1/2000&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="gp">In [792]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">dates</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;D&#39;</span><span class="p">])</span>
+
+<span class="gp">In [793]: </span><span class="n">df</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01  0.469112 -0.282863 -1.509059 -1.135632</span>
+<span class="go">2000-01-02  1.212112 -0.173215  0.119209 -1.044236</span>
+<span class="go">2000-01-03 -0.861849 -2.104569 -0.494929  1.071804</span>
+<span class="go">2000-01-04  0.721555 -0.706771 -1.039575  0.271860</span>
+<span class="go">2000-01-05 -0.424972  0.567020  0.276232 -1.087401</span>
+<span class="go">2000-01-06 -0.673690  0.113648 -1.478427  0.524988</span>
+<span class="go">2000-01-07  0.404705  0.577046 -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -0.370647 -1.157892 -1.344312  0.844885</span>
+
+<span class="gp">In [794]: </span><span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">({</span><span class="s">&#39;one&#39;</span> <span class="p">:</span> <span class="n">df</span><span class="p">,</span> <span class="s">&#39;two&#39;</span> <span class="p">:</span> <span class="n">df</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">()})</span>
+
+<span class="gp">In [795]: </span><span class="n">panel</span>
+
+<span class="go">&lt;class &#39;pandas.core.panel.Panel&#39;&gt;</span>
+<span class="go">Dimensions: 2 (items) x 8 (major_axis) x 4 (minor_axis)</span>
+<span class="go">Items axis: one to two</span>
+<span class="go">Major_axis axis: 2000-01-01 00:00:00 to 2000-01-08 00:00:00</span>
+<span class="go">Minor_axis axis: A to D</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">None of the indexing functionality is time series specific unless
+specifically stated.</p>
+</div>
+<p>Thus, as per above, we have the most basic indexing using <tt class="docutils literal"><span class="pre">[]</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [796]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span>
+
+<span class="gp">In [797]: </span><span class="n">s</span><span class="p">[</span><span class="n">dates</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
+<span class="go">-0.67368970808837059</span>
+
+<span class="gp">In [798]: </span><span class="n">panel</span><span class="p">[</span><span class="s">&#39;two&#39;</span><span class="p">]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01  0.409571  0.113086 -0.610826 -0.936507</span>
+<span class="go">2000-01-02  1.152571  0.222735  1.017442 -0.845111</span>
+<span class="go">2000-01-03 -0.921390 -1.708620  0.403304  1.270929</span>
+<span class="go">2000-01-04  0.662014 -0.310822 -0.141342  0.470985</span>
+<span class="go">2000-01-05 -0.484513  0.962970  1.174465 -0.888276</span>
+<span class="go">2000-01-06 -0.733231  0.509598 -0.580194  0.724113</span>
+<span class="go">2000-01-07  0.345164  0.972995 -0.816769 -0.840143</span>
+<span class="go">2000-01-08 -0.430188 -0.761943 -0.446079  1.044010</span>
+</pre></div>
+</div>
+<p>You can pass a list of columns to <tt class="docutils literal"><span class="pre">[]</span></tt> to select columns in that order.
+If a column is not contained in the DataFrame, an exception will be
+raised. Multiple columns can also be set in this manner:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [799]: </span><span class="n">df</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01  0.469112 -0.282863 -1.509059 -1.135632</span>
+<span class="go">2000-01-02  1.212112 -0.173215  0.119209 -1.044236</span>
+<span class="go">2000-01-03 -0.861849 -2.104569 -0.494929  1.071804</span>
+<span class="go">2000-01-04  0.721555 -0.706771 -1.039575  0.271860</span>
+<span class="go">2000-01-05 -0.424972  0.567020  0.276232 -1.087401</span>
+<span class="go">2000-01-06 -0.673690  0.113648 -1.478427  0.524988</span>
+<span class="go">2000-01-07  0.404705  0.577046 -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -0.370647 -1.157892 -1.344312  0.844885</span>
+
+<span class="gp">In [800]: </span><span class="n">df</span><span class="p">[[</span><span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;A&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">]]</span>
+
+<span class="gp">In [801]: </span><span class="n">df</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  1.071804</span>
+<span class="go">2000-01-04 -0.706771  0.721555 -1.039575  0.271860</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+<span class="go">2000-01-06  0.113648 -0.673690 -1.478427  0.524988</span>
+<span class="go">2000-01-07  0.577046  0.404705 -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -1.157892 -0.370647 -1.344312  0.844885</span>
+</pre></div>
+</div>
+<p>You may find this useful for applying a transform (in-place) to a subset of the
+columns.</p>
+<div class="section" id="attribute-access">
+<h3>Attribute Access<a class="headerlink" href="#attribute-access" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-df-cols"><span id="indexing-columns-multiple"></span>You may access a column on a <tt class="docutils literal"><span class="pre">DataFrame</span></tt>, and a item on a <tt class="docutils literal"><span class="pre">Panel</span></tt> directly
+as an attribute:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [802]: </span><span class="n">df</span><span class="o">.</span><span class="n">A</span>
+
+<span class="go">2000-01-01   -0.282863</span>
+<span class="go">2000-01-02   -0.173215</span>
+<span class="go">2000-01-03   -2.104569</span>
+<span class="go">2000-01-04   -0.706771</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">2000-01-08   -1.157892</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+
+<span class="gp">In [803]: </span><span class="n">panel</span><span class="o">.</span><span class="n">one</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01  0.469112 -0.282863 -1.509059 -1.135632</span>
+<span class="go">2000-01-02  1.212112 -0.173215  0.119209 -1.044236</span>
+<span class="go">2000-01-03 -0.861849 -2.104569 -0.494929  1.071804</span>
+<span class="go">2000-01-04  0.721555 -0.706771 -1.039575  0.271860</span>
+<span class="go">2000-01-05 -0.424972  0.567020  0.276232 -1.087401</span>
+<span class="go">2000-01-06 -0.673690  0.113648 -1.478427  0.524988</span>
+<span class="go">2000-01-07  0.404705  0.577046 -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -0.370647 -1.157892 -1.344312  0.844885</span>
+</pre></div>
+</div>
+<p>If you are using the IPython environment, you may also use tab-completion to
+see these accessable attributes.</p>
+</div>
+<div class="section" id="slicing-ranges">
+<h3>Slicing ranges<a class="headerlink" href="#slicing-ranges" title="Permalink to this headline">¶</a></h3>
+<p>The most robust and consistent way of slicing ranges along arbitrary axes is
+described in the <a class="reference internal" href="#indexing-integer"><em>Selection by Position</em></a> section
+detailing the <tt class="docutils literal"><span class="pre">.iloc</span></tt> method. For now, we explain the semantics of slicing using the <tt class="docutils literal"><span class="pre">[]</span></tt> operator.</p>
+<p>With Series, the syntax works exactly as with an ndarray, returning a slice of
+the values and the corresponding labels:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [804]: </span><span class="n">s</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="go">2000-01-01   -0.282863</span>
+<span class="go">2000-01-02   -0.173215</span>
+<span class="go">2000-01-03   -2.104569</span>
+<span class="go">2000-01-04   -0.706771</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+
+<span class="gp">In [805]: </span><span class="n">s</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="go">2000-01-01   -0.282863</span>
+<span class="go">2000-01-03   -2.104569</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">Freq: 2D, Name: A, dtype: float64</span>
+
+<span class="gp">In [806]: </span><span class="n">s</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="go">2000-01-08   -1.157892</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-04   -0.706771</span>
+<span class="go">2000-01-03   -2.104569</span>
+<span class="go">2000-01-02   -0.173215</span>
+<span class="go">2000-01-01   -0.282863</span>
+<span class="go">Freq: -1D, Name: A, dtype: float64</span>
+</pre></div>
+</div>
+<p>Note that setting works as well:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [807]: </span><span class="n">s2</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [808]: </span><span class="n">s2</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="gp">In [809]: </span><span class="n">s2</span>
+
+<span class="go">2000-01-01    0.000000</span>
+<span class="go">2000-01-02    0.000000</span>
+<span class="go">2000-01-03    0.000000</span>
+<span class="go">2000-01-04    0.000000</span>
+<span class="go">2000-01-05    0.000000</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">2000-01-08   -1.157892</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+</pre></div>
+</div>
+<p>With DataFrame, slicing inside of <tt class="docutils literal"><span class="pre">[]</span></tt> <strong>slices the rows</strong>. This is provided
+largely as a convenience since it is such a common operation.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [810]: </span><span class="n">df</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  1.071804</span>
+
+<span class="gp">In [811]: </span><span class="n">df</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-08 -1.157892 -0.370647 -1.344312  0.844885</span>
+<span class="go">2000-01-07  0.577046  0.404705 -1.715002 -1.039268</span>
+<span class="go">2000-01-06  0.113648 -0.673690 -1.478427  0.524988</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+<span class="go">2000-01-04 -0.706771  0.721555 -1.039575  0.271860</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  1.071804</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selection-by-label">
+<span id="indexing-label"></span><h3>Selection By Label<a class="headerlink" href="#selection-by-label" title="Permalink to this headline">¶</a></h3>
+<p>Pandas provides a suite of methods in order to have <strong>purely label based indexing</strong>. This is a strict inclusion based protocol.
+<strong>ALL</strong> of the labels for which you ask, must be in the index or a <tt class="docutils literal"><span class="pre">KeyError</span></tt> will be raised! When slicing, the start bound is <em>included</em>, <strong>AND</strong> the stop bound is <em>included</em>. Integers are valid labels, but they refer to the label <strong>and not the position</strong>.</p>
+<p>The <tt class="docutils literal"><span class="pre">.loc</span></tt> attribute is the primary access method. The following are valid inputs:</p>
+<ul class="simple">
+<li>A single label, e.g. <tt class="docutils literal"><span class="pre">5</span></tt> or <tt class="docutils literal"><span class="pre">'a'</span></tt>, (note that <tt class="docutils literal"><span class="pre">5</span></tt> is interpreted as a <em>label</em> of the index. This use is <strong>not</strong> an integer position along the index)</li>
+<li>A list or array of labels <tt class="docutils literal"><span class="pre">['a',</span> <span class="pre">'b',</span> <span class="pre">'c']</span></tt></li>
+<li>A slice object with labels <tt class="docutils literal"><span class="pre">'a':'f'</span></tt> (note that contrary to usual python slices, <strong>both</strong> the start and the stop are included!)</li>
+<li>A boolean array</li>
+</ul>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [812]: </span><span class="n">s1</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span><span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;abcdef&#39;</span><span class="p">))</span>
+
+<span class="gp">In [813]: </span><span class="n">s1</span>
+
+<span class="go">a    1.075770</span>
+<span class="go">b   -0.109050</span>
+<span class="go">c    1.643563</span>
+<span class="go">d   -1.469388</span>
+<span class="go">e    0.357021</span>
+<span class="go">f   -0.674600</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [814]: </span><span class="n">s1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;c&#39;</span><span class="p">:]</span>
+
+<span class="go">c    1.643563</span>
+<span class="go">d   -1.469388</span>
+<span class="go">e    0.357021</span>
+<span class="go">f   -0.674600</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [815]: </span><span class="n">s1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span>
+<span class="go">-0.10904997528022223</span>
+</pre></div>
+</div>
+<p>Note that setting works as well:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [816]: </span><span class="n">s1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;c&#39;</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="gp">In [817]: </span><span class="n">s1</span>
+
+<span class="go">a    1.07577</span>
+<span class="go">b   -0.10905</span>
+<span class="go">c    0.00000</span>
+<span class="go">d    0.00000</span>
+<span class="go">e    0.00000</span>
+<span class="go">f    0.00000</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>With a DataFrame</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [818]: </span><span class="n">df1</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span>
+<span class="gp">   .....:</span>                 <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;abcdef&#39;</span><span class="p">),</span>
+<span class="gp">   .....:</span>                 <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;ABCD&#39;</span><span class="p">))</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [819]: </span><span class="n">df1</span>
+
+<span class="go">          A         B         C         D</span>
+<span class="go">a -1.776904 -0.968914 -1.294524  0.413738</span>
+<span class="go">b  0.276662 -0.472035 -0.013960 -0.362543</span>
+<span class="go">c -0.006154 -0.923061  0.895717  0.805244</span>
+<span class="go">d -1.206412  2.565646  1.431256  1.340309</span>
+<span class="go">e -1.170299 -0.226169  0.410835  0.813850</span>
+<span class="go">f  0.132003 -0.827317 -0.076467 -1.187678</span>
+
+<span class="gp">In [820]: </span><span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">],:]</span>
+
+<span class="go">          A         B         C         D</span>
+<span class="go">a -1.776904 -0.968914 -1.294524  0.413738</span>
+<span class="go">b  0.276662 -0.472035 -0.013960 -0.362543</span>
+<span class="go">d -1.206412  2.565646  1.431256  1.340309</span>
+</pre></div>
+</div>
+<p>Accessing via label slices</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [821]: </span><span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;d&#39;</span><span class="p">:,</span><span class="s">&#39;A&#39;</span><span class="p">:</span><span class="s">&#39;C&#39;</span><span class="p">]</span>
+
+<span class="go">          A         B         C</span>
+<span class="go">d -1.206412  2.565646  1.431256</span>
+<span class="go">e -1.170299 -0.226169  0.410835</span>
+<span class="go">f  0.132003 -0.827317 -0.076467</span>
+</pre></div>
+</div>
+<p>For getting a cross section using a label (equiv to <tt class="docutils literal"><span class="pre">df.xs('a')</span></tt>)</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [822]: </span><span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>
+
+<span class="go">A   -1.776904</span>
+<span class="go">B   -0.968914</span>
+<span class="go">C   -1.294524</span>
+<span class="go">D    0.413738</span>
+<span class="go">Name: a, dtype: float64</span>
+</pre></div>
+</div>
+<p>For getting values with a boolean array</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [823]: </span><span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span>
+
+<span class="go">A    False</span>
+<span class="go">B    False</span>
+<span class="go">C    False</span>
+<span class="go">D     True</span>
+<span class="go">Name: a, dtype: bool</span>
+
+<span class="gp">In [824]: </span><span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="go">          D</span>
+<span class="go">a  0.413738</span>
+<span class="go">b -0.362543</span>
+<span class="go">c  0.805244</span>
+<span class="go">d  1.340309</span>
+<span class="go">e  0.813850</span>
+<span class="go">f -1.187678</span>
+</pre></div>
+</div>
+<p>For getting a value explicity (equiv to deprecated <tt class="docutils literal"><span class="pre">df.get_value('a','A')</span></tt>)</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="c"># this is also equivalent to ``df1.at[&#39;a&#39;,&#39;A&#39;]``</span>
+<span class="gp">In [825]: </span><span class="n">df1</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">]</span>
+<span class="go">-1.7769037169718671</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selection-by-position">
+<span id="indexing-integer"></span><h3>Selection By Position<a class="headerlink" href="#selection-by-position" title="Permalink to this headline">¶</a></h3>
+<p>Pandas provides a suite of methods in order to get <strong>purely integer based indexing</strong>. The semantics follow closely python and numpy slicing. These are <tt class="docutils literal"><span class="pre">0-based</span></tt> indexing. When slicing, the start bounds is <em>included</em>, while the upper bound is <em>excluded</em>. Trying to use a non-integer, even a <strong>valid</strong> label will raise a <tt class="docutils literal"><span class="pre">IndexError</span></tt>.</p>
+<p>The <tt class="docutils literal"><span class="pre">.iloc</span></tt> attribute is the primary access method. The following are valid inputs:</p>
+<ul class="simple">
+<li>An integer e.g. <tt class="docutils literal"><span class="pre">5</span></tt></li>
+<li>A list or array of integers <tt class="docutils literal"><span class="pre">[4,</span> <span class="pre">3,</span> <span class="pre">0]</span></tt></li>
+<li>A slice object with ints <tt class="docutils literal"><span class="pre">1:7</span></tt></li>
+</ul>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [826]: </span><span class="n">s1</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="gp">In [827]: </span><span class="n">s1</span>
+
+<span class="go">0    1.130127</span>
+<span class="go">2   -1.436737</span>
+<span class="go">4   -1.413681</span>
+<span class="go">6    1.607920</span>
+<span class="go">8    1.024180</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [828]: </span><span class="n">s1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="go">0    1.130127</span>
+<span class="go">2   -1.436737</span>
+<span class="go">4   -1.413681</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [829]: </span><span class="n">s1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">1.6079204745847746</span>
+</pre></div>
+</div>
+<p>Note that setting works as well:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [830]: </span><span class="n">s1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="gp">In [831]: </span><span class="n">s1</span>
+
+<span class="go">0    0.00000</span>
+<span class="go">2    0.00000</span>
+<span class="go">4    0.00000</span>
+<span class="go">6    1.60792</span>
+<span class="go">8    1.02418</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>With a DataFrame</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [832]: </span><span class="n">df1</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span>
+<span class="gp">   .....:</span>                 <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+<span class="gp">   .....:</span>                 <span class="n">columns</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [833]: </span><span class="n">df1</span>
+
+<span class="go">           0         2         4         6</span>
+<span class="go">0   0.569605  0.875906 -2.211372  0.974466</span>
+<span class="go">2  -2.006747 -0.410001 -0.078638  0.545952</span>
+<span class="go">4  -1.219217 -1.226825  0.769804 -1.281247</span>
+<span class="go">6  -0.727707 -0.121306 -0.097883  0.695775</span>
+<span class="go">8   0.341734  0.959726 -1.110336 -0.619976</span>
+<span class="go">10  0.149748 -0.732339  0.687738  0.176444</span>
+</pre></div>
+</div>
+<p>Select via integer slicing</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [834]: </span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="go">          0         2         4         6</span>
+<span class="go">0  0.569605  0.875906 -2.211372  0.974466</span>
+<span class="go">2 -2.006747 -0.410001 -0.078638  0.545952</span>
+<span class="go">4 -1.219217 -1.226825  0.769804 -1.281247</span>
+
+<span class="gp">In [835]: </span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="go">          4         6</span>
+<span class="go">2 -0.078638  0.545952</span>
+<span class="go">4  0.769804 -1.281247</span>
+<span class="go">6 -0.097883  0.695775</span>
+<span class="go">8 -1.110336 -0.619976</span>
+</pre></div>
+</div>
+<p>Select via integer list</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [836]: </span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+
+<span class="go">           2         6</span>
+<span class="go">2  -0.410001  0.545952</span>
+<span class="go">6  -0.121306  0.695775</span>
+<span class="go">10 -0.732339  0.176444</span>
+</pre></div>
+</div>
+<p>For slicing rows explicitly (equiv to deprecated <tt class="docutils literal"><span class="pre">df.irow(slice(1,3))</span></tt>).</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [837]: </span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,:]</span>
+
+<span class="go">          0         2         4         6</span>
+<span class="go">2 -2.006747 -0.410001 -0.078638  0.545952</span>
+<span class="go">4 -1.219217 -1.226825  0.769804 -1.281247</span>
+</pre></div>
+</div>
+<p>For slicing columns explicitly (equiv to deprecated <tt class="docutils literal"><span class="pre">df.icol(slice(1,3))</span></tt>).</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [838]: </span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="go">           2         4</span>
+<span class="go">0   0.875906 -2.211372</span>
+<span class="go">2  -0.410001 -0.078638</span>
+<span class="go">4  -1.226825  0.769804</span>
+<span class="go">6  -0.121306 -0.097883</span>
+<span class="go">8   0.959726 -1.110336</span>
+<span class="go">10 -0.732339  0.687738</span>
+</pre></div>
+</div>
+<p>For getting a scalar via integer position (equiv to deprecated <tt class="docutils literal"><span class="pre">df.get_value(1,1)</span></tt>)</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="c"># this is also equivalent to ``df1.iat[1,1]``</span>
+<span class="gp">In [839]: </span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">-0.41000056806065832</span>
+</pre></div>
+</div>
+<p>For getting a cross section using an integer position (equiv to <tt class="docutils literal"><span class="pre">df.xs(1)</span></tt>)</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [840]: </span><span class="n">df1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="go">0   -2.006747</span>
+<span class="go">2   -0.410001</span>
+<span class="go">4   -0.078638</span>
+<span class="go">6    0.545952</span>
+<span class="go">Name: 2, dtype: float64</span>
+</pre></div>
+</div>
+<p>There is one signficant departure from standard python/numpy slicing semantics.
+python/numpy allow slicing past the end of an array without an associated error.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="c"># these are allowed in python/numpy.</span>
+<span class="gp">In [841]: </span><span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s">&#39;abcdef&#39;</span><span class="p">)</span>
+
+<span class="gp">In [842]: </span><span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<span class="go">[&#39;e&#39;, &#39;f&#39;]</span>
+
+<span class="gp">In [843]: </span><span class="n">x</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+<p>Pandas will detect this and raise <tt class="docutils literal"><span class="pre">IndexError</span></tt>, rather than return an empty structure.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+<span class="go">IndexError: out-of-bounds on slice (end)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fast-scalar-value-getting-and-setting">
+<span id="indexing-basics-get-value"></span><h3>Fast scalar value getting and setting<a class="headerlink" href="#fast-scalar-value-getting-and-setting" title="Permalink to this headline">¶</a></h3>
+<p>Since indexing with <tt class="docutils literal"><span class="pre">[]</span></tt> must handle a lot of cases (single-label access,
+slicing, boolean indexing, etc.), it has a bit of overhead in order to figure
+out what you&#8217;re asking for. If you only want to access a scalar value, the
+fastest way is to use the <tt class="docutils literal"><span class="pre">at</span></tt> and <tt class="docutils literal"><span class="pre">iat</span></tt> methods, which are implemented on
+all of the data structures.</p>
+<p>Similary to <tt class="docutils literal"><span class="pre">loc</span></tt>, <tt class="docutils literal"><span class="pre">at</span></tt> provides <strong>label</strong> based scalar lookups, while, <tt class="docutils literal"><span class="pre">iat</span></tt> provides <strong>integer</strong> based lookups analagously to <tt class="docutils literal"><span class="pre">iloc</span></tt></p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [844]: </span><span class="n">s</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="go">0.1136484096888855</span>
+
+<span class="gp">In [845]: </span><span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">dates</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="s">&#39;A&#39;</span><span class="p">]</span>
+<span class="go">0.1136484096888855</span>
+
+<span class="gp">In [846]: </span><span class="n">df</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="go">-0.70677113363008448</span>
+</pre></div>
+</div>
+<p>You can also set using these same indexers. These have the additional
+capability of enlarging an object. This method <em>always</em> returns a reference to
+the object it modified, which in the case of enlargement, will be a <strong>new object</strong>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [847]: </span><span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">dates</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="s">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="gp">In [848]: </span><span class="n">df</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">7</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="boolean-indexing">
+<h3>Boolean indexing<a class="headerlink" href="#boolean-indexing" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-boolean">Another common operation is the use of boolean vectors to filter the data.
+The operators are: <tt class="docutils literal"><span class="pre">|</span></tt> for <tt class="docutils literal"><span class="pre">or</span></tt>, <tt class="docutils literal"><span class="pre">&amp;</span></tt> for <tt class="docutils literal"><span class="pre">and</span></tt>, and <tt class="docutils literal"><span class="pre">~</span></tt> for <tt class="docutils literal"><span class="pre">not</span></tt>. These <strong>must</strong> be grouped by using parentheses.</p>
+<p>Using a boolean vector to index a Series works exactly as in a numpy ndarray:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [849]: </span><span class="n">s</span><span class="p">[</span><span class="n">s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="go">2000-01-04    7.000000</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+
+<span class="gp">In [850]: </span><span class="n">s</span><span class="p">[(</span><span class="n">s</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)]</span>
+
+<span class="go">2000-01-01   -0.282863</span>
+<span class="go">2000-01-02   -0.173215</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+
+<span class="gp">In [851]: </span><span class="n">s</span><span class="p">[(</span><span class="n">s</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">s</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">)]</span>
+
+<span class="go">2000-01-03   -2.104569</span>
+<span class="go">2000-01-04    7.000000</span>
+<span class="go">2000-01-08   -1.157892</span>
+<span class="go">Name: A, dtype: float64</span>
+
+<span class="gp">In [852]: </span><span class="n">s</span><span class="p">[</span><span class="o">~</span><span class="p">(</span><span class="n">s</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)]</span>
+
+<span class="go">2000-01-04    7.000000</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+</pre></div>
+</div>
+<p>You may select rows from a DataFrame using a boolean vector the same length as
+the DataFrame&#8217;s index (for example, something derived from one of the columns
+of the DataFrame):</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [853]: </span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-04  7.000000  0.721555 -1.039575  0.271860</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+<span class="go">2000-01-06  0.113648 -0.673690 -1.478427  0.524988</span>
+<span class="go">2000-01-07  0.577046  0.404705 -1.715002 -1.039268</span>
+</pre></div>
+</div>
+<p>Consider the <tt class="docutils literal"><span class="pre">isin</span></tt> method of Series, which returns a boolean vector that is
+true wherever the Series elements exist in the passed list. This allows you to
+select rows where one or more columns have values you want:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [854]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;a&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;six&#39;</span><span class="p">],</span>
+<span class="gp">   .....:</span>                  <span class="s">&#39;b&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">],</span>
+<span class="gp">   .....:</span>                  <span class="s">&#39;c&#39;</span> <span class="p">:</span> <span class="n">randn</span><span class="p">(</span><span class="mi">7</span><span class="p">)})</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [855]: </span><span class="n">df2</span><span class="p">[</span><span class="n">df2</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">])]</span>
+
+<span class="go">     a  b         c</span>
+<span class="go">0  one  x  0.403310</span>
+<span class="go">1  one  y -0.154951</span>
+<span class="go">2  two  y  0.301624</span>
+<span class="go">4  two  y -1.369849</span>
+<span class="go">5  one  x -0.954208</span>
+</pre></div>
+</div>
+<p>List comprehensions and <tt class="docutils literal"><span class="pre">map</span></tt> method of Series can also be used to produce
+more complex criteria:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="c"># only want &#39;two&#39; or &#39;three&#39;</span>
+<span class="gp">In [856]: </span><span class="n">criterion</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">))</span>
+
+<span class="gp">In [857]: </span><span class="n">df2</span><span class="p">[</span><span class="n">criterion</span><span class="p">]</span>
+
+<span class="go">       a  b         c</span>
+<span class="go">2    two  y  0.301624</span>
+<span class="go">3  three  x -2.179861</span>
+<span class="go">4    two  y -1.369849</span>
+
+<span class="c"># equivalent but slower</span>
+<span class="gp">In [858]: </span><span class="n">df2</span><span class="p">[[</span><span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df2</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]]]</span>
+
+<span class="go">       a  b         c</span>
+<span class="go">2    two  y  0.301624</span>
+<span class="go">3  three  x -2.179861</span>
+<span class="go">4    two  y -1.369849</span>
+
+<span class="c"># Multiple criteria</span>
+<span class="gp">In [859]: </span><span class="n">df2</span><span class="p">[</span><span class="n">criterion</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;x&#39;</span><span class="p">)]</span>
+
+<span class="go">       a  b         c</span>
+<span class="go">3  three  x -2.179861</span>
+</pre></div>
+</div>
+<p>Note, with the choice methods <a class="reference internal" href="#indexing-label"><em>Selection by Label</em></a>, <a class="reference internal" href="#indexing-integer"><em>Selection by Position</em></a>,
+and <a class="reference internal" href="#indexing-advanced"><em>Advanced Indexing</em></a> you may select along more than one axis using boolean vectors combined with other indexing expressions.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [860]: </span><span class="n">df2</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">criterion</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;x&#39;</span><span class="p">),</span><span class="s">&#39;b&#39;</span><span class="p">:</span><span class="s">&#39;c&#39;</span><span class="p">]</span>
+
+<span class="go">   b         c</span>
+<span class="go">3  x -2.179861</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="where-and-masking">
+<h3>Where and Masking<a class="headerlink" href="#where-and-masking" title="Permalink to this headline">¶</a></h3>
+<p>Selecting values from a Series with a boolean vector generally returns a
+subset of the data. To guarantee that selection output has the same shape as
+the original data, you can use the <tt class="docutils literal"><span class="pre">where</span></tt> method in <tt class="docutils literal"><span class="pre">Series</span></tt> and <tt class="docutils literal"><span class="pre">DataFrame</span></tt>.</p>
+<p>To return only the selected rows</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [861]: </span><span class="n">s</span><span class="p">[</span><span class="n">s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="go">2000-01-04    7.000000</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+</pre></div>
+</div>
+<p>To return a Series of the same shape as the original</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [862]: </span><span class="n">s</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="go">2000-01-01         NaN</span>
+<span class="go">2000-01-02         NaN</span>
+<span class="go">2000-01-03         NaN</span>
+<span class="go">2000-01-04    7.000000</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">2000-01-08         NaN</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+</pre></div>
+</div>
+<p>Selecting values from a DataFrame with a boolean critierion now also preserves
+input data shape. <tt class="docutils literal"><span class="pre">where</span></tt> is used under the hood as the implementation.
+Equivalent is <tt class="docutils literal"><span class="pre">df.where(df</span> <span class="pre">&lt;</span> <span class="pre">0)</span></tt></p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [863]: </span><span class="n">df</span><span class="p">[</span><span class="n">df</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863       NaN -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215       NaN       NaN -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929       NaN</span>
+<span class="go">2000-01-04       NaN       NaN -1.039575       NaN</span>
+<span class="go">2000-01-05       NaN -0.424972       NaN -1.087401</span>
+<span class="go">2000-01-06       NaN -0.673690 -1.478427       NaN</span>
+<span class="go">2000-01-07       NaN       NaN -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -1.157892 -0.370647 -1.344312       NaN</span>
+</pre></div>
+</div>
+<p>In addition, <tt class="docutils literal"><span class="pre">where</span></tt> takes an optional <tt class="docutils literal"><span class="pre">other</span></tt> argument for replacement of
+values where the condition is False, in the returned copy.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [864]: </span><span class="n">df</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">df</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">df</span><span class="p">)</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863 -0.469112 -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215 -1.212112 -0.119209 -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929 -1.071804</span>
+<span class="go">2000-01-04 -7.000000 -0.721555 -1.039575 -0.271860</span>
+<span class="go">2000-01-05 -0.567020 -0.424972 -0.276232 -1.087401</span>
+<span class="go">2000-01-06 -0.113648 -0.673690 -1.478427 -0.524988</span>
+<span class="go">2000-01-07 -0.577046 -0.404705 -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -1.157892 -0.370647 -1.344312 -0.844885</span>
+</pre></div>
+</div>
+<p>You may wish to set values based on some boolean criteria.
+This can be done intuitively like so:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [865]: </span><span class="n">s2</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [866]: </span><span class="n">s2</span><span class="p">[</span><span class="n">s2</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="gp">In [867]: </span><span class="n">s2</span>
+
+<span class="go">2000-01-01    0.000000</span>
+<span class="go">2000-01-02    0.000000</span>
+<span class="go">2000-01-03    0.000000</span>
+<span class="go">2000-01-04    7.000000</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">2000-01-06    0.113648</span>
+<span class="go">2000-01-07    0.577046</span>
+<span class="go">2000-01-08    0.000000</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+
+<span class="gp">In [868]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [869]: </span><span class="n">df2</span><span class="p">[</span><span class="n">df2</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="gp">In [870]: </span><span class="n">df2</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01  0.000000  0.469112  0.000000  0.000000</span>
+<span class="go">2000-01-02  0.000000  1.212112  0.119209  0.000000</span>
+<span class="go">2000-01-03  0.000000  0.000000  0.000000  1.071804</span>
+<span class="go">2000-01-04  7.000000  0.721555  0.000000  0.271860</span>
+<span class="go">2000-01-05  0.567020  0.000000  0.276232  0.000000</span>
+<span class="go">2000-01-06  0.113648  0.000000  0.000000  0.524988</span>
+<span class="go">2000-01-07  0.577046  0.404705  0.000000  0.000000</span>
+<span class="go">2000-01-08  0.000000  0.000000  0.000000  0.844885</span>
+</pre></div>
+</div>
+<p>Furthermore, <tt class="docutils literal"><span class="pre">where</span></tt> aligns the input boolean condition (ndarray or DataFrame),
+such that partial selection with setting is possible. This is analagous to
+partial setting via <tt class="docutils literal"><span class="pre">.ix</span></tt> (but on the contents rather than the axis labels)</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [871]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [872]: </span><span class="n">df2</span><span class="p">[</span> <span class="n">df2</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="gp">In [873]: </span><span class="n">df2</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215  3.000000  3.000000 -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  3.000000</span>
+<span class="go">2000-01-04  3.000000  3.000000 -1.039575  3.000000</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+<span class="go">2000-01-06  0.113648 -0.673690 -1.478427  0.524988</span>
+<span class="go">2000-01-07  0.577046  0.404705 -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -1.157892 -0.370647 -1.344312  0.844885</span>
+</pre></div>
+</div>
+<p>By default, <tt class="docutils literal"><span class="pre">where</span></tt> returns a modified copy of the data. There is an
+optional parameter <tt class="docutils literal"><span class="pre">inplace</span></tt> so that the original data can be modified
+without creating a copy:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [874]: </span><span class="n">df_orig</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [875]: </span><span class="n">df_orig</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">df</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">df</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">);</span>
+<span class="gp">In [875]: </span><span class="n">df_orig</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01  0.282863  0.469112  1.509059  1.135632</span>
+<span class="go">2000-01-02  0.173215  1.212112  0.119209  1.044236</span>
+<span class="go">2000-01-03  2.104569  0.861849  0.494929  1.071804</span>
+<span class="go">2000-01-04  7.000000  0.721555  1.039575  0.271860</span>
+<span class="go">2000-01-05  0.567020  0.424972  0.276232  1.087401</span>
+<span class="go">2000-01-06  0.113648  0.673690  1.478427  0.524988</span>
+<span class="go">2000-01-07  0.577046  0.404705  1.715002  1.039268</span>
+<span class="go">2000-01-08  1.157892  0.370647  1.344312  0.844885</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">mask</span></tt> is the inverse boolean operation of <tt class="docutils literal"><span class="pre">where</span></tt>.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [876]: </span><span class="n">s</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">s</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="go">2000-01-01   -0.282863</span>
+<span class="go">2000-01-02   -0.173215</span>
+<span class="go">2000-01-03   -2.104569</span>
+<span class="go">2000-01-04         NaN</span>
+<span class="go">2000-01-05         NaN</span>
+<span class="go">2000-01-06         NaN</span>
+<span class="go">2000-01-07         NaN</span>
+<span class="go">2000-01-08   -1.157892</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+
+<span class="gp">In [877]: </span><span class="n">df</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">df</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863       NaN -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215       NaN       NaN -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929       NaN</span>
+<span class="go">2000-01-04       NaN       NaN -1.039575       NaN</span>
+<span class="go">2000-01-05       NaN -0.424972       NaN -1.087401</span>
+<span class="go">2000-01-06       NaN -0.673690 -1.478427       NaN</span>
+<span class="go">2000-01-07       NaN       NaN -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -1.157892 -0.370647 -1.344312       NaN</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="take-methods">
+<h3>Take Methods<a class="headerlink" href="#take-methods" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-take">Similar to numpy ndarrays, pandas Index, Series, and DataFrame also provides
+the <tt class="docutils literal"><span class="pre">take</span></tt> method that retrieves elements along a given axis at the given
+indices. The given indices must be either a list or an ndarray of integer
+index positions. <tt class="docutils literal"><span class="pre">take</span></tt> will also accept negative integers as relative positions to the end of the object.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [878]: </span><span class="n">index</span> <span class="o">=</span> <span class="n">Index</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="gp">In [879]: </span><span class="n">index</span>
+<span class="go">Int64Index([350, 634, 637, 430, 270, 333, 264, 738, 801, 829], dtype=int64)</span>
+
+<span class="gp">In [880]: </span><span class="n">positions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="gp">In [881]: </span><span class="n">index</span><span class="p">[</span><span class="n">positions</span><span class="p">]</span>
+<span class="go">Int64Index([350, 829, 430], dtype=int64)</span>
+
+<span class="gp">In [882]: </span><span class="n">index</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+<span class="go">Int64Index([350, 829, 430], dtype=int64)</span>
+
+<span class="gp">In [883]: </span><span class="n">ser</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="gp">In [884]: </span><span class="n">ser</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">positions</span><span class="p">]</span>
+
+<span class="go">0    0.007207</span>
+<span class="go">9   -1.623033</span>
+<span class="go">3    2.395985</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [885]: </span><span class="n">ser</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+
+<span class="go">0    0.007207</span>
+<span class="go">9   -1.623033</span>
+<span class="go">3    2.395985</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>For DataFrames, the given indices should be a 1d list or ndarray that specifies
+row or column positions.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [886]: </span><span class="n">frm</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="gp">In [887]: </span><span class="n">frm</span><span class="o">.</span><span class="n">take</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="go">          0         1         2</span>
+<span class="go">1 -0.087302 -1.575170  1.771208</span>
+<span class="go">4  1.074803  0.173520  0.211027</span>
+<span class="go">3  1.586976  0.019234  0.264294</span>
+
+<span class="gp">In [888]: </span><span class="n">frm</span><span class="o">.</span><span class="n">take</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="go">          0         2</span>
+<span class="go">0  0.029399  0.282696</span>
+<span class="go">1 -0.087302  1.771208</span>
+<span class="go">2  0.816482 -0.612665</span>
+<span class="go">3  1.586976  0.264294</span>
+<span class="go">4  1.074803  0.211027</span>
+</pre></div>
+</div>
+<p>It is important to note that the <tt class="docutils literal"><span class="pre">take</span></tt> method on pandas objects are not
+intended to work on boolean indices and may return unexpected results.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [889]: </span><span class="n">arr</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="gp">In [890]: </span><span class="n">arr</span><span class="o">.</span><span class="n">take</span><span class="p">([</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">])</span>
+<span class="go">array([ 1.3571,  1.3571,  1.4188,  1.4188])</span>
+
+<span class="gp">In [891]: </span><span class="n">arr</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="go">array([ 1.3571,  1.4188])</span>
+
+<span class="gp">In [892]: </span><span class="n">ser</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="gp">In [893]: </span><span class="n">ser</span><span class="o">.</span><span class="n">take</span><span class="p">([</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">])</span>
+
+<span class="go">0   -0.773723</span>
+<span class="go">0   -0.773723</span>
+<span class="go">1   -1.170653</span>
+<span class="go">1   -1.170653</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [894]: </span><span class="n">ser</span><span class="o">.</span><span class="n">ix</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+
+<span class="go">0   -0.773723</span>
+<span class="go">1   -1.170653</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>Finally, as a small note on performance, because the <tt class="docutils literal"><span class="pre">take</span></tt> method handles
+a narrower range of inputs, it can offer performance that is a good deal
+faster than fancy indexing.</p>
+</div>
+<div class="section" id="duplicate-data">
+<h3>Duplicate Data<a class="headerlink" href="#duplicate-data" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-duplicate">If you want to identify and remove duplicate rows in a DataFrame,  there are
+two methods that will help: <tt class="docutils literal"><span class="pre">duplicated</span></tt> and <tt class="docutils literal"><span class="pre">drop_duplicates</span></tt>. Each
+takes as an argument the columns to use to identify duplicated rows.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">duplicated</span></tt> returns a boolean vector whose length is the number of rows, and which indicates whether a row is duplicated.</li>
+<li><tt class="docutils literal"><span class="pre">drop_duplicates</span></tt> removes duplicate rows.</li>
+</ul>
+<p>By default, the first observed row of a duplicate set is considered unique, but
+each method has a <tt class="docutils literal"><span class="pre">take_last</span></tt> parameter that indicates the last observed row
+should be taken instead.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [895]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;a&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;six&#39;</span><span class="p">],</span>
+<span class="gp">   .....:</span>                  <span class="s">&#39;b&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">],</span>
+<span class="gp">   .....:</span>                  <span class="s">&#39;c&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">7</span><span class="p">)})</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [896]: </span><span class="n">df2</span><span class="o">.</span><span class="n">duplicated</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">])</span>
+
+<span class="go">0    False</span>
+<span class="go">1    False</span>
+<span class="go">2    False</span>
+<span class="go">3    False</span>
+<span class="go">4     True</span>
+<span class="go">5     True</span>
+<span class="go">6    False</span>
+<span class="go">dtype: bool</span>
+
+<span class="gp">In [897]: </span><span class="n">df2</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">])</span>
+
+<span class="go">       a  b         c</span>
+<span class="go">0    one  x  1.024098</span>
+<span class="go">1    one  y -0.106062</span>
+<span class="go">2    two  y  1.824375</span>
+<span class="go">3  three  x  0.595974</span>
+<span class="go">6    six  x -1.237881</span>
+
+<span class="gp">In [898]: </span><span class="n">df2</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">],</span> <span class="n">take_last</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="go">       a  b         c</span>
+<span class="go">1    one  y -0.106062</span>
+<span class="go">3  three  x  0.595974</span>
+<span class="go">4    two  y  1.167115</span>
+<span class="go">5    one  x  0.601544</span>
+<span class="go">6    six  x -1.237881</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dictionary-like-get-method">
+<span id="indexing-dictionarylike"></span><h3>Dictionary-like <tt class="docutils literal"><span class="pre">get</span></tt> method<a class="headerlink" href="#dictionary-like-get-method" title="Permalink to this headline">¶</a></h3>
+<p>Each of Series, DataFrame, and Panel have a <tt class="docutils literal"><span class="pre">get</span></tt> method which can return a
+default value.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [899]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">])</span>
+
+<span class="gp">In [900]: </span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>               <span class="c"># equivalent to s[&#39;a&#39;]</span>
+<span class="go">1</span>
+
+<span class="gp">In [901]: </span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">-1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="advanced-indexing-with-ix">
+<span id="indexing-advanced"></span><h2>Advanced Indexing with <tt class="docutils literal"><span class="pre">.ix</span></tt><a class="headerlink" href="#advanced-indexing-with-ix" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The recent addition of <tt class="docutils literal"><span class="pre">.loc</span></tt> and <tt class="docutils literal"><span class="pre">.iloc</span></tt> have enabled users to be quite
+explicit about indexing choices. <tt class="docutils literal"><span class="pre">.ix</span></tt> allows a great flexibility to
+specify indexing locations by <em>label</em> and/or <em>integer position</em>. Pandas will
+attempt to use any passed <em>integer</em> as <em>label</em> locations first (like what
+<tt class="docutils literal"><span class="pre">.loc</span></tt> would do, then to fall back on <em>positional</em> indexing, like what
+<tt class="docutils literal"><span class="pre">.iloc</span></tt>  would do). See <a class="reference internal" href="#indexing-fallback"><em>Fallback Indexing</em></a> for
+an example.</p>
+</div>
+<p>The syntax of using <tt class="docutils literal"><span class="pre">.ix</span></tt> is identical to <tt class="docutils literal"><span class="pre">.loc</span></tt>, in <a class="reference internal" href="#indexing-label"><em>Selection by
+Label</em></a>, and <tt class="docutils literal"><span class="pre">.iloc</span></tt> in <a class="reference internal" href="#indexing-integer"><em>Selection by Position</em></a>.</p>
+<p>The <tt class="docutils literal"><span class="pre">.ix</span></tt> attribute takes the following inputs:</p>
+<ul class="simple">
+<li>An integer or single label, e.g. <tt class="docutils literal"><span class="pre">5</span></tt> or <tt class="docutils literal"><span class="pre">'a'</span></tt></li>
+<li>A list or array of labels <tt class="docutils literal"><span class="pre">['a',</span> <span class="pre">'b',</span> <span class="pre">'c']</span></tt> or integers <tt class="docutils literal"><span class="pre">[4,</span> <span class="pre">3,</span> <span class="pre">0]</span></tt></li>
+<li>A slice object with ints <tt class="docutils literal"><span class="pre">1:7</span></tt> or labels <tt class="docutils literal"><span class="pre">'a':'f'</span></tt></li>
+<li>A boolean array</li>
+</ul>
+<p>We&#8217;ll illustrate all of these methods. First, note that this provides a concise
+way of reindexing on multiple axes at once:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [902]: </span><span class="n">subindex</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]]</span>
+
+<span class="gp">In [903]: </span><span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">subindex</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="go">                   C         B</span>
+<span class="go">2000-01-04 -1.039575  0.721555</span>
+<span class="go">2000-01-05  0.276232 -0.424972</span>
+<span class="go">2000-01-06 -1.478427 -0.673690</span>
+
+<span class="gp">In [904]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">subindex</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">]]</span>
+
+<span class="go">                   C         B</span>
+<span class="go">2000-01-04 -1.039575  0.721555</span>
+<span class="go">2000-01-05  0.276232 -0.424972</span>
+<span class="go">2000-01-06 -1.478427 -0.673690</span>
+</pre></div>
+</div>
+<p>Assignment / setting values is possible when using <tt class="docutils literal"><span class="pre">ix</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [905]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [906]: </span><span class="n">df2</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">subindex</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="gp">In [907]: </span><span class="n">df2</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  1.071804</span>
+<span class="go">2000-01-04  7.000000  0.000000  0.000000  0.271860</span>
+<span class="go">2000-01-05  0.567020  0.000000  0.000000 -1.087401</span>
+<span class="go">2000-01-06  0.113648  0.000000  0.000000  0.524988</span>
+<span class="go">2000-01-07  0.577046  0.404705 -1.715002 -1.039268</span>
+<span class="go">2000-01-08 -1.157892 -0.370647 -1.344312  0.844885</span>
+</pre></div>
+</div>
+<p>Indexing with an array of integers can also be done:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [908]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+<span class="go">2000-01-04  7.000000  0.721555 -1.039575  0.271860</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236</span>
+
+<span class="gp">In [909]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">dates</span><span class="p">[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]]]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+<span class="go">2000-01-04  7.000000  0.721555 -1.039575  0.271860</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236</span>
+</pre></div>
+</div>
+<p><strong>Slicing</strong> has standard Python semantics for integer slices:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [910]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="go">                   A         B</span>
+<span class="go">2000-01-02 -0.173215  1.212112</span>
+<span class="go">2000-01-03 -2.104569 -0.861849</span>
+<span class="go">2000-01-04  7.000000  0.721555</span>
+<span class="go">2000-01-05  0.567020 -0.424972</span>
+<span class="go">2000-01-06  0.113648 -0.673690</span>
+<span class="go">2000-01-07  0.577046  0.404705</span>
+</pre></div>
+</div>
+<p>Slicing with labels is semantically slightly different because the slice start
+and stop are <strong>inclusive</strong> in the label-based case:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [911]: </span><span class="n">date1</span><span class="p">,</span> <span class="n">date2</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+
+<span class="gp">In [912]: </span><span class="k">print</span> <span class="n">date1</span><span class="p">,</span> <span class="n">date2</span>
+<span class="go">2000-01-03 00:00:00 2000-01-05 00:00:00</span>
+
+<span class="gp">In [913]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">date1</span><span class="p">:</span><span class="n">date2</span><span class="p">]</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  1.071804</span>
+<span class="go">2000-01-04  7.000000  0.721555 -1.039575  0.271860</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+
+<span class="gp">In [914]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">date1</span><span class="p">:</span><span class="n">date2</span><span class="p">]</span>
+
+<span class="go">2000-01-03   -2.104569</span>
+<span class="go">2000-01-04    7.000000</span>
+<span class="go">2000-01-05    0.567020</span>
+<span class="go">Freq: D, Name: A, dtype: float64</span>
+</pre></div>
+</div>
+<p>Getting and setting rows in a DataFrame, especially by their location, is much
+easier:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [915]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="gp">In [916]: </span><span class="n">df2</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="go">A    7.000000</span>
+<span class="go">B    0.721555</span>
+<span class="go">C   -1.039575</span>
+<span class="go">D    0.271860</span>
+<span class="go">Name: 2000-01-04 00:00:00, dtype: float64</span>
+
+<span class="gp">In [917]: </span><span class="n">df2</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df2</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+
+<span class="gp">In [918]: </span><span class="n">df2</span>
+
+<span class="go">                   A         B         C         D</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  1.071804</span>
+<span class="go">2000-01-04  0.000000  1.000000  2.000000  3.000000</span>
+<span class="go">2000-01-05  0.567020 -0.424972  0.276232 -1.087401</span>
+</pre></div>
+</div>
+<p>Column or row selection can be combined as you would expect with arrays of
+labels or even boolean vectors:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [919]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">]</span>
+
+<span class="go">2000-01-04    0.721555</span>
+<span class="go">2000-01-05   -0.424972</span>
+<span class="go">2000-01-06   -0.673690</span>
+<span class="go">2000-01-07    0.404705</span>
+<span class="go">Freq: D, Name: B, dtype: float64</span>
+
+<span class="gp">In [920]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">date1</span><span class="p">:</span><span class="n">date2</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">]</span>
+
+<span class="go">2000-01-03   -0.861849</span>
+<span class="go">2000-01-04    0.721555</span>
+<span class="go">2000-01-05   -0.424972</span>
+<span class="go">Freq: D, Name: B, dtype: float64</span>
+
+<span class="gp">In [921]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">date1</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">]</span>
+<span class="go">-0.86184896334779992</span>
+</pre></div>
+</div>
+<p>Slicing with labels is closely related to the <tt class="docutils literal"><span class="pre">truncate</span></tt> method which does
+precisely <tt class="docutils literal"><span class="pre">.ix[start:stop]</span></tt> but returns a copy (for legacy reasons).</p>
+<div class="section" id="the-select-method">
+<h3>The <tt class="docutils literal"><span class="pre">select</span></tt> method<a class="headerlink" href="#the-select-method" title="Permalink to this headline">¶</a></h3>
+<p>Another way to extract slices from an object is with the <tt class="docutils literal"><span class="pre">select</span></tt> method of
+Series, DataFrame, and Panel. This method should be used only when there is no
+more direct way.  <tt class="docutils literal"><span class="pre">select</span></tt> takes a function which operates on labels along
+<tt class="docutils literal"><span class="pre">axis</span></tt> and returns a boolean.  For instance:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [922]: </span><span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="go">                   A</span>
+<span class="go">2000-01-01 -0.282863</span>
+<span class="go">2000-01-02 -0.173215</span>
+<span class="go">2000-01-03 -2.104569</span>
+<span class="go">2000-01-04  7.000000</span>
+<span class="go">2000-01-05  0.567020</span>
+<span class="go">2000-01-06  0.113648</span>
+<span class="go">2000-01-07  0.577046</span>
+<span class="go">2000-01-08 -1.157892</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-lookup-method">
+<h3>The <tt class="docutils literal"><span class="pre">lookup</span></tt> method<a class="headerlink" href="#the-lookup-method" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes you want to extract a set of values given a sequence of row labels
+and column labels, and the <tt class="docutils literal"><span class="pre">lookup</span></tt> method allows for this and returns a
+numpy array.  For instance,</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [923]: </span><span class="n">dflookup</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="s">&#39;D&#39;</span><span class="p">])</span>
+
+<span class="gp">In [924]: </span><span class="n">dflookup</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;D&#39;</span><span class="p">])</span>
+<span class="go">array([ 0.5277,  0.4201,  0.2442,  0.1239,  0.5722])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-values-in-mixed-type-dataframe">
+<h3>Setting values in mixed-type DataFrame<a class="headerlink" href="#setting-values-in-mixed-type-dataframe" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-mixed-type-setting">Setting values on a mixed-type DataFrame or Panel is supported when using
+scalar values, though setting arbitrary vectors is not yet supported:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [925]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="gp">In [926]: </span><span class="n">df2</span><span class="p">[</span><span class="s">&#39;foo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;bar&#39;</span>
+
+<span class="gp">In [927]: </span><span class="k">print</span> <span class="n">df2</span>
+<span class="go">                   A         B         C         D  foo</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632  bar</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236  bar</span>
+<span class="go">2000-01-03 -2.104569 -0.861849 -0.494929  1.071804  bar</span>
+<span class="go">2000-01-04  7.000000  0.721555 -1.039575  0.271860  bar</span>
+
+<span class="gp">In [928]: </span><span class="n">df2</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="gp">In [929]: </span><span class="k">print</span> <span class="n">df2</span>
+<span class="go">                   A         B         C         D  foo</span>
+<span class="go">2000-01-01 -0.282863  0.469112 -1.509059 -1.135632  bar</span>
+<span class="go">2000-01-02 -0.173215  1.212112  0.119209 -1.044236  bar</span>
+<span class="go">2000-01-03       NaN       NaN       NaN       NaN  NaN</span>
+<span class="go">2000-01-04  7.000000  0.721555 -1.039575  0.271860  bar</span>
+
+<span class="gp">In [930]: </span><span class="k">print</span> <span class="n">df2</span><span class="o">.</span><span class="n">dtypes</span>
+<span class="go">A      float64</span>
+<span class="go">B      float64</span>
+<span class="go">C      float64</span>
+<span class="go">D      float64</span>
+<span class="go">foo     object</span>
+<span class="go">dtype: object</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="returning-a-view-versus-a-copy">
+<span id="indexing-view-versus-copy"></span><h3>Returning a view versus a copy<a class="headerlink" href="#returning-a-view-versus-a-copy" title="Permalink to this headline">¶</a></h3>
+<p>The rules about when a view on the data is returned are entirely dependent on
+NumPy. Whenever an array of labels or a boolean vector are involved in the
+indexing operation, the result will be a copy. With single label / scalar
+indexing and slicing, e.g. <tt class="docutils literal"><span class="pre">df.ix[3:6]</span></tt> or <tt class="docutils literal"><span class="pre">df.ix[:,</span> <span class="pre">'A']</span></tt>, a view will be
+returned.</p>
+<p>In chained expressions, the order may determine whether a copy is returned or not:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [931]: </span><span class="n">dfb</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;a&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;six&#39;</span><span class="p">],</span>
+<span class="gp">   .....:</span>                  <span class="s">&#39;b&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">],</span>
+<span class="gp">   .....:</span>                  <span class="s">&#39;c&#39;</span> <span class="p">:</span> <span class="n">randn</span><span class="p">(</span><span class="mi">7</span><span class="p">)})</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [932]: </span><span class="n">dfb</span><span class="p">[</span><span class="n">dfb</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)][</span><span class="s">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>  <span class="c"># goes to copy (will be lost)</span>
+
+<span class="gp">In [933]: </span><span class="n">dfb</span><span class="p">[</span><span class="s">&#39;c&#39;</span><span class="p">][</span><span class="n">dfb</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">42</span>  <span class="c"># passed via reference (will stay)</span>
+</pre></div>
+</div>
+<p>When assigning values to subsets of your data, thus, make sure to either use the
+pandas access methods or explicitly handle the assignment creating a copy.</p>
+</div>
+<div class="section" id="fallback-indexing">
+<h3>Fallback indexing<a class="headerlink" href="#fallback-indexing" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-fallback">Float indexes should be used only with caution. If you have a float indexed
+<tt class="docutils literal"><span class="pre">DataFrame</span></tt> and try to select using an integer, the row that Pandas returns
+might not be what you expect. Pandas first attempts to use the <em>integer</em>
+as a <em>label</em> location, but fails to find a match (because the types
+are not equal). Pandas then falls back to back to positional indexing.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [934]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span>
+<span class="gp">   .....:</span>     <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;ABCD&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [935]: </span><span class="n">df</span>
+
+<span class="go">          A         B         C         D</span>
+<span class="go">1 -0.823761  0.535420 -1.032853  1.469725</span>
+<span class="go">2  1.304124  1.449735  0.203109 -1.032011</span>
+<span class="go">3  0.969818 -0.962723  1.382083 -0.938794</span>
+<span class="go">4  0.669142 -0.433567 -0.273610  0.680433</span>
+
+<span class="gp">In [936]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="go">A    1.304124</span>
+<span class="go">B    1.449735</span>
+<span class="go">C    0.203109</span>
+<span class="go">D   -1.032011</span>
+<span class="go">Name: 2.0, dtype: float64</span>
+</pre></div>
+</div>
+<p>To select the row you do expect, instead use a float label or
+use <tt class="docutils literal"><span class="pre">iloc</span></tt>.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [937]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+
+<span class="go">A   -0.823761</span>
+<span class="go">B    0.535420</span>
+<span class="go">C   -1.032853</span>
+<span class="go">D    1.469725</span>
+<span class="go">Name: 1.0, dtype: float64</span>
+
+<span class="gp">In [938]: </span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="go">A   -0.823761</span>
+<span class="go">B    0.535420</span>
+<span class="go">C   -1.032853</span>
+<span class="go">D    1.469725</span>
+<span class="go">Name: 1.0, dtype: float64</span>
+</pre></div>
+</div>
+<p>Instead of using a float index, it is often better to
+convert to an integer index:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [939]: </span><span class="n">df_new</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+<span class="gp">In [940]: </span><span class="n">df_new</span><span class="p">[</span><span class="n">df_new</span><span class="p">[</span><span class="s">&#39;index&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">]</span>
+
+<span class="go">   index         A        B         C         D</span>
+<span class="go">0      1 -0.823761  0.53542 -1.032853  1.469725</span>
+
+<span class="c"># now you can also do &quot;float selection&quot;</span>
+<span class="gp">In [941]: </span><span class="n">df_new</span><span class="p">[(</span><span class="n">df_new</span><span class="p">[</span><span class="s">&#39;index&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_new</span><span class="p">[</span><span class="s">&#39;index&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)]</span>
+
+<span class="go">   index         A        B         C         D</span>
+<span class="go">0      1 -0.823761  0.53542 -1.032853  1.469725</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="index-objects">
+<span id="indexing-class"></span><h2>Index objects<a class="headerlink" href="#index-objects" title="Permalink to this headline">¶</a></h2>
+<p>The pandas Index class and its subclasses can be viewed as implementing an
+<em>ordered set</em> in addition to providing the support infrastructure necessary for
+lookups, data alignment, and reindexing. The easiest way to create one directly
+is to pass a list or other sequence to <tt class="docutils literal"><span class="pre">Index</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [942]: </span><span class="n">index</span> <span class="o">=</span> <span class="n">Index</span><span class="p">([</span><span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">])</span>
+
+<span class="gp">In [943]: </span><span class="n">index</span>
+<span class="go">Index([u&#39;e&#39;, u&#39;d&#39;, u&#39;a&#39;, u&#39;b&#39;], dtype=object)</span>
+
+<span class="gp">In [944]: </span><span class="s">&#39;d&#39;</span> <span class="ow">in</span> <span class="n">index</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>You can also pass a <tt class="docutils literal"><span class="pre">name</span></tt> to be stored in the index:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [945]: </span><span class="n">index</span> <span class="o">=</span> <span class="n">Index</span><span class="p">([</span><span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;something&#39;</span><span class="p">)</span>
+
+<span class="gp">In [946]: </span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;something&#39;</span>
+</pre></div>
+</div>
+<p>Starting with pandas 0.5, the name, if set, will be shown in the console
+display:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [947]: </span><span class="n">index</span> <span class="o">=</span> <span class="n">Index</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;rows&#39;</span><span class="p">)</span>
+
+<span class="gp">In [948]: </span><span class="n">columns</span> <span class="o">=</span> <span class="n">Index</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;cols&#39;</span><span class="p">)</span>
+
+<span class="gp">In [949]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="gp">In [950]: </span><span class="n">df</span>
+
+<span class="go">cols         A         B         C</span>
+<span class="go">rows                              </span>
+<span class="go">0    -0.308450 -0.276099 -1.821168</span>
+<span class="go">1    -1.993606 -1.927385 -2.027924</span>
+<span class="go">2     1.624972  0.551135  3.059267</span>
+<span class="go">3     0.455264 -0.030740  0.935716</span>
+<span class="go">4     1.061192 -2.107852  0.199905</span>
+
+<span class="gp">In [951]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span>
+
+<span class="go">rows</span>
+<span class="go">0      -0.308450</span>
+<span class="go">1      -1.993606</span>
+<span class="go">2       1.624972</span>
+<span class="go">3       0.455264</span>
+<span class="go">4       1.061192</span>
+<span class="go">Name: A, dtype: float64</span>
+</pre></div>
+</div>
+<div class="section" id="set-operations-on-index-objects">
+<h3>Set operations on Index objects<a class="headerlink" href="#set-operations-on-index-objects" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-set-ops">The three main operations are <tt class="docutils literal"><span class="pre">union</span> <span class="pre">(|)</span></tt>, <tt class="docutils literal"><span class="pre">intersection</span> <span class="pre">(&amp;)</span></tt>, and <tt class="docutils literal"><span class="pre">diff</span>
+<span class="pre">(-)</span></tt>. These can be directly called as instance methods or used via overloaded
+operators:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [952]: </span><span class="n">a</span> <span class="o">=</span> <span class="n">Index</span><span class="p">([</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">])</span>
+
+<span class="gp">In [953]: </span><span class="n">b</span> <span class="o">=</span> <span class="n">Index</span><span class="p">([</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">])</span>
+
+<span class="gp">In [954]: </span><span class="n">a</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="go">Index([u&#39;a&#39;, u&#39;b&#39;, u&#39;c&#39;, u&#39;d&#39;, u&#39;e&#39;], dtype=object)</span>
+
+<span class="gp">In [955]: </span><span class="n">a</span> <span class="o">|</span> <span class="n">b</span>
+<span class="go">Index([u&#39;a&#39;, u&#39;b&#39;, u&#39;c&#39;, u&#39;d&#39;, u&#39;e&#39;], dtype=object)</span>
+
+<span class="gp">In [956]: </span><span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span>
+<span class="go">Index([u&#39;c&#39;], dtype=object)</span>
+
+<span class="gp">In [957]: </span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+<span class="go">Index([u&#39;a&#39;, u&#39;b&#39;], dtype=object)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="isin-method-of-index-objects">
+<h3><tt class="docutils literal"><span class="pre">isin</span></tt> method of Index objects<a class="headerlink" href="#isin-method-of-index-objects" title="Permalink to this headline">¶</a></h3>
+<p>One additional operation is the <tt class="docutils literal"><span class="pre">isin</span></tt> method that works analogously to the
+<tt class="docutils literal"><span class="pre">Series.isin</span></tt> method found <a class="reference internal" href="#indexing-boolean"><em>here</em></a>.</p>
+</div>
+</div>
+<div class="section" id="hierarchical-indexing-multiindex">
+<span id="indexing-hierarchical"></span><h2>Hierarchical indexing (MultiIndex)<a class="headerlink" href="#hierarchical-indexing-multiindex" title="Permalink to this headline">¶</a></h2>
+<p>Hierarchical indexing (also referred to as &#8220;multi-level&#8221; indexing) is brand new
+in the pandas 0.4 release. It is very exciting as it opens the door to some
+quite sophisticated data analysis and manipulation, especially for working with
+higher dimensional data. In essence, it enables you to store and manipulate
+data with an arbitrary number of dimensions in lower dimensional data
+structures like Series (1d) and DataFrame (2d).</p>
+<p>In this section, we will show what exactly we mean by &#8220;hierarchical&#8221; indexing
+and how it integrates with the all of the pandas indexing functionality
+described above and in prior sections. Later, when discussing <a class="reference internal" href="groupby.html#groupby"><em>group by</em></a> and <a class="reference internal" href="reshaping.html#reshaping"><em>pivoting and reshaping data</em></a>, we&#8217;ll show
+non-trivial applications to illustrate how it aids in structuring data for
+analysis.</p>
+<p>See the <a class="reference internal" href="cookbook.html#cookbook-multi-index"><em>cookbook</em></a> for some advanced strategies</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Given that hierarchical indexing is so new to the library, it is definitely
+&#8220;bleeding-edge&#8221; functionality but is certainly suitable for production. But,
+there may inevitably be some minor API changes as more use cases are
+explored and any weaknesses in the design / implementation are identified.
+pandas aims to be &#8220;eminently usable&#8221; so any feedback about new
+functionality like this is extremely helpful.</p>
+</div>
+<div class="section" id="creating-a-multiindex-hierarchical-index-object">
+<h3>Creating a MultiIndex (hierarchical index) object<a class="headerlink" href="#creating-a-multiindex-hierarchical-index-object" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> object is the hierarchical analogue of the standard
+<tt class="docutils literal"><span class="pre">Index</span></tt> object which typically stores the axis labels in pandas objects. You
+can think of <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> an array of tuples where each tuple is unique. A
+<tt class="docutils literal"><span class="pre">MultiIndex</span></tt> can be created from a list of arrays (using
+<tt class="docutils literal"><span class="pre">MultiIndex.from_arrays</span></tt>) or an array of tuples (using
+<tt class="docutils literal"><span class="pre">MultiIndex.from_tuples</span></tt>).</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [958]: </span><span class="n">arrays</span> <span class="o">=</span> <span class="p">[[</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;qux&#39;</span><span class="p">,</span> <span class="s">&#39;qux&#39;</span><span class="p">],</span>
+<span class="gp">   .....:</span>           <span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">]]</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [959]: </span><span class="n">tuples</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">arrays</span><span class="p">)</span>
+
+<span class="gp">In [960]: </span><span class="n">tuples</span>
+
+<span class="go">[(&#39;bar&#39;, &#39;one&#39;),</span>
+<span class="go"> (&#39;bar&#39;, &#39;two&#39;),</span>
+<span class="go"> (&#39;baz&#39;, &#39;one&#39;),</span>
+<span class="go"> (&#39;baz&#39;, &#39;two&#39;),</span>
+<span class="go"> (&#39;foo&#39;, &#39;one&#39;),</span>
+<span class="go"> (&#39;foo&#39;, &#39;two&#39;),</span>
+<span class="go"> (&#39;qux&#39;, &#39;one&#39;),</span>
+<span class="go"> (&#39;qux&#39;, &#39;two&#39;)]</span>
+
+<span class="gp">In [961]: </span><span class="n">index</span> <span class="o">=</span> <span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">tuples</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;second&#39;</span><span class="p">])</span>
+
+<span class="gp">In [962]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+
+<span class="gp">In [963]: </span><span class="n">s</span>
+
+<span class="go">first  second</span>
+<span class="go">bar    one       0.323586</span>
+<span class="go">       two      -0.641630</span>
+<span class="go">baz    one      -0.587514</span>
+<span class="go">       two       0.053897</span>
+<span class="go">foo    one       0.194889</span>
+<span class="go">       two      -0.381994</span>
+<span class="go">qux    one       0.318587</span>
+<span class="go">       two       2.089075</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>As a convenience, you can pass a list of arrays directly into Series or
+DataFrame to construct a MultiIndex automatically:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [964]: </span><span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;qux&#39;</span><span class="p">,</span> <span class="s">&#39;qux&#39;</span><span class="p">])</span>
+<span class="gp">   .....:</span> <span class="p">,</span>
+<span class="gp">   .....:</span>           <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">])</span>
+<span class="gp">   .....:</span>           <span class="p">]</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [965]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">arrays</span><span class="p">)</span>
+
+<span class="gp">In [966]: </span><span class="n">s</span>
+
+<span class="go">bar  one   -0.728293</span>
+<span class="go">     two   -0.090255</span>
+<span class="go">baz  one   -0.748199</span>
+<span class="go">     two    1.318931</span>
+<span class="go">foo  one   -2.029766</span>
+<span class="go">     two    0.792652</span>
+<span class="go">qux  one    0.461007</span>
+<span class="go">     two   -0.542749</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [967]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">arrays</span><span class="p">)</span>
+
+<span class="gp">In [968]: </span><span class="n">df</span>
+
+<span class="go">                0         1         2         3</span>
+<span class="go">bar one -0.305384 -0.479195  0.095031 -0.270099</span>
+<span class="go">    two -0.707140 -0.773882  0.229453  0.304418</span>
+<span class="go">baz one  0.736135 -0.859631 -0.424100 -0.776114</span>
+<span class="go">    two  1.279293  0.943798 -1.001859  0.306546</span>
+<span class="go">foo one  0.307453 -0.906534 -1.505397  1.392009</span>
+<span class="go">    two -0.027793 -0.631023 -0.662357  2.725042</span>
+<span class="go">qux one -1.847240 -0.529247  0.614656 -1.590742</span>
+<span class="go">    two -0.156479 -1.696377  0.819712 -2.107728</span>
+</pre></div>
+</div>
+<p>All of the <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> constructors accept a <tt class="docutils literal"><span class="pre">names</span></tt> argument which stores
+string names for the levels themselves. If no names are provided, <tt class="docutils literal"><span class="pre">None</span></tt> will
+be assigned:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [969]: </span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+<span class="go">[None, None]</span>
+</pre></div>
+</div>
+<p>This index can back any axis of a pandas object, and the number of <strong>levels</strong>
+of the index is up to you:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [970]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+
+<span class="gp">In [971]: </span><span class="n">df</span>
+
+<span class="go">first        bar                 baz                 foo                 qux  \</span>
+<span class="go">second       one       two       one       two       one       two       one   </span>
+<span class="go">A      -0.488326  0.851918 -1.242101 -0.654708 -1.647369  0.828258 -0.352362   </span>
+<span class="go">B       0.289685 -1.982371  0.840166 -0.411403 -2.049028  2.846612 -1.208049   </span>
+<span class="go">C       2.423905  0.121108  0.266916  0.843826 -0.222540  2.021981 -0.716789   </span>
+<span class="go">first             </span>
+<span class="go">second       two  </span>
+<span class="go">A      -0.814324  </span>
+<span class="go">B      -0.450392  </span>
+<span class="go">C      -2.224485  </span>
+
+<span class="gp">In [972]: </span><span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">[:</span><span class="mi">6</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">index</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span>
+
+<span class="go">first              bar                 baz                 foo          </span>
+<span class="go">second             one       two       one       two       one       two</span>
+<span class="go">first second                                                            </span>
+<span class="go">bar   one    -1.061137 -0.232825  0.430793 -0.665478  1.829807 -1.406509</span>
+<span class="go">      two     1.078248  0.322774  0.200324  0.890024  0.194813  0.351633</span>
+<span class="go">baz   one     0.448881 -0.197915  0.965714 -1.522909 -0.116619  0.295575</span>
+<span class="go">      two    -1.047704  1.640556  1.905836  2.772115  0.088787 -1.144197</span>
+<span class="go">foo   one    -0.633372  0.925372 -0.006438 -0.820408 -0.600874 -1.039266</span>
+<span class="go">      two     0.824758 -0.824095 -0.337730 -0.927764 -0.840123  0.248505</span>
+</pre></div>
+</div>
+<p>We&#8217;ve &#8220;sparsified&#8221; the higher levels of the indexes to make the console output a
+bit easier on the eyes.</p>
+<p>It&#8217;s worth keeping in mind that there&#8217;s nothing preventing you from using
+tuples as atomic labels on an axis:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [973]: </span><span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">tuples</span><span class="p">)</span>
+
+<span class="go">(bar, one)   -0.109250</span>
+<span class="go">(bar, two)    0.431977</span>
+<span class="go">(baz, one)   -0.460710</span>
+<span class="go">(baz, two)    0.336505</span>
+<span class="go">(foo, one)   -3.207595</span>
+<span class="go">(foo, two)   -1.535854</span>
+<span class="go">(qux, one)    0.409769</span>
+<span class="go">(qux, two)   -0.673145</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>The reason that the <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> matters is that it can allow you to do
+grouping, selection, and reshaping operations as we will describe below and in
+subsequent areas of the documentation. As you will see in later sections, you
+can find yourself working with hierarchically-indexed data without creating a
+<tt class="docutils literal"><span class="pre">MultiIndex</span></tt> explicitly yourself. However, when loading data from a file, you
+may wish to generate your own <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> when preparing the data set.</p>
+<p>Note that how the index is displayed by be controlled using the
+<tt class="docutils literal"><span class="pre">multi_sparse</span></tt> option in <tt class="docutils literal"><span class="pre">pandas.set_printoptions</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [974]: </span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;display.multi_sparse&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
+<span class="gp">In [975]: </span><span class="n">df</span>
+
+<span class="go">first        bar       bar       baz       baz       foo       foo       qux  \</span>
+<span class="go">second       one       two       one       two       one       two       one   </span>
+<span class="go">A      -0.488326  0.851918 -1.242101 -0.654708 -1.647369  0.828258 -0.352362   </span>
+<span class="go">B       0.289685 -1.982371  0.840166 -0.411403 -2.049028  2.846612 -1.208049   </span>
+<span class="go">C       2.423905  0.121108  0.266916  0.843826 -0.222540  2.021981 -0.716789   </span>
+<span class="go">first        qux  </span>
+<span class="go">second       two  </span>
+<span class="go">A      -0.814324  </span>
+<span class="go">B      -0.450392  </span>
+<span class="go">C      -2.224485  </span>
+
+<span class="gp">In [976]: </span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;display.multi_sparse&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reconstructing-the-level-labels">
+<h3>Reconstructing the level labels<a class="headerlink" href="#reconstructing-the-level-labels" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-get-level-values">The method <tt class="docutils literal"><span class="pre">get_level_values</span></tt> will return a vector of the labels for each
+location at a particular level:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [977]: </span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">Index([u&#39;bar&#39;, u&#39;bar&#39;, u&#39;baz&#39;, u&#39;baz&#39;, u&#39;foo&#39;, u&#39;foo&#39;, u&#39;qux&#39;, u&#39;qux&#39;], dtype=object)</span>
+
+<span class="gp">In [978]: </span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s">&#39;second&#39;</span><span class="p">)</span>
+<span class="go">Index([u&#39;one&#39;, u&#39;two&#39;, u&#39;one&#39;, u&#39;two&#39;, u&#39;one&#39;, u&#39;two&#39;, u&#39;one&#39;, u&#39;two&#39;], dtype=object)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="basic-indexing-on-axis-with-multiindex">
+<h3>Basic indexing on axis with MultiIndex<a class="headerlink" href="#basic-indexing-on-axis-with-multiindex" title="Permalink to this headline">¶</a></h3>
+<p>One of the important features of hierarchical indexing is that you can select
+data by a &#8220;partial&#8221; label identifying a subgroup in the data. <strong>Partial</strong>
+selection &#8220;drops&#8221; levels of the hierarchical index in the result in a
+completely analogous way to selecting a column in a regular DataFrame:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [979]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;bar&#39;</span><span class="p">]</span>
+
+<span class="go">second       one       two</span>
+<span class="go">A      -0.488326  0.851918</span>
+<span class="go">B       0.289685 -1.982371</span>
+<span class="go">C       2.423905  0.121108</span>
+
+<span class="gp">In [980]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">]</span>
+
+<span class="go">A   -0.488326</span>
+<span class="go">B    0.289685</span>
+<span class="go">C    2.423905</span>
+<span class="go">Name: (bar, one), dtype: float64</span>
+
+<span class="gp">In [981]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;bar&#39;</span><span class="p">][</span><span class="s">&#39;one&#39;</span><span class="p">]</span>
+
+<span class="go">A   -0.488326</span>
+<span class="go">B    0.289685</span>
+<span class="go">C    2.423905</span>
+<span class="go">Name: one, dtype: float64</span>
+
+<span class="gp">In [982]: </span><span class="n">s</span><span class="p">[</span><span class="s">&#39;qux&#39;</span><span class="p">]</span>
+
+<span class="go">one    0.461007</span>
+<span class="go">two   -0.542749</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-alignment-and-using-reindex">
+<h3>Data alignment and using <tt class="docutils literal"><span class="pre">reindex</span></tt><a class="headerlink" href="#data-alignment-and-using-reindex" title="Permalink to this headline">¶</a></h3>
+<p>Operations between differently-indexed objects having <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> on the
+axes will work as you expect; data alignment will work the same as an Index of
+tuples:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [983]: </span><span class="n">s</span> <span class="o">+</span> <span class="n">s</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="go">bar  one   -1.456587</span>
+<span class="go">     two   -0.180509</span>
+<span class="go">baz  one   -1.496398</span>
+<span class="go">     two    2.637862</span>
+<span class="go">foo  one   -4.059533</span>
+<span class="go">     two    1.585304</span>
+<span class="go">qux  one         NaN</span>
+<span class="go">     two         NaN</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [984]: </span><span class="n">s</span> <span class="o">+</span> <span class="n">s</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="go">bar  one   -1.456587</span>
+<span class="go">     two         NaN</span>
+<span class="go">baz  one   -1.496398</span>
+<span class="go">     two         NaN</span>
+<span class="go">foo  one   -4.059533</span>
+<span class="go">     two         NaN</span>
+<span class="go">qux  one    0.922013</span>
+<span class="go">     two         NaN</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">reindex</span></tt> can be called with another <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> or even a list or array
+of tuples:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [985]: </span><span class="n">s</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">index</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="go">first  second</span>
+<span class="go">bar    one      -0.728293</span>
+<span class="go">       two      -0.090255</span>
+<span class="go">baz    one      -0.748199</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [986]: </span><span class="n">s</span><span class="o">.</span><span class="n">reindex</span><span class="p">([(</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;qux&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">)])</span>
+
+<span class="go">foo  two    0.792652</span>
+<span class="go">bar  one   -0.728293</span>
+<span class="go">qux  one    0.461007</span>
+<span class="go">baz  one   -0.748199</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-indexing-with-hierarchical-index">
+<span id="indexing-advanced-hierarchical"></span><h3>Advanced indexing with hierarchical index<a class="headerlink" href="#advanced-indexing-with-hierarchical-index" title="Permalink to this headline">¶</a></h3>
+<p>Syntactically integrating <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> in advanced indexing with <tt class="docutils literal"><span class="pre">.ix</span></tt> is a
+bit challenging, but we&#8217;ve made every effort to do so. for example the
+following works as you would expect:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [987]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span>
+
+<span class="gp">In [988]: </span><span class="n">df</span>
+
+<span class="go">                     A         B         C</span>
+<span class="go">first second                              </span>
+<span class="go">bar   one    -0.488326  0.289685  2.423905</span>
+<span class="go">      two     0.851918 -1.982371  0.121108</span>
+<span class="go">baz   one    -1.242101  0.840166  0.266916</span>
+<span class="go">      two    -0.654708 -0.411403  0.843826</span>
+<span class="go">foo   one    -1.647369 -2.049028 -0.222540</span>
+<span class="go">      two     0.828258  2.846612  2.021981</span>
+<span class="go">qux   one    -0.352362 -1.208049 -0.716789</span>
+<span class="go">      two    -0.814324 -0.450392 -2.224485</span>
+
+<span class="gp">In [989]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s">&#39;bar&#39;</span><span class="p">]</span>
+
+<span class="go">               A         B         C</span>
+<span class="go">second                              </span>
+<span class="go">one    -0.488326  0.289685  2.423905</span>
+<span class="go">two     0.851918 -1.982371  0.121108</span>
+
+<span class="gp">In [990]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">]</span>
+
+<span class="go">A    0.851918</span>
+<span class="go">B   -1.982371</span>
+<span class="go">C    0.121108</span>
+<span class="go">Name: (bar, two), dtype: float64</span>
+</pre></div>
+</div>
+<p>&#8220;Partial&#8221; slicing also works quite nicely:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [991]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s">&#39;baz&#39;</span><span class="p">:</span><span class="s">&#39;foo&#39;</span><span class="p">]</span>
+
+<span class="go">                     A         B         C</span>
+<span class="go">first second                              </span>
+<span class="go">baz   one    -1.242101  0.840166  0.266916</span>
+<span class="go">      two    -0.654708 -0.411403  0.843826</span>
+<span class="go">foo   one    -1.647369 -2.049028 -0.222540</span>
+<span class="go">      two     0.828258  2.846612  2.021981</span>
+
+<span class="gp">In [992]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[(</span><span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">):(</span><span class="s">&#39;qux&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">)]</span>
+
+<span class="go">                     A         B         C</span>
+<span class="go">first second                              </span>
+<span class="go">baz   two    -0.654708 -0.411403  0.843826</span>
+<span class="go">foo   one    -1.647369 -2.049028 -0.222540</span>
+<span class="go">      two     0.828258  2.846612  2.021981</span>
+<span class="go">qux   one    -0.352362 -1.208049 -0.716789</span>
+
+<span class="gp">In [993]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[(</span><span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">):</span><span class="s">&#39;foo&#39;</span><span class="p">]</span>
+
+<span class="go">                     A         B         C</span>
+<span class="go">first second                              </span>
+<span class="go">baz   two    -0.654708 -0.411403  0.843826</span>
+<span class="go">foo   one    -1.647369 -2.049028 -0.222540</span>
+<span class="go">      two     0.828258  2.846612  2.021981</span>
+</pre></div>
+</div>
+<p>Passing a list of labels or tuples works similar to reindexing:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [994]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[[(</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;qux&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">)]]</span>
+
+<span class="go">                     A         B         C</span>
+<span class="go">first second                              </span>
+<span class="go">bar   two     0.851918 -1.982371  0.121108</span>
+<span class="go">qux   one    -0.352362 -1.208049 -0.716789</span>
+</pre></div>
+</div>
+<p>The following does not work, and it&#8217;s not clear if it should or not:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[[</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;qux&#39;</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>The code for implementing <tt class="docutils literal"><span class="pre">.ix</span></tt> makes every attempt to &#8220;do the right thing&#8221;
+but as you use it you may uncover corner cases or unintuitive behavior. If you
+do find something like this, do not hesitate to report the issue or ask on the
+mailing list.</p>
+</div>
+<div class="section" id="cross-section-with-hierarchical-index">
+<span id="indexing-xs"></span><h3>Cross-section with hierarchical index<a class="headerlink" href="#cross-section-with-hierarchical-index" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">xs</span></tt> method of <tt class="docutils literal"><span class="pre">DataFrame</span></tt> additionally takes a level argument to make
+selecting data at a particular level of a MultiIndex easier.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [995]: </span><span class="n">df</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s">&#39;second&#39;</span><span class="p">)</span>
+
+<span class="go">              A         B         C</span>
+<span class="go">first                              </span>
+<span class="go">bar   -0.488326  0.289685  2.423905</span>
+<span class="go">baz   -1.242101  0.840166  0.266916</span>
+<span class="go">foo   -1.647369 -2.049028 -0.222540</span>
+<span class="go">qux   -0.352362 -1.208049 -0.716789</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-reindexing-and-alignment-with-hierarchical-index">
+<span id="indexing-advanced-reindex"></span><h3>Advanced reindexing and alignment with hierarchical index<a class="headerlink" href="#advanced-reindexing-and-alignment-with-hierarchical-index" title="Permalink to this headline">¶</a></h3>
+<p>The parameter <tt class="docutils literal"><span class="pre">level</span></tt> has been added to the <tt class="docutils literal"><span class="pre">reindex</span></tt> and <tt class="docutils literal"><span class="pre">align</span></tt> methods
+of pandas objects. This is useful to broadcast values across a level. For
+instance:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [996]: </span><span class="n">midx</span> <span class="o">=</span> <span class="n">MultiIndex</span><span class="p">(</span><span class="n">levels</span><span class="o">=</span><span class="p">[[</span><span class="s">&#39;zero&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">]],</span>
+<span class="gp">   .....:</span>                   <span class="n">labels</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [997]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">midx</span><span class="p">)</span>
+
+<span class="gp">In [998]: </span><span class="k">print</span> <span class="n">df</span>
+<span class="go">               0         1</span>
+<span class="go">one  y -0.741113 -0.110891</span>
+<span class="go">     x -2.672910  0.864492</span>
+<span class="go">zero y  0.060868  0.933092</span>
+<span class="go">     x  0.288841  1.324969</span>
+
+<span class="gp">In [999]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [1000]: </span><span class="k">print</span> <span class="n">df2</span>
+<span class="go">             0        1</span>
+<span class="go">zero  0.174854  1.12903</span>
+<span class="go">one  -1.707011  0.37680</span>
+
+<span class="gp">In [1001]: </span><span class="k">print</span> <span class="n">df2</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">               0        1</span>
+<span class="go">one  y -1.707011  0.37680</span>
+<span class="go">     x -1.707011  0.37680</span>
+<span class="go">zero y  0.174854  1.12903</span>
+<span class="go">     x  0.174854  1.12903</span>
+
+<span class="gp">In [1002]: </span><span class="n">df_aligned</span><span class="p">,</span> <span class="n">df2_aligned</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [1003]: </span><span class="k">print</span> <span class="n">df_aligned</span>
+<span class="go">               0         1</span>
+<span class="go">one  y -0.741113 -0.110891</span>
+<span class="go">     x -2.672910  0.864492</span>
+<span class="go">zero y  0.060868  0.933092</span>
+<span class="go">     x  0.288841  1.324969</span>
+
+<span class="gp">In [1004]: </span><span class="k">print</span> <span class="n">df2_aligned</span>
+<span class="go">               0        1</span>
+<span class="go">one  y -1.707011  0.37680</span>
+<span class="go">     x -1.707011  0.37680</span>
+<span class="go">zero y  0.174854  1.12903</span>
+<span class="go">     x  0.174854  1.12903</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-need-for-sortedness">
+<h3>The need for sortedness<a class="headerlink" href="#the-need-for-sortedness" title="Permalink to this headline">¶</a></h3>
+<p><strong>Caveat emptor</strong>: the present implementation of <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> requires that
+the labels be sorted for some of the slicing / indexing routines to work
+correctly. You can think about breaking the axis into unique groups, where at
+the hierarchical level of interest, each distinct group shares a label, but no
+two have the same label. However, the <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> does not enforce this:
+<strong>you are responsible for ensuring that things are properly sorted</strong>. There is
+an important new method <tt class="docutils literal"><span class="pre">sortlevel</span></tt> to sort an axis within a <tt class="docutils literal"><span class="pre">MultiIndex</span></tt>
+so that its labels are grouped and sorted by the original ordering of the
+associated factor at that level. Note that this does not necessarily mean the
+labels will be sorted lexicographically!</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1005]: </span><span class="kn">import</span> <span class="nn">random</span><span class="p">;</span> <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">tuples</span><span class="p">)</span>
+
+<span class="gp">In [1006]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">tuples</span><span class="p">))</span>
+
+<span class="gp">In [1007]: </span><span class="n">s</span>
+
+<span class="go">bar  one    0.589220</span>
+<span class="go">baz  one    0.531415</span>
+<span class="go">qux  one   -1.198747</span>
+<span class="go">     two   -0.236866</span>
+<span class="go">baz  two   -1.317798</span>
+<span class="go">foo  one    0.373766</span>
+<span class="go">     two   -0.675588</span>
+<span class="go">bar  two    0.981295</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [1008]: </span><span class="n">s</span><span class="o">.</span><span class="n">sortlevel</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="go">bar  one    0.589220</span>
+<span class="go">     two    0.981295</span>
+<span class="go">baz  one    0.531415</span>
+<span class="go">     two   -1.317798</span>
+<span class="go">foo  one    0.373766</span>
+<span class="go">     two   -0.675588</span>
+<span class="go">qux  one   -1.198747</span>
+<span class="go">     two   -0.236866</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [1009]: </span><span class="n">s</span><span class="o">.</span><span class="n">sortlevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="go">bar  one    0.589220</span>
+<span class="go">baz  one    0.531415</span>
+<span class="go">foo  one    0.373766</span>
+<span class="go">qux  one   -1.198747</span>
+<span class="go">bar  two    0.981295</span>
+<span class="go">baz  two   -1.317798</span>
+<span class="go">foo  two   -0.675588</span>
+<span class="go">qux  two   -0.236866</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p id="indexing-sortlevel-byname">Note, you may also pass a level name to <tt class="docutils literal"><span class="pre">sortlevel</span></tt> if the MultiIndex levels
+are named.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1010]: </span><span class="n">s</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;L1&#39;</span><span class="p">,</span> <span class="s">&#39;L2&#39;</span><span class="p">]</span>
+
+<span class="gp">In [1011]: </span><span class="n">s</span><span class="o">.</span><span class="n">sortlevel</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s">&#39;L1&#39;</span><span class="p">)</span>
+
+<span class="go">L1   L2 </span>
+<span class="go">bar  one    0.589220</span>
+<span class="go">     two    0.981295</span>
+<span class="go">baz  one    0.531415</span>
+<span class="go">     two   -1.317798</span>
+<span class="go">foo  one    0.373766</span>
+<span class="go">     two   -0.675588</span>
+<span class="go">qux  one   -1.198747</span>
+<span class="go">     two   -0.236866</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [1012]: </span><span class="n">s</span><span class="o">.</span><span class="n">sortlevel</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s">&#39;L2&#39;</span><span class="p">)</span>
+
+<span class="go">L1   L2 </span>
+<span class="go">bar  one    0.589220</span>
+<span class="go">baz  one    0.531415</span>
+<span class="go">foo  one    0.373766</span>
+<span class="go">qux  one   -1.198747</span>
+<span class="go">bar  two    0.981295</span>
+<span class="go">baz  two   -1.317798</span>
+<span class="go">foo  two   -0.675588</span>
+<span class="go">qux  two   -0.236866</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>Some indexing will work even if the data are not sorted, but will be rather
+inefficient and will also return a copy of the data rather than a view:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1013]: </span><span class="n">s</span><span class="p">[</span><span class="s">&#39;qux&#39;</span><span class="p">]</span>
+
+<span class="go">L2</span>
+<span class="go">one   -1.198747</span>
+<span class="go">two   -0.236866</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [1014]: </span><span class="n">s</span><span class="o">.</span><span class="n">sortlevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s">&#39;qux&#39;</span><span class="p">]</span>
+
+<span class="go">L2</span>
+<span class="go">one   -1.198747</span>
+<span class="go">two   -0.236866</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>On higher dimensional objects, you can sort any of the other axes by level if
+they have a MultiIndex:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1015]: </span><span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">sortlevel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="go">       zero       one      zero       one</span>
+<span class="go">          x         x         y         y</span>
+<span class="go">0  0.288841 -2.672910  0.060868 -0.741113</span>
+<span class="go">1  1.324969  0.864492  0.933092 -0.110891</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> object has code to <strong>explicity check the sort depth</strong>. Thus,
+if you try to index at a depth at which the index is not sorted, it will raise
+an exception. Here is a concrete example to illustrate this:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1016]: </span><span class="n">tuples</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">)]</span>
+
+<span class="gp">In [1017]: </span><span class="n">idx</span> <span class="o">=</span> <span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">tuples</span><span class="p">)</span>
+
+<span class="gp">In [1018]: </span><span class="n">idx</span><span class="o">.</span><span class="n">lexsort_depth</span>
+<span class="go">2</span>
+
+<span class="gp">In [1019]: </span><span class="n">reordered</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+
+<span class="gp">In [1020]: </span><span class="n">reordered</span><span class="o">.</span><span class="n">lexsort_depth</span>
+<span class="go">1</span>
+
+<span class="gp">In [1021]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">reordered</span><span class="p">)</span>
+
+<span class="gp">In [1022]: </span><span class="n">s</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="s">&#39;a&#39;</span><span class="p">]</span>
+
+<span class="go">a  b   -0.100323</span>
+<span class="go">   a    0.935523</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>However:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">ix</span><span class="p">[(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">):(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)]</span>
+<span class="go">Exception: MultiIndex lexsort depth 1, key was length 2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="swapping-levels-with-swaplevel">
+<h3>Swapping levels with <tt class="docutils literal"><span class="pre">swaplevel</span></tt><a class="headerlink" href="#swapping-levels-with-swaplevel" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">swaplevel</span></tt> function can switch the order of two levels:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1023]: </span><span class="n">df</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="go">               0         1</span>
+<span class="go">one  y -0.741113 -0.110891</span>
+<span class="go">     x -2.672910  0.864492</span>
+<span class="go">zero y  0.060868  0.933092</span>
+<span class="go">     x  0.288841  1.324969</span>
+
+<span class="gp">In [1024]: </span><span class="n">df</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="go">               0         1</span>
+<span class="go">y one  -0.741113 -0.110891</span>
+<span class="go">x one  -2.672910  0.864492</span>
+<span class="go">y zero  0.060868  0.933092</span>
+<span class="go">x zero  0.288841  1.324969</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reordering-levels-with-reorder-levels">
+<span id="indexing-reorderlevels"></span><h3>Reordering levels with <tt class="docutils literal"><span class="pre">reorder_levels</span></tt><a class="headerlink" href="#reordering-levels-with-reorder-levels" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">reorder_levels</span></tt> function generalizes the <tt class="docutils literal"><span class="pre">swaplevel</span></tt> function,
+allowing you to permute the hierarchical index levels in one step:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1025]: </span><span class="n">df</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">reorder_levels</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="go">               0         1</span>
+<span class="go">y one  -0.741113 -0.110891</span>
+<span class="go">x one  -2.672910  0.864492</span>
+<span class="go">y zero  0.060868  0.933092</span>
+<span class="go">x zero  0.288841  1.324969</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="some-gory-internal-details">
+<h3>Some gory internal details<a class="headerlink" href="#some-gory-internal-details" title="Permalink to this headline">¶</a></h3>
+<p>Internally, the <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> consists of a few things: the <strong>levels</strong>, the
+integer <strong>labels</strong>, and the level <strong>names</strong>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1026]: </span><span class="n">index</span>
+
+<span class="go">MultiIndex</span>
+<span class="go">[(u&#39;bar&#39;, u&#39;one&#39;), (u&#39;bar&#39;, u&#39;two&#39;), (u&#39;baz&#39;, u&#39;one&#39;), (u&#39;baz&#39;, u&#39;two&#39;), (u&#39;foo&#39;, u&#39;one&#39;), (u&#39;foo&#39;, u&#39;two&#39;), (u&#39;qux&#39;, u&#39;one&#39;), (u&#39;qux&#39;, u&#39;two&#39;)]</span>
+
+<span class="gp">In [1027]: </span><span class="n">index</span><span class="o">.</span><span class="n">levels</span>
+
+<span class="go">[Index([u&#39;bar&#39;, u&#39;baz&#39;, u&#39;foo&#39;, u&#39;qux&#39;], dtype=object),</span>
+<span class="go"> Index([u&#39;one&#39;, u&#39;two&#39;], dtype=object)]</span>
+
+<span class="gp">In [1028]: </span><span class="n">index</span><span class="o">.</span><span class="n">labels</span>
+<span class="go">[array([0, 0, 1, 1, 2, 2, 3, 3]), array([0, 1, 0, 1, 0, 1, 0, 1])]</span>
+
+<span class="gp">In [1029]: </span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+<span class="go">[&#39;first&#39;, &#39;second&#39;]</span>
+</pre></div>
+</div>
+<p>You can probably guess that the labels determine which unique element is
+identified with that location at each layer of the index. It&#8217;s important to
+note that sortedness is determined <strong>solely</strong> from the integer labels and does
+not check (or care) whether the levels themselves are sorted. Fortunately, the
+constructors <tt class="docutils literal"><span class="pre">from_tuples</span></tt> and <tt class="docutils literal"><span class="pre">from_arrays</span></tt> ensure that this is true, but
+if you compute the levels and labels yourself, please be careful.</p>
+</div>
+</div>
+<div class="section" id="adding-an-index-to-an-existing-dataframe">
+<h2>Adding an index to an existing DataFrame<a class="headerlink" href="#adding-an-index-to-an-existing-dataframe" title="Permalink to this headline">¶</a></h2>
+<p>Occasionally you will load or create a data set into a DataFrame and want to
+add an index after you&#8217;ve already done so. There are a couple of different
+ways.</p>
+<div class="section" id="add-an-index-using-dataframe-columns">
+<h3>Add an index using DataFrame columns<a class="headerlink" href="#add-an-index-using-dataframe-columns" title="Permalink to this headline">¶</a></h3>
+<p id="indexing-set-index">DataFrame has a <tt class="docutils literal"><span class="pre">set_index</span></tt> method which takes a column name (for a regular
+<tt class="docutils literal"><span class="pre">Index</span></tt>) or a list of column names (for a <tt class="docutils literal"><span class="pre">MultiIndex</span></tt>), to create a new,
+indexed DataFrame:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1030]: </span><span class="n">data</span>
+
+<span class="go">     a    b  c  d</span>
+<span class="go">0  bar  one  z  1</span>
+<span class="go">1  bar  two  y  2</span>
+<span class="go">2  foo  one  x  3</span>
+<span class="go">3  foo  two  w  4</span>
+
+<span class="gp">In [1031]: </span><span class="n">indexed1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">&#39;c&#39;</span><span class="p">)</span>
+
+<span class="gp">In [1032]: </span><span class="n">indexed1</span>
+
+<span class="go">     a    b  d</span>
+<span class="go">c             </span>
+<span class="go">z  bar  one  1</span>
+<span class="go">y  bar  two  2</span>
+<span class="go">x  foo  one  3</span>
+<span class="go">w  foo  two  4</span>
+
+<span class="gp">In [1033]: </span><span class="n">indexed2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1034]: </span><span class="n">indexed2</span>
+
+<span class="go">         c  d</span>
+<span class="go">a   b        </span>
+<span class="go">bar one  z  1</span>
+<span class="go">    two  y  2</span>
+<span class="go">foo one  x  3</span>
+<span class="go">    two  w  4</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">append</span></tt> keyword option allow you to keep the existing index and append
+the given columns to a MultiIndex:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1035]: </span><span class="n">frame</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="gp">In [1036]: </span><span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="gp">In [1037]: </span><span class="n">frame</span>
+
+<span class="go">           c  d</span>
+<span class="go">c a   b        </span>
+<span class="go">z bar one  z  1</span>
+<span class="go">y bar two  y  2</span>
+<span class="go">x foo one  x  3</span>
+<span class="go">w foo two  w  4</span>
+</pre></div>
+</div>
+<p>Other options in <tt class="docutils literal"><span class="pre">set_index</span></tt> allow you not drop the index columns or to add
+the index in-place (without creating a new object):</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1038]: </span><span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="go">     a    b  c  d</span>
+<span class="go">c                </span>
+<span class="go">z  bar  one  z  1</span>
+<span class="go">y  bar  two  y  2</span>
+<span class="go">x  foo  one  x  3</span>
+<span class="go">w  foo  two  w  4</span>
+
+<span class="gp">In [1039]: </span><span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="gp">In [1040]: </span><span class="n">data</span>
+
+<span class="go">         c  d</span>
+<span class="go">a   b        </span>
+<span class="go">bar one  z  1</span>
+<span class="go">    two  y  2</span>
+<span class="go">foo one  x  3</span>
+<span class="go">    two  w  4</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-reset-the-index-reset-index">
+<h3>Remove / reset the index,  <tt class="docutils literal"><span class="pre">reset_index</span></tt><a class="headerlink" href="#remove-reset-the-index-reset-index" title="Permalink to this headline">¶</a></h3>
+<p>As a convenience, there is a new function on DataFrame called <tt class="docutils literal"><span class="pre">reset_index</span></tt>
+which transfers the index values into the DataFrame&#8217;s columns and sets a simple
+integer index. This is the inverse operation to <tt class="docutils literal"><span class="pre">set_index</span></tt></p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1041]: </span><span class="n">data</span>
+
+<span class="go">         c  d</span>
+<span class="go">a   b        </span>
+<span class="go">bar one  z  1</span>
+<span class="go">    two  y  2</span>
+<span class="go">foo one  x  3</span>
+<span class="go">    two  w  4</span>
+
+<span class="gp">In [1042]: </span><span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+<span class="go">     a    b  c  d</span>
+<span class="go">0  bar  one  z  1</span>
+<span class="go">1  bar  two  y  2</span>
+<span class="go">2  foo  one  x  3</span>
+<span class="go">3  foo  two  w  4</span>
+</pre></div>
+</div>
+<p>The output is more similar to a SQL table or a record array. The names for the
+columns derived from the index are the ones stored in the <tt class="docutils literal"><span class="pre">names</span></tt> attribute.</p>
+<p>You can use the <tt class="docutils literal"><span class="pre">level</span></tt> keyword to remove only a portion of the index:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1043]: </span><span class="n">frame</span>
+
+<span class="go">           c  d</span>
+<span class="go">c a   b        </span>
+<span class="go">z bar one  z  1</span>
+<span class="go">y bar two  y  2</span>
+<span class="go">x foo one  x  3</span>
+<span class="go">w foo two  w  4</span>
+
+<span class="gp">In [1044]: </span><span class="n">frame</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="go">         a  c  d</span>
+<span class="go">c b             </span>
+<span class="go">z one  bar  z  1</span>
+<span class="go">y two  bar  y  2</span>
+<span class="go">x one  foo  x  3</span>
+<span class="go">w two  foo  w  4</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">reset_index</span></tt> takes an optional parameter <tt class="docutils literal"><span class="pre">drop</span></tt> which if true simply
+discards the index, instead of putting index values in the DataFrame&#8217;s columns.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <tt class="docutils literal"><span class="pre">reset_index</span></tt> method used to be called <tt class="docutils literal"><span class="pre">delevel</span></tt> which is now
+deprecated.</p>
+</div>
+</div>
+<div class="section" id="adding-an-ad-hoc-index">
+<h3>Adding an ad hoc index<a class="headerlink" href="#adding-an-ad-hoc-index" title="Permalink to this headline">¶</a></h3>
+<p>If you create an index yourself, you can just assign it to the <tt class="docutils literal"><span class="pre">index</span></tt> field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="indexing-internal-details">
+<h2>Indexing internal details<a class="headerlink" href="#indexing-internal-details" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The following is largely relevant for those actually working on the pandas
+codebase. And the source code is still the best place to look at the
+specifics of how things are implemented.</p>
+</div>
+<p>In pandas there are a few objects implemented which can serve as valid
+containers for the axis labels:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">Index</span></tt>: the generic &#8220;ordered set&#8221; object, an ndarray of object dtype
+assuming nothing about its contents. The labels must be hashable (and
+likely immutable) and unique. Populates a dict of label to location in
+Cython to do <img class="math" src="_images/math/62d0effd6477f4244d585fc25f46a645378a4ceb.png" alt="O(1)"/> lookups.</li>
+<li><tt class="docutils literal"><span class="pre">Int64Index</span></tt>: a version of <tt class="docutils literal"><span class="pre">Index</span></tt> highly optimized for 64-bit integer
+data, such as time stamps</li>
+<li><tt class="docutils literal"><span class="pre">MultiIndex</span></tt>: the standard hierarchical index object</li>
+<li><tt class="docutils literal"><span class="pre">date_range</span></tt>: fixed frequency date range generated from a time rule or
+DateOffset. An ndarray of Python datetime objects</li>
+</ul>
+</div></blockquote>
+<p>The motivation for having an <tt class="docutils literal"><span class="pre">Index</span></tt> class in the first place was to enable
+different implementations of indexing. This means that it&#8217;s possible for you,
+the user, to implement a custom <tt class="docutils literal"><span class="pre">Index</span></tt> subclass that may be better suited to
+a particular application than the ones provided in pandas.</p>
+<p>From an internal implementation point of view, the relevant methods that an
+<tt class="docutils literal"><span class="pre">Index</span></tt> must define are one or more of the following (depending on how
+incompatible the new object internals are with the <tt class="docutils literal"><span class="pre">Index</span></tt> functions):</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">get_loc</span></tt>: returns an &#8220;indexer&#8221; (an integer, or in some cases a
+slice object) for a label</li>
+<li><tt class="docutils literal"><span class="pre">slice_locs</span></tt>: returns the &#8220;range&#8221; to slice between two labels</li>
+<li><tt class="docutils literal"><span class="pre">get_indexer</span></tt>: Computes the indexing vector for reindexing / data
+alignment purposes. See the source / docstrings for more on this</li>
+<li><tt class="docutils literal"><span class="pre">get_indexer_non_unique</span></tt>: Computes the indexing vector for reindexing / data
+alignment purposes when the index is non-unique. See the source / docstrings
+for more on this</li>
+<li><tt class="docutils literal"><span class="pre">reindex</span></tt>: Does any pre-conversion of the input index then calls
+<tt class="docutils literal"><span class="pre">get_indexer</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">union</span></tt>, <tt class="docutils literal"><span class="pre">intersection</span></tt>: computes the union or intersection of two
+Index objects</li>
+<li><tt class="docutils literal"><span class="pre">insert</span></tt>: Inserts a new label into an Index, yielding a new object</li>
+<li><tt class="docutils literal"><span class="pre">delete</span></tt>: Delete a label, yielding a new object</li>
+<li><tt class="docutils literal"><span class="pre">drop</span></tt>: Deletes a set of labels</li>
+<li><tt class="docutils literal"><span class="pre">take</span></tt>: Analogous to ndarray.take</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="clearer"></div>
+        </div>
+    </div>
+</div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="computation.html" title="Computational tools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="basics.html" title="Essential Basic Functionality"
+             >previous</a> |</li>
+        <li><a href="index.html">pandas 0.11.1.dev-36c1263 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, the pandas development team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

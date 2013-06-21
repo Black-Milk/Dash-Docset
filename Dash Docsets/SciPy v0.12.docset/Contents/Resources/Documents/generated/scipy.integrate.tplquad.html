@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.integrate.tplquad — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../integrate.html" rel="up" title="Integration and ODEs (scipy.integrate)"/><link href="scipy.integrate.fixed_quad.html" rel="next" title="scipy.integrate.fixed_quad"/><link href="scipy.integrate.dblquad.html" rel="prev" title="scipy.integrate.dblquad"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.integrate.fixed_quad.html" title="scipy.integrate.fixed_quad">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.integrate.dblquad.html" title="scipy.integrate.dblquad">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a accesskey="U" href="../integrate.html">Integration and ODEs (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.integrate</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-integrate-tplquad">
+<h1>scipy.integrate.tplquad<a class="headerlink" href="#scipy-integrate-tplquad" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.integrate.tplquad"><a name="//apple_ref/cpp/func/scipy.integrate.tplquad"></a>
+<tt class="descclassname">scipy.integrate.</tt><tt class="descname">tplquad</tt><big>(</big><em>func</em>, <em>a</em>, <em>b</em>, <em>gfun</em>, <em>hfun</em>, <em>qfun</em>, <em>rfun</em>, <em>args=()</em>, <em>epsabs=1.49e-08</em>, <em>epsrel=1.49e-08</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/integrate/quadpack.py#L434"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.integrate.tplquad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a triple (definite) integral.</p>
+<p>Return the triple integral of func(z, y, x) from
+x=a..b, y=gfun(x)..hfun(x), and z=qfun(x,y)..rfun(x,y)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>func</strong> : function</p>
+<blockquote>
+<div><p>A Python function or method of at least three variables in the
+order (z, y, x).</p>
+</div></blockquote>
+<p><strong>(a,b)</strong> : tuple</p>
+<blockquote>
+<div><p>The limits of integration in x: a &lt; b</p>
+</div></blockquote>
+<p><strong>gfun</strong> : function</p>
+<blockquote>
+<div><p>The lower boundary curve in y which is a function taking a single
+floating point argument (x) and returning a floating point result:
+a lambda function can be useful here.</p>
+</div></blockquote>
+<p><strong>hfun</strong> : function</p>
+<blockquote>
+<div><p>The upper boundary curve in y (same requirements as gfun).</p>
+</div></blockquote>
+<p><strong>qfun</strong> : function</p>
+<blockquote>
+<div><p>The lower boundary surface in z.  It must be a function that takes
+two floats in the order (x, y) and returns a float.</p>
+</div></blockquote>
+<p><strong>rfun</strong> : function</p>
+<blockquote>
+<div><p>The upper boundary surface in z. (Same requirements as qfun.)</p>
+</div></blockquote>
+<p><strong>args</strong> : Arguments</p>
+<blockquote>
+<div><p>Extra arguments to pass to func3d.</p>
+</div></blockquote>
+<p><strong>epsabs</strong> : float, optional</p>
+<blockquote>
+<div><p>Absolute tolerance passed directly to the innermost 1-D quadrature
+integration. Default is 1.49e-8.</p>
+</div></blockquote>
+<p><strong>epsrel</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative tolerance of the innermost 1-D integrals. Default is 1.49e-8.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y</strong> : float</p>
+<blockquote>
+<div><p>The resultant integral.</p>
+</div></blockquote>
+<p><strong>abserr</strong> : float</p>
+<blockquote class="last">
+<div><p>An estimate of the error.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a></dt>
+<dd>Adaptive quadrature using QUADPACK</dd>
+<dt><a class="reference internal" href="scipy.integrate.quadrature.html#scipy.integrate.quadrature" title="scipy.integrate.quadrature"><tt class="xref py py-obj docutils literal"><span class="pre">quadrature</span></tt></a></dt>
+<dd>Adaptive Gaussian quadrature</dd>
+<dt><a class="reference internal" href="scipy.integrate.fixed_quad.html#scipy.integrate.fixed_quad" title="scipy.integrate.fixed_quad"><tt class="xref py py-obj docutils literal"><span class="pre">fixed_quad</span></tt></a></dt>
+<dd>Fixed-order Gaussian quadrature</dd>
+<dt><a class="reference internal" href="scipy.integrate.dblquad.html#scipy.integrate.dblquad" title="scipy.integrate.dblquad"><tt class="xref py py-obj docutils literal"><span class="pre">dblquad</span></tt></a></dt>
+<dd>Double integrals</dd>
+<dt><a class="reference internal" href="scipy.integrate.romb.html#scipy.integrate.romb" title="scipy.integrate.romb"><tt class="xref py py-obj docutils literal"><span class="pre">romb</span></tt></a></dt>
+<dd>Integrators for sampled data</dd>
+<dt><a class="reference internal" href="scipy.integrate.simps.html#scipy.integrate.simps" title="scipy.integrate.simps"><tt class="xref py py-obj docutils literal"><span class="pre">simps</span></tt></a></dt>
+<dd>Integrators for sampled data</dd>
+<dt><a class="reference internal" href="scipy.integrate.ode.html#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a></dt>
+<dd>ODE integrators</dd>
+<dt><a class="reference internal" href="scipy.integrate.odeint.html#scipy.integrate.odeint" title="scipy.integrate.odeint"><tt class="xref py py-obj docutils literal"><span class="pre">odeint</span></tt></a></dt>
+<dd>ODE integrators</dd>
+<dt><a class="reference internal" href="../special.html#module-scipy.special" title="scipy.special"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.special</span></tt></a></dt>
+<dd>For coefficients and roots of orthogonal polynomials</dd>
+</dl>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.integrate.dblquad.html" title="previous chapter">scipy.integrate.dblquad</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.integrate.fixed_quad.html" title="next chapter">scipy.integrate.fixed_quad</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.integrate.fixed_quad.html" title="scipy.integrate.fixed_quad">next</a> |</li>
+<li class="right">
+<a href="scipy.integrate.dblquad.html" title="scipy.integrate.dblquad">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../integrate.html">Integration and ODEs (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.integrate</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

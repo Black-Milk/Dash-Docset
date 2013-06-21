@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.signal.filtfilt — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../signal.html" rel="up" title="Signal processing (scipy.signal)"/><link href="scipy.signal.deconvolve.html" rel="next" title="scipy.signal.deconvolve"/><link href="scipy.signal.lfilter_zi.html" rel="prev" title="scipy.signal.lfilter_zi"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.signal.deconvolve.html" title="scipy.signal.deconvolve">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.signal.lfilter_zi.html" title="scipy.signal.lfilter_zi">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a accesskey="U" href="../signal.html">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-signal-filtfilt">
+<h1>scipy.signal.filtfilt<a class="headerlink" href="#scipy-signal-filtfilt" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.signal.filtfilt"><a name="//apple_ref/cpp/func/scipy.signal.filtfilt"></a>
+<tt class="descclassname">scipy.signal.</tt><tt class="descname">filtfilt</tt><big>(</big><em>b</em>, <em>a</em>, <em>x</em>, <em>axis=-1</em>, <em>padtype='odd'</em>, <em>padlen=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/signal/signaltools.py#L1538"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.signal.filtfilt" title="Permalink to this definition">¶</a></dt>
+<dd><p>A forward-backward filter.</p>
+<p>This function applies a linear filter twice, once forward
+and once backwards.  The combined filter has linear phase.</p>
+<p>Before applying the filter, the function can pad the data along the
+given axis in one of three ways: odd, even or constant.  The odd
+and even extensions have the corresponding symmetry about the end point
+of the data.  The constant extension extends the data with the values
+at end points.  On both the forward and backwards passes, the
+initial condition of the filter is found by using <a class="reference internal" href="scipy.signal.lfilter_zi.html#scipy.signal.lfilter_zi" title="scipy.signal.lfilter_zi"><tt class="xref py py-obj docutils literal"><span class="pre">lfilter_zi</span></tt></a> and
+scaling it by the end point of the extended data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>b</strong> : (N,) array_like</p>
+<blockquote>
+<div><p>The numerator coefficient vector of the filter.</p>
+</div></blockquote>
+<p><strong>a</strong> : (N,) array_like</p>
+<blockquote>
+<div><p>The denominator coefficient vector of the filter.  If a[0]
+is not 1, then both a and b are normalized by a[0].</p>
+</div></blockquote>
+<p><strong>x</strong> : array_like</p>
+<blockquote>
+<div><p>The array of data to be filtered.</p>
+</div></blockquote>
+<p><strong>axis</strong> : int, optional</p>
+<blockquote>
+<div><p>The axis of <em class="xref py py-obj">x</em> to which the filter is applied.
+Default is -1.</p>
+</div></blockquote>
+<p><strong>padtype</strong> : str or None, optional</p>
+<blockquote>
+<div><p>Must be ‘odd’, ‘even’, ‘constant’, or None.  This determines the
+type of extension to use for the padded signal to which the filter
+is applied.  If <em class="xref py py-obj">padtype</em> is None, no padding is used.  The default
+is ‘odd’.</p>
+</div></blockquote>
+<p><strong>padlen</strong> : int or None, optional</p>
+<blockquote>
+<div><p>The number of elements by which to extend <em class="xref py py-obj">x</em> at both ends of
+<em class="xref py py-obj">axis</em> before applying the filter. This value must be less than
+<em class="xref py py-obj">x.shape[axis]-1</em>.  <em class="xref py py-obj">padlen=0</em> implies no padding.
+The default value is 3*max(len(a),len(b)).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The filtered output, an array of type numpy.float64 with the same
+shape as <em class="xref py py-obj">x</em>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="scipy.signal.lfilter_zi.html#scipy.signal.lfilter_zi" title="scipy.signal.lfilter_zi"><tt class="xref py py-obj docutils literal"><span class="pre">lfilter_zi</span></tt></a>, <a class="reference internal" href="scipy.signal.lfilter.html#scipy.signal.lfilter" title="scipy.signal.lfilter"><tt class="xref py py-obj docutils literal"><span class="pre">lfilter</span></tt></a></p>
+</div>
+<p class="rubric">Examples</p>
+<p>First we create a one second signal that is the sum of two pure sine
+waves, with frequencies 5 Hz and 250 Hz, sampled at 2000 Hz.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">2001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xlow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xhigh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">250</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">xlow</span> <span class="o">+</span> <span class="n">xhigh</span>
+</pre></div>
+</div>
+<p>Now create a lowpass Butterworth filter with a cutoff of 0.125 times
+the Nyquist rate, or 125 Hz, and apply it to x with filtfilt.  The
+result should be approximately xlow, with no phase shift.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">butter</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">filtfilt</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">padlen</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">xlow</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="go">9.1086182074789912e-06</span>
+</pre></div>
+</div>
+<p>We get a fairly clean result for this artificial example because
+the odd extension is exact, and with the moderately long padding,
+the filter’s transients have dissipated by the time the actual data
+is reached.  In general, transient effects at the edges are
+unavoidable.</p>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.signal.lfilter_zi.html" title="previous chapter">scipy.signal.lfilter_zi</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.signal.deconvolve.html" title="next chapter">scipy.signal.deconvolve</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.signal.deconvolve.html" title="scipy.signal.deconvolve">next</a> |</li>
+<li class="right">
+<a href="scipy.signal.lfilter_zi.html" title="scipy.signal.lfilter_zi">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../signal.html">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

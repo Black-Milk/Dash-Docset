@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fourier Transforms (scipy.fftpack) &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Signal Processing (scipy.signal)" href="signal.html" />
+    <link rel="prev" title="Interpolation (scipy.interpolate)" href="interpolate.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="signal.html" title="Signal Processing (scipy.signal)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="interpolate.html" title="Interpolation (scipy.interpolate)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fourier-transforms-scipy-fftpack">
+<h1><a class="toc-backref" href="#id14">Fourier Transforms (<a class="reference internal" href="../fftpack.html#module-scipy.fftpack" title="scipy.fftpack"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.fftpack</span></tt></a>)</a><a class="headerlink" href="#fourier-transforms-scipy-fftpack" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is currently a stub page</p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fourier-transforms-scipy-fftpack" id="id14">Fourier Transforms (<a class="reference internal" href="../fftpack.html#module-scipy.fftpack" title="scipy.fftpack"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.fftpack</span></tt></a>)</a><ul>
+<li><a class="reference internal" href="#fast-fourier-transforms" id="id15">Fast Fourier transforms</a></li>
+<li><a class="reference internal" href="#one-dimensional-discrete-fourier-transforms" id="id16">One dimensional discrete Fourier transforms</a></li>
+<li><a class="reference internal" href="#two-and-n-dimensional-discrete-fourier-transforms" id="id17">Two and n dimensional discrete Fourier transforms</a></li>
+<li><a class="reference internal" href="#discrete-cosine-transforms" id="id18">Discrete Cosine Transforms</a><ul>
+<li><a class="reference internal" href="#type-i" id="id19">type I</a></li>
+<li><a class="reference internal" href="#type-ii" id="id20">type II</a></li>
+<li><a class="reference internal" href="#type-iii" id="id21">type III</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discrete-sine-transforms" id="id22">Discrete Sine Transforms</a><ul>
+<li><a class="reference internal" href="#id7" id="id23">type I</a></li>
+<li><a class="reference internal" href="#id8" id="id24">type II</a></li>
+<li><a class="reference internal" href="#id9" id="id25">type III</a></li>
+<li><a class="reference internal" href="#references" id="id26">References</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fft-convolution" id="id27">FFT convolution</a></li>
+<li><a class="reference internal" href="#cache-destruction" id="id28">Cache Destruction</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Fourier analysis is fundamentally a method for expressing a function as a
+sum of periodic components, and for recovering the signal from those
+components.  When both the function and its Fourier transform are
+replaced with discretized counterparts, it is called the discrete Fourier
+transform (DFT).  The DFT has become a mainstay of numerical computing in
+part because of a very fast algorithm for computing it, called the Fast
+Fourier Transform (FFT), which was known to Gauss (1805) and was brought
+to light in its current form by Cooley and Tukey <a class="reference internal" href="#ct">[CT]</a>.  Press et al. <a class="reference internal" href="#nr">[NR]</a>
+provide an accessible introduction to Fourier analysis and its
+applications.</p>
+<div class="section" id="fast-fourier-transforms">
+<h2><a class="toc-backref" href="#id15">Fast Fourier transforms</a><a class="headerlink" href="#fast-fourier-transforms" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="one-dimensional-discrete-fourier-transforms">
+<h2><a class="toc-backref" href="#id16">One dimensional discrete Fourier transforms</a><a class="headerlink" href="#one-dimensional-discrete-fourier-transforms" title="Permalink to this headline">¶</a></h2>
+<p>fft, ifft, rfft, irfft</p>
+</div>
+<div class="section" id="two-and-n-dimensional-discrete-fourier-transforms">
+<h2><a class="toc-backref" href="#id17">Two and n dimensional discrete Fourier transforms</a><a class="headerlink" href="#two-and-n-dimensional-discrete-fourier-transforms" title="Permalink to this headline">¶</a></h2>
+<p>fft in more than one dimension</p>
+</div>
+<div class="section" id="discrete-cosine-transforms">
+<h2><a class="toc-backref" href="#id18">Discrete Cosine Transforms</a><a class="headerlink" href="#discrete-cosine-transforms" title="Permalink to this headline">¶</a></h2>
+<p>Return the Discrete Cosine Transform <a class="reference internal" href="#mak">[Mak]</a> of arbitrary type sequence <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<p>For a single dimension array <tt class="docutils literal"><span class="pre">x</span></tt>, <tt class="docutils literal"><span class="pre">dct(x,</span> <span class="pre">norm='ortho')</span></tt> is equal to
+MATLAB <tt class="docutils literal"><span class="pre">dct(x)</span></tt>.</p>
+<p>There are theoretically 8 types of the DCT <a class="reference internal" href="#wpc">[WPC]</a>, only the first 3 types are
+implemented in scipy. &#8216;The&#8217; DCT generally refers to DCT type 2, and &#8216;the&#8217;
+Inverse DCT generally refers to DCT type 3.</p>
+<div class="section" id="type-i">
+<h3><a class="toc-backref" href="#id19">type I</a><a class="headerlink" href="#type-i" title="Permalink to this headline">¶</a></h3>
+<p>There are several definitions of the DCT-I; we use the following
+(for <tt class="docutils literal"><span class="pre">norm=None</span></tt>):</p>
+<div class="math">
+<p><img src="../_images/math/48f3da0bab41b09706ae0602c33cbd9ab398f428.png" alt="\[ y_k = x_0 + (-1)^k x_{N-1} + 2\sum_{n=1}^{N-2} x_n
+ \cos\left({\pi nk\over N-1}\right),
+ \qquad 0 \le k &lt; N. \]"/></p>
+</div><p>Only None is supported as normalization mode for DCT-I. Note also that the
+DCT-I is only supported for input size &gt; 1</p>
+</div>
+<div class="section" id="type-ii">
+<h3><a class="toc-backref" href="#id20">type II</a><a class="headerlink" href="#type-ii" title="Permalink to this headline">¶</a></h3>
+<p>There are several definitions of the DCT-II; we use the following
+(for <tt class="docutils literal"><span class="pre">norm=None</span></tt>):</p>
+<div class="math">
+<p><img src="../_images/math/be705fbc486ef12ed8709bc2bbbad5b7e3b6c307.png" alt="\[ y_k = 2 \sum_{n=0}^{N-1} x_n
+ \cos \left({\pi(2n+1)k \over 2N} \right)
+ \qquad 0 \le k &lt; N.\]"/></p>
+</div><p>If <tt class="docutils literal"><span class="pre">norm='ortho'</span></tt>, <img class="math" src="../_images/math/c5dd4a48fae40d106f05aa536bdbebd1f0195842.png" alt="y_k" style="vertical-align: -4px"/> is multiplied by a scaling factor <em class="xref py py-obj">f</em>:</p>
+<div class="math">
+<p><img src="../_images/math/8539deace9df2375e18b7a069dd78f89d3e9faea.png" alt="\[f = \begin{cases} \sqrt{1/(4N)}, &amp; \text{if $k = 0$} \\
+    \sqrt{1/(2N)}, &amp; \text{otherwise} \end{cases} \]"/></p>
+</div><p>Which makes the corresponding matrix of coefficients orthonormal
+(<em class="xref py py-obj">OO&#8217; = Id</em>).</p>
+</div>
+<div class="section" id="type-iii">
+<h3><a class="toc-backref" href="#id21">type III</a><a class="headerlink" href="#type-iii" title="Permalink to this headline">¶</a></h3>
+<p>There are several definitions of the DCT-III, we use the following
+(for <tt class="docutils literal"><span class="pre">norm=None</span></tt>):</p>
+<div class="math">
+<p><img src="../_images/math/340490f784c338bc97bb2c9f66e1059c4111cf0e.png" alt="\[ y_k = x_0 + 2 \sum_{n=1}^{N-1} x_n
+ \cos\left({\pi n(2k+1) \over 2N}\right)
+ \qquad 0 \le k &lt; N,\]"/></p>
+</div><p>or, for <tt class="docutils literal"><span class="pre">norm='ortho'</span></tt>:</p>
+<div class="math">
+<p><img src="../_images/math/2b105080f0cefc2833d91049830098acbb1727ac.png" alt="\[ y_k = {x_0\over\sqrt{N}} + {1\over\sqrt{N}} \sum_{n=1}^{N-1}
+ x_n \cos\left({\pi n(2k+1) \over 2N}\right)
+ \qquad 0 \le k &lt; N.\]"/></p>
+</div><p>The (unnormalized) DCT-III is the inverse of the (unnormalized) DCT-II, up
+to a factor <em class="xref py py-obj">2N</em>. The orthonormalized DCT-III is exactly the inverse of the
+orthonormalized DCT-II.</p>
+</div>
+</div>
+<div class="section" id="discrete-sine-transforms">
+<h2><a class="toc-backref" href="#id22">Discrete Sine Transforms</a><a class="headerlink" href="#discrete-sine-transforms" title="Permalink to this headline">¶</a></h2>
+<p>Return the Discrete Sine Transform <a class="reference internal" href="#mak">[Mak]</a> of arbitrary type sequence <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<p>There are theoretically 8 types of the DST for different combinations of even/odd
+boundary conditions and boundary off sets <a class="reference internal" href="#wps">[WPS]</a>, only the first 3 types are
+implemented in scipy.</p>
+<div class="section" id="id7">
+<h3><a class="toc-backref" href="#id23">type I</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>There are several definitions of the DST-I; we use the following
+for <tt class="docutils literal"><span class="pre">norm=None</span></tt>.  DST-I assumes the input is odd around n=-1 and n=N.</p>
+<div class="math">
+<p><img src="../_images/math/0f5d212f7e00ab50201a488a4f6b881cd14c6d5e.png" alt="\[ y_k = 2\sum_{n=0}^{N-1} x_n
+ \sin\left( \pi {(n+1) (k+1)}\over{N+1} \right),
+ \qquad 0 \le k &lt; N. \]"/></p>
+</div><p>Only None is supported as normalization mode for DST-I. Note also that the
+DCT-I is only supported for input size &gt; 1.
+The (unnormalized) DCT-I is its own inverse, up to a factor <em class="xref py py-obj">2(N+1)</em>.</p>
+</div>
+<div class="section" id="id8">
+<h3><a class="toc-backref" href="#id24">type II</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>There are several definitions of the DST-II; we use the following
+(for <tt class="docutils literal"><span class="pre">norm=None</span></tt>).  DST-II assumes the input is odd around n=-1/2 and even
+around n=N</p>
+<div class="math">
+<p><img src="../_images/math/7a7c70f8354fb97aa8cb288db5cc1851b0cc4a3f.png" alt="\[ y_k = 2 \sum_{n=0}^{N-1} x_n
+ \sin\left( {\pi (n+1/2)(k+1)} \over N \right),
+ \qquad 0 \le k &lt; N. \]"/></p>
+</div></div>
+<div class="section" id="id9">
+<h3><a class="toc-backref" href="#id25">type III</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>There are several definitions of the DST-III, we use the following
+(for <tt class="docutils literal"><span class="pre">norm=None</span></tt>).  DST-III assumes the input is odd around n=-1
+and even around n=N-1</p>
+<div class="math">
+<p><img src="../_images/math/e6f80c9260e3270d84136b25bb69e4fcb0e518ff.png" alt="\[ y_k = (-1)^k x_{N-1} + 2 \sum_{n=0}^{N-2} x_n
+ \sin \left( {\pi (n+1)(k+1/2)} \over N \right),
+ \qquad 0 \le k &lt; N. \]"/></p>
+</div><p>The (unnormalized) DCT-III is the inverse of the (unnormalized) DCT-II, up
+to a factor <em class="xref py py-obj">2N</em>.</p>
+</div>
+<div class="section" id="references">
+<h3><a class="toc-backref" href="#id26">References</a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<table class="docutils citation" frame="void" id="ct" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[CT]</a></td><td>Cooley, James W., and John W. Tukey, 1965, &#8220;An algorithm for the
+machine calculation of complex Fourier series,&#8221; <em>Math. Comput.</em>
+19: 297-301.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="nr" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[NR]</a></td><td>Press, W., Teukolsky, S., Vetterline, W.T., and Flannery, B.P.,
+2007, <em>Numerical Recipes: The Art of Scientific Computing</em>, ch.
+12-13.  Cambridge Univ. Press, Cambridge, UK.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="mak" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Mak]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> J. Makhoul, 1980, &#8216;A Fast Cosine Transform in One and Two Dimensions&#8217;,
+<em class="xref py py-obj">IEEE Transactions on acoustics, speech and signal processing</em>
+vol. 28(1), pp. 27-34, <a class="reference external" href="http://dx.doi.org/10.1109/TASSP.1980.1163351">http://dx.doi.org/10.1109/TASSP.1980.1163351</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="wpc" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[WPC]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Discrete_cosine_transform">http://en.wikipedia.org/wiki/Discrete_cosine_transform</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="wps" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[WPS]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Discrete_sine_transform">http://en.wikipedia.org/wiki/Discrete_sine_transform</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="fft-convolution">
+<h2><a class="toc-backref" href="#id27">FFT convolution</a><a class="headerlink" href="#fft-convolution" title="Permalink to this headline">¶</a></h2>
+<p>scipy.fftpack.convolve performs a convolution of two one-dimensional
+arrays in frequency domain.</p>
+</div>
+<div class="section" id="cache-destruction">
+<h2><a class="toc-backref" href="#id28">Cache Destruction</a><a class="headerlink" href="#cache-destruction" title="Permalink to this headline">¶</a></h2>
+<p>To accelerate repeat transforms on arrays of the same shape and dtype,
+scipy.fftpack keeps a cache of the prime factorization of length of the array
+and pre-computed trigonometric functions.  These caches can be destroyed by
+calling the appropriate function in scipy.fftpack._fftpack.  dst(type=1) and
+idst(type=1) share a cache (<a href="#id10"><span class="problematic" id="id11">*</span></a>dst1_cache).  As do dst(type=2), dst(type=3),
+idst(type=3), and idst(type=3) (<a href="#id12"><span class="problematic" id="id13">*</span></a>dst2_cache).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fourier Transforms (<tt class="docutils literal"><span class="pre">scipy.fftpack</span></tt>)</a><ul>
+<li><a class="reference internal" href="#fast-fourier-transforms">Fast Fourier transforms</a></li>
+<li><a class="reference internal" href="#one-dimensional-discrete-fourier-transforms">One dimensional discrete Fourier transforms</a></li>
+<li><a class="reference internal" href="#two-and-n-dimensional-discrete-fourier-transforms">Two and n dimensional discrete Fourier transforms</a></li>
+<li><a class="reference internal" href="#discrete-cosine-transforms">Discrete Cosine Transforms</a><ul>
+<li><a class="reference internal" href="#type-i">type I</a></li>
+<li><a class="reference internal" href="#type-ii">type II</a></li>
+<li><a class="reference internal" href="#type-iii">type III</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discrete-sine-transforms">Discrete Sine Transforms</a><ul>
+<li><a class="reference internal" href="#id7">type I</a></li>
+<li><a class="reference internal" href="#id8">type II</a></li>
+<li><a class="reference internal" href="#id9">type III</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fft-convolution">FFT convolution</a></li>
+<li><a class="reference internal" href="#cache-destruction">Cache Destruction</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="interpolate.html"
+                        title="previous chapter">Interpolation (<tt class="docutils literal"><span class="pre">scipy.interpolate</span></tt>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="signal.html"
+                        title="next chapter">Signal Processing (<tt class="docutils literal"><span class="pre">scipy.signal</span></tt>)</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="signal.html" title="Signal Processing (scipy.signal)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="interpolate.html" title="Interpolation (scipy.interpolate)"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" >SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

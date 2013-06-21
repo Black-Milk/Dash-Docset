@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.spatial.KDTree.query — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="scipy.spatial.KDTree.html" rel="up" title="scipy.spatial.KDTree"/><link href="scipy.spatial.KDTree.query_ball_point.html" rel="next" title="scipy.spatial.KDTree.query_ball_point"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.spatial.KDTree.query_ball_point.html" title="scipy.spatial.KDTree.query_ball_point">next</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../spatial.html">Spatial algorithms and data structures (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.spatial</span></tt>)</a> »</li>
+<li><a accesskey="U" href="scipy.spatial.KDTree.html">scipy.spatial.KDTree</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-spatial-kdtree-query">
+<h1>scipy.spatial.KDTree.query<a class="headerlink" href="#scipy-spatial-kdtree-query" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="scipy.spatial.KDTree.query"><a name="//apple_ref/cpp/clm/scipy.spatial.KDTree.query"></a>
+<tt class="descclassname">KDTree.</tt><tt class="descname">query</tt><big>(</big><em>x</em>, <em>k=1</em>, <em>eps=0</em>, <em>p=2</em>, <em>distance_upper_bound=inf</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/spatial/kdtree.py#L383"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.spatial.KDTree.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the kd-tree for nearest neighbors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>x</strong> : array_like, last dimension self.m</p>
+<blockquote>
+<div><p>An array of points to query.</p>
+</div></blockquote>
+<p><strong>k</strong> : integer</p>
+<blockquote>
+<div><p>The number of nearest neighbors to return.</p>
+</div></blockquote>
+<p><strong>eps</strong> : nonnegative float</p>
+<blockquote>
+<div><p>Return approximate nearest neighbors; the kth returned value
+is guaranteed to be no further than (1+eps) times the
+distance to the real kth nearest neighbor.</p>
+</div></blockquote>
+<p><strong>p</strong> : float, 1&lt;=p&lt;=infinity</p>
+<blockquote>
+<div><p>Which Minkowski p-norm to use.
+1 is the sum-of-absolute-values “Manhattan” distance
+2 is the usual Euclidean distance
+infinity is the maximum-coordinate-difference distance</p>
+</div></blockquote>
+<p><strong>distance_upper_bound</strong> : nonnegative float</p>
+<blockquote>
+<div><p>Return only neighbors within this distance. This is used to prune
+tree searches, so if you are doing a series of nearest-neighbor
+queries, it may help to supply the distance to the nearest neighbor
+of the most recent point.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>d</strong> : array of floats</p>
+<blockquote>
+<div><p>The distances to the nearest neighbors.
+If x has shape tuple+(self.m,), then d has shape tuple if
+k is one, or tuple+(k,) if k is larger than one.  Missing
+neighbors are indicated with infinite distances.  If k is None,
+then d is an object array of shape tuple, containing lists
+of distances. In either case the hits are sorted by distance
+(nearest first).</p>
+</div></blockquote>
+<p><strong>i</strong> : array of integers</p>
+<blockquote class="last">
+<div><p>The locations of the neighbors in self.data. i is the same
+shape as d.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">spatial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">KDTree</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span><span class="o">.</span><span class="n">data</span>
+<span class="go">array([[0, 2],</span>
+<span class="go">       [0, 3],</span>
+<span class="go">       [0, 4],</span>
+<span class="go">       [0, 5],</span>
+<span class="go">       [0, 6],</span>
+<span class="go">       [0, 7],</span>
+<span class="go">       [1, 2],</span>
+<span class="go">       [1, 3],</span>
+<span class="go">       [1, 4],</span>
+<span class="go">       [1, 5],</span>
+<span class="go">       [1, 6],</span>
+<span class="go">       [1, 7],</span>
+<span class="go">       [2, 2],</span>
+<span class="go">       [2, 3],</span>
+<span class="go">       [2, 4],</span>
+<span class="go">       [2, 5],</span>
+<span class="go">       [2, 6],</span>
+<span class="go">       [2, 7],</span>
+<span class="go">       [3, 2],</span>
+<span class="go">       [3, 3],</span>
+<span class="go">       [3, 4],</span>
+<span class="go">       [3, 5],</span>
+<span class="go">       [3, 6],</span>
+<span class="go">       [3, 7],</span>
+<span class="go">       [4, 2],</span>
+<span class="go">       [4, 3],</span>
+<span class="go">       [4, 4],</span>
+<span class="go">       [4, 5],</span>
+<span class="go">       [4, 6],</span>
+<span class="go">       [4, 7]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.1</span><span class="p">,</span> <span class="mf">2.9</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+<span class="go">(array([ 2.        ,  0.14142136]), array([ 0, 13]))</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.spatial.KDTree.query_ball_point.html" title="next chapter">scipy.spatial.KDTree.query_ball_point</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.spatial.KDTree.query_ball_point.html" title="scipy.spatial.KDTree.query_ball_point">next</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../spatial.html">Spatial algorithms and data structures (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.spatial</span></tt>)</a> »</li>
+<li><a href="scipy.spatial.KDTree.html">scipy.spatial.KDTree</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

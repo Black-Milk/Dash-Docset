@@ -1,0 +1,1169 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Statistics (scipy.stats) &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Multi-dimensional image processing (scipy.ndimage)" href="ndimage.html" />
+    <link rel="prev" title="Spatial data structures and algorithms (scipy.spatial)" href="spatial.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ndimage.html" title="Multi-dimensional image processing (scipy.ndimage)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="spatial.html" title="Spatial data structures and algorithms (scipy.spatial)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="statistics-scipy-stats">
+<h1>Statistics (<a class="reference internal" href="../stats.html#module-scipy.stats" title="scipy.stats"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats</span></tt></a>)<a class="headerlink" href="#statistics-scipy-stats" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial we discuss many, but certainly not all, features of
+<tt class="docutils literal"><span class="pre">scipy.stats</span></tt>. The intention here is to provide a user with a
+working knowledge of this package. We refer to the <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/stats.html">reference manual</a> for further
+details.</p>
+<p>Note: This documentation is work in progress.</p>
+</div>
+<div class="section" id="random-variables">
+<h2>Random Variables<a class="headerlink" href="#random-variables" title="Permalink to this headline">¶</a></h2>
+<p>There are two general distribution classes that have been implemented
+for encapsulating <a class="reference internal" href="stats/continuous.html#continuous-random-variables"><em>continuous random variables</em></a> and <a class="reference internal" href="stats/discrete.html#discrete-random-variables"><em>discrete random variables</em></a> . Over 80 continuous random variables
+(RVs) and 10 discrete random variables have been implemented using
+these classes. Besides this, new routines and distributions can easily
+added by the end user. (If you create one, please contribute it).</p>
+<p>All of the statistics functions are located in the sub-package
+<a class="reference internal" href="../stats.html#module-scipy.stats" title="scipy.stats"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.stats</span></tt></a> and a fairly complete listing of these functions
+can be obtained using <tt class="docutils literal"><span class="pre">info(stats)</span></tt>.  The list of the random
+variables available can also be obtained from the docstring for the
+stats sub-package.</p>
+<p>In the discussion below we mostly focus on continuous RVs. Nearly all
+applies to discrete variables also, but we point out some differences
+here: <a class="reference internal" href="#discrete-points-label"><em>Specific Points for Discrete Distributions</em></a>.</p>
+<div class="section" id="getting-help">
+<h3>Getting Help<a class="headerlink" href="#getting-help" title="Permalink to this headline">¶</a></h3>
+<p>First of all, all distributions are accompanied with help
+functions. To obtain just some basic information we can call</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">norm</span><span class="o">.</span><span class="n">__doc__</span>
+</pre></div>
+</div>
+<p>To find the support, i.e., upper and lower bound of the distribution,
+call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;bounds of distribution lower: </span><span class="si">%s</span><span class="s">, upper: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">a</span><span class="p">,</span><span class="n">norm</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+<span class="go">bounds of distribution lower: -inf, upper: inf</span>
+</pre></div>
+</div>
+<p>We can list all methods and properties of the distribution with
+<tt class="docutils literal"><span class="pre">dir(norm)</span></tt>.  As it turns out, some of the methods are private
+methods although they are not named as such (their name does not start
+with a leading underscore), for example <tt class="docutils literal"><span class="pre">veccdf</span></tt> or <tt class="docutils literal"><span class="pre">xa</span></tt> and
+<tt class="docutils literal"><span class="pre">xb</span></tt> are only available for internal calculation.</p>
+<p>To obtain the <em class="xref py py-obj">real</em> main methods, we list the methods of the frozen
+distribution. (We explain the meaning of a <em class="xref py py-obj">frozen</em> distribution
+below).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rv</span> <span class="o">=</span> <span class="n">norm</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">(</span><span class="n">rv</span><span class="p">)</span> <span class="c">#reformatted</span>
+<span class="go">    [&#39;__class__&#39;, &#39;__delattr__&#39;, &#39;__dict__&#39;, &#39;__doc__&#39;, &#39;__getattribute__&#39;,</span>
+<span class="go">    &#39;__hash__&#39;, &#39;__init__&#39;, &#39;__module__&#39;, &#39;__new__&#39;, &#39;__reduce__&#39;, &#39;__reduce_ex__&#39;,</span>
+<span class="go">    &#39;__repr__&#39;, &#39;__setattr__&#39;, &#39;__str__&#39;, &#39;__weakref__&#39;, &#39;args&#39;, &#39;cdf&#39;, &#39;dist&#39;,</span>
+<span class="go">    &#39;entropy&#39;, &#39;isf&#39;, &#39;kwds&#39;, &#39;moment&#39;, &#39;pdf&#39;, &#39;pmf&#39;, &#39;ppf&#39;, &#39;rvs&#39;, &#39;sf&#39;, &#39;stats&#39;]</span>
+</pre></div>
+</div>
+<p>Finally, we can obtain the list of available distribution through
+introspection:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist_continu</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span> <span class="k">if</span>
+<span class="gp">... </span>                <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span><span class="n">d</span><span class="p">),</span> <span class="n">stats</span><span class="o">.</span><span class="n">rv_continuous</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist_discrete</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span> <span class="k">if</span>
+<span class="gp">... </span>                 <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span><span class="n">d</span><span class="p">),</span> <span class="n">stats</span><span class="o">.</span><span class="n">rv_discrete</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;number of continuous distributions:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist_continu</span><span class="p">)</span>
+<span class="go">number of continuous distributions: 84</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;number of discrete distributions:  &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dist_discrete</span><span class="p">)</span>
+<span class="go">number of discrete distributions:   12</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="common-methods">
+<h3>Common Methods<a class="headerlink" href="#common-methods" title="Permalink to this headline">¶</a></h3>
+<p>The main public methods for continuous  RVs are:</p>
+<ul class="simple">
+<li>rvs:   Random Variates</li>
+<li>pdf:   Probability Density Function</li>
+<li>cdf:   Cumulative Distribution Function</li>
+<li>sf:    Survival Function (1-CDF)</li>
+<li>ppf:   Percent Point Function (Inverse of CDF)</li>
+<li>isf:   Inverse Survival Function (Inverse of SF)</li>
+<li>stats: Return mean, variance, (Fisher&#8217;s) skew, or (Fisher&#8217;s) kurtosis</li>
+<li>moment: non-central moments of the distribution</li>
+</ul>
+<p>Lets take a normal RV as an example.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
+<p>To compute the <tt class="docutils literal"><span class="pre">cdf</span></tt> at a number of points, we can pass a list or a numpy array.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">array([ 0.15865525,  0.5       ,  0.84134475])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+<span class="go">array([ 0.15865525,  0.5       ,  0.84134475])</span>
+</pre></div>
+</div>
+<p>Thus, the basic methods such as <em class="xref py py-obj">pdf</em>, <em class="xref py py-obj">cdf</em>, and so on are vectorized
+with <tt class="docutils literal"><span class="pre">np.vectorize</span></tt>.</p>
+<p>Other generally useful methods are supported too:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">norm</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">norm</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="go">(0.0, 1.0, 1.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">moments</span> <span class="o">=</span> <span class="s">&quot;mv&quot;</span><span class="p">)</span>
+<span class="go">(array(0.0), array(1.0))</span>
+</pre></div>
+</div>
+<p>To find the median of a distribution we can use the percent point
+function <tt class="docutils literal"><span class="pre">ppf</span></tt>, which is the inverse of the <tt class="docutils literal"><span class="pre">cdf</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">..</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To generate a set of random variates:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([-0.35687759,  1.34347647, -0.11710531, -1.00725181, -0.51275702])</span>
+</pre></div>
+</div>
+<p>Don&#8217;t think that <tt class="docutils literal"><span class="pre">norm.rvs(5)</span></tt> generates 5 variates:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">7.131624370075814</span>
+</pre></div>
+</div>
+<p>This brings us, in fact, to topic of the next subsection.</p>
+</div>
+<div class="section" id="shifting-and-scaling">
+<h3>Shifting and Scaling<a class="headerlink" href="#shifting-and-scaling" title="Permalink to this headline">¶</a></h3>
+<p>All continuous distributions take <tt class="docutils literal"><span class="pre">loc</span></tt> and <tt class="docutils literal"><span class="pre">scale</span></tt> as keyword
+parameters to adjust the location and scale of the distribution,
+e.g. for the standard normal distribution the location is the mean and
+the scale is the standard deviation.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">moments</span> <span class="o">=</span> <span class="s">&quot;mv&quot;</span><span class="p">)</span>
+<span class="go">(array(3.0), array(16.0))</span>
+</pre></div>
+</div>
+<p>In general the standardized distribution for a random variable <tt class="docutils literal"><span class="pre">X</span></tt>
+is obtained through the transformation <tt class="docutils literal"><span class="pre">(X</span> <span class="pre">-</span> <span class="pre">loc)</span> <span class="pre">/</span> <span class="pre">scale</span></tt>.  The
+default values are <tt class="docutils literal"><span class="pre">loc</span> <span class="pre">=</span> <span class="pre">0</span></tt> and <tt class="docutils literal"><span class="pre">scale</span> <span class="pre">=</span> <span class="pre">1</span></tt>.</p>
+<p>Smart use of <tt class="docutils literal"><span class="pre">loc</span></tt> and <tt class="docutils literal"><span class="pre">scale</span></tt> can help modify the standard
+distributions in many ways. To illustrate the scaling further, the
+<tt class="docutils literal"><span class="pre">cdf</span></tt> of an exponentially distributed RV with mean <img class="math" src="../_images/math/4c9152e63118bc3565c2b66c99b15170eafa8c79.png" alt="1/\lambda" style="vertical-align: -5px"/>
+is given by</p>
+<div class="math">
+<p><img src="../_images/math/e3326b0615c92af533691db3ba64548aedf0b111.png" alt="F(x) = 1 - \exp(-\lambda x)"/></p>
+</div><p>By applying the scaling rule above, it can be seen that by
+taking <tt class="docutils literal"><span class="pre">scale</span>&nbsp; <span class="pre">=</span> <span class="pre">1./lambda</span></tt> we get the proper scale.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">expon</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expon</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scale</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">)</span>
+<span class="go">3.0</span>
+</pre></div>
+</div>
+<p>The uniform distribution is also interesting:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">uniform</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">uniform</span><span class="o">.</span><span class="n">cdf</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">loc</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">array([ 0.  ,  0.  ,  0.25,  0.5 ,  0.75,  1.  ])</span>
+</pre></div>
+</div>
+<p>Finally, recall from the previous paragraph that we are left with the
+problem of the meaning of <tt class="docutils literal"><span class="pre">norm.rvs(5)</span></tt>. As it turns out, calling a
+distribution like this, the first argument, i.e., the 5, gets passed
+to set the <tt class="docutils literal"><span class="pre">loc</span></tt> parameter. Lets see:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
+<span class="go">4.983550784784704</span>
+</pre></div>
+</div>
+<p>Thus, to explain the output of the example of the last section:
+<tt class="docutils literal"><span class="pre">norm.rvs(5)`</span> <span class="pre">generates</span> <span class="pre">a</span> <span class="pre">normally</span> <span class="pre">distributed</span> <span class="pre">random</span> <span class="pre">variate</span> <span class="pre">with</span>
+<span class="pre">mean</span> <span class="pre">``loc=5</span></tt>.</p>
+<p>I prefer to set the <tt class="docutils literal"><span class="pre">loc</span></tt> and <tt class="docutils literal"><span class="pre">scale</span></tt> parameter explicitly, by
+passing the values as keywords rather than as arguments. This is less
+of a hassle as it may seem. We clarify this below when we explain the
+topic of <em class="xref py py-obj">freezing a RV</em>.</p>
+</div>
+<div class="section" id="shape-parameters">
+<h3>Shape Parameters<a class="headerlink" href="#shape-parameters" title="Permalink to this headline">¶</a></h3>
+<p>While a general continuous random variable can be shifted and scaled
+with the <tt class="docutils literal"><span class="pre">loc</span></tt> and <tt class="docutils literal"><span class="pre">scale</span></tt> parameters, some distributions require
+additional shape parameters. For instance, the gamma distribution, with density</p>
+<div class="math">
+<p><img src="../_images/math/0752a7e956436d9b966c933b1b46697d49f3d2e7.png" alt="\gamma(x,n) = \frac{\lambda (\lambda x)^{n-1}}{\Gamma(n)} e^{-\lambda x},"/></p>
+</div><p>requires the shape parameter <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/>. Observe that setting
+<img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> can be obtained by setting the <tt class="docutils literal"><span class="pre">scale</span></tt> keyword to
+<img class="math" src="../_images/math/4c9152e63118bc3565c2b66c99b15170eafa8c79.png" alt="1/\lambda" style="vertical-align: -5px"/>.</p>
+<p>Lets check the number and name of the shape parameters of the gamma
+distribution. (We know from the above that this should be 1.)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gamma</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="o">.</span><span class="n">numargs</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="o">.</span><span class="n">shapes</span>
+<span class="go">&#39;a&#39;</span>
+</pre></div>
+</div>
+<p>Now we set the value of the shape variable to 1 to obtain the
+exponential distribution, so that we compare easily whether we get the
+results we expect.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span> <span class="n">gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">moments</span> <span class="o">=</span> <span class="s">&quot;mv&quot;</span><span class="p">)</span>
+<span class="go">(array(2.0), array(4.0))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="freezing-a-distribution">
+<h3>Freezing a Distribution<a class="headerlink" href="#freezing-a-distribution" title="Permalink to this headline">¶</a></h3>
+<p>Passing the <tt class="docutils literal"><span class="pre">loc</span></tt> and <tt class="docutils literal"><span class="pre">scale</span></tt> keywords time and again can become
+quite bothersome. The concept of <em class="xref py py-obj">freezing</em> a RV is used to
+solve such problems.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rv</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By using <tt class="docutils literal"><span class="pre">rv</span></tt> we no longer have to include the scale or the shape
+parameters anymore. Thus, distributions can be used in one of two
+ways, either by passing all distribution parameters to each method
+call (such as we did earlier) or by freezing the parameters for the
+instance of the distribution. Let us check this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rv</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">rv</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="go">(2.0, 2.0)</span>
+</pre></div>
+</div>
+<p>This is indeed what we should get.</p>
+</div>
+<div class="section" id="broadcasting">
+<h3>Broadcasting<a class="headerlink" href="#broadcasting" title="Permalink to this headline">¶</a></h3>
+<p>The basic methods <tt class="docutils literal"><span class="pre">pdf</span></tt> and so on satisfy the usual numpy broadcasting rules. For
+example, we can calculate the critical values for the upper tail of
+the t distribution for different probabilites and degrees of freedom.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span> <span class="p">[[</span><span class="mi">10</span><span class="p">],</span> <span class="p">[</span><span class="mi">11</span><span class="p">]])</span>
+<span class="go">array([[ 1.37218364,  1.81246112,  2.76376946],</span>
+<span class="go">       [ 1.36343032,  1.79588482,  2.71807918]])</span>
+</pre></div>
+</div>
+<p>Here, the first row are the critical values for 10 degrees of freedom
+and the second row for 11 degrees of freedom (d.o.f.). Thus, the
+broadcasting rules give the same result of calling <tt class="docutils literal"><span class="pre">isf</span></tt> twice:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span> <span class="mi">10</span><span class="p">)</span>
+<span class="go">array([ 1.37218364,  1.81246112,  2.76376946])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span> <span class="mi">11</span><span class="p">)</span>
+<span class="go">array([ 1.36343032,  1.79588482,  2.71807918])</span>
+</pre></div>
+</div>
+<p>If the array with probabilities, i.e, <tt class="docutils literal"><span class="pre">[0.1,</span> <span class="pre">0.05,</span> <span class="pre">0.01]</span></tt> and the
+array of degrees of freedom i.e., <tt class="docutils literal"><span class="pre">[10,</span> <span class="pre">11,</span> <span class="pre">12]</span></tt>, have the same
+array shape, then element wise matching is used. As an example, we can
+obtain the 10% tail for 10 d.o.f., the 5% tail for 11 d.o.f. and the
+1% tail for 12 d.o.f. by calling</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="go">array([ 1.37218364,  1.79588482,  2.68099799])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specific-points-for-discrete-distributions">
+<span id="discrete-points-label"></span><h3>Specific Points for Discrete Distributions<a class="headerlink" href="#specific-points-for-discrete-distributions" title="Permalink to this headline">¶</a></h3>
+<p>Discrete distribution have mostly the same basic methods as the
+continuous distributions.  However <tt class="docutils literal"><span class="pre">pdf</span></tt> is replaced the probability
+mass function <tt class="docutils literal"><span class="pre">pmf</span></tt>, no estimation methods, such as fit, are
+available, and <tt class="docutils literal"><span class="pre">scale</span></tt> is not a valid keyword parameter. The
+location parameter, keyword <tt class="docutils literal"><span class="pre">loc</span></tt> can still be used to shift the
+distribution.</p>
+<p>The computation of the cdf requires some extra attention. In the case
+of continuous distribution the cumulative distribution function is in
+most standard cases strictly monotonic increasing in the bounds (a,b)
+and has therefore a unique inverse. The cdf of a discrete
+distribution, however, is a step function, hence the inverse cdf,
+i.e., the percent point function, requires a different definition:</p>
+<div class="highlight-python"><pre>ppf(q) = min{x : cdf(x) &gt;= q, x integer}</pre>
+</div>
+<p>For further info, see the docs <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/tutorial/stats/discrete.html#percent-point-function-inverse-cdf">here</a>.</p>
+<p>We can look at the hypergeometric distribution as an example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">hypergeom</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">M</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If we use the cdf at some integer points and then evaluate the ppf at those
+cdf values, we get the initial integers back, for example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([0, 2, 4, 6])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prb</span> <span class="o">=</span> <span class="n">hypergeom</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prb</span>
+<span class="go">array([ 0.0001031991744066,  0.0521155830753351,  0.6083591331269301,</span>
+<span class="go">        0.9897832817337386])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hypergeom</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">prb</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="go">array([ 0.,  2.,  4.,  6.])</span>
+</pre></div>
+</div>
+<p>If we use values that are not at the kinks of the cdf step function, we get
+the next higher integer back:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hypergeom</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">prb</span><span class="o">+</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="go">array([ 1.,  3.,  5.,  7.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hypergeom</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">prb</span><span class="o">-</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="go">array([ 0.,  2.,  4.,  6.])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fitting-distributions">
+<h3>Fitting Distributions<a class="headerlink" href="#fitting-distributions" title="Permalink to this headline">¶</a></h3>
+<p>The main additional methods of the not frozen distribution are related
+to the estimation of distribution parameters:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>fit:   maximum likelihood estimation of distribution parameters, including location</dt>
+<dd><p class="first last">and scale</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">fit_loc_scale: estimation of location and scale when shape parameters are given</p>
+</li>
+<li><p class="first">nnlf:  negative log likelihood function</p>
+</li>
+<li><p class="first">expect: Calculate the expectation of a function against the pdf or pmf</p>
+</li>
+</ul>
+</div>
+<div class="section" id="performance-issues-and-cautionary-remarks">
+<span id="performance-issues-label"></span><h3>Performance Issues and Cautionary Remarks<a class="headerlink" href="#performance-issues-and-cautionary-remarks" title="Permalink to this headline">¶</a></h3>
+<p>The performance of the individual methods, in terms of speed, varies
+widely by distribution and method. The results of a method are
+obtained in one of two ways: either by explicit calculation, or by a
+generic algorithm that is independent of the specific distribution.</p>
+<p>Explicit calculation, on the one hand, requires that the method is
+directly specified for the given distribution, either through analytic
+formulas or through special functions in <tt class="docutils literal"><span class="pre">scipy.special</span></tt> or
+<tt class="docutils literal"><span class="pre">numpy.random</span></tt> for <tt class="docutils literal"><span class="pre">rvs</span></tt>. These are usually relatively fast
+calculations.</p>
+<p>The generic methods, on the other hand, are used if the distribution
+does not specify any explicit calculation. To define a distribution,
+only one of pdf or cdf is necessary; all other methods can be derived
+using numeric integration and root finding. However, these indirect
+methods can be <em class="xref py py-obj">very</em> slow. As an example, <tt class="docutils literal"><span class="pre">rgh</span> <span class="pre">=</span>
+<span class="pre">stats.gausshyper.rvs(0.5,</span> <span class="pre">2,</span> <span class="pre">2,</span> <span class="pre">2,</span> <span class="pre">size=100)</span></tt> creates random
+variables in a very indirect way and takes about 19 seconds for 100
+random variables on my computer, while one million random variables
+from the standard normal or from the t distribution take just above
+one second.</p>
+</div>
+<div class="section" id="remaining-issues">
+<h3>Remaining Issues<a class="headerlink" href="#remaining-issues" title="Permalink to this headline">¶</a></h3>
+<p>The distributions in <tt class="docutils literal"><span class="pre">scipy.stats</span></tt> have recently been corrected and improved
+and gained a considerable test suite, however a few issues remain:</p>
+<ul class="simple">
+<li>skew and kurtosis, 3rd and 4th moments and entropy are not thoroughly
+tested and some coarse testing indicates that there are still some
+incorrect results left.</li>
+<li>the distributions have been tested over some range of parameters,
+however in some corner ranges, a few incorrect results may remain.</li>
+<li>the maximum likelihood estimation in <em class="xref py py-obj">fit</em> does not work with
+default starting parameters for all distributions and the user
+needs to supply good starting parameters. Also, for some
+distribution using a maximum likelihood estimator might
+inherently not be the best choice.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="building-specific-distributions">
+<h2>Building  Specific Distributions<a class="headerlink" href="#building-specific-distributions" title="Permalink to this headline">¶</a></h2>
+<p>The next examples shows how to build your own distributions.  Further
+examples show the usage of the distributions and some statistical
+tests.</p>
+<div class="section" id="making-a-continuous-distribution-i-e-subclassing-rv-continuous">
+<h3>Making a Continuous Distribution, i.e., Subclassing <tt class="docutils literal"><span class="pre">rv_continuous</span></tt><a class="headerlink" href="#making-a-continuous-distribution-i-e-subclassing-rv-continuous" title="Permalink to this headline">¶</a></h3>
+<p>Making continuous distributions is fairly simple.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">deterministic_gen</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">rv_continuous</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="p">):</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">deterministic</span> <span class="o">=</span> <span class="n">deterministic_gen</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;deterministic&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deterministic</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="go">array([ 0.,  0.,  0.,  0.,  0.,  0.,  1.,  1.,  1.,  1.,  1.,  1.])</span>
+</pre></div>
+</div>
+<p>Interestingly,  the <tt class="docutils literal"><span class="pre">pdf</span></tt> is now computed automatically:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">deterministic</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="go">array([  0.00000000e+00,   0.00000000e+00,   0.00000000e+00,</span>
+<span class="go">         0.00000000e+00,   0.00000000e+00,   0.00000000e+00,</span>
+<span class="go">         5.83333333e+04,   4.16333634e-12,   4.16333634e-12,</span>
+<span class="go">         4.16333634e-12,   4.16333634e-12,   4.16333634e-12])</span>
+</pre></div>
+</div>
+<p>Be aware of the performance issues mentions in
+<a class="reference internal" href="#performance-issues-label"><em>Performance Issues and Cautionary Remarks</em></a>. The computation of unspecified
+common methods can become very slow, since only general methods are
+called which, by their very nature, cannot use any specific
+information about the distribution. Thus, as a cautionary example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">deterministic</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">)</span>
+<span class="go">(4.163336342344337e-13, 0.0)</span>
+</pre></div>
+</div>
+<p>But this is not correct: the integral over this pdf should be 1. Lets make the
+integration interval smaller:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">deterministic</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="c"># warning removed</span>
+<span class="go">(1.000076872229173, 0.0010625571718182458)</span>
+</pre></div>
+</div>
+<p>This looks better. However, the problem originated from the fact that
+the pdf is not specified in the class definition of the deterministic
+distribution.</p>
+</div>
+<div class="section" id="subclassing-rv-discrete">
+<h3>Subclassing <tt class="docutils literal"><span class="pre">rv_discrete</span></tt><a class="headerlink" href="#subclassing-rv-discrete" title="Permalink to this headline">¶</a></h3>
+<p>In the following we use <tt class="docutils literal"><span class="pre">stats.rv_discrete</span></tt> to generate a discrete
+distribution that has the probabilities of the truncated normal for the
+intervals centered around the integers.</p>
+<p><strong>General Info</strong></p>
+<p>From the docstring of rv_discrete, i.e.,</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">rv_discrete</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">rv_discrete</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>we learn that:</p>
+<blockquote>
+<div>&#8220;You can construct an aribtrary discrete rv where P{X=xk} = pk by
+passing to the rv_discrete initialization method (through the values=
+keyword) a tuple of sequences (xk, pk) which describes only those
+values of X (xk) that occur with nonzero probability (pk).&#8221;</div></blockquote>
+<p>Next to this, there are some further requirements for this approach to
+work:</p>
+<ul class="simple">
+<li>The keyword <em class="xref py py-obj">name</em> is required.</li>
+<li>The support points of the distribution xk have to be integers.</li>
+<li>The number of significant digits (decimals) needs to be specified.</li>
+</ul>
+<p>In fact, if the last two requirements are not satisfied an exception
+may be raised or the resulting numbers may be incorrect.</p>
+<p><strong>An Example</strong></p>
+<p>Lets do the work. First</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">npoints</span> <span class="o">=</span> <span class="mi">20</span>   <span class="c"># number of integer support points of the distribution minus 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npointsh</span> <span class="o">=</span> <span class="n">npoints</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npointsf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">npoints</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nbound</span> <span class="o">=</span> <span class="mi">4</span>   <span class="c"># bounds for the truncated normal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normbound</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">npointsf</span><span class="p">)</span> <span class="o">*</span> <span class="n">nbound</span>   <span class="c"># actual bounds of truncated normal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">npointsh</span><span class="p">,</span> <span class="n">npointsh</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>   <span class="c"># integer grid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gridlimitsnorm</span> <span class="o">=</span> <span class="p">(</span><span class="n">grid</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">npointsh</span> <span class="o">*</span> <span class="n">nbound</span>   <span class="c"># bin limits for the truncnorm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gridlimits</span> <span class="o">=</span> <span class="n">grid</span> <span class="o">-</span> <span class="mf">0.5</span>   <span class="c"># used later in the analysis</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">truncnorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">gridlimitsnorm</span><span class="p">,</span> <span class="o">-</span><span class="n">normbound</span><span class="p">,</span> <span class="n">normbound</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gridint</span> <span class="o">=</span> <span class="n">grid</span>
+</pre></div>
+</div>
+<p>And finally we can subclass <tt class="docutils literal"><span class="pre">rv_discrete</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">normdiscrete</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">rv_discrete</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">(</span><span class="n">gridint</span><span class="p">,</span>
+<span class="gp">... </span>             <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">7</span><span class="p">)),</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;normdiscrete&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now that we have defined the distribution, we have access to all
+common methods of discrete distributions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;mean = </span><span class="si">%6.4f</span><span class="s">, variance = </span><span class="si">%6.4f</span><span class="s">, skew = </span><span class="si">%6.4f</span><span class="s">, kurtosis = </span><span class="si">%6.4f</span><span class="s">&#39;</span><span class="o">%</span> \
+<span class="gp">... </span>      <span class="n">normdiscrete</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">moments</span> <span class="o">=</span>  <span class="s">&#39;mvsk&#39;</span><span class="p">)</span>
+<span class="go">mean = -0.0000, variance = 6.3302, skew = 0.0000, kurtosis = -0.0076</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nd_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">normdiscrete</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">moments</span><span class="o">=</span><span class="s">&#39;v&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Testing the Implementation</strong></p>
+<p>Lets generate a random sample and compare observed frequencies with
+the probabilities.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n_sample</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">87655678</span><span class="p">)</span>   <span class="c"># fix the seed for replicability</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rvs</span> <span class="o">=</span> <span class="n">normdiscrete</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n_sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rvsnd</span> <span class="o">=</span> <span class="n">rvs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">gridlimits</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sfreq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">gridint</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">probs</span><span class="o">*</span><span class="n">n_sample</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sfreq</span>
+<span class="go">[[ -1.00000000e+01   0.00000000e+00   2.95019349e-02]</span>
+<span class="go"> [ -9.00000000e+00   0.00000000e+00   1.32294142e-01]</span>
+<span class="go"> [ -8.00000000e+00   0.00000000e+00   5.06497902e-01]</span>
+<span class="go"> [ -7.00000000e+00   2.00000000e+00   1.65568919e+00]</span>
+<span class="go"> [ -6.00000000e+00   1.00000000e+00   4.62125309e+00]</span>
+<span class="go"> [ -5.00000000e+00   9.00000000e+00   1.10137298e+01]</span>
+<span class="go"> [ -4.00000000e+00   2.60000000e+01   2.24137683e+01]</span>
+<span class="go"> [ -3.00000000e+00   3.70000000e+01   3.89503370e+01]</span>
+<span class="go"> [ -2.00000000e+00   5.10000000e+01   5.78004747e+01]</span>
+<span class="go"> [ -1.00000000e+00   7.10000000e+01   7.32455414e+01]</span>
+<span class="go"> [  0.00000000e+00   7.40000000e+01   7.92618251e+01]</span>
+<span class="go"> [  1.00000000e+00   8.90000000e+01   7.32455414e+01]</span>
+<span class="go"> [  2.00000000e+00   5.50000000e+01   5.78004747e+01]</span>
+<span class="go"> [  3.00000000e+00   5.00000000e+01   3.89503370e+01]</span>
+<span class="go"> [  4.00000000e+00   1.70000000e+01   2.24137683e+01]</span>
+<span class="go"> [  5.00000000e+00   1.10000000e+01   1.10137298e+01]</span>
+<span class="go"> [  6.00000000e+00   4.00000000e+00   4.62125309e+00]</span>
+<span class="go"> [  7.00000000e+00   3.00000000e+00   1.65568919e+00]</span>
+<span class="go"> [  8.00000000e+00   0.00000000e+00   5.06497902e-01]</span>
+<span class="go"> [  9.00000000e+00   0.00000000e+00   1.32294142e-01]</span>
+<span class="go"> [  1.00000000e+01   0.00000000e+00   2.95019349e-02]]</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/examples/normdiscr_plot1.py">Source code</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/normdiscr_plot1.png" src="../_images/normdiscr_plot1.png" />
+</div>
+<p>(<a class="reference external" href="../tutorial/examples/normdiscr_plot2.py">Source code</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/normdiscr_plot2.png" src="../_images/normdiscr_plot2.png" />
+</div>
+<p>Next, we can test, whether our sample was generated by our normdiscrete
+distribution. This also verifies whether the random numbers are generated
+correctly.</p>
+<p>The chisquare test requires that there are a minimum number of observations
+in each bin. We combine the tail bins into larger bins so that they contain
+enough observations.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">f</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">f</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">()])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">probs</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">probs</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">probs</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">()])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ch2</span><span class="p">,</span> <span class="n">pval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">p2</span><span class="o">*</span><span class="n">n_sample</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;chisquare for normdiscrete: chi2 = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ch2</span><span class="p">,</span> <span class="n">pval</span><span class="p">)</span>
+<span class="go">chisquare for normdiscrete: chi2 = 12.466 pvalue = 0.4090</span>
+</pre></div>
+</div>
+<p>The pvalue in this case is high, so we can be quite confident that
+our random sample was actually generated by the distribution.</p>
+</div>
+</div>
+<div class="section" id="analysing-one-sample">
+<h2>Analysing One Sample<a class="headerlink" href="#analysing-one-sample" title="Permalink to this headline">¶</a></h2>
+<p>First, we create some random variables. We set a seed so that in each run
+we get identical results to look at. As an example we take a sample from
+the Student t distribution:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">282629734</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, we set the required shape parameter of the t distribution, which
+in statistics corresponds to the degrees of freedom, to 10. Using size=1000 means
+that our sample consists of 1000 independently drawn (pseudo) random numbers.
+Since we did not specify the keyword arguments <em class="xref py py-obj">loc</em> and <em class="xref py py-obj">scale</em>, those are
+set to their default values zero and one.</p>
+<div class="section" id="descriptive-statistics">
+<h3>Descriptive Statistics<a class="headerlink" href="#descriptive-statistics" title="Permalink to this headline">¶</a></h3>
+<p><em class="xref py py-obj">x</em> is a numpy array, and we have direct access to all array methods, e.g.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>  <span class="c"># equivalent to np.max(x), np.min(x)</span>
+<span class="go">5.26327732981 -3.78975572422</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="c"># equivalent to np.mean(x), np.var(x)</span>
+<span class="go">0.0140610663985 1.28899386208</span>
+</pre></div>
+</div>
+<p>How do the some sample properties compare to their theoretical counterparts?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">moments</span><span class="o">=</span><span class="s">&#39;mvsk&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="n">smin</span><span class="p">,</span> <span class="n">smax</span><span class="p">),</span> <span class="n">sm</span><span class="p">,</span> <span class="n">sv</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">sk</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;distribution:&#39;</span><span class="p">,</span>
+<span class="go">distribution:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sstr</span> <span class="o">=</span> <span class="s">&#39;mean = </span><span class="si">%6.4f</span><span class="s">, variance = </span><span class="si">%6.4f</span><span class="s">, skew = </span><span class="si">%6.4f</span><span class="s">, kurtosis = </span><span class="si">%6.4f</span><span class="s">&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sstr</span> <span class="o">%</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">s</span> <span class="p">,</span><span class="n">k</span><span class="p">)</span>
+<span class="go">mean = 0.0000, variance = 1.2500, skew = 0.0000, kurtosis = 1.0000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;sample:      &#39;</span><span class="p">,</span>
+<span class="go">sample:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sstr</span> <span class="o">%</span><span class="p">(</span><span class="n">sm</span><span class="p">,</span> <span class="n">sv</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">sk</span><span class="p">)</span>
+<span class="go">mean = 0.0141, variance = 1.2903, skew = 0.2165, kurtosis = 1.0556</span>
+</pre></div>
+</div>
+<p>Note: stats.describe uses the unbiased estimator for the variance, while
+np.var is the biased estimator.</p>
+<p>For our sample the sample statistics differ a by a small amount from
+their theoretical counterparts.</p>
+</div>
+<div class="section" id="t-test-and-ks-test">
+<h3>T-test and KS-test<a class="headerlink" href="#t-test-and-ks-test" title="Permalink to this headline">¶</a></h3>
+<p>We can use the t-test to test whether the mean of our sample differs
+in a statistcally significant way from the theoretical expectation.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;t-statistic = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span>  <span class="n">stats</span><span class="o">.</span><span class="n">ttest_1samp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="go">t-statistic =  0.391 pvalue = 0.6955</span>
+</pre></div>
+</div>
+<p>The pvalue is 0.7, this means that with an alpha error of, for
+example, 10%, we cannot reject the hypothesis that the sample mean
+is equal to zero, the expectation of the standard t-distribution.</p>
+<p>As an exercise, we can calculate our ttest also directly without
+using the provided function, which should give us the same answer,
+and so it does:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">sm</span><span class="o">-</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sv</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>  <span class="c"># t-statistic for mean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tt</span><span class="p">),</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span>  <span class="c"># two-sided pvalue = Prob(abs(t)&gt;tt)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;t-statistic = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">pval</span><span class="p">)</span>
+<span class="go">t-statistic =  0.391 pvalue = 0.6955</span>
+</pre></div>
+</div>
+<p>The Kolmogorov-Smirnov test can be used to test the hypothesis that
+the sample comes from the standard t-distribution</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;KS-statistic D = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">stats</span><span class="o">.</span><span class="n">kstest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;t&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,))</span>
+<span class="go">KS-statistic D =  0.016 pvalue = 0.9606</span>
+</pre></div>
+</div>
+<p>Again the p-value is high enough that we cannot reject the
+hypothesis that the random sample really is distributed according to the
+t-distribution. In real applications, we don&#8217;t know what the
+underlying distribution is. If we perform the Kolmogorov-Smirnov
+test of our sample against the standard normal distribution, then we
+also cannot reject the hypothesis that our sample was generated by the
+normal distribution given that in this example the p-value is almost 40%.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;KS-statistic D = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">stats</span><span class="o">.</span><span class="n">kstest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="s">&#39;norm&#39;</span><span class="p">)</span>
+<span class="go">KS-statistic D =  0.028 pvalue = 0.3949</span>
+</pre></div>
+</div>
+<p>However, the standard normal distribution has a variance of 1, while our
+sample has a variance of 1.29. If we standardize our sample and test it
+against the normal distribution, then the p-value is again large enough
+that we cannot reject the hypothesis that the sample came form the
+normal distribution.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">,</span> <span class="n">pval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">kstest</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="s">&#39;norm&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;KS-statistic D = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">pval</span><span class="p">)</span>
+<span class="go">KS-statistic D =  0.032 pvalue = 0.2402</span>
+</pre></div>
+</div>
+<p>Note: The Kolmogorov-Smirnov test assumes that we test against a
+distribution with given parameters, since in the last case we
+estimated mean and variance, this assumption is violated, and the
+distribution of the test statistic on which the p-value is based, is
+not correct.</p>
+</div>
+<div class="section" id="tails-of-the-distribution">
+<h3>Tails of the distribution<a class="headerlink" href="#tails-of-the-distribution" title="Permalink to this headline">¶</a></h3>
+<p>Finally, we can check the upper tail of the distribution. We can use
+the percent point function ppf, which is the inverse of the cdf
+function, to obtain the critical values, or, more directly, we can use
+the inverse of the survival function</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">crit01</span><span class="p">,</span> <span class="n">crit05</span><span class="p">,</span> <span class="n">crit10</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">([</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.10</span><span class="p">],</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;critical values from ppf at 1</span><span class="si">%%</span><span class="s">, 5</span><span class="si">%%</span><span class="s"> and 10</span><span class="si">%%</span><span class="s"> </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s">&#39;</span><span class="o">%</span> <span class="p">(</span><span class="n">crit01</span><span class="p">,</span> <span class="n">crit05</span><span class="p">,</span> <span class="n">crit10</span><span class="p">)</span>
+<span class="go">critical values from ppf at 1%, 5% and 10%   2.7638   1.8125   1.3722</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;critical values from isf at 1</span><span class="si">%%</span><span class="s">, 5</span><span class="si">%%</span><span class="s"> and 10</span><span class="si">%%</span><span class="s"> </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s">&#39;</span><span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.10</span><span class="p">],</span><span class="mi">10</span><span class="p">))</span>
+<span class="go">critical values from isf at 1%, 5% and 10%   2.7638   1.8125   1.3722</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">freq01</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">crit01</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">freq05</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">crit05</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">freq10</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">crit10</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;sample </span><span class="si">%%</span><span class="s">-frequency at 1</span><span class="si">%%</span><span class="s">, 5</span><span class="si">%%</span><span class="s"> and 10</span><span class="si">%%</span><span class="s"> tail </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s">&#39;</span><span class="o">%</span> <span class="p">(</span><span class="n">freq01</span><span class="p">,</span> <span class="n">freq05</span><span class="p">,</span> <span class="n">freq10</span><span class="p">)</span>
+<span class="go">sample %-frequency at 1%, 5% and 10% tail   1.4000   5.8000  10.5000</span>
+</pre></div>
+</div>
+<p>In all three cases, our sample has more weight in the top tail than the
+underlying distribution.
+We can briefly check a larger sample to see if we get a closer match. In this
+case the empirical frequency is quite close to the theoretical probability,
+but if we repeat this several times the fluctuations are still pretty large.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">freq05l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit05</span><span class="p">)</span> <span class="o">/</span> <span class="mf">10000.0</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;larger sample </span><span class="si">%%</span><span class="s">-frequency at 5</span><span class="si">%%</span><span class="s"> tail </span><span class="si">%8.4f</span><span class="s">&#39;</span><span class="o">%</span> <span class="n">freq05l</span>
+<span class="go">larger sample %-frequency at 5% tail   4.8000</span>
+</pre></div>
+</div>
+<p>We can also compare it with the tail of the normal distribution, which
+has less weight in the tails:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;tail prob. of normal at 1</span><span class="si">%%</span><span class="s">, 5</span><span class="si">%%</span><span class="s"> and 10</span><span class="si">%%</span><span class="s"> </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s"> </span><span class="si">%8.4f</span><span class="s">&#39;</span><span class="o">%</span> \
+<span class="gp">... </span>      <span class="nb">tuple</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">sf</span><span class="p">([</span><span class="n">crit01</span><span class="p">,</span> <span class="n">crit05</span><span class="p">,</span> <span class="n">crit10</span><span class="p">])</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+<span class="go">tail prob. of normal at 1%, 5% and 10%   0.2857   3.4957   8.5003</span>
+</pre></div>
+</div>
+<p>The chisquare test can be used to test, whether for a finite number of bins,
+the observed frequencies differ significantly from the probabilites of the
+hypothesized distribution.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quantiles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.10</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">crit</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">quantiles</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">crit</span>
+<span class="go">[       -Inf -2.76376946 -1.81246112 -1.37218364  1.37218364  1.81246112</span>
+<span class="go">  2.76376946         Inf]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_sample</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">freqcount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">crit</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tprob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">quantiles</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">crit</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tch</span><span class="p">,</span> <span class="n">tpval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">freqcount</span><span class="p">,</span> <span class="n">tprob</span><span class="o">*</span><span class="n">n_sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nch</span><span class="p">,</span> <span class="n">npval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">freqcount</span><span class="p">,</span> <span class="n">nprob</span><span class="o">*</span><span class="n">n_sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;chisquare for t:      chi2 = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tch</span><span class="p">,</span> <span class="n">tpval</span><span class="p">)</span>
+<span class="go">chisquare for t:      chi2 =  2.300 pvalue = 0.8901</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;chisquare for normal: chi2 = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nch</span><span class="p">,</span> <span class="n">npval</span><span class="p">)</span>
+<span class="go">chisquare for normal: chi2 = 64.605 pvalue = 0.0000</span>
+</pre></div>
+</div>
+<p>We see that the standard normal distribution is clearly rejected while the
+standard t-distribution cannot be rejected. Since the variance of our sample
+differs from both standard distribution, we can again redo the test taking
+the estimate for scale and location into account.</p>
+<p>The fit method of the distributions can be used to estimate the parameters
+of the distribution, and the test is repeated using probabilites of the
+estimated distribution.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tdof</span><span class="p">,</span> <span class="n">tloc</span><span class="p">,</span> <span class="n">tscale</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nloc</span><span class="p">,</span> <span class="n">nscale</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tprob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">tdof</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">tloc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">tscale</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">nloc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">nscale</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tch</span><span class="p">,</span> <span class="n">tpval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">freqcount</span><span class="p">,</span> <span class="n">tprob</span><span class="o">*</span><span class="n">n_sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nch</span><span class="p">,</span> <span class="n">npval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">freqcount</span><span class="p">,</span> <span class="n">nprob</span><span class="o">*</span><span class="n">n_sample</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;chisquare for t:      chi2 = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tch</span><span class="p">,</span> <span class="n">tpval</span><span class="p">)</span>
+<span class="go">chisquare for t:      chi2 =  1.577 pvalue = 0.9542</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;chisquare for normal: chi2 = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nch</span><span class="p">,</span> <span class="n">npval</span><span class="p">)</span>
+<span class="go">chisquare for normal: chi2 = 11.084 pvalue = 0.0858</span>
+</pre></div>
+</div>
+<p>Taking account of the estimated parameters, we can still reject the
+hypothesis that our sample came from a normal distribution (at the 5% level),
+but again, with a p-value of 0.95, we cannot reject the t distribution.</p>
+</div>
+<div class="section" id="special-tests-for-normal-distributions">
+<h3>Special tests for normal distributions<a class="headerlink" href="#special-tests-for-normal-distributions" title="Permalink to this headline">¶</a></h3>
+<p>Since the normal distribution is the most common distribution in statistics,
+there are several additional functions available to test whether a sample
+could have been drawn from a normal distribution</p>
+<p>First we can test if skew and kurtosis of our sample differ significantly from
+those of a normal distribution:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;normal skewtest teststat = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">stats</span><span class="o">.</span><span class="n">skewtest</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">normal skewtest teststat =  2.785 pvalue = 0.0054</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;normal kurtosistest teststat = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">stats</span><span class="o">.</span><span class="n">kurtosistest</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">normal kurtosistest teststat =  4.757 pvalue = 0.0000</span>
+</pre></div>
+</div>
+<p>These two tests are combined in the normality test</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;normaltest teststat = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">stats</span><span class="o">.</span><span class="n">normaltest</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">normaltest teststat = 30.379 pvalue = 0.0000</span>
+</pre></div>
+</div>
+<p>In all three tests the p-values are very low and we can reject the hypothesis
+that the our sample has skew and kurtosis of the normal distribution.</p>
+<p>Since skew and kurtosis of our sample are based on central moments, we get
+exactly the same results if we test the standardized sample:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;normaltest teststat = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> \
+<span class="gp">... </span>                     <span class="n">stats</span><span class="o">.</span><span class="n">normaltest</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
+<span class="go">normaltest teststat = 30.379 pvalue = 0.0000</span>
+</pre></div>
+</div>
+<p>Because normality is rejected so strongly, we can check whether the
+normaltest gives reasonable results for other cases:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;normaltest teststat = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">stats</span><span class="o">.</span><span class="n">normaltest</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>
+<span class="go">normaltest teststat =  4.698 pvalue = 0.0955</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;normaltest teststat = </span><span class="si">%6.3f</span><span class="s"> pvalue = </span><span class="si">%6.4f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">stats</span><span class="o">.</span><span class="n">normaltest</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+<span class="go">normaltest teststat =  0.613 pvalue = 0.7361</span>
+</pre></div>
+</div>
+<p>When testing for normality of a small sample of t-distributed observations
+and a large sample of normal distributed observation, then in neither case
+can we reject the null hypothesis that the sample comes from a normal
+distribution. In the first case this is because the test is not powerful
+enough to distinguish a t and a normally distributed random variable in a
+small sample.</p>
+</div>
+</div>
+<div class="section" id="comparing-two-samples">
+<h2>Comparing two samples<a class="headerlink" href="#comparing-two-samples" title="Permalink to this headline">¶</a></h2>
+<p>In the following, we are given two samples, which can come either from the
+same or from different distribution, and we want to test whether these
+samples have the same statistical properties.</p>
+<div class="section" id="comparing-means">
+<h3>Comparing means<a class="headerlink" href="#comparing-means" title="Permalink to this headline">¶</a></h3>
+<p>Test with sample with identical means:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rvs1</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rvs2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">ttest_ind</span><span class="p">(</span><span class="n">rvs1</span><span class="p">,</span> <span class="n">rvs2</span><span class="p">)</span>
+<span class="go">(-0.54890361750888583, 0.5831943748663857)</span>
+</pre></div>
+</div>
+<p>Test with sample with different means:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rvs3</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">ttest_ind</span><span class="p">(</span><span class="n">rvs1</span><span class="p">,</span> <span class="n">rvs3</span><span class="p">)</span>
+<span class="go">(-4.5334142901750321, 6.507128186505895e-006)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="kolmogorov-smirnov-test-for-two-samples-ks-2samp">
+<h3>Kolmogorov-Smirnov test for two samples ks_2samp<a class="headerlink" href="#kolmogorov-smirnov-test-for-two-samples-ks-2samp" title="Permalink to this headline">¶</a></h3>
+<p>For the example where both samples are drawn from the same distribution,
+we cannot reject the null hypothesis since the pvalue is high</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">ks_2samp</span><span class="p">(</span><span class="n">rvs1</span><span class="p">,</span> <span class="n">rvs2</span><span class="p">)</span>
+<span class="go">(0.025999999999999995, 0.99541195173064878)</span>
+</pre></div>
+</div>
+<p>In the second example, with different location, i.e. means, we can
+reject the null hypothesis since the pvalue is below 1%</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">ks_2samp</span><span class="p">(</span><span class="n">rvs1</span><span class="p">,</span> <span class="n">rvs3</span><span class="p">)</span>
+<span class="go">(0.11399999999999999, 0.0027132103661283141)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="kernel-density-estimation">
+<h2>Kernel Density Estimation<a class="headerlink" href="#kernel-density-estimation" title="Permalink to this headline">¶</a></h2>
+<p>A common task in statistics is to estimate the probability density function
+(PDF) of a random variable from a set of data samples.  This task is called
+density estimation.  The most well-known tool to do this is the histogram.
+A histogram is a useful tool for visualization (mainly because everyone
+understands it), but doesn&#8217;t use the available data very efficiently.  Kernel
+density estimation (KDE) is a more efficient tool for the same task.  The
+<tt class="xref py py-func docutils literal"><span class="pre">gaussian_kde</span></tt> estimator can be used to estimate the PDF of univariate as
+well as multivariate data.  It works best if the data is unimodal.</p>
+<div class="section" id="univariate-estimation">
+<h3>Univariate estimation<a class="headerlink" href="#univariate-estimation" title="Permalink to this headline">¶</a></h3>
+<p>We start with a minimal amount of data in order to see how <tt class="xref py py-func docutils literal"><span class="pre">gaussian_kde</span></tt>
+works, and what the different options for bandwidth selection do.  The data
+sampled from the PDF is show as blue dashes at the bottom of the figure (this
+is called a rug plot):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kde1</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kde2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="s">&#39;silverman&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="s">&#39;b+&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>  <span class="c"># rug plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x_eval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">kde1</span><span class="p">(</span><span class="n">x_eval</span><span class="p">),</span> <span class="s">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Scott&#39;s Rule&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">kde1</span><span class="p">(</span><span class="n">x_eval</span><span class="p">),</span> <span class="s">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Silverman&#39;s Rule&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/stats-1.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/stats-1.png" src="../_images/stats-1.png" />
+</div>
+<p>We see that there is very little difference between Scott&#8217;s Rule and
+Silverman&#8217;s Rule, and that the bandwidth selection with a limited amount of
+data is probably a bit too wide.  We can define our own bandwidth function to
+get a less smoothed out result.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">my_kde_bandwidth</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">fac</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mi">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="sd">&quot;&quot;&quot;We use Scott&#39;s Rule, multiplied by a constant factor.&quot;&quot;&quot;</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">d</span><span class="o">+</span><span class="mi">4</span><span class="p">))</span> <span class="o">*</span> <span class="n">fac</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="s">&#39;b+&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>  <span class="c"># rug plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kde3</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="n">my_kde_bandwidth</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">kde3</span><span class="p">(</span><span class="n">x_eval</span><span class="p">),</span> <span class="s">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;With smaller BW&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/stats/plots/kde_plot2.py">Source code</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/kde_plot2.png" src="../_images/kde_plot2.png" />
+</div>
+<p>We see that if we set bandwidth to be very narrow, the obtained estimate for
+the probability density function (PDF) is simply the sum of Gaussians around
+each data point.</p>
+<p>We now take a more realistic example, and look at the difference between the
+two available bandwidth selection rules.  Those rules are known to work well
+for (close to) normal distributions, but even for unimodal distributions that
+are quite strongly non-normal they work reasonably well.  As a non-normal
+distribution we take a Student&#8217;s T distribution with 5 degrees of freedom.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12456</span><span class="p">)</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>  <span class="c"># random data, normal distribution</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+<span class="n">kde1</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+<span class="n">kde2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="s">&#39;silverman&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="s">&#39;b+&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>  <span class="c"># rug plot</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">kde1</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="s">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Scott&#39;s Rule&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">kde2</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="s">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Silverman&#39;s Rule&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="s">&#39;r--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;True PDF&quot;</span><span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;Density&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&quot;Normal (top) and Student&#39;s T$_{df=5}$ (bottom) distributions&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">x2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>  <span class="c"># random data, T distribution</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x2</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x2</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+<span class="n">kde3</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+<span class="n">kde4</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="s">&#39;silverman&#39;</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x2</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="s">&#39;b+&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>  <span class="c"># rug plot</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">kde3</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="s">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Scott&#39;s Rule&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">kde4</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="s">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Silverman&#39;s Rule&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s">&#39;r--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;True PDF&quot;</span><span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;Density&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/stats/plots/kde_plot3.py">Source code</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/kde_plot3.png" src="../_images/kde_plot3.png" />
+</div>
+<p>We now take a look at a bimodal distribution with one wider and one narrower
+Gaussian feature.  We expect that this will be a more difficult density to
+approximate, due to the different bandwidths required to accurately resolve
+each feature.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">loc1</span><span class="p">,</span> <span class="n">scale1</span><span class="p">,</span> <span class="n">size1</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">175</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc2</span><span class="p">,</span> <span class="n">scale2</span><span class="p">,</span> <span class="n">size2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size1</span><span class="p">),</span>
+<span class="gp">... </span>                     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size2</span><span class="p">)])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x_eval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x2</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x2</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">kde</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kde2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="s">&#39;silverman&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kde3</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">my_kde_bandwidth</span><span class="p">,</span> <span class="n">fac</span><span class="o">=</span><span class="mf">0.2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kde4</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">bw_method</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">my_kde_bandwidth</span><span class="p">,</span> <span class="n">fac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pdf</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bimodal_pdf</span> <span class="o">=</span> <span class="n">pdf</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale1</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">size1</span><span class="p">)</span> <span class="o">/</span> <span class="n">x2</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> \
+<span class="gp">... </span>              <span class="n">pdf</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale2</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">size2</span><span class="p">)</span> <span class="o">/</span> <span class="n">x2</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x2</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="s">&#39;b+&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">kde</span><span class="p">(</span><span class="n">x_eval</span><span class="p">),</span> <span class="s">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Scott&#39;s Rule&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">kde2</span><span class="p">(</span><span class="n">x_eval</span><span class="p">),</span> <span class="s">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Silverman&#39;s Rule&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">kde3</span><span class="p">(</span><span class="n">x_eval</span><span class="p">),</span> <span class="s">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Scott * 0.2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">kde4</span><span class="p">(</span><span class="n">x_eval</span><span class="p">),</span> <span class="s">&#39;c-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Scott * 0.5&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_eval</span><span class="p">,</span> <span class="n">bimodal_pdf</span><span class="p">,</span> <span class="s">&#39;r--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Actual PDF&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">x_eval</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x_eval</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;Density&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/stats/plots/kde_plot4.py">Source code</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/kde_plot4.png" src="../_images/kde_plot4.png" />
+</div>
+<p>As expected, the KDE is not as close to the true PDF as we would like due to
+the different characteristic size of the two features of the bimodal
+distribution.  By halving the default bandwidth (<tt class="docutils literal"><span class="pre">Scott</span> <span class="pre">*</span> <span class="pre">0.5</span></tt>) we can do
+somewhat better, while using a factor 5 smaller bandwidth than the default
+doesn&#8217;t smooth enough.  What we really need though in this case is a
+non-uniform (adaptive) bandwidth.</p>
+</div>
+<div class="section" id="multivariate-estimation">
+<h3>Multivariate estimation<a class="headerlink" href="#multivariate-estimation" title="Permalink to this headline">¶</a></h3>
+<p>With <tt class="xref py py-func docutils literal"><span class="pre">gaussian_kde</span></tt> we can perform multivariate as well as univariate
+estimation.  We demonstrate the bivariate case.  First we generate some random
+data with a model in which the two variates are correlated.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">measure</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="sd">&quot;&quot;&quot;Measurement model, return two coupled measurements.&quot;&quot;&quot;</span>
+<span class="gp">... </span>    <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">m2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">m1</span><span class="o">+</span><span class="n">m2</span><span class="p">,</span> <span class="n">m1</span><span class="o">-</span><span class="n">m2</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">measure</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmin</span> <span class="o">=</span> <span class="n">m1</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmax</span> <span class="o">=</span> <span class="n">m1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ymin</span> <span class="o">=</span> <span class="n">m2</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ymax</span> <span class="o">=</span> <span class="n">m2</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then we apply the KDE to the data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="n">xmin</span><span class="p">:</span><span class="n">xmax</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span> <span class="n">ymin</span><span class="p">:</span><span class="n">ymax</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kernel</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally we plot the estimated bivariate distribution as a colormap, and plot
+the individual data points on top.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">Z</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gist_earth_r</span><span class="p">,</span>
+<span class="gp">... </span>          <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="s">&#39;k.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/stats/plots/kde_plot5.py">Source code</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/kde_plot5.png" src="../_images/kde_plot5.png" />
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Statistics (<tt class="docutils literal"><span class="pre">scipy.stats</span></tt>)</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#random-variables">Random Variables</a><ul>
+<li><a class="reference internal" href="#getting-help">Getting Help</a></li>
+<li><a class="reference internal" href="#common-methods">Common Methods</a></li>
+<li><a class="reference internal" href="#shifting-and-scaling">Shifting and Scaling</a></li>
+<li><a class="reference internal" href="#shape-parameters">Shape Parameters</a></li>
+<li><a class="reference internal" href="#freezing-a-distribution">Freezing a Distribution</a></li>
+<li><a class="reference internal" href="#broadcasting">Broadcasting</a></li>
+<li><a class="reference internal" href="#specific-points-for-discrete-distributions">Specific Points for Discrete Distributions</a></li>
+<li><a class="reference internal" href="#fitting-distributions">Fitting Distributions</a></li>
+<li><a class="reference internal" href="#performance-issues-and-cautionary-remarks">Performance Issues and Cautionary Remarks</a></li>
+<li><a class="reference internal" href="#remaining-issues">Remaining Issues</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#building-specific-distributions">Building  Specific Distributions</a><ul>
+<li><a class="reference internal" href="#making-a-continuous-distribution-i-e-subclassing-rv-continuous">Making a Continuous Distribution, i.e., Subclassing <tt class="docutils literal"><span class="pre">rv_continuous</span></tt></a></li>
+<li><a class="reference internal" href="#subclassing-rv-discrete">Subclassing <tt class="docutils literal"><span class="pre">rv_discrete</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#analysing-one-sample">Analysing One Sample</a><ul>
+<li><a class="reference internal" href="#descriptive-statistics">Descriptive Statistics</a></li>
+<li><a class="reference internal" href="#t-test-and-ks-test">T-test and KS-test</a></li>
+<li><a class="reference internal" href="#tails-of-the-distribution">Tails of the distribution</a></li>
+<li><a class="reference internal" href="#special-tests-for-normal-distributions">Special tests for normal distributions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#comparing-two-samples">Comparing two samples</a><ul>
+<li><a class="reference internal" href="#comparing-means">Comparing means</a></li>
+<li><a class="reference internal" href="#kolmogorov-smirnov-test-for-two-samples-ks-2samp">Kolmogorov-Smirnov test for two samples ks_2samp</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#kernel-density-estimation">Kernel Density Estimation</a><ul>
+<li><a class="reference internal" href="#univariate-estimation">Univariate estimation</a></li>
+<li><a class="reference internal" href="#multivariate-estimation">Multivariate estimation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spatial.html"
+                        title="previous chapter">Spatial data structures and algorithms (<tt class="docutils literal docutils literal docutils literal"><span class="pre">scipy.spatial</span></tt>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ndimage.html"
+                        title="next chapter">Multi-dimensional image processing (<tt class="docutils literal docutils literal docutils literal"><span class="pre">scipy.ndimage</span></tt>)</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ndimage.html" title="Multi-dimensional image processing (scipy.ndimage)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="spatial.html" title="Spatial data structures and algorithms (scipy.spatial)"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" >SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

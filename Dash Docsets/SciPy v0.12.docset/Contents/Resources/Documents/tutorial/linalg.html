@@ -1,0 +1,919 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linear Algebra (scipy.linalg) &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Sparse Eigenvalue Problems with ARPACK" href="arpack.html" />
+    <link rel="prev" title="Signal Processing (scipy.signal)" href="signal.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arpack.html" title="Sparse Eigenvalue Problems with ARPACK"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="signal.html" title="Signal Processing (scipy.signal)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linear-algebra-scipy-linalg">
+<h1>Linear Algebra (<a class="reference internal" href="../linalg.html#module-scipy.linalg" title="scipy.linalg"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg</span></tt></a>)<a class="headerlink" href="#linear-algebra-scipy-linalg" title="Permalink to this headline">¶</a></h1>
+<p>When SciPy is built using the optimized ATLAS LAPACK and BLAS
+libraries, it has very fast linear algebra capabilities. If you dig
+deep enough, all of the raw lapack and blas libraries are available
+for your use for even more speed. In this section, some easier-to-use
+interfaces to these routines are described.</p>
+<p>All of these linear algebra routines expect an object that can be
+converted into a 2-dimensional array. The output of these routines is
+also a two-dimensional array.</p>
+<div class="section" id="scipy-linalg-vs-numpy-linalg">
+<h2>scipy.linalg vs numpy.linalg<a class="headerlink" href="#scipy-linalg-vs-numpy-linalg" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">scipy.linalg</span></tt> contains all the functions in <tt class="docutils literal"><span class="pre">numpy.linalg</span></tt>.
+plus some other more advanced ones not contained in <tt class="docutils literal"><span class="pre">numpy.linalg</span></tt></p>
+<p>Another advantage of using <tt class="docutils literal"><span class="pre">scipy.linalg</span></tt> over <tt class="docutils literal"><span class="pre">numpy.linalg</span></tt> is that
+it is always compiled with BLAS/LAPACK support, while for numpy this is
+optional. Therefore, the scipy version might be faster depending on how
+numpy was installed.</p>
+<p>Therefore, unless you don&#8217;t want to add <tt class="docutils literal"><span class="pre">scipy</span></tt> as a dependency to
+your <tt class="docutils literal"><span class="pre">numpy</span></tt> program, use <tt class="docutils literal"><span class="pre">scipy.linalg</span></tt> instead of <tt class="docutils literal"><span class="pre">numpy.linalg</span></tt></p>
+</div>
+<div class="section" id="numpy-matrix-vs-2d-numpy-ndarray">
+<h2>numpy.matrix vs 2D numpy.ndarray<a class="headerlink" href="#numpy-matrix-vs-2d-numpy-ndarray" title="Permalink to this headline">¶</a></h2>
+<p>The classes that represent matrices, and basic operations such as
+matrix multiplications and transpose are a part of <tt class="docutils literal"><span class="pre">numpy</span></tt>.
+For convenience, we summarize the differences between <tt class="docutils literal"><span class="pre">numpy.matrix</span></tt>
+and <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> here.</p>
+<p><tt class="docutils literal"><span class="pre">numpy.matrix</span></tt> is matrix class that has a more convenient interface
+than <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> for matrix operations. This class supports for
+example MATLAB-like creation syntax via the, has matrix multiplication
+as default for the <tt class="docutils literal"><span class="pre">*</span></tt> operator, and contains <tt class="docutils literal"><span class="pre">I</span></tt> and <tt class="docutils literal"><span class="pre">T</span></tt> members
+that serve as shortcuts for inverse and transpose:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mat</span><span class="p">(</span><span class="s">&#39;[1 2;3 4]&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">matrix([[1, 2],</span>
+<span class="go">        [3, 4]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">I</span>
+<span class="go">matrix([[-2. ,  1. ],</span>
+<span class="go">        [ 1.5, -0.5]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mat</span><span class="p">(</span><span class="s">&#39;[5 6]&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">matrix([[5, 6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">T</span>
+<span class="go">matrix([[5],</span>
+<span class="go">        [6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">T</span>
+<span class="go">matrix([[17],</span>
+<span class="go">        [39]])</span>
+</pre></div>
+</div>
+<p>Despite its convenience, the use of the <tt class="docutils literal"><span class="pre">numpy.matrix</span></tt> class is
+discouraged, since it adds nothing that cannot be accomplished
+with 2D <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> objects, and may lead to a confusion of which class
+is being used. For example, the above code can be rewritten as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">array([[1, 2],</span>
+<span class="go">      [3, 4]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">array([[-2. ,  1. ],</span>
+<span class="go">      [ 1.5, -0.5]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span> <span class="c">#2D array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">array([[5, 6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">T</span>
+<span class="go">array([[5],</span>
+<span class="go">      [6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">*</span><span class="n">b</span> <span class="c">#not matrix multiplication!</span>
+<span class="go">array([[ 5, 12],</span>
+<span class="go">      [15, 24]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="c">#matrix multiplication</span>
+<span class="go">array([[17],</span>
+<span class="go">      [39]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span> <span class="c">#1D array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">array([5, 6])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">T</span>  <span class="c">#not matrix transpose!</span>
+<span class="go">array([5, 6])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>  <span class="c">#does not matter for multiplication</span>
+<span class="go">array([17, 39])</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">scipy.linalg</span></tt> operations can be applied equally to
+<tt class="docutils literal"><span class="pre">numpy.matrix</span></tt> or to 2D <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> objects.</p>
+</div>
+<div class="section" id="basic-routines">
+<h2>Basic routines<a class="headerlink" href="#basic-routines" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="finding-inverse">
+<h3>Finding Inverse<a class="headerlink" href="#finding-inverse" title="Permalink to this headline">¶</a></h3>
+<p>The inverse of a matrix <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> is the matrix
+<img class="math" src="../_images/math/684089822af19d4ccbfae10139f057dbdad68d9f.png" alt="\mathbf{B}" style="vertical-align: 0px"/> such that <img class="math" src="../_images/math/860664eaa82a7b28e432c34f4162804b0a6769f8.png" alt="\mathbf{AB}=\mathbf{I}" style="vertical-align: -1px"/> where
+<img class="math" src="../_images/math/be6e42f1c628767a374da81818b6cda46a8c678d.png" alt="\mathbf{I}" style="vertical-align: 0px"/> is the identity matrix consisting of ones down the
+main diagonal.  Usually <img class="math" src="../_images/math/684089822af19d4ccbfae10139f057dbdad68d9f.png" alt="\mathbf{B}" style="vertical-align: 0px"/> is denoted
+<img class="math" src="../_images/math/18b3c4a8a35d5ce7b0b35828dabdfb522c1ac7f2.png" alt="\mathbf{B}=\mathbf{A}^{-1}" style="vertical-align: -1px"/> . In SciPy, the matrix inverse of
+the Numpy array, A, is obtained using <tt class="xref py py-obj docutils literal"><span class="pre">linalg.inv</span></tt> <tt class="docutils literal"><span class="pre">(A)</span></tt> , or
+using <tt class="docutils literal"><span class="pre">A.I</span></tt> if <tt class="docutils literal"><span class="pre">A</span></tt> is a Matrix. For example, let</p>
+<div class="math">
+<p><img src="../_images/math/f15da1511a57d79b59b079b3b1bd20a88c00cbeb.png" alt="\[ \mathbf{A=}\left[\begin{array}{ccc} 1 &amp; 3 &amp; 5\\ 2 &amp; 5 &amp; 1\\ 2 &amp; 3 &amp; 8\end{array}\right]\]"/></p>
+</div><p>then</p>
+<div class="math">
+<p><img src="../_images/math/6448dc8dd04285fd3eac2290ee7a0d0d5776b5d9.png" alt="\[ \mathbf{A^{-1}=\frac{1}{25}\left[\begin{array}{ccc} -37 &amp; 9 &amp; 22\\ 14 &amp; 2 &amp; -9\\ 4 &amp; -3 &amp; 1\end{array}\right]=\left[\begin{array}{ccc} -1.48 &amp; 0.36 &amp; 0.88\\ 0.56 &amp; 0.08 &amp; -0.36\\ 0.16 &amp; -0.12 &amp; 0.04\end{array}\right].}\]"/></p>
+</div><p>The following example demonstrates this computation in SciPy</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="go">array([[1, 2],</span>
+<span class="go">      [3, 4]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">array([[-2. ,  1. ],</span>
+<span class="go">      [ 1.5, -0.5]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">))</span> <span class="c">#double check</span>
+<span class="go">array([[  1.00000000e+00,   0.00000000e+00],</span>
+<span class="go">      [  4.44089210e-16,   1.00000000e+00]])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="solving-linear-system">
+<h3>Solving linear system<a class="headerlink" href="#solving-linear-system" title="Permalink to this headline">¶</a></h3>
+<p>Solving linear systems of equations is straightforward using the scipy
+command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.solve</span></tt>. This command expects an input matrix and
+a right-hand-side vector. The solution vector is then computed. An
+option for entering a symmetrix matrix is offered which can speed up
+the processing when applicable.  As an example, suppose it is desired
+to solve the following simultaneous equations:</p>
+<div class="math">
+<p><img src="../_images/math/7761ccc75e1d065d6cdf11c68640ae7b3e4a5e94.png" alt="\begin{eqnarray*} x+3y+5z &amp; = &amp; 10\\ 2x+5y+z &amp; = &amp; 8\\ 2x+3y+8z &amp; = &amp; 3\end{eqnarray*}"/></p>
+</div><p>We could find the solution vector using a matrix inverse:</p>
+<div class="math">
+<p><img src="../_images/math/10eff05280e41f23e86fae08e79ab0f35ef8e82e.png" alt="\[ \left[\begin{array}{c} x\\ y\\ z\end{array}\right]=\left[\begin{array}{ccc} 1 &amp; 3 &amp; 5\\ 2 &amp; 5 &amp; 1\\ 2 &amp; 3 &amp; 8\end{array}\right]^{-1}\left[\begin{array}{c} 10\\ 8\\ 3\end{array}\right]=\frac{1}{25}\left[\begin{array}{c} -232\\ 129\\ 19\end{array}\right]=\left[\begin{array}{c} -9.28\\ 5.16\\ 0.76\end{array}\right].\]"/></p>
+</div><p>However, it is better to use the linalg.solve command which can be
+faster and more numerically stable. In this case it however gives the
+same answer as shown in the following example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">array([[1, 2],</span>
+<span class="go">      [3, 4]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">5</span><span class="p">],[</span><span class="mi">6</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">array([[5],</span>
+<span class="go">      [6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="c">#slow</span>
+<span class="go">array([[-4. ],</span>
+<span class="go">      [ 4.5]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">))</span><span class="o">-</span><span class="n">b</span> <span class="c">#check</span>
+<span class="go">array([[  8.88178420e-16],</span>
+<span class="go">      [  2.66453526e-15]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="c">#fast</span>
+<span class="go">array([[-4. ],</span>
+<span class="go">      [ 4.5]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">b</span><span class="p">))</span><span class="o">-</span><span class="n">b</span> <span class="c">#check</span>
+<span class="go">array([[ 0.],</span>
+<span class="go">      [ 0.]])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="finding-determinant">
+<h3>Finding Determinant<a class="headerlink" href="#finding-determinant" title="Permalink to this headline">¶</a></h3>
+<p>The determinant of a square matrix <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> is often denoted
+<img class="math" src="../_images/math/8398a6a072b58f6c1475b5d4c4ce34cf60fe0f45.png" alt="\left|\mathbf{A}\right|" style="vertical-align: -5px"/> and is a quantity often used in linear
+algebra. Suppose <img class="math" src="../_images/math/d6b159fdba4b71ff0eb9caee9a10fb34ebfcaad8.png" alt="a_{ij}" style="vertical-align: -6px"/> are the elements of the matrix
+<img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> and let <img class="math" src="../_images/math/a7ed40a037402c5e69f9a60729def57b8c12e34b.png" alt="M_{ij}=\left|\mathbf{A}_{ij}\right|" style="vertical-align: -6px"/>
+be the determinant of the matrix left by removing the
+<img class="math" src="../_images/math/f7d487353ad46311dbe60e1d74c3403579ed5dde.png" alt="i^{\textrm{th}}" style="vertical-align: 0px"/> row and <img class="math" src="../_images/math/2c47d36786af8f5dc212355ff203abeadb2a5543.png" alt="j^{\textrm{th}}" style="vertical-align: -4px"/> column from
+<img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> . Then for any row <img class="math" src="../_images/math/8c7b75235740f61a772820eb1b981f55c080ebaa.png" alt="i," style="vertical-align: -4px"/></p>
+<div class="math">
+<p><img src="../_images/math/755bef529c1f89f0d1a25bad420ed878c30d985a.png" alt="\[ \left|\mathbf{A}\right|=\sum_{j}\left(-1\right)^{i+j}a_{ij}M_{ij}.\]"/></p>
+</div><p>This is a recursive way to define the determinant where the base case
+is defined by accepting that the determinant of a <img class="math" src="../_images/math/41cc793e4f6d8149b881fa5ac0843dea8f309f24.png" alt="1\times1" style="vertical-align: -1px"/> matrix is the only matrix element. In SciPy the determinant can be
+calculated with <tt class="xref py py-obj docutils literal"><span class="pre">linalg.det</span></tt> . For example, the determinant of</p>
+<div class="math">
+<p><img src="../_images/math/f15da1511a57d79b59b079b3b1bd20a88c00cbeb.png" alt="\[ \mathbf{A=}\left[\begin{array}{ccc} 1 &amp; 3 &amp; 5\\ 2 &amp; 5 &amp; 1\\ 2 &amp; 3 &amp; 8\end{array}\right]\]"/></p>
+</div><p>is</p>
+<div class="math">
+<p><img src="../_images/math/574a331e7205200896a320a7012b2b17d5de4a7e.png" alt="\begin{eqnarray*} \left|\mathbf{A}\right| &amp; = &amp; 1\left|\begin{array}{cc} 5 &amp; 1\\ 3 &amp; 8\end{array}\right|-3\left|\begin{array}{cc} 2 &amp; 1\\ 2 &amp; 8\end{array}\right|+5\left|\begin{array}{cc} 2 &amp; 5\\ 2 &amp; 3\end{array}\right|\\  &amp; = &amp; 1\left(5\cdot8-3\cdot1\right)-3\left(2\cdot8-2\cdot1\right)+5\left(2\cdot3-2\cdot5\right)=-25.\end{eqnarray*}"/></p>
+</div><p>In SciPy this is computed as shown in this example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">array([[1, 2],</span>
+<span class="go">      [3, 4]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">-2.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="computing-norms">
+<h3>Computing norms<a class="headerlink" href="#computing-norms" title="Permalink to this headline">¶</a></h3>
+<p>Matrix and vector norms can also be computed with SciPy. A wide range
+of norm definitions are available using different parameters to the
+order argument of <tt class="xref py py-obj docutils literal"><span class="pre">linalg.norm</span></tt> . This function takes a rank-1
+(vectors) or a rank-2 (matrices) array and an optional order argument
+(default is 2). Based on these inputs a vector or matrix norm of the
+requested order is computed.</p>
+<p>For vector <em>x</em> , the order parameter can be any real number including
+<tt class="docutils literal"><span class="pre">inf</span></tt> or <tt class="docutils literal"><span class="pre">-inf</span></tt>. The computed norm is</p>
+<div class="math">
+<p><img src="../_images/math/40ce959838b62e756d60da7048ce7b030a6c542b.png" alt="\[ \left\Vert \mathbf{x}\right\Vert =\left\{ \begin{array}{cc} \max\left|x_{i}\right| &amp; \textrm{ord}=\textrm{inf}\\ \min\left|x_{i}\right| &amp; \textrm{ord}=-\textrm{inf}\\ \left(\sum_{i}\left|x_{i}\right|^{\textrm{ord}}\right)^{1/\textrm{ord}} &amp; \left|\textrm{ord}\right|&lt;\infty.\end{array}\right.\]"/></p>
+</div><p>For matrix <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> the only valid values for norm are <img class="math" src="../_images/math/d2ea8034dbd848a96ab1c4885a45ad552cc0854b.png" alt="\pm2,\pm1," style="vertical-align: -4px"/> <img class="math" src="../_images/math/91205e81c98c486418902c88d5c396f5355491f1.png" alt="\pm" style="vertical-align: 0px"/> inf, and &#8216;fro&#8217; (or &#8216;f&#8217;) Thus,</p>
+<div class="math">
+<p><img src="../_images/math/554dc8584731014e0bec0140b3fc7b75c00cde7d.png" alt="\[ \left\Vert \mathbf{A}\right\Vert =\left\{ \begin{array}{cc} \max_{i}\sum_{j}\left|a_{ij}\right| &amp; \textrm{ord}=\textrm{inf}\\ \min_{i}\sum_{j}\left|a_{ij}\right| &amp; \textrm{ord}=-\textrm{inf}\\ \max_{j}\sum_{i}\left|a_{ij}\right| &amp; \textrm{ord}=1\\ \min_{j}\sum_{i}\left|a_{ij}\right| &amp; \textrm{ord}=-1\\ \max\sigma_{i} &amp; \textrm{ord}=2\\ \min\sigma_{i} &amp; \textrm{ord}=-2\\ \sqrt{\textrm{trace}\left(\mathbf{A}^{H}\mathbf{A}\right)} &amp; \textrm{ord}=\textrm{'fro'}\end{array}\right.\]"/></p>
+</div><p>where <img class="math" src="../_images/math/0b2fecba81bc0662ca582947f2c85b2e88da2d58.png" alt="\sigma_{i}" style="vertical-align: -3px"/> are the singular values of <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> .</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">array([[1, 2],</span>
+<span class="go">      [3, 4]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">5.4772255750516612</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="s">&#39;fro&#39;</span><span class="p">)</span> <span class="c"># frobenius norm is the default</span>
+<span class="go">5.4772255750516612</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c"># L1 norm (max column sum)</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">inf</span><span class="p">)</span> <span class="c"># L inf norm (max row sum)</span>
+<span class="go">7</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="solving-linear-least-squares-problems-and-pseudo-inverses">
+<h3>Solving linear least-squares problems and pseudo-inverses<a class="headerlink" href="#solving-linear-least-squares-problems-and-pseudo-inverses" title="Permalink to this headline">¶</a></h3>
+<p>Linear least-squares problems occur in many branches of applied
+mathematics. In this problem a set of linear scaling coefficients is
+sought that allow a model to fit data. In particular it is assumed
+that data <img class="math" src="../_images/math/8061ee572c06de48dfc2c0d05e4c23da64bcd74a.png" alt="y_{i}" style="vertical-align: -4px"/> is related to data <img class="math" src="../_images/math/9b2454535b611d475e225039218c7aa99562ce74.png" alt="\mathbf{x}_{i}" style="vertical-align: -3px"/>
+through a set of coefficients <img class="math" src="../_images/math/6c611530143fe582b6279715426eee5e1374d95d.png" alt="c_{j}" style="vertical-align: -6px"/> and model functions
+<img class="math" src="../_images/math/5f36356f9d62fcf02489dcd90bdf6723c6144a59.png" alt="f_{j}\left(\mathbf{x}_{i}\right)" style="vertical-align: -6px"/> via the model</p>
+<div class="math">
+<p><img src="../_images/math/824f8f0c8822fb56f2ebf3820efa3027764c70c3.png" alt="\[ y_{i}=\sum_{j}c_{j}f_{j}\left(\mathbf{x}_{i}\right)+\epsilon_{i}\]"/></p>
+</div><p>where <img class="math" src="../_images/math/91d19b2bf6da8fc4279762e6edacb308528c6e73.png" alt="\epsilon_{i}" style="vertical-align: -3px"/> represents uncertainty in the data. The
+strategy of least squares is to pick the coefficients <img class="math" src="../_images/math/6c611530143fe582b6279715426eee5e1374d95d.png" alt="c_{j}" style="vertical-align: -6px"/> to
+minimize</p>
+<div class="math">
+<p><img src="../_images/math/bba7bf382c1b39fb8f7a660d4adc97990b4c83bc.png" alt="\[ J\left(\mathbf{c}\right)=\sum_{i}\left|y_{i}-\sum_{j}c_{j}f_{j}\left(x_{i}\right)\right|^{2}.\]"/></p>
+</div><p>Theoretically, a global minimum will occur when</p>
+<div class="math">
+<p><img src="../_images/math/d5e780ba1a0b43644c120d7cdfedf0cd81752b6e.png" alt="\[ \frac{\partial J}{\partial c_{n}^{*}}=0=\sum_{i}\left(y_{i}-\sum_{j}c_{j}f_{j}\left(x_{i}\right)\right)\left(-f_{n}^{*}\left(x_{i}\right)\right)\]"/></p>
+</div><p>or</p>
+<div class="math">
+<p><img src="../_images/math/6066fc0f0f257041e6decda08a9fc0d600e32c9a.png" alt="\begin{eqnarray*} \sum_{j}c_{j}\sum_{i}f_{j}\left(x_{i}\right)f_{n}^{*}\left(x_{i}\right) &amp; = &amp; \sum_{i}y_{i}f_{n}^{*}\left(x_{i}\right)\\ \mathbf{A}^{H}\mathbf{Ac} &amp; = &amp; \mathbf{A}^{H}\mathbf{y}\end{eqnarray*}"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="../_images/math/f02400ee00eacc33a25c6f7006209fdfef72102b.png" alt="\[ \left\{ \mathbf{A}\right\} _{ij}=f_{j}\left(x_{i}\right).\]"/></p>
+</div><p>When <img class="math" src="../_images/math/166ebb7f05ceb948e66409d91298f7d5e766f0a1.png" alt="\mathbf{A^{H}A}" style="vertical-align: -1px"/> is invertible, then</p>
+<div class="math">
+<p><img src="../_images/math/6dc8365db33468ac649416f9b1ee52fb4d3581fa.png" alt="\[ \mathbf{c}=\left(\mathbf{A}^{H}\mathbf{A}\right)^{-1}\mathbf{A}^{H}\mathbf{y}=\mathbf{A}^{\dagger}\mathbf{y}\]"/></p>
+</div><p>where <img class="math" src="../_images/math/dd53b77b7328f0a789fc47b54e59571a7ebe3913.png" alt="\mathbf{A}^{\dagger}" style="vertical-align: -1px"/> is called the pseudo-inverse of
+<img class="math" src="../_images/math/77e9c9e54522de64725cb1fb0487f6c2de456fdb.png" alt="\mathbf{A}." style="vertical-align: -1px"/> Notice that using this definition of
+<img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> the model can be written</p>
+<div class="math">
+<p><img src="../_images/math/478f15b1c4b3b59f1a1c04a319df7e48d89575dc.png" alt="\[ \mathbf{y}=\mathbf{Ac}+\boldsymbol{\epsilon}.\]"/></p>
+</div><p>The command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.lstsq</span></tt> will solve the linear least squares
+problem for <img class="math" src="../_images/math/99d7255ca41810aba9f5362e728b6f33b554a99a.png" alt="\mathbf{c}" style="vertical-align: 0px"/> given <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> and
+<img class="math" src="../_images/math/6c382eeb0dad017400c2bb6e32c2d5bdf4002c3e.png" alt="\mathbf{y}" style="vertical-align: -3px"/> . In addition <tt class="xref py py-obj docutils literal"><span class="pre">linalg.pinv</span></tt> or
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.pinv2</span></tt> (uses a different method based on singular value
+decomposition) will find <img class="math" src="../_images/math/dd53b77b7328f0a789fc47b54e59571a7ebe3913.png" alt="\mathbf{A}^{\dagger}" style="vertical-align: -1px"/> given
+<img class="math" src="../_images/math/77e9c9e54522de64725cb1fb0487f6c2de456fdb.png" alt="\mathbf{A}." style="vertical-align: -1px"/></p>
+<p>The following example and figure demonstrate the use of
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.lstsq</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">linalg.pinv</span></tt> for solving a data-fitting
+problem. The data shown below were generated using the model:</p>
+<div class="math">
+<p><img src="../_images/math/24ee8d9cd2b039c4556918015d1917b34aa09850.png" alt="\[ y_{i}=c_{1}e^{-x_{i}}+c_{2}x_{i}\]"/></p>
+</div><p>where <img class="math" src="../_images/math/1e3e528034b6201c5cb7f3426faa884f3beece0a.png" alt="x_{i}=0.1i" style="vertical-align: -3px"/> for <img class="math" src="../_images/math/c4a7ab4923e0fcb30438a31430300e0d66c11cef.png" alt="i=1\ldots10" style="vertical-align: -1px"/> , <img class="math" src="../_images/math/28279242c0f6b08c7738898eb0bc16daeccad06d.png" alt="c_{1}=5" style="vertical-align: -4px"/> ,
+and <img class="math" src="../_images/math/6186c1406b047144067b7637762eaf5e4cd27495.png" alt="c_{2}=4." style="vertical-align: -3px"/> Noise is added to <img class="math" src="../_images/math/8061ee572c06de48dfc2c0d05e4c23da64bcd74a.png" alt="y_{i}" style="vertical-align: -4px"/> and the
+coefficients <img class="math" src="../_images/math/ba09e029e54f3f870b2f3256b1a02d3994fc7a67.png" alt="c_{1}" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/9515528033e610b398edaaedcd0de025752fe918.png" alt="c_{2}" style="vertical-align: -3px"/> are estimated using
+linear least squares.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span><span class="mf">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">r_</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xi</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">i</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yi</span> <span class="o">=</span> <span class="n">c1</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">xi</span><span class="p">)</span><span class="o">+</span><span class="n">c2</span><span class="o">*</span><span class="n">xi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zi</span> <span class="o">=</span> <span class="n">yi</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="n">yi</span><span class="p">)</span><span class="o">*</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">yi</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">c_</span><span class="p">[</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">xi</span><span class="p">)[:,</span><span class="n">newaxis</span><span class="p">],</span><span class="n">xi</span><span class="p">[:,</span><span class="n">newaxis</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span><span class="n">resid</span><span class="p">,</span><span class="n">rank</span><span class="p">,</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">zi</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">xi2</span> <span class="o">=</span> <span class="n">r_</span><span class="p">[</span><span class="mf">0.1</span><span class="p">:</span><span class="mf">1.0</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yi2</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">xi2</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">xi2</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span><span class="n">zi</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="n">xi2</span><span class="p">,</span><span class="n">yi2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.1</span><span class="p">,</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">5.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;$x_i$&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Data fitting with linalg.lstsq&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/linalg-1.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/linalg-1.png" src="../_images/linalg-1.png" />
+</div>
+</div>
+<div class="section" id="generalized-inverse">
+<h3>Generalized inverse<a class="headerlink" href="#generalized-inverse" title="Permalink to this headline">¶</a></h3>
+<p>The generalized inverse is calculated using the command
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.pinv</span></tt> or <tt class="xref py py-obj docutils literal"><span class="pre">linalg.pinv2</span></tt>. These two commands differ
+in how they compute the generalized inverse.  The first uses the
+linalg.lstsq algorithm while the second uses singular value
+decomposition. Let <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> be an <img class="math" src="../_images/math/1a1643a70d3292c4a34ddd25801500f7369bb7b3.png" alt="M\times N" style="vertical-align: 0px"/> matrix,
+then if <img class="math" src="../_images/math/7568409324f5fac95cb73c74f7324cc39b85065c.png" alt="M&gt;N" style="vertical-align: 0px"/> the generalized inverse is</p>
+<div class="math">
+<p><img src="../_images/math/a437038b602ab343b912b2fc73927ca2fc9627f7.png" alt="\[ \mathbf{A}^{\dagger}=\left(\mathbf{A}^{H}\mathbf{A}\right)^{-1}\mathbf{A}^{H}\]"/></p>
+</div><p>while if <img class="math" src="../_images/math/f45d2d533ad98cac208fb02698e80c50593065f3.png" alt="M&lt;N" style="vertical-align: 0px"/> matrix the generalized inverse is</p>
+<div class="math">
+<p><img src="../_images/math/f74570d1ea02bded571be7269361aa6de5d7ebad.png" alt="\[ \mathbf{A}^{\#}=\mathbf{A}^{H}\left(\mathbf{A}\mathbf{A}^{H}\right)^{-1}.\]"/></p>
+</div><p>In both cases for <img class="math" src="../_images/math/14b2cbaa9459ac8c6fce667bb26f68f78e4a0a33.png" alt="M=N" style="vertical-align: 0px"/> , then</p>
+<div class="math">
+<p><img src="../_images/math/a7ccfa366bb288ff51298fd823f6c9bf7e60825b.png" alt="\[ \mathbf{A}^{\dagger}=\mathbf{A}^{\#}=\mathbf{A}^{-1}\]"/></p>
+</div><p>as long as <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> is invertible.</p>
+</div>
+</div>
+<div class="section" id="decompositions">
+<h2>Decompositions<a class="headerlink" href="#decompositions" title="Permalink to this headline">¶</a></h2>
+<p>In many applications it is useful to decompose a matrix using other
+representations. There are several decompositions supported by SciPy.</p>
+<div class="section" id="eigenvalues-and-eigenvectors">
+<h3>Eigenvalues and eigenvectors<a class="headerlink" href="#eigenvalues-and-eigenvectors" title="Permalink to this headline">¶</a></h3>
+<p>The eigenvalue-eigenvector problem is one of the most commonly
+employed linear algebra operations. In one popular form, the
+eigenvalue-eigenvector problem is to find for some square matrix
+<img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> scalars <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> and corresponding vectors
+<img class="math" src="../_images/math/1c39926efbcdc7d77c9337f5d48dd8e1761aec2d.png" alt="\mathbf{v}" style="vertical-align: 0px"/> such that</p>
+<div class="math">
+<p><img src="../_images/math/1d8e08b5e0feee938bb177c3f90800f6e2f4a7d4.png" alt="\[ \mathbf{Av}=\lambda\mathbf{v}.\]"/></p>
+</div><p>For an <img class="math" src="../_images/math/781a9346ccbbb394be4d0fbec40392750e826ea1.png" alt="N\times N" style="vertical-align: 0px"/> matrix, there are <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> (not necessarily
+distinct) eigenvalues &#8212; roots of the (characteristic) polynomial</p>
+<div class="math">
+<p><img src="../_images/math/b2662cca5feccf9301f713f3e7c79a985b641cba.png" alt="\[ \left|\mathbf{A}-\lambda\mathbf{I}\right|=0.\]"/></p>
+</div><p>The eigenvectors, <img class="math" src="../_images/math/1c39926efbcdc7d77c9337f5d48dd8e1761aec2d.png" alt="\mathbf{v}" style="vertical-align: 0px"/> , are also sometimes called right
+eigenvectors to distinguish them from another set of left eigenvectors
+that satisfy</p>
+<div class="math">
+<p><img src="../_images/math/af5d720a35d3b6a2c1ded629d90239b1e25eb9eb.png" alt="\[ \mathbf{v}_{L}^{H}\mathbf{A}=\lambda\mathbf{v}_{L}^{H}\]"/></p>
+</div><p>or</p>
+<div class="math">
+<p><img src="../_images/math/8774c026418e4bcc15c0fd54ffc01a6303fb3de7.png" alt="\[ \mathbf{A}^{H}\mathbf{v}_{L}=\lambda^{*}\mathbf{v}_{L}.\]"/></p>
+</div><p>With it&#8217;s default optional arguments, the command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.eig</span></tt>
+returns <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/f1be0a2e72f505708862ed7a64875382440299e4.png" alt="\mathbf{v}." style="vertical-align: 0px"/> However, it can also
+return <img class="math" src="../_images/math/69312733369dab697fd8bdc8a0fcdd4fbd11c1ab.png" alt="\mathbf{v}_{L}" style="vertical-align: -3px"/> and just <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> by itself (
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.eigvals</span></tt> returns just <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> as well).</p>
+<p>In addtion, <tt class="xref py py-obj docutils literal"><span class="pre">linalg.eig</span></tt> can also solve the more general eigenvalue problem</p>
+<div class="math">
+<p><img src="../_images/math/62d8228737d32c986974f387c52c85ba342b1bbe.png" alt="\begin{eqnarray*} \mathbf{Av} &amp; = &amp; \lambda\mathbf{Bv}\\ \mathbf{A}^{H}\mathbf{v}_{L} &amp; = &amp; \lambda^{*}\mathbf{B}^{H}\mathbf{v}_{L}\end{eqnarray*}"/></p>
+</div><p>for square matrices <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> and <img class="math" src="../_images/math/c51b214155737f8fcc24501dfe4d3bbeb7fbb9e2.png" alt="\mathbf{B}." style="vertical-align: 0px"/> The
+standard eigenvalue problem is an example of the general eigenvalue
+problem for <img class="math" src="../_images/math/9ec3bf2c7e849a46748c8e540f6501d7e734e706.png" alt="\mathbf{B}=\mathbf{I}." style="vertical-align: 0px"/> When a generalized
+eigenvalue problem can be solved, then it provides a decomposition of
+<img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> as</p>
+<div class="math">
+<p><img src="../_images/math/87276d434b87f1d7912ebdd7c3fc7eafacad3ab6.png" alt="\[ \mathbf{A}=\mathbf{BV}\boldsymbol{\Lambda}\mathbf{V}^{-1}\]"/></p>
+</div><p>where <img class="math" src="../_images/math/9d5b9321f67eecfa2013fa6f3891ba1f2e335946.png" alt="\mathbf{V}" style="vertical-align: 0px"/> is the collection of eigenvectors into
+columns and <img class="math" src="../_images/math/47d793a8c85b7ec45b95e8b617aee59854be7612.png" alt="\boldsymbol{\Lambda}" style="vertical-align: -1px"/> is a diagonal matrix of
+eigenvalues.</p>
+<p>By definition, eigenvectors are only defined up to a constant scale
+factor. In SciPy, the scaling factor for the eigenvectors is chosen so
+that <img class="math" src="../_images/math/da91896622b13bd903c21fd33683a7fd341d2842.png" alt="\left\Vert \mathbf{v}\right\Vert
+^{2}=\sum_{i}v_{i}^{2}=1." style="vertical-align: -5px"/></p>
+<p>As an example, consider finding the eigenvalues and eigenvectors of
+the matrix</p>
+<div class="math">
+<p><img src="../_images/math/58c752af8057ccb75f3eb73fcf74e012cb8fbbe9.png" alt="\[ \mathbf{A}=\left[\begin{array}{ccc} 1 &amp; 5 &amp; 2\\ 2 &amp; 4 &amp; 1\\ 3 &amp; 6 &amp; 2\end{array}\right].\]"/></p>
+</div><p>The characteristic polynomial is</p>
+<div class="math">
+<p><img src="../_images/math/67dfe1c28738109b8806fb5d40834ea83eba5352.png" alt="\begin{eqnarray*} \left|\mathbf{A}-\lambda\mathbf{I}\right| &amp; = &amp; \left(1-\lambda\right)\left[\left(4-\lambda\right)\left(2-\lambda\right)-6\right]-\\  &amp;  &amp; 5\left[2\left(2-\lambda\right)-3\right]+2\left[12-3\left(4-\lambda\right)\right]\\  &amp; = &amp; -\lambda^{3}+7\lambda^{2}+8\lambda-3.\end{eqnarray*}"/></p>
+</div><p>The roots of this polynomial are the eigenvalues of <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> :</p>
+<div class="math">
+<p><img src="../_images/math/bee9b83e31a4ec0813463faea261c504563e48ed.png" alt="\begin{eqnarray*} \lambda_{1} &amp; = &amp; 7.9579\\ \lambda_{2} &amp; = &amp; -1.2577\\ \lambda_{3} &amp; = &amp; 0.2997.\end{eqnarray*}"/></p>
+</div><p>The eigenvectors corresponding to each eigenvalue can be found using
+the original equation. The eigenvectors associated with these
+eigenvalues can then be found.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">la</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l1</span><span class="p">,</span><span class="n">l2</span> <span class="o">=</span> <span class="n">la</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span>  <span class="c">#eigenvalues</span>
+<span class="go">(-0.372281323269+0j) (5.37228132327+0j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">v</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="c">#first eigenvector</span>
+<span class="go">[-0.82456484  0.56576746]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">v</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>  <span class="c">#second eigenvector</span>
+<span class="go">[-0.41597356 -0.90937671]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c">#eigenvectors are unitary</span>
+<span class="go">[ 1.  1. ]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">-</span><span class="n">l1</span><span class="o">*</span><span class="n">v1</span><span class="p">)</span> <span class="c">#check the computation</span>
+<span class="go">3.23682852457e-16</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="singular-value-decomposition">
+<h3>Singular value decomposition<a class="headerlink" href="#singular-value-decomposition" title="Permalink to this headline">¶</a></h3>
+<p>Singular Value Decompostion (SVD) can be thought of as an extension of
+the eigenvalue problem to matrices that are not square. Let
+<img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> be an <img class="math" src="../_images/math/1a1643a70d3292c4a34ddd25801500f7369bb7b3.png" alt="M\times N" style="vertical-align: 0px"/> matrix with <img class="math" src="../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> and
+<img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> arbitrary. The matrices <img class="math" src="../_images/math/ebbc03b17ec2ef36ba94bd303dae7312a92d3ebd.png" alt="\mathbf{A}^{H}\mathbf{A}" style="vertical-align: -1px"/> and
+<img class="math" src="../_images/math/8a15d871110a36ec6ee2128fca586415b9c3a97e.png" alt="\mathbf{A}\mathbf{A}^{H}" style="vertical-align: -1px"/> are square hermitian matrices <a class="footnote-reference" href="#id3" id="id1">[1]</a> of
+size <img class="math" src="../_images/math/781a9346ccbbb394be4d0fbec40392750e826ea1.png" alt="N\times N" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/a3f6c75ebe4e62ae5baf8e22d2fc4b93ad40cae4.png" alt="M\times M" style="vertical-align: 0px"/> respectively. It is known
+that the eigenvalues of square hermitian matrices are real and
+non-negative. In addtion, there are at most
+<img class="math" src="../_images/math/46d3e38696cbe9f5cfcd340cb088a6e4ca47ffcd.png" alt="\min\left(M,N\right)" style="vertical-align: -4px"/> identical non-zero eigenvalues of
+<img class="math" src="../_images/math/ebbc03b17ec2ef36ba94bd303dae7312a92d3ebd.png" alt="\mathbf{A}^{H}\mathbf{A}" style="vertical-align: -1px"/> and <img class="math" src="../_images/math/4a2113051e8e8548a46b6a0ae2bb5319114a56ef.png" alt="\mathbf{A}\mathbf{A}^{H}." style="vertical-align: -1px"/>
+Define these positive eigenvalues as <img class="math" src="../_images/math/ff27e60be2b13561a1d3dd210a3311f4c1748727.png" alt="\sigma_{i}^{2}." style="vertical-align: -5px"/> The
+square-root of these are called singular values of <img class="math" src="../_images/math/77e9c9e54522de64725cb1fb0487f6c2de456fdb.png" alt="\mathbf{A}." style="vertical-align: -1px"/>
+The eigenvectors of <img class="math" src="../_images/math/ebbc03b17ec2ef36ba94bd303dae7312a92d3ebd.png" alt="\mathbf{A}^{H}\mathbf{A}" style="vertical-align: -1px"/> are collected by
+columns into an <img class="math" src="../_images/math/781a9346ccbbb394be4d0fbec40392750e826ea1.png" alt="N\times N" style="vertical-align: 0px"/> unitary <a class="footnote-reference" href="#id4" id="id2">[2]</a> matrix
+<img class="math" src="../_images/math/9d5b9321f67eecfa2013fa6f3891ba1f2e335946.png" alt="\mathbf{V}" style="vertical-align: 0px"/> while the eigenvectors of
+<img class="math" src="../_images/math/8a15d871110a36ec6ee2128fca586415b9c3a97e.png" alt="\mathbf{A}\mathbf{A}^{H}" style="vertical-align: -1px"/> are collected by columns in the
+unitary matrix <img class="math" src="../_images/math/c9eadbff3f359c41e6ac5b6bd382a29bb0415c4f.png" alt="\mathbf{U}" style="vertical-align: 0px"/> , the singular values are collected
+in an <img class="math" src="../_images/math/1a1643a70d3292c4a34ddd25801500f7369bb7b3.png" alt="M\times N" style="vertical-align: 0px"/> zero matrix
+<img class="math" src="../_images/math/14b313e75e436f72808e7e9ec39799f03003ba01.png" alt="\mathbf{\boldsymbol{\Sigma}}" style="vertical-align: 0px"/> with main diagonal entries set to
+the singular values. Then</p>
+<div class="math">
+<p><img src="../_images/math/982143dc39add5009746663baf582d6dc728eafa.png" alt="\[ \mathbf{A=U}\boldsymbol{\Sigma}\mathbf{V}^{H}\]"/></p>
+</div><p>is the singular-value decomposition of <img class="math" src="../_images/math/77e9c9e54522de64725cb1fb0487f6c2de456fdb.png" alt="\mathbf{A}." style="vertical-align: -1px"/> Every
+matrix has a singular value decomposition. Sometimes, the singular
+values are called the spectrum of <img class="math" src="../_images/math/77e9c9e54522de64725cb1fb0487f6c2de456fdb.png" alt="\mathbf{A}." style="vertical-align: -1px"/> The command
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.svd</span></tt> will return <img class="math" src="../_images/math/c9eadbff3f359c41e6ac5b6bd382a29bb0415c4f.png" alt="\mathbf{U}" style="vertical-align: 0px"/> ,
+<img class="math" src="../_images/math/ed5625448ef7578ef6fa1c6ba9c905f5bfe2cd45.png" alt="\mathbf{V}^{H}" style="vertical-align: 0px"/> , and <img class="math" src="../_images/math/0b2fecba81bc0662ca582947f2c85b2e88da2d58.png" alt="\sigma_{i}" style="vertical-align: -3px"/> as an array of the
+singular values. To obtain the matrix <img class="math" src="../_images/math/c5ae943c9309b34626c688fa8c18c3ef58e6d991.png" alt="\mathbf{\Sigma}" style="vertical-align: 0px"/> use
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.diagsvd</span></tt>. The following example illustrates the use of
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.svd</span></tt> .</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">array([[1, 2, 3],</span>
+<span class="go">      [4, 5, 6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">M</span><span class="p">,</span><span class="n">N</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">Vh</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">diagsvd</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">U</span><span class="p">,</span> <span class="n">Vh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">U</span>
+<span class="go">array([[-0.3863177 , -0.92236578],</span>
+<span class="go">      [-0.92236578,  0.3863177 ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sig</span>
+<span class="go">array([[ 9.508032  ,  0.        ,  0.        ],</span>
+<span class="go">      [ 0.        ,  0.77286964,  0.        ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Vh</span>
+<span class="go">array([[-0.42866713, -0.56630692, -0.7039467 ],</span>
+<span class="go">      [ 0.80596391,  0.11238241, -0.58119908],</span>
+<span class="go">      [ 0.40824829, -0.81649658,  0.40824829]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Sig</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Vh</span><span class="p">))</span> <span class="c">#check computation</span>
+<span class="go">array([[ 1.,  2.,  3.],</span>
+<span class="go">      [ 4.,  5.,  6.]])</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>A hermitian matrix <img class="math" src="../_images/math/ba333bedeb89d6f64a3e309d315b1d3c0cbb0c4b.png" alt="\mathbf{D}" style="vertical-align: 0px"/> satisfies <img class="math" src="../_images/math/49ccd5dbf224dfbe6fb2c0bdfcb96b1629b801c2.png" alt="\mathbf{D}^{H}=\mathbf{D}." style="vertical-align: 0px"/></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>A unitary matrix <img class="math" src="../_images/math/ba333bedeb89d6f64a3e309d315b1d3c0cbb0c4b.png" alt="\mathbf{D}" style="vertical-align: 0px"/> satisfies <img class="math" src="../_images/math/7f893bd7085235292b275409688358386002b73a.png" alt="\mathbf{D}^{H}\mathbf{D}=\mathbf{I}=\mathbf{D}\mathbf{D}^{H}" style="vertical-align: 0px"/> so that <img class="math" src="../_images/math/a6ef96e1022d211af50c1c23223945219c36a179.png" alt="\mathbf{D}^{-1}=\mathbf{D}^{H}." style="vertical-align: 0px"/></td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="lu-decomposition">
+<h3>LU decomposition<a class="headerlink" href="#lu-decomposition" title="Permalink to this headline">¶</a></h3>
+<p>The LU decompostion finds a representation for the <img class="math" src="../_images/math/1a1643a70d3292c4a34ddd25801500f7369bb7b3.png" alt="M\times N" style="vertical-align: 0px"/> matrix <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> as</p>
+<div class="math">
+<p><img src="../_images/math/6418ca9f0987baa21818b0df8685344a761b56b1.png" alt="\[ \mathbf{A}=\mathbf{PLU}\]"/></p>
+</div><p>where <img class="math" src="../_images/math/74089aa833d9ff5a509f04bb3a0462aeb41d27e8.png" alt="\mathbf{P}" style="vertical-align: 0px"/> is an <img class="math" src="../_images/math/a3f6c75ebe4e62ae5baf8e22d2fc4b93ad40cae4.png" alt="M\times M" style="vertical-align: 0px"/> permutation matrix (a
+permutation of the rows of the identity matrix), <img class="math" src="../_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}" style="vertical-align: 0px"/> is
+in <img class="math" src="../_images/math/d373c5401ad6dd572b3e697b508f29220627a360.png" alt="M\times K" style="vertical-align: 0px"/> lower triangular or trapezoidal matrix (
+<img class="math" src="../_images/math/7e03b9bcfee96b68f16cbd82846093146b1306d5.png" alt="K=\min\left(M,N\right)" style="vertical-align: -4px"/> ) with unit-diagonal, and
+<img class="math" src="../_images/math/c9eadbff3f359c41e6ac5b6bd382a29bb0415c4f.png" alt="\mathbf{U}" style="vertical-align: 0px"/> is an upper triangular or trapezoidal matrix. The
+SciPy command for this decomposition is <tt class="xref py py-obj docutils literal"><span class="pre">linalg.lu</span></tt> .</p>
+<p>Such a decomposition is often useful for solving many simultaneous
+equations where the left-hand-side does not change but the right hand
+side does. For example, suppose we are going to solve</p>
+<div class="math">
+<p><img src="../_images/math/b78d42ead48f836bd05e94dc414deb7186182dfb.png" alt="\[ \mathbf{A}\mathbf{x}_{i}=\mathbf{b}_{i}\]"/></p>
+</div><p>for many different <img class="math" src="../_images/math/539b514129fc454261769541d28018b1c9b569d4.png" alt="\mathbf{b}_{i}" style="vertical-align: -3px"/> . The LU decomposition allows this to be written as</p>
+<div class="math">
+<p><img src="../_images/math/19939ea9f3ce9b41602abdd5c749a5aaaacf6905.png" alt="\[ \mathbf{PLUx}_{i}=\mathbf{b}_{i}.\]"/></p>
+</div><p>Because <img class="math" src="../_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}" style="vertical-align: 0px"/> is lower-triangular, the equation can be
+solved for <img class="math" src="../_images/math/279af65af983cbf759dcda82046bfe21312341a0.png" alt="\mathbf{U}\mathbf{x}_{i}" style="vertical-align: -3px"/> and finally
+<img class="math" src="../_images/math/9b2454535b611d475e225039218c7aa99562ce74.png" alt="\mathbf{x}_{i}" style="vertical-align: -3px"/> very rapidly using forward- and
+back-substitution. An initial time spent factoring <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/>
+allows for very rapid solution of similar systems of equations in the
+future. If the intent for performing LU decomposition is for solving
+linear systems then the command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.lu_factor</span></tt> should be used
+followed by repeated applications of the command
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.lu_solve</span></tt> to solve the system for each new
+right-hand-side.</p>
+</div>
+<div class="section" id="cholesky-decomposition">
+<h3>Cholesky decomposition<a class="headerlink" href="#cholesky-decomposition" title="Permalink to this headline">¶</a></h3>
+<p>Cholesky decomposition is a special case of LU decomposition
+applicable to Hermitian positive definite matrices. When
+<img class="math" src="../_images/math/fa923cad2bf79eaefaae08bbd13227fc1d6c9500.png" alt="\mathbf{A}=\mathbf{A}^{H}" style="vertical-align: -1px"/> and
+<img class="math" src="../_images/math/94e312b7abf8cd4b1512dd177a02cead27577b74.png" alt="\mathbf{x}^{H}\mathbf{Ax}\geq0" style="vertical-align: -3px"/> for all <img class="math" src="../_images/math/5f61118f2ae912f86e683687c005145b5eb54aec.png" alt="\mathbf{x}" style="vertical-align: -1px"/> ,
+then decompositions of <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> can be found so that</p>
+<div class="math">
+<p><img src="../_images/math/cd21f08b98fd575fbee787a3bc973d8395516556.png" alt="\begin{eqnarray*} \mathbf{A} &amp; = &amp; \mathbf{U}^{H}\mathbf{U}\\ \mathbf{A} &amp; = &amp; \mathbf{L}\mathbf{L}^{H}\end{eqnarray*}"/></p>
+</div><p>where <img class="math" src="../_images/math/f36a69e6a3b183e05991c8cafae387e99ae527e4.png" alt="\mathbf{L}" style="vertical-align: 0px"/> is lower-triangular and <img class="math" src="../_images/math/c9eadbff3f359c41e6ac5b6bd382a29bb0415c4f.png" alt="\mathbf{U}" style="vertical-align: 0px"/> is
+upper triangular. Notice that <img class="math" src="../_images/math/5c45c35e41c0409b74e78ef3e3cd7d441feef182.png" alt="\mathbf{L}=\mathbf{U}^{H}." style="vertical-align: 0px"/> The
+command <tt class="xref py py-obj docutils literal"><span class="pre">linagl.cholesky</span></tt> computes the cholesky
+factorization. For using cholesky factorization to solve systems of
+equations there are also <tt class="xref py py-obj docutils literal"><span class="pre">linalg.cho_factor</span></tt> and
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.cho_solve</span></tt> routines that work similarly to their LU
+decomposition counterparts.</p>
+</div>
+<div class="section" id="qr-decomposition">
+<h3>QR decomposition<a class="headerlink" href="#qr-decomposition" title="Permalink to this headline">¶</a></h3>
+<p>The QR decomposition (sometimes called a polar decomposition) works
+for any <img class="math" src="../_images/math/1a1643a70d3292c4a34ddd25801500f7369bb7b3.png" alt="M\times N" style="vertical-align: 0px"/> array and finds an <img class="math" src="../_images/math/a3f6c75ebe4e62ae5baf8e22d2fc4b93ad40cae4.png" alt="M\times M" style="vertical-align: 0px"/> unitary
+matrix <img class="math" src="../_images/math/02b45048a960d723f8d41c2a73f271c4babc1457.png" alt="\mathbf{Q}" style="vertical-align: -3px"/> and an <img class="math" src="../_images/math/1a1643a70d3292c4a34ddd25801500f7369bb7b3.png" alt="M\times N" style="vertical-align: 0px"/> upper-trapezoidal
+matrix <img class="math" src="../_images/math/4b93006f0bf4b46588ae2abb27feebf9488fdd8e.png" alt="\mathbf{R}" style="vertical-align: 0px"/> such that</p>
+<div class="math">
+<p><img src="../_images/math/0110430c3f72562038677ae460f41df5b6edd41f.png" alt="\[ \mathbf{A=QR}.\]"/></p>
+</div><p>Notice that if the SVD of <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> is known then the QR decomposition can be found</p>
+<div class="math">
+<p><img src="../_images/math/a0e7336badff32ddb382f78f36a93bbae63e3784.png" alt="\[ \mathbf{A}=\mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^{H}=\mathbf{QR}\]"/></p>
+</div><p>implies that <img class="math" src="../_images/math/7e0e703ca7ae5925afeee9c0f44ea2ad28028c9a.png" alt="\mathbf{Q}=\mathbf{U}" style="vertical-align: -3px"/> and
+<img class="math" src="../_images/math/7f0a9970dd6ec9814142b77d0ca20b0d694c058b.png" alt="\mathbf{R}=\boldsymbol{\Sigma}\mathbf{V}^{H}." style="vertical-align: 0px"/> Note, however,
+that in SciPy independent algorithms are used to find QR and SVD
+decompositions. The command for QR decomposition is <tt class="xref py py-obj docutils literal"><span class="pre">linalg.qr</span></tt> .</p>
+</div>
+<div class="section" id="schur-decomposition">
+<h3>Schur decomposition<a class="headerlink" href="#schur-decomposition" title="Permalink to this headline">¶</a></h3>
+<p>For a square <img class="math" src="../_images/math/781a9346ccbbb394be4d0fbec40392750e826ea1.png" alt="N\times N" style="vertical-align: 0px"/> matrix, <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> , the Schur
+decomposition finds (not-necessarily unique) matrices
+<img class="math" src="../_images/math/ba10d3557df11b479884462df8939ed56701ef83.png" alt="\mathbf{T}" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/75d4a3d7f9e00ba4ad4d80289be98fe888e31448.png" alt="\mathbf{Z}" style="vertical-align: 0px"/> such that</p>
+<div class="math">
+<p><img src="../_images/math/63a0676ccac3bd1598fb204e8b85d91d6bc55e50.png" alt="\[ \mathbf{A}=\mathbf{ZT}\mathbf{Z}^{H}\]"/></p>
+</div><p>where <img class="math" src="../_images/math/75d4a3d7f9e00ba4ad4d80289be98fe888e31448.png" alt="\mathbf{Z}" style="vertical-align: 0px"/> is a unitary matrix and <img class="math" src="../_images/math/ba10d3557df11b479884462df8939ed56701ef83.png" alt="\mathbf{T}" style="vertical-align: 0px"/> is
+either upper-triangular or quasi-upper triangular depending on whether
+or not a real schur form or complex schur form is requested.  For a
+real schur form both <img class="math" src="../_images/math/ba10d3557df11b479884462df8939ed56701ef83.png" alt="\mathbf{T}" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/75d4a3d7f9e00ba4ad4d80289be98fe888e31448.png" alt="\mathbf{Z}" style="vertical-align: 0px"/> are
+real-valued when <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> is real-valued. When
+<img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> is a real-valued matrix the real schur form is only
+quasi-upper triangular because <img class="math" src="../_images/math/8a3b32228e9105bf0f3dffd78b0b7310083b693d.png" alt="2\times2" style="vertical-align: 0px"/> blocks extrude from
+the main diagonal corresponding to any complex- valued
+eigenvalues. The command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.schur</span></tt> finds the Schur
+decomposition while the command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.rsf2csf</span></tt> converts
+<img class="math" src="../_images/math/ba10d3557df11b479884462df8939ed56701ef83.png" alt="\mathbf{T}" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/75d4a3d7f9e00ba4ad4d80289be98fe888e31448.png" alt="\mathbf{Z}" style="vertical-align: 0px"/> from a real Schur form to a
+complex Schur form. The Schur form is especially useful in calculating
+functions of matrices.</p>
+<p>The following example illustrates the schur decomposition:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">mat</span><span class="p">(</span><span class="s">&#39;[1 3 2; 1 4 5; 2 3 6]&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">schur</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T1</span><span class="p">,</span><span class="n">Z1</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">schur</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="s">&#39;complex&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T2</span><span class="p">,</span><span class="n">Z2</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">rsf2csf</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">T</span>
+<span class="go">[[ 9.90012467  1.78947961 -0.65498528]</span>
+<span class="go"> [ 0.          0.54993766 -1.57754789]</span>
+<span class="go"> [ 0.          0.51260928  0.54993766]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">T2</span>
+<span class="go">[[ 9.90012467 +0.00000000e+00j -0.32436598 +1.55463542e+00j</span>
+<span class="go">  -0.88619748 +5.69027615e-01j]</span>
+<span class="go"> [ 0.00000000 +0.00000000e+00j  0.54993766 +8.99258408e-01j</span>
+<span class="go">   1.06493862 +1.37016050e-17j]</span>
+<span class="go"> [ 0.00000000 +0.00000000e+00j  0.00000000 +0.00000000e+00j</span>
+<span class="go">   0.54993766 -8.99258408e-01j]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">abs</span><span class="p">(</span><span class="n">T1</span><span class="o">-</span><span class="n">T2</span><span class="p">)</span> <span class="c"># different</span>
+<span class="go">[[  1.24357637e-14   2.09205364e+00   6.56028192e-01]</span>
+<span class="go"> [  0.00000000e+00   4.00296604e-16   1.83223097e+00]</span>
+<span class="go"> [  0.00000000e+00   0.00000000e+00   4.57756680e-16]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Z1</span><span class="o">-</span><span class="n">Z2</span><span class="p">)</span> <span class="c"># different</span>
+<span class="go">[[ 0.06833781  1.10591375  0.23662249]</span>
+<span class="go"> [ 0.11857169  0.5585604   0.29617525]</span>
+<span class="go"> [ 0.12624999  0.75656818  0.22975038]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="p">,</span><span class="n">Z</span><span class="p">,</span><span class="n">T1</span><span class="p">,</span><span class="n">Z1</span><span class="p">,</span><span class="n">T2</span><span class="p">,</span><span class="n">Z2</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mat</span><span class="p">,(</span><span class="n">T</span><span class="p">,</span><span class="n">Z</span><span class="p">,</span><span class="n">T1</span><span class="p">,</span><span class="n">Z1</span><span class="p">,</span><span class="n">T2</span><span class="p">,</span><span class="n">Z2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">abs</span><span class="p">(</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">Z</span><span class="o">.</span><span class="n">H</span><span class="p">)</span> <span class="c"># same</span>
+<span class="go">[[  1.11022302e-16   4.44089210e-16   4.44089210e-16]</span>
+<span class="go"> [  4.44089210e-16   1.33226763e-15   8.88178420e-16]</span>
+<span class="go"> [  8.88178420e-16   4.44089210e-16   2.66453526e-15]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">abs</span><span class="p">(</span><span class="n">A</span><span class="o">-</span><span class="n">Z1</span><span class="o">*</span><span class="n">T1</span><span class="o">*</span><span class="n">Z1</span><span class="o">.</span><span class="n">H</span><span class="p">)</span> <span class="c"># same</span>
+<span class="go">[[  1.00043248e-15   2.22301403e-15   5.55749485e-15]</span>
+<span class="go"> [  2.88899660e-15   8.44927041e-15   9.77322008e-15]</span>
+<span class="go"> [  3.11291538e-15   1.15463228e-14   1.15464861e-14]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">abs</span><span class="p">(</span><span class="n">A</span><span class="o">-</span><span class="n">Z2</span><span class="o">*</span><span class="n">T2</span><span class="o">*</span><span class="n">Z2</span><span class="o">.</span><span class="n">H</span><span class="p">)</span> <span class="c"># same</span>
+<span class="go">[[  3.34058710e-16   8.88611201e-16   4.18773089e-18]</span>
+<span class="go"> [  1.48694940e-16   8.95109973e-16   8.92966151e-16]</span>
+<span class="go"> [  1.33228956e-15   1.33582317e-15   3.55373104e-15]]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="matrix-functions">
+<h2>Matrix Functions<a class="headerlink" href="#matrix-functions" title="Permalink to this headline">¶</a></h2>
+<p>Consider the function <img class="math" src="../_images/math/8c7d2d5eb5afb17913ed2a07c040b66c87f2498e.png" alt="f\left(x\right)" style="vertical-align: -4px"/> with Taylor series expansion</p>
+<div class="math">
+<p><img src="../_images/math/adf875f7968f2eacd843a6781a311c30a294d242.png" alt="\[ f\left(x\right)=\sum_{k=0}^{\infty}\frac{f^{\left(k\right)}\left(0\right)}{k!}x^{k}.\]"/></p>
+</div><p>A matrix function can be defined using this Taylor series for the
+square matrix <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> as</p>
+<div class="math">
+<p><img src="../_images/math/3bb288756a77e30defb3856c78f3f3275944b69d.png" alt="\[ f\left(\mathbf{A}\right)=\sum_{k=0}^{\infty}\frac{f^{\left(k\right)}\left(0\right)}{k!}\mathbf{A}^{k}.\]"/></p>
+</div><p>While, this serves as a useful representation of a matrix function, it
+is rarely the best way to calculate a matrix function.</p>
+<div class="section" id="exponential-and-logarithm-functions">
+<h3>Exponential and logarithm functions<a class="headerlink" href="#exponential-and-logarithm-functions" title="Permalink to this headline">¶</a></h3>
+<p>The matrix exponential is one of the more common matrix functions. It
+can be defined for square matrices as</p>
+<div class="math">
+<p><img src="../_images/math/b90c25a79b0bf9a43a7bb678f6285cdf34c63d0f.png" alt="\[ e^{\mathbf{A}}=\sum_{k=0}^{\infty}\frac{1}{k!}\mathbf{A}^{k}.\]"/></p>
+</div><p>The command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.expm3</span></tt> uses this Taylor series definition to compute the matrix exponential.
+Due to poor convergence properties it is not often used.</p>
+<p>Another method to compute the matrix exponential is to find an
+eigenvalue decomposition of <img class="math" src="../_images/math/f3e830722dede854af533bfa96d549c68ed5997f.png" alt="\mathbf{A}" style="vertical-align: -1px"/> :</p>
+<div class="math">
+<p><img src="../_images/math/7df93fd626a347846d758355a0a222db1375ee2f.png" alt="\[ \mathbf{A}=\mathbf{V}\boldsymbol{\Lambda}\mathbf{V}^{-1}\]"/></p>
+</div><p>and note that</p>
+<div class="math">
+<p><img src="../_images/math/913ee63a8b6d027192a8e0eda61fe6a9cb57c67e.png" alt="\[ e^{\mathbf{A}}=\mathbf{V}e^{\boldsymbol{\Lambda}}\mathbf{V}^{-1}\]"/></p>
+</div><p>where the matrix exponential of the diagonal matrix <img class="math" src="../_images/math/47d793a8c85b7ec45b95e8b617aee59854be7612.png" alt="\boldsymbol{\Lambda}" style="vertical-align: -1px"/> is just the exponential of its elements. This method is implemented in <tt class="xref py py-obj docutils literal"><span class="pre">linalg.expm2</span></tt> .</p>
+<p>The preferred method for implementing the matrix exponential is to use
+scaling and a Padé approximation for <img class="math" src="../_images/math/c13a313c9231ccaa699c1929a7126a313f1adbda.png" alt="e^{x}" style="vertical-align: 0px"/> . This algorithm is
+implemented as <tt class="xref py py-obj docutils literal"><span class="pre">linalg.expm</span></tt> .</p>
+<p>The inverse of the matrix exponential is the matrix logarithm defined
+as the inverse of the matrix exponential.</p>
+<div class="math">
+<p><img src="../_images/math/32d11c8dcf8b96fa4f2466a53892f850bc713b15.png" alt="\[ \mathbf{A}\equiv\exp\left(\log\left(\mathbf{A}\right)\right).\]"/></p>
+</div><p>The matrix logarithm can be obtained with <tt class="xref py py-obj docutils literal"><span class="pre">linalg.logm</span></tt> .</p>
+</div>
+<div class="section" id="trigonometric-functions">
+<h3>Trigonometric functions<a class="headerlink" href="#trigonometric-functions" title="Permalink to this headline">¶</a></h3>
+<p>The trigonometric functions <img class="math" src="../_images/math/6fb300dacfcde1b57ad070409262b1743e0cd966.png" alt="\sin" style="vertical-align: -1px"/> , <img class="math" src="../_images/math/bb5e108fdc4bf4fb6151cb922992f23bc6c35985.png" alt="\cos" style="vertical-align: 0px"/> , and
+<img class="math" src="../_images/math/75b04387daddfdad2ef55b5a9dfec552ea41db50.png" alt="\tan" style="vertical-align: -1px"/> are implemented for matrices in <tt class="xref py py-func docutils literal"><span class="pre">linalg.sinm</span></tt>,
+<tt class="xref py py-func docutils literal"><span class="pre">linalg.cosm</span></tt>, and <tt class="xref py py-obj docutils literal"><span class="pre">linalg.tanm</span></tt> respectively. The matrix
+sin and cosine can be defined using Euler&#8217;s identity as</p>
+<div class="math">
+<p><img src="../_images/math/7ae33a04ea9886089629271befff4543f8c21cb6.png" alt="\begin{eqnarray*} \sin\left(\mathbf{A}\right) &amp; = &amp; \frac{e^{j\mathbf{A}}-e^{-j\mathbf{A}}}{2j}\\ \cos\left(\mathbf{A}\right) &amp; = &amp; \frac{e^{j\mathbf{A}}+e^{-j\mathbf{A}}}{2}.\end{eqnarray*}"/></p>
+</div><p>The tangent is</p>
+<div class="math">
+<p><img src="../_images/math/430f207b46e2788e19b9cf23f857ab4ac492fe03.png" alt="\[ \tan\left(x\right)=\frac{\sin\left(x\right)}{\cos\left(x\right)}=\left[\cos\left(x\right)\right]^{-1}\sin\left(x\right)\]"/></p>
+</div><p>and so the matrix tangent is defined as</p>
+<div class="math">
+<p><img src="../_images/math/3685ed6e1ac7e3a98ea0076b48815f39923f0fe8.png" alt="\[ \left[\cos\left(\mathbf{A}\right)\right]^{-1}\sin\left(\mathbf{A}\right).\]"/></p>
+</div></div>
+<div class="section" id="hyperbolic-trigonometric-functions">
+<h3>Hyperbolic trigonometric functions<a class="headerlink" href="#hyperbolic-trigonometric-functions" title="Permalink to this headline">¶</a></h3>
+<p>The hyperbolic trigonemetric functions <img class="math" src="../_images/math/ff7c71d59b09defa3075b461d8fe33c10db6e116.png" alt="\sinh" style="vertical-align: -1px"/> , <img class="math" src="../_images/math/5253e55896d208af75d495bfe152435224e58825.png" alt="\cosh" style="vertical-align: -1px"/> ,
+and <img class="math" src="../_images/math/57e5c3760659b5c7b8101be86f0ce20597733908.png" alt="\tanh" style="vertical-align: -1px"/> can also be defined for matrices using the familiar
+definitions:</p>
+<div class="math">
+<p><img src="../_images/math/9b414596e47b8daf591e465f76a8bca9bfc3ec26.png" alt="\begin{eqnarray*} \sinh\left(\mathbf{A}\right) &amp; = &amp; \frac{e^{\mathbf{A}}-e^{-\mathbf{A}}}{2}\\ \cosh\left(\mathbf{A}\right) &amp; = &amp; \frac{e^{\mathbf{A}}+e^{-\mathbf{A}}}{2}\\ \tanh\left(\mathbf{A}\right) &amp; = &amp; \left[\cosh\left(\mathbf{A}\right)\right]^{-1}\sinh\left(\mathbf{A}\right).\end{eqnarray*}"/></p>
+</div><p>These matrix functions can be found using <tt class="xref py py-obj docutils literal"><span class="pre">linalg.sinhm</span></tt>,
+<tt class="xref py py-obj docutils literal"><span class="pre">linalg.coshm</span></tt> , and <tt class="xref py py-obj docutils literal"><span class="pre">linalg.tanhm</span></tt>.</p>
+</div>
+<div class="section" id="arbitrary-function">
+<h3>Arbitrary function<a class="headerlink" href="#arbitrary-function" title="Permalink to this headline">¶</a></h3>
+<p>Finally, any arbitrary function that takes one complex number and
+returns a complex number can be called as a matrix function using the
+command <tt class="xref py py-obj docutils literal"><span class="pre">linalg.funm</span></tt>. This command takes the matrix and an
+arbitrary Python function. It then implements an algorithm from Golub
+and Van Loan&#8217;s book &#8220;Matrix Computations &#8220;to compute function applied
+to the matrix using a Schur decomposition.  Note that <em>the function
+needs to accept complex numbers</em> as input in order to work with this
+algorithm. For example the following code computes the zeroth-order
+Bessel function applied to a matrix.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">special</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="n">linalg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">funm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">special</span><span class="o">.</span><span class="n">jv</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">A</span>
+<span class="go">[[ 0.72578091  0.34105276  0.79570345]</span>
+<span class="go"> [ 0.65767207  0.73855618  0.541453  ]</span>
+<span class="go"> [ 0.78397086  0.68043507  0.4837898 ]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">B</span>
+<span class="go">[[ 0.72599893 -0.20545711 -0.22721101]</span>
+<span class="go"> [-0.27426769  0.77255139 -0.23422637]</span>
+<span class="go"> [-0.27612103 -0.21754832  0.7556849 ]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="go">[ 1.91262611+0.j  0.21846476+0.j -0.18296399+0.j]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">special</span><span class="o">.</span><span class="n">jv</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+<span class="go">[ 0.27448286+0.j  0.98810383+0.j  0.99164854+0.j]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="go">[ 0.27448286+0.j  0.98810383+0.j  0.99164854+0.j]</span>
+</pre></div>
+</div>
+<p>Note how, by virtue of how matrix analytic functions are defined,
+the Bessel function has acted on the matrix eigenvalues.</p>
+</div>
+</div>
+<div class="section" id="special-matrices">
+<h2>Special matrices<a class="headerlink" href="#special-matrices" title="Permalink to this headline">¶</a></h2>
+<p>SciPy and NumPy provide several functions for creating special matrices
+that are frequently used in engineering and science.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="25%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Function</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>block diagonal</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.block_diag.html#scipy.linalg.block_diag" title="scipy.linalg.block_diag"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.block_diag</span></tt></a></td>
+<td>Create a block diagonal matrix from the provided arrays.</td>
+</tr>
+<tr class="row-odd"><td>circulant</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.circulant.html#scipy.linalg.circulant" title="scipy.linalg.circulant"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.circulant</span></tt></a></td>
+<td>Construct a circulant matrix.</td>
+</tr>
+<tr class="row-even"><td>companion</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.companion.html#scipy.linalg.companion" title="scipy.linalg.companion"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.companion</span></tt></a></td>
+<td>Create a companion matrix.</td>
+</tr>
+<tr class="row-odd"><td>Hadamard</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.hadamard.html#scipy.linalg.hadamard" title="scipy.linalg.hadamard"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.hadamard</span></tt></a></td>
+<td>Construct a Hadamard matrix.</td>
+</tr>
+<tr class="row-even"><td>Hankel</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.hankel.html#scipy.linalg.hankel" title="scipy.linalg.hankel"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.hankel</span></tt></a></td>
+<td>Construct a Hankel matrix.</td>
+</tr>
+<tr class="row-odd"><td>Hilbert</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.hilbert.html#scipy.linalg.hilbert" title="scipy.linalg.hilbert"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.hilbert</span></tt></a></td>
+<td>Construct a Hilbert matrix.</td>
+</tr>
+<tr class="row-even"><td>Inverse Hilbert</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.invhilbert.html#scipy.linalg.invhilbert" title="scipy.linalg.invhilbert"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.invhilbert</span></tt></a></td>
+<td>Construct the inverse of a Hilbert matrix.</td>
+</tr>
+<tr class="row-odd"><td>Leslie</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.leslie.html#scipy.linalg.leslie" title="scipy.linalg.leslie"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.leslie</span></tt></a></td>
+<td>Create a Leslie matrix.</td>
+</tr>
+<tr class="row-even"><td>Pascal</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.pascal.html#scipy.linalg.pascal" title="scipy.linalg.pascal"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.pascal</span></tt></a></td>
+<td>Create a Pascal matrix.</td>
+</tr>
+<tr class="row-odd"><td>Toeplitz</td>
+<td><a class="reference internal" href="../generated/scipy.linalg.toeplitz.html#scipy.linalg.toeplitz" title="scipy.linalg.toeplitz"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.toeplitz</span></tt></a></td>
+<td>Construct a Toeplitz matrix.</td>
+</tr>
+<tr class="row-even"><td>Van der Monde</td>
+<td><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.vander.html#numpy.vander" title="(in NumPy v1.7)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.vander</span></tt></a></td>
+<td>Generate a Van der Monde matrix.</td>
+</tr>
+</tbody>
+</table>
+<p>For examples of the use of these functions, see their respective docstrings.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Linear Algebra (<tt class="docutils literal"><span class="pre">scipy.linalg</span></tt>)</a><ul>
+<li><a class="reference internal" href="#scipy-linalg-vs-numpy-linalg">scipy.linalg vs numpy.linalg</a></li>
+<li><a class="reference internal" href="#numpy-matrix-vs-2d-numpy-ndarray">numpy.matrix vs 2D numpy.ndarray</a></li>
+<li><a class="reference internal" href="#basic-routines">Basic routines</a><ul>
+<li><a class="reference internal" href="#finding-inverse">Finding Inverse</a></li>
+<li><a class="reference internal" href="#solving-linear-system">Solving linear system</a></li>
+<li><a class="reference internal" href="#finding-determinant">Finding Determinant</a></li>
+<li><a class="reference internal" href="#computing-norms">Computing norms</a></li>
+<li><a class="reference internal" href="#solving-linear-least-squares-problems-and-pseudo-inverses">Solving linear least-squares problems and pseudo-inverses</a></li>
+<li><a class="reference internal" href="#generalized-inverse">Generalized inverse</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#decompositions">Decompositions</a><ul>
+<li><a class="reference internal" href="#eigenvalues-and-eigenvectors">Eigenvalues and eigenvectors</a></li>
+<li><a class="reference internal" href="#singular-value-decomposition">Singular value decomposition</a></li>
+<li><a class="reference internal" href="#lu-decomposition">LU decomposition</a></li>
+<li><a class="reference internal" href="#cholesky-decomposition">Cholesky decomposition</a></li>
+<li><a class="reference internal" href="#qr-decomposition">QR decomposition</a></li>
+<li><a class="reference internal" href="#schur-decomposition">Schur decomposition</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#matrix-functions">Matrix Functions</a><ul>
+<li><a class="reference internal" href="#exponential-and-logarithm-functions">Exponential and logarithm functions</a></li>
+<li><a class="reference internal" href="#trigonometric-functions">Trigonometric functions</a></li>
+<li><a class="reference internal" href="#hyperbolic-trigonometric-functions">Hyperbolic trigonometric functions</a></li>
+<li><a class="reference internal" href="#arbitrary-function">Arbitrary function</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#special-matrices">Special matrices</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="signal.html"
+                        title="previous chapter">Signal Processing (<tt class="docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="arpack.html"
+                        title="next chapter">Sparse Eigenvalue Problems with ARPACK</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="arpack.html" title="Sparse Eigenvalue Problems with ARPACK"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="signal.html" title="Signal Processing (scipy.signal)"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" >SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1721 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Multi-dimensional image processing (scipy.ndimage) &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="File IO (scipy.io)" href="io.html" />
+    <link rel="prev" title="Statistics (scipy.stats)" href="stats.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="io.html" title="File IO (scipy.io)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="stats.html" title="Statistics (scipy.stats)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="multi-dimensional-image-processing-scipy-ndimage">
+<h1>Multi-dimensional image processing (<a class="reference internal" href="../ndimage.html#module-scipy.ndimage" title="scipy.ndimage"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.ndimage</span></tt></a>)<a class="headerlink" href="#multi-dimensional-image-processing-scipy-ndimage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<span id="ndimage-introduction"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Image processing and analysis are generally seen as operations on
+two-dimensional arrays of values. There are however a number of
+fields where images of higher dimensionality must be analyzed. Good
+examples of these are medical imaging and biological imaging.
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.7)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a> is suited very well for this type of applications due
+its inherent multi-dimensional nature. The <a class="reference internal" href="../ndimage.html#module-scipy.ndimage" title="scipy.ndimage"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.ndimage</span></tt></a>
+packages provides a number of general image processing and analysis
+functions that are designed to operate with arrays of arbitrary
+dimensionality. The packages currently includes functions for
+linear and non-linear filtering, binary morphology, B-spline
+interpolation, and object measurements.</p>
+</div>
+<div class="section" id="properties-shared-by-all-functions">
+<span id="ndimage-properties-shared-by-all-functions"></span><h2>Properties shared by all functions<a class="headerlink" href="#properties-shared-by-all-functions" title="Permalink to this headline">¶</a></h2>
+<p>All functions share some common properties. Notably, all functions
+allow the specification of an output array with the <em>output</em>
+argument. With this argument you can specify an array that will be
+changed in-place with the result with the operation. In this case
+the result is not returned. Usually, using the <em>output</em> argument is
+more efficient, since an existing array is used to store the
+result.</p>
+<p>The type of arrays returned is dependent on the type of operation,
+but it is in most cases equal to the type of the input. If,
+however, the <em>output</em> argument is used, the type of the result is
+equal to the type of the specified output argument. If no output
+argument is given, it is still possible to specify what the result
+of the output should be. This is done by simply assigning the
+desired <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.7)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy</span></tt></a> type object to the output argument. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">correlate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
+<span class="go">array([ 0,  2,  6,  9, 13, 16, 20, 23, 27, 30])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="go">array([  0. ,   2.5,   6. ,   9.5,  13. ,  16.5,  20. ,  23.5,  27. ,  30.5])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filter-functions">
+<span id="ndimage-filter-functions"></span><h2>Filter functions<a class="headerlink" href="#filter-functions" title="Permalink to this headline">¶</a></h2>
+<p>The functions described in this section all perform some type of spatial
+filtering of the the input array: the elements in the output are some function
+of the values in the neighborhood of the corresponding input element. We refer
+to this neighborhood of elements as the filter kernel, which is often
+rectangular in shape but may also have an arbitrary footprint. Many
+of the functions described below allow you to define the footprint
+of the kernel, by passing a mask through the <em>footprint</em> parameter.
+For example a cross shaped kernel can be defined as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">footprint</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">footprint</span>
+<span class="go">array([[0, 1, 0],</span>
+<span class="go">       [1, 1, 1],</span>
+<span class="go">       [0, 1, 0]])</span>
+</pre></div>
+</div>
+<p>Usually the origin of the kernel is at the center calculated by
+dividing the dimensions of the kernel shape by two. For instance,
+the origin of a one-dimensional kernel of length three is at the
+second element. Take for example the correlation of a
+one-dimensional array with a filter of length 3 consisting of
+ones:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlate1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">array([0, 0, 1, 1, 1, 0, 0])</span>
+</pre></div>
+</div>
+<p>Sometimes it is convenient to choose a different origin for the
+kernel. For this reason most functions support the <em>origin</em>
+parameter which gives the origin of the filter relative to its
+center. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlate1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">origin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([0 1 1 1 0 0 0])</span>
+</pre></div>
+</div>
+<p>The effect is a shift of the result towards the left. This feature
+will not be needed very often, but it may be useful especially for
+filters that have an even size. A good example is the calculation
+of backward and forward differences:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlate1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>               <span class="c"># backward difference</span>
+<span class="go">array([ 0  0  1  0  0 -1  0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlate1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">origin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># forward difference</span>
+<span class="go">array([ 0  1  0  0 -1  0  0])</span>
+</pre></div>
+</div>
+<p>We could also have calculated the forward difference as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">correlate1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">array([ 0  1  0  0 -1  0  0])</span>
+</pre></div>
+</div>
+<p>However, using the origin parameter instead of a larger kernel is
+more efficient. For multi-dimensional kernels <em>origin</em> can be a
+number, in which case the origin is assumed to be equal along all
+axes, or a sequence giving the origin along each axis.</p>
+<p>Since the output elements are a function of elements in the
+neighborhood of the input elements, the borders of the array need
+to be dealt with appropriately by providing the values outside the
+borders. This is done by assuming that the arrays are extended
+beyond their boundaries according certain boundary conditions. In
+the functions described below, the boundary conditions can be
+selected using the <em>mode</em> parameter which must be a string with the
+name of the boundary condition. Following boundary conditions are
+currently supported:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="55%" />
+<col width="30%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&#8220;nearest&#8221;</td>
+<td>Use the value at the boundary</td>
+<td>[1 2 3]-&gt;[1 1 2 3 3]</td>
+</tr>
+<tr class="row-even"><td>&#8220;wrap&#8221;</td>
+<td>Periodically replicate the array</td>
+<td>[1 2 3]-&gt;[3 1 2 3 1]</td>
+</tr>
+<tr class="row-odd"><td>&#8220;reflect&#8221;</td>
+<td>Reflect the array at the boundary</td>
+<td>[1 2 3]-&gt;[1 1 2 3 3]</td>
+</tr>
+<tr class="row-even"><td>&#8220;constant&#8221;</td>
+<td>Use a constant value, default is 0.0</td>
+<td>[1 2 3]-&gt;[0 1 2 3 0]</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>The &#8220;constant&#8221; mode is special since it needs an additional
+parameter to specify the constant value that should be used.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The easiest way to implement such boundary conditions would be to copy the data to a larger array and extend the data at the borders according to the boundary conditions. For large arrays and large filter kernels, this would be very memory consuming, and the functions described below therefore use a different approach that does not require allocating large temporary buffers.</p>
+</div>
+<div class="section" id="correlation-and-convolution">
+<h3>Correlation and convolution<a class="headerlink" href="#correlation-and-convolution" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.correlate1d.html#scipy.ndimage.filters.correlate1d" title="scipy.ndimage.filters.correlate1d"><tt class="xref py py-func docutils literal"><span class="pre">correlate1d</span></tt></a> function calculates a one-dimensional correlation
+along the given axis. The lines of the array along the given axis
+are correlated with the given <em>weights</em>. The <em>weights</em> parameter
+must be a one-dimensional sequences of numbers.</p>
+<p>The function <a class="reference internal" href="../generated/scipy.ndimage.filters.correlate.html#scipy.ndimage.filters.correlate" title="scipy.ndimage.filters.correlate"><tt class="xref py py-func docutils literal"><span class="pre">correlate</span></tt></a> implements multi-dimensional correlation
+of the input array with a given kernel.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.convolve1d.html#scipy.ndimage.filters.convolve1d" title="scipy.ndimage.filters.convolve1d"><tt class="xref py py-func docutils literal"><span class="pre">convolve1d</span></tt></a> function calculates a one-dimensional convolution
+along the given axis. The lines of the array along the given axis
+are convoluted with the given <em>weights</em>. The <em>weights</em> parameter
+must be a one-dimensional sequences of numbers.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A convolution is essentially a correlation after mirroring the kernel. As a result, the <em>origin</em> parameter behaves differently than in the case of a correlation: the result is shifted in the opposite directions.</p>
+</div>
+<p>The function <a class="reference internal" href="../generated/scipy.ndimage.filters.convolve.html#scipy.ndimage.filters.convolve" title="scipy.ndimage.filters.convolve"><tt class="xref py py-func docutils literal"><span class="pre">convolve</span></tt></a> implements multi-dimensional convolution of
+the input array with a given kernel.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A convolution is essentially a correlation after mirroring the kernel. As a result, the <em>origin</em> parameter behaves differently than in the case of a correlation: the results is shifted in the opposite direction.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="smoothing-filters">
+<span id="ndimage-filter-functions-smoothing"></span><h3>Smoothing filters<a class="headerlink" href="#smoothing-filters" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.gaussian_filter1d.html#scipy.ndimage.filters.gaussian_filter1d" title="scipy.ndimage.filters.gaussian_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">gaussian_filter1d</span></tt></a> function implements a one-dimensional
+Gaussian filter. The standard-deviation of the Gaussian filter is
+passed through the parameter <em>sigma</em>. Setting <em>order</em> = 0 corresponds
+to convolution with a Gaussian kernel. An order of 1, 2, or 3
+corresponds to convolution with the first, second or third
+derivatives of a Gaussian. Higher order derivatives are not
+implemented.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.gaussian_filter.html#scipy.ndimage.filters.gaussian_filter" title="scipy.ndimage.filters.gaussian_filter"><tt class="xref py py-func docutils literal"><span class="pre">gaussian_filter</span></tt></a> function implements a multi-dimensional
+Gaussian filter. The standard-deviations of the Gaussian filter
+along each axis are passed through the parameter <em>sigma</em> as a
+sequence or numbers. If <em>sigma</em> is not a sequence but a single
+number, the standard deviation of the filter is equal along all
+directions. The order of the filter can be specified separately for
+each axis. An order of 0 corresponds to convolution with a Gaussian
+kernel. An order of 1, 2, or 3 corresponds to convolution with the
+first, second or third derivatives of a Gaussian. Higher order
+derivatives are not implemented. The <em>order</em> parameter must be a
+number, to specify the same order for all axes, or a sequence of
+numbers to specify a different order for each axis.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The multi-dimensional filter is implemented as a sequence of one-dimensional Gaussian filters. The intermediate arrays are stored in  the same data type as the output.  Therefore, for output types with a lower precision, the results may be imprecise because intermediate results may be stored with insufficient precision. This can be prevented by specifying a more precise output type.</p>
+</div>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.uniform_filter1d.html#scipy.ndimage.filters.uniform_filter1d" title="scipy.ndimage.filters.uniform_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">uniform_filter1d</span></tt></a> function calculates a one-dimensional
+uniform filter of the given <em>size</em> along the given axis.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.uniform_filter.html#scipy.ndimage.filters.uniform_filter" title="scipy.ndimage.filters.uniform_filter"><tt class="xref py py-func docutils literal"><span class="pre">uniform_filter</span></tt></a> implements a multi-dimensional uniform
+filter. The sizes of the uniform filter are given for each axis as
+a sequence of integers by the <em>size</em> parameter. If <em>size</em> is not a
+sequence, but a single number, the sizes along all axis are assumed
+to be equal.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The multi-dimensional filter is implemented as a sequence of one-dimensional uniform filters. The intermediate arrays are stored in the same data type as the output. Therefore, for output types with a lower precision, the results may be imprecise because intermediate results may be stored with insufficient precision. This can be prevented by specifying a more precise output type.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="filters-based-on-order-statistics">
+<h3>Filters based on order statistics<a class="headerlink" href="#filters-based-on-order-statistics" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.minimum_filter1d.html#scipy.ndimage.filters.minimum_filter1d" title="scipy.ndimage.filters.minimum_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">minimum_filter1d</span></tt></a> function calculates a one-dimensional
+minimum filter of given <em>size</em> along the given axis.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.maximum_filter1d.html#scipy.ndimage.filters.maximum_filter1d" title="scipy.ndimage.filters.maximum_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">maximum_filter1d</span></tt></a> function calculates a one-dimensional
+maximum filter of given <em>size</em> along the given axis.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.minimum_filter.html#scipy.ndimage.filters.minimum_filter" title="scipy.ndimage.filters.minimum_filter"><tt class="xref py py-func docutils literal"><span class="pre">minimum_filter</span></tt></a> function calculates a multi-dimensional
+minimum filter. Either the sizes of a rectangular kernel or the
+footprint of the kernel must be provided. The <em>size</em> parameter, if
+provided, must be a sequence of sizes or a single number in which
+case the size of the filter is assumed to be equal along each axis.
+The <em>footprint</em>, if provided, must be an array that defines the
+shape of the kernel by its non-zero elements.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.maximum_filter.html#scipy.ndimage.filters.maximum_filter" title="scipy.ndimage.filters.maximum_filter"><tt class="xref py py-func docutils literal"><span class="pre">maximum_filter</span></tt></a> function calculates a multi-dimensional
+maximum filter. Either the sizes of a rectangular kernel or the
+footprint of the kernel must be provided. The <em>size</em> parameter, if
+provided, must be a sequence of sizes or a single number in which
+case the size of the filter is assumed to be equal along each axis.
+The <em>footprint</em>, if provided, must be an array that defines the
+shape of the kernel by its non-zero elements.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.rank_filter.html#scipy.ndimage.filters.rank_filter" title="scipy.ndimage.filters.rank_filter"><tt class="xref py py-func docutils literal"><span class="pre">rank_filter</span></tt></a> function calculates a multi-dimensional rank
+filter. The <em>rank</em> may be less then zero, i.e., <em>rank</em> = -1 indicates
+the largest element. Either the sizes of a rectangular kernel or
+the footprint of the kernel must be provided. The <em>size</em> parameter,
+if provided, must be a sequence of sizes or a single number in
+which case the size of the filter is assumed to be equal along each
+axis. The <em>footprint</em>, if provided, must be an array that defines
+the shape of the kernel by its non-zero elements.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.percentile_filter.html#scipy.ndimage.filters.percentile_filter" title="scipy.ndimage.filters.percentile_filter"><tt class="xref py py-func docutils literal"><span class="pre">percentile_filter</span></tt></a> function calculates a multi-dimensional
+percentile filter. The <em>percentile</em> may be less then zero, i.e.,
+<em>percentile</em> = -20 equals <em>percentile</em> = 80. Either the sizes of a
+rectangular kernel or the footprint of the kernel must be provided.
+The <em>size</em> parameter, if provided, must be a sequence of sizes or a
+single number in which case the size of the filter is assumed to be
+equal along each axis. The <em>footprint</em>, if provided, must be an
+array that defines the shape of the kernel by its non-zero
+elements.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.median_filter.html#scipy.ndimage.filters.median_filter" title="scipy.ndimage.filters.median_filter"><tt class="xref py py-func docutils literal"><span class="pre">median_filter</span></tt></a> function calculates a multi-dimensional median
+filter. Either the sizes of a rectangular kernel or the footprint
+of the kernel must be provided. The <em>size</em> parameter, if provided,
+must be a sequence of sizes or a single number in which case the
+size of the filter is assumed to be equal along each axis. The
+<em>footprint</em> if provided, must be an array that defines the shape of
+the kernel by its non-zero elements.</p>
+</div></blockquote>
+</div>
+<div class="section" id="derivatives">
+<h3>Derivatives<a class="headerlink" href="#derivatives" title="Permalink to this headline">¶</a></h3>
+<p>Derivative filters can be constructed in several ways. The function
+<a class="reference internal" href="../generated/scipy.ndimage.filters.gaussian_filter1d.html#scipy.ndimage.filters.gaussian_filter1d" title="scipy.ndimage.filters.gaussian_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">gaussian_filter1d</span></tt></a> described in
+<a class="reference internal" href="#ndimage-filter-functions-smoothing"><em>Smoothing filters</em></a> can be used to calculate
+derivatives along a given axis using the <em>order</em> parameter. Other
+derivative filters are the Prewitt and Sobel filters:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.prewitt.html#scipy.ndimage.filters.prewitt" title="scipy.ndimage.filters.prewitt"><tt class="xref py py-func docutils literal"><span class="pre">prewitt</span></tt></a> function calculates a derivative along the given
+axis.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.sobel.html#scipy.ndimage.filters.sobel" title="scipy.ndimage.filters.sobel"><tt class="xref py py-func docutils literal"><span class="pre">sobel</span></tt></a> function calculates a derivative along the given
+axis.</p>
+</div></blockquote>
+<p>The Laplace filter is calculated by the sum of the second
+derivatives along all axes. Thus, different Laplace filters can be
+constructed using different second derivative functions. Therefore
+we provide a general function that takes a function argument to
+calculate the second derivative along a given direction and to
+construct the Laplace filter:</p>
+<blockquote>
+<div><p>The function <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_laplace.html#scipy.ndimage.filters.generic_laplace" title="scipy.ndimage.filters.generic_laplace"><tt class="xref py py-func docutils literal"><span class="pre">generic_laplace</span></tt></a> calculates a laplace filter using
+the function passed through <tt class="xref py py-func docutils literal"><span class="pre">derivative2</span></tt> to calculate second
+derivatives. The function <tt class="xref py py-func docutils literal"><span class="pre">derivative2</span></tt> should have the following
+signature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">derivative2</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_keywords</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It should calculate the second derivative along the dimension
+<em>axis</em>. If <em>output</em> is not None it should use that for the output
+and return None, otherwise it should return the result. <em>mode</em>,
+<em>cval</em> have the usual meaning.</p>
+<p>The <em>extra_arguments</em> and <em>extra_keywords</em> arguments can be used
+to pass a tuple of extra arguments and a dictionary of named
+arguments that are passed to <tt class="xref py py-func docutils literal"><span class="pre">derivative2</span></tt> at each call.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">d2</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">correlate1d</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_laplace</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span>
+<span class="go">array([[ 0.,  0.,  0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  1., -4.,  1.,  0.],</span>
+<span class="go">       [ 0.,  0.,  1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.,  0.,  0.]])</span>
+</pre></div>
+</div>
+<p>To demonstrate the use of the <em>extra_arguments</em> argument we could
+do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">d2</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">correlate1d</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">,</span> <span class="mi">0</span><span class="p">,)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_laplace</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">extra_arguments</span> <span class="o">=</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],))</span>
+<span class="go">array([[ 0.,  0.,  0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  1., -4.,  1.,  0.],</span>
+<span class="go">       [ 0.,  0.,  1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.,  0.,  0.]])</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">generic_laplace</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">extra_keywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;weights&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="go">array([[ 0.,  0.,  0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  1., -4.,  1.,  0.],</span>
+<span class="go">       [ 0.,  0.,  1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.,  0.,  0.]])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The following two functions are implemented using
+<a class="reference internal" href="../generated/scipy.ndimage.filters.generic_laplace.html#scipy.ndimage.filters.generic_laplace" title="scipy.ndimage.filters.generic_laplace"><tt class="xref py py-func docutils literal"><span class="pre">generic_laplace</span></tt></a> by providing appropriate functions for the
+second derivative function:</p>
+<blockquote>
+<div><p>The function <a class="reference internal" href="../generated/scipy.ndimage.filters.laplace.html#scipy.ndimage.filters.laplace" title="scipy.ndimage.filters.laplace"><tt class="xref py py-func docutils literal"><span class="pre">laplace</span></tt></a> calculates the Laplace using discrete
+differentiation for the second derivative (i.e. convolution with
+<tt class="xref py py-obj docutils literal"><span class="pre">[1,</span> <span class="pre">-2,</span> <span class="pre">1]</span></tt>).</p>
+<p>The function <a class="reference internal" href="../generated/scipy.ndimage.filters.gaussian_laplace.html#scipy.ndimage.filters.gaussian_laplace" title="scipy.ndimage.filters.gaussian_laplace"><tt class="xref py py-func docutils literal"><span class="pre">gaussian_laplace</span></tt></a> calculates the Laplace using
+<a class="reference internal" href="../generated/scipy.ndimage.filters.gaussian_filter.html#scipy.ndimage.filters.gaussian_filter" title="scipy.ndimage.filters.gaussian_filter"><tt class="xref py py-func docutils literal"><span class="pre">gaussian_filter</span></tt></a> to calculate the second derivatives. The
+standard-deviations of the Gaussian filter along each axis are
+passed through the parameter <em>sigma</em> as a sequence or numbers. If
+<em>sigma</em> is not a sequence but a single number, the standard
+deviation of the filter is equal along all directions.</p>
+</div></blockquote>
+<p>The gradient magnitude is defined as the square root of the sum of
+the squares of the gradients in all directions. Similar to the
+generic Laplace function there is a <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_gradient_magnitude.html#scipy.ndimage.filters.generic_gradient_magnitude" title="scipy.ndimage.filters.generic_gradient_magnitude"><tt class="xref py py-func docutils literal"><span class="pre">generic_gradient_magnitude</span></tt></a>
+function that calculated the gradient magnitude of an array:</p>
+<blockquote>
+<div><p>The function <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_gradient_magnitude.html#scipy.ndimage.filters.generic_gradient_magnitude" title="scipy.ndimage.filters.generic_gradient_magnitude"><tt class="xref py py-func docutils literal"><span class="pre">generic_gradient_magnitude</span></tt></a> calculates a gradient
+magnitude using the function passed through <tt class="xref py py-func docutils literal"><span class="pre">derivative</span></tt> to
+calculate first derivatives. The function <tt class="xref py py-func docutils literal"><span class="pre">derivative</span></tt> should have
+the following signature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">derivative</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_keywords</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It should calculate the derivative along the dimension <em>axis</em>. If
+<em>output</em> is not None it should use that for the output and return
+None, otherwise it should return the result. <em>mode</em>, <em>cval</em> have
+the usual meaning.</p>
+<p>The <em>extra_arguments</em> and <em>extra_keywords</em> arguments can be used
+to pass a tuple of extra arguments and a dictionary of named
+arguments that are passed to <em>derivative</em> at each call.</p>
+<p>For example, the <a class="reference internal" href="../generated/scipy.ndimage.filters.sobel.html#scipy.ndimage.filters.sobel" title="scipy.ndimage.filters.sobel"><tt class="xref py py-func docutils literal"><span class="pre">sobel</span></tt></a> function fits the required signature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_gradient_magnitude</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sobel</span><span class="p">)</span>
+<span class="go">array([[ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ],</span>
+<span class="go">       [ 0.        ,  1.41421356,  2.        ,  1.41421356,  0.        ],</span>
+<span class="go">       [ 0.        ,  2.        ,  0.        ,  2.        ,  0.        ],</span>
+<span class="go">       [ 0.        ,  1.41421356,  2.        ,  1.41421356,  0.        ],</span>
+<span class="go">       [ 0.        ,  0.        ,  0.        ,  0.        ,  0.        ]])</span>
+</pre></div>
+</div>
+<p>See the documentation of <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_laplace.html#scipy.ndimage.filters.generic_laplace" title="scipy.ndimage.filters.generic_laplace"><tt class="xref py py-func docutils literal"><span class="pre">generic_laplace</span></tt></a> for examples of using
+the <em>extra_arguments</em> and <em>extra_keywords</em> arguments.</p>
+</div></blockquote>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.sobel.html#scipy.ndimage.filters.sobel" title="scipy.ndimage.filters.sobel"><tt class="xref py py-func docutils literal"><span class="pre">sobel</span></tt></a> and <a class="reference internal" href="../generated/scipy.ndimage.filters.prewitt.html#scipy.ndimage.filters.prewitt" title="scipy.ndimage.filters.prewitt"><tt class="xref py py-func docutils literal"><span class="pre">prewitt</span></tt></a> functions fit the required signature and
+can therefore directly be used with <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_gradient_magnitude.html#scipy.ndimage.filters.generic_gradient_magnitude" title="scipy.ndimage.filters.generic_gradient_magnitude"><tt class="xref py py-func docutils literal"><span class="pre">generic_gradient_magnitude</span></tt></a>.
+The following function implements the gradient magnitude using
+Gaussian derivatives:</p>
+<blockquote>
+<div>The function <a class="reference internal" href="../generated/scipy.ndimage.filters.gaussian_gradient_magnitude.html#scipy.ndimage.filters.gaussian_gradient_magnitude" title="scipy.ndimage.filters.gaussian_gradient_magnitude"><tt class="xref py py-func docutils literal"><span class="pre">gaussian_gradient_magnitude</span></tt></a> calculates the
+gradient magnitude using <a class="reference internal" href="../generated/scipy.ndimage.filters.gaussian_filter.html#scipy.ndimage.filters.gaussian_filter" title="scipy.ndimage.filters.gaussian_filter"><tt class="xref py py-func docutils literal"><span class="pre">gaussian_filter</span></tt></a> to calculate the first
+derivatives. The standard-deviations of the Gaussian filter along
+each axis are passed through the parameter <em>sigma</em> as a sequence or
+numbers. If <em>sigma</em> is not a sequence but a single number, the
+standard deviation of the filter is equal along all directions.</div></blockquote>
+</div>
+<div class="section" id="generic-filter-functions">
+<span id="ndimage-genericfilters"></span><h3>Generic filter functions<a class="headerlink" href="#generic-filter-functions" title="Permalink to this headline">¶</a></h3>
+<p>To implement filter functions, generic functions can be used that accept a
+callable object that implements the filtering operation. The iteration over the
+input and output arrays is handled by these generic functions, along with such
+details as the implementation of the boundary conditions. Only a
+callable object implementing a callback function that does the
+actual filtering work must be provided. The callback function can
+also be written in C and passed using a <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt> (see
+<a class="reference internal" href="#ndimage-ccallbacks"><em>Extending ndimage in C</em></a> for more information).</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter1d.html#scipy.ndimage.filters.generic_filter1d" title="scipy.ndimage.filters.generic_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter1d</span></tt></a> function implements a generic
+one-dimensional filter function, where the actual filtering
+operation must be supplied as a python function (or other callable
+object). The <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter1d.html#scipy.ndimage.filters.generic_filter1d" title="scipy.ndimage.filters.generic_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter1d</span></tt></a> function iterates over the lines
+of an array and calls <tt class="xref py py-func docutils literal"><span class="pre">function</span></tt> at each line. The arguments that
+are passed to <tt class="xref py py-func docutils literal"><span class="pre">function</span></tt> are one-dimensional arrays of the
+<tt class="xref c c-type docutils literal"><span class="pre">tFloat64</span></tt> type. The first contains the values of the current line.
+It is extended at the beginning end the end, according to the
+<em>filter_size</em> and <em>origin</em> arguments. The second array should be
+modified in-place to provide the output values of the line. For
+example consider a correlation along one dimension:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlate1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">array([[ 3,  8, 14, 17],</span>
+<span class="go">       [27, 32, 38, 41],</span>
+<span class="go">       [51, 56, 62, 65]])</span>
+</pre></div>
+</div>
+<p>The same operation can be implemented using <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter1d.html#scipy.ndimage.filters.generic_filter1d" title="scipy.ndimage.filters.generic_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter1d</span></tt></a> as
+follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">fnc</span><span class="p">(</span><span class="n">iline</span><span class="p">,</span> <span class="n">oline</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">oline</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">iline</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">iline</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">iline</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">array([[ 3,  8, 14, 17],</span>
+<span class="go">       [27, 32, 38, 41],</span>
+<span class="go">       [51, 56, 62, 65]])</span>
+</pre></div>
+</div>
+<p>Here the origin of the kernel was (by default) assumed to be in the
+middle of the filter of length 3. Therefore, each input line was
+extended by one value at the beginning and at the end, before the
+function was called.</p>
+<p>Optionally extra arguments can be defined and passed to the filter
+function. The <em>extra_arguments</em> and <em>extra_keywords</em> arguments
+can be used to pass a tuple of extra arguments and/or a dictionary
+of named arguments that are passed to derivative at each call. For
+example, we can pass the parameters of our filter as an argument:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">fnc</span><span class="p">(</span><span class="n">iline</span><span class="p">,</span> <span class="n">oline</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">oline</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">iline</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">iline</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">iline</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">extra_arguments</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">array([[ 3,  8, 14, 17],</span>
+<span class="go">       [27, 32, 38, 41],</span>
+<span class="go">       [51, 56, 62, 65]])</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">extra_keywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">})</span>
+<span class="go">array([[ 3,  8, 14, 17],</span>
+<span class="go">       [27, 32, 38, 41],</span>
+<span class="go">       [51, 56, 62, 65]])</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter.html#scipy.ndimage.filters.generic_filter" title="scipy.ndimage.filters.generic_filter"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter</span></tt></a> function implements a generic filter
+function, where the actual filtering operation must be supplied as
+a python function (or other callable object). The <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter.html#scipy.ndimage.filters.generic_filter" title="scipy.ndimage.filters.generic_filter"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter</span></tt></a>
+function iterates over the array and calls <tt class="xref py py-func docutils literal"><span class="pre">function</span></tt> at each
+element. The argument of <tt class="xref py py-func docutils literal"><span class="pre">function</span></tt> is a one-dimensional array of
+the <tt class="xref c c-type docutils literal"><span class="pre">tFloat64</span></tt> type, that contains the values around the current
+element that are within the footprint of the filter. The function
+should return a single value that can be converted to a double
+precision number. For example consider a correlation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">correlate</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="go">array([[ 0,  3,  7, 11],</span>
+<span class="go">       [12, 15, 19, 23],</span>
+<span class="go">       [28, 31, 35, 39]])</span>
+</pre></div>
+</div>
+<p>The same operation can be implemented using <em>generic_filter</em> as
+follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">fnc</span><span class="p">(</span><span class="nb">buffer</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="nb">buffer</span> <span class="o">*</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="p">,</span> <span class="n">footprint</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="go">array([[ 0  3  7 11],</span>
+<span class="go">       [12 15 19 23],</span>
+<span class="go">       [28 31 35 39]])</span>
+</pre></div>
+</div>
+<p>Here a kernel footprint was specified that contains only two
+elements. Therefore the filter function receives a buffer of length
+equal to two, which was multiplied with the proper weights and the
+result summed.</p>
+<p>When calling <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter.html#scipy.ndimage.filters.generic_filter" title="scipy.ndimage.filters.generic_filter"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter</span></tt></a>, either the sizes of a rectangular
+kernel or the footprint of the kernel must be provided. The <em>size</em>
+parameter, if provided, must be a sequence of sizes or a single
+number in which case the size of the filter is assumed to be equal
+along each axis. The <em>footprint</em>, if provided, must be an array
+that defines the shape of the kernel by its non-zero elements.</p>
+<p>Optionally extra arguments can be defined and passed to the filter
+function. The <em>extra_arguments</em> and <em>extra_keywords</em> arguments
+can be used to pass a tuple of extra arguments and/or a dictionary
+of named arguments that are passed to derivative at each call. For
+example, we can pass the parameters of our filter as an argument:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">fnc</span><span class="p">(</span><span class="nb">buffer</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">weights</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="nb">buffer</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="p">,</span> <span class="n">footprint</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">extra_arguments</span> <span class="o">=</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],))</span>
+<span class="go">array([[ 0,  3,  7, 11],</span>
+<span class="go">       [12, 15, 19, 23],</span>
+<span class="go">       [28, 31, 35, 39]])</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="p">,</span> <span class="n">footprint</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">extra_keywords</span><span class="o">=</span> <span class="p">{</span><span class="s">&#39;weights&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>
+<span class="go">array([[ 0,  3,  7, 11],</span>
+<span class="go">       [12, 15, 19, 23],</span>
+<span class="go">       [28, 31, 35, 39]])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>These functions iterate over the lines or elements starting at the
+last axis, i.e. the last index changes the fastest. This order of
+iteration is guaranteed for the case that it is important to adapt
+the filter depending on spatial location. Here is an example of
+using a class that implements the filter and keeps track of the
+current coordinates while iterating. It performs the same filter
+operation as described above for <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter.html#scipy.ndimage.filters.generic_filter" title="scipy.ndimage.filters.generic_filter"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter</span></tt></a>, but
+additionally prints the current coordinates:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">fnc_class</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="c"># store the shape:</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+<span class="gp">... </span>        <span class="c"># initialize the coordinates:</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">buffer</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="nb">buffer</span> <span class="o">*</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span>
+<span class="gp">... </span>        <span class="c"># calculate the next coordinates:</span>
+<span class="gp">... </span>        <span class="n">axes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">axes</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+<span class="gp">... </span>                <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">... </span>                <span class="k">break</span>
+<span class="gp">... </span>            <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>                <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">result</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fnc</span> <span class="o">=</span> <span class="n">fnc_class</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="n">footprint</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="go">[0, 0]</span>
+<span class="go">[0, 1]</span>
+<span class="go">[0, 2]</span>
+<span class="go">[0, 3]</span>
+<span class="go">[1, 0]</span>
+<span class="go">[1, 1]</span>
+<span class="go">[1, 2]</span>
+<span class="go">[1, 3]</span>
+<span class="go">[2, 0]</span>
+<span class="go">[2, 1]</span>
+<span class="go">[2, 2]</span>
+<span class="go">[2, 3]</span>
+<span class="go">array([[ 0,  3,  7, 11],</span>
+<span class="go">       [12, 15, 19, 23],</span>
+<span class="go">       [28, 31, 35, 39]])</span>
+</pre></div>
+</div>
+<p>For the <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter1d.html#scipy.ndimage.filters.generic_filter1d" title="scipy.ndimage.filters.generic_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter1d</span></tt></a> function the same approach works,
+except that this function does not iterate over the axis that is
+being filtered. The example for <a class="reference internal" href="../generated/scipy.ndimage.filters.generic_filter1d.html#scipy.ndimage.filters.generic_filter1d" title="scipy.ndimage.filters.generic_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">generic_filter1d</span></tt></a> then becomes
+this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">fnc1d_class</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="c"># store the filter axis:</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span>
+<span class="gp">... </span>        <span class="c"># store the shape:</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+<span class="gp">... </span>        <span class="c"># initialize the coordinates:</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iline</span><span class="p">,</span> <span class="n">oline</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">oline</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">iline</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">iline</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">iline</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span>
+<span class="gp">... </span>        <span class="c"># calculate the next coordinates:</span>
+<span class="gp">... </span>        <span class="n">axes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="c"># skip the filter axis:</span>
+<span class="gp">... </span>        <span class="k">del</span> <span class="n">axes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">]</span>
+<span class="gp">... </span>        <span class="n">axes</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+<span class="gp">... </span>                <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">... </span>                <span class="k">break</span>
+<span class="gp">... </span>            <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>                <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fnc</span> <span class="o">=</span> <span class="n">fnc1d_class</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generic_filter1d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">fnc</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">[0, 0]</span>
+<span class="go">[1, 0]</span>
+<span class="go">[2, 0]</span>
+<span class="go">array([[ 3,  8, 14, 17],</span>
+<span class="go">       [27, 32, 38, 41],</span>
+<span class="go">       [51, 56, 62, 65]])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fourier-domain-filters">
+<h3>Fourier domain filters<a class="headerlink" href="#fourier-domain-filters" title="Permalink to this headline">¶</a></h3>
+<p>The functions described in this section perform filtering
+operations in the Fourier domain. Thus, the input array of such a
+function should be compatible with an inverse Fourier transform
+function, such as the functions from the <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/routines.fft.html#numpy.fft" title="(in NumPy v1.7)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy.fft</span></tt></a> module. We
+therefore have to deal with arrays that may be the result of a real
+or a complex Fourier transform. In the case of a real Fourier
+transform only half of the of the symmetric complex transform is
+stored. Additionally, it needs to be known what the length of the
+axis was that was transformed by the real fft. The functions
+described here provide a parameter <em>n</em> that in the case of a real
+transform must be equal to the length of the real transform axis
+before transformation. If this parameter is less than zero, it is
+assumed that the input array was the result of a complex Fourier
+transform. The parameter <em>axis</em> can be used to indicate along which
+axis the real transform was executed.</p>
+<blockquote>
+<div><p>The <tt class="xref py py-func docutils literal"><span class="pre">fourier_shift</span></tt> function multiplies the input array with the
+multi-dimensional Fourier transform of a shift operation for the
+given shift. The <em>shift</em> parameter is a sequences of shifts for
+each dimension, or a single value for all dimensions.</p>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">fourier_gaussian</span></tt> function multiplies the input array with
+the multi-dimensional Fourier transform of a Gaussian filter with
+given standard-deviations <em>sigma</em>. The <em>sigma</em> parameter is a
+sequences of values for each dimension, or a single value for all
+dimensions.</p>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">fourier_uniform</span></tt> function multiplies the input array with the
+multi-dimensional Fourier transform of a uniform filter with given
+sizes <em>size</em>. The <em>size</em> parameter is a sequences of values for
+each dimension, or a single value for all dimensions.</p>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">fourier_ellipsoid</span></tt> function multiplies the input array with
+the multi-dimensional Fourier transform of a elliptically shaped
+filter with given sizes <em>size</em>. The <em>size</em> parameter is a sequences
+of values for each dimension, or a single value for all dimensions.
+This function is only implemented for dimensions 1, 2, and 3.</p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="interpolation-functions">
+<span id="ndimage-interpolation"></span><h2>Interpolation functions<a class="headerlink" href="#interpolation-functions" title="Permalink to this headline">¶</a></h2>
+<p>This section describes various interpolation functions that are
+based on B-spline theory. A good introduction to B-splines can be
+found in: M. Unser, &#8220;Splines: A Perfect Fit for Signal and Image
+Processing,&#8221; IEEE Signal Processing Magazine, vol. 16, no. 6, pp.
+22-38, November 1999.</p>
+<div class="section" id="spline-pre-filters">
+<h3>Spline pre-filters<a class="headerlink" href="#spline-pre-filters" title="Permalink to this headline">¶</a></h3>
+<p>Interpolation using
+splines of an order larger than 1 requires a pre- filtering step.
+The interpolation functions described in section
+<a class="reference internal" href="#ndimage-interpolation"><em>Interpolation functions</em></a> apply pre-filtering by calling
+<a class="reference internal" href="../generated/scipy.ndimage.interpolation.spline_filter.html#scipy.ndimage.interpolation.spline_filter" title="scipy.ndimage.interpolation.spline_filter"><tt class="xref py py-func docutils literal"><span class="pre">spline_filter</span></tt></a>, but they can be instructed not to do this by
+setting the <em>prefilter</em> keyword equal to False. This is useful if
+more than one interpolation operation is done on the same array. In
+this case it is more efficient to do the pre-filtering only once
+and use a prefiltered array as the input of the interpolation
+functions. The following two functions implement the
+pre-filtering:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.interpolation.spline_filter1d.html#scipy.ndimage.interpolation.spline_filter1d" title="scipy.ndimage.interpolation.spline_filter1d"><tt class="xref py py-func docutils literal"><span class="pre">spline_filter1d</span></tt></a> function calculates a one-dimensional spline
+filter along the given axis. An output array can optionally be
+provided. The order of the spline must be larger then 1 and less
+than 6.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.interpolation.spline_filter.html#scipy.ndimage.interpolation.spline_filter" title="scipy.ndimage.interpolation.spline_filter"><tt class="xref py py-func docutils literal"><span class="pre">spline_filter</span></tt></a> function calculates a multi-dimensional spline
+filter.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The multi-dimensional filter is implemented as a sequence of one-dimensional spline filters. The intermediate arrays are stored in the same data type as the output. Therefore, if an output with a limited precision is requested, the results may be imprecise because intermediate results may be stored with insufficient precision. This can be prevented by specifying a output type of high precision.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h3>Interpolation functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Following functions all employ spline interpolation to effect some type of
+geometric transformation of the input array. This requires a mapping of the
+output coordinates to the input coordinates, and therefore the possibility
+arises that input values outside the boundaries are needed. This problem is
+solved in the same way as described in <a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>
+for the multi-dimensional filter functions. Therefore these functions all
+support a <em>mode</em> parameter that determines how the boundaries are handled, and
+a <em>cval</em> parameter that gives a constant value in case that the &#8216;constant&#8217;
+mode is used.</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.interpolation.geometric_transform.html#scipy.ndimage.interpolation.geometric_transform" title="scipy.ndimage.interpolation.geometric_transform"><tt class="xref py py-func docutils literal"><span class="pre">geometric_transform</span></tt></a> function applies an arbitrary geometric
+transform to the input. The given <em>mapping</em> function is called at
+each point in the output to find the corresponding coordinates in
+the input. <em>mapping</em> must be a callable object that accepts a tuple
+of length equal to the output array rank and returns the
+corresponding input coordinates as a tuple of length equal to the
+input array rank. The output shape and output type can optionally
+be provided. If not given they are equal to the input shape and
+type.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">shift_func</span><span class="p">(</span><span class="n">output_coordinates</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">output_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">output_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">geometric_transform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">shift_func</span><span class="p">)</span>
+<span class="go">array([[ 0.    ,  0.    ,  0.    ],</span>
+<span class="go">       [ 0.    ,  1.3625,  2.7375],</span>
+<span class="go">       [ 0.    ,  4.8125,  6.1875],</span>
+<span class="go">       [ 0.    ,  8.2625,  9.6375]])</span>
+</pre></div>
+</div>
+<p>Optionally extra arguments can be defined and passed to the filter
+function. The <em>extra_arguments</em> and <em>extra_keywords</em> arguments
+can be used to pass a tuple of extra arguments and/or a dictionary
+of named arguments that are passed to derivative at each call. For
+example, we can pass the shifts in our example as arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">shift_func</span><span class="p">(</span><span class="n">output_coordinates</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">s1</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">output_coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">s0</span><span class="p">,</span> <span class="n">output_coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">s1</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">geometric_transform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">shift_func</span><span class="p">,</span> <span class="n">extra_arguments</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="go">array([[ 0.    ,  0.    ,  0.    ],</span>
+<span class="go">       [ 0.    ,  1.3625,  2.7375],</span>
+<span class="go">       [ 0.    ,  4.8125,  6.1875],</span>
+<span class="go">       [ 0.    ,  8.2625,  9.6375]])</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">geometric_transform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">shift_func</span><span class="p">,</span> <span class="n">extra_keywords</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;s0&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s">&#39;s1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+<span class="go">array([[ 0.    ,  0.    ,  0.    ],</span>
+<span class="go">       [ 0.    ,  1.3625,  2.7375],</span>
+<span class="go">       [ 0.    ,  4.8125,  6.1875],</span>
+<span class="go">       [ 0.    ,  8.2625,  9.6375]])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The mapping function can also be written in C and passed using a <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt>. See <a class="reference internal" href="#ndimage-ccallbacks"><em>Extending ndimage in C</em></a> for more information.</p>
+</div>
+<p>The function <a class="reference internal" href="../generated/scipy.ndimage.interpolation.map_coordinates.html#scipy.ndimage.interpolation.map_coordinates" title="scipy.ndimage.interpolation.map_coordinates"><tt class="xref py py-func docutils literal"><span class="pre">map_coordinates</span></tt></a> applies an arbitrary coordinate
+transformation using the given array of coordinates. The shape of
+the output is derived from that of the coordinate array by dropping
+the first axis. The parameter <em>coordinates</em> is used to find for
+each point in the output the corresponding coordinates in the
+input. The values of <em>coordinates</em> along the first axis are the
+coordinates in the input array at which the output value is found.
+(See also the numarray <em class="xref py py-obj">coordinates</em> function.) Since the
+coordinates may be non- integer coordinates, the value of the input
+at these coordinates is determined by spline interpolation of the
+requested order. Here is an example that interpolates a 2D array at
+(0.5, 0.5) and (1, 2):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([[  0.,   1.,   2.],</span>
+<span class="go">       [  3.,   4.,   5.],</span>
+<span class="go">       [  6.,   7.,   8.],</span>
+<span class="go">       [  9.,  10.,  11.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">map_coordinates</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="go">array([ 1.3625  7.    ])</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.interpolation.affine_transform.html#scipy.ndimage.interpolation.affine_transform" title="scipy.ndimage.interpolation.affine_transform"><tt class="xref py py-func docutils literal"><span class="pre">affine_transform</span></tt></a> function applies an affine transformation
+to the input array. The given transformation <em>matrix</em> and <em>offset</em>
+are used to find for each point in the output the corresponding
+coordinates in the input. The value of the input at the calculated
+coordinates is determined by spline interpolation of the requested
+order. The transformation <em>matrix</em> must be two-dimensional or can
+also be given as a one-dimensional sequence or array. In the latter
+case, it is assumed that the matrix is diagonal. A more efficient
+interpolation algorithm is then applied that exploits the
+separability of the problem. The output shape and output type can
+optionally be provided. If not given they are equal to the input
+shape and type.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.interpolation.shift.html#scipy.ndimage.interpolation.shift" title="scipy.ndimage.interpolation.shift"><tt class="xref py py-func docutils literal"><span class="pre">shift</span></tt></a> function returns a shifted version of the input, using
+spline interpolation of the requested <em>order</em>.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.interpolation.zoom.html#scipy.ndimage.interpolation.zoom" title="scipy.ndimage.interpolation.zoom"><tt class="xref py py-func docutils literal"><span class="pre">zoom</span></tt></a> function returns a rescaled version of the input, using
+spline interpolation of the requested <em>order</em>.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.interpolation.rotate.html#scipy.ndimage.interpolation.rotate" title="scipy.ndimage.interpolation.rotate"><tt class="xref py py-func docutils literal"><span class="pre">rotate</span></tt></a> function returns the input array rotated in the plane
+defined by the two axes given by the parameter <em>axes</em>, using spline
+interpolation of the requested <em>order</em>. The angle must be given in
+degrees. If <em>reshape</em> is true, then the size of the output array is
+adapted to contain the rotated input.</p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="morphology">
+<span id="ndimage-morphology"></span><h2>Morphology<a class="headerlink" href="#morphology" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="binary-morphology">
+<span id="ndimage-binary-morphology"></span><h3>Binary morphology<a class="headerlink" href="#binary-morphology" title="Permalink to this headline">¶</a></h3>
+<p>Binary morphology (need something to put here).</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a> functions generates a binary
+structuring element for use in binary morphology operations. The
+<em>rank</em> of the structure must be provided. The size of the structure
+that is returned is equal to three in each direction. The value of
+each element is equal to one if the square of the Euclidean
+distance from the element to the center is less or equal to
+<em>connectivity</em>. For instance, two dimensional 4-connected and
+8-connected structures are generated as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">generate_binary_structure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">array([[False,  True, False],</span>
+<span class="go">       [ True,  True,  True],</span>
+<span class="go">       [False,  True, False]], dtype=bool)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">generate_binary_structure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[ True,  True,  True],</span>
+<span class="go">       [ True,  True,  True],</span>
+<span class="go">       [ True,  True,  True]], dtype=bool)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Most binary morphology functions can be expressed in terms of the
+basic operations erosion and dilation:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_erosion.html#scipy.ndimage.morphology.binary_erosion" title="scipy.ndimage.morphology.binary_erosion"><tt class="xref py py-func docutils literal"><span class="pre">binary_erosion</span></tt></a> function implements binary erosion of arrays
+of arbitrary rank with the given structuring element. The origin
+parameter controls the placement of the structuring element as
+described in <a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>. If no
+structuring element is provided, an element with connectivity equal
+to one is generated using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a>. The
+<em>border_value</em> parameter gives the value of the array outside
+boundaries. The erosion is repeated <em>iterations</em> times. If
+<em>iterations</em> is less than one, the erosion is repeated until the
+result does not change anymore. If a <em>mask</em> array is given, only
+those elements with a true value at the corresponding mask element
+are modified at each iteration.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_dilation.html#scipy.ndimage.morphology.binary_dilation" title="scipy.ndimage.morphology.binary_dilation"><tt class="xref py py-func docutils literal"><span class="pre">binary_dilation</span></tt></a> function implements binary dilation of
+arrays of arbitrary rank with the given structuring element. The
+origin parameter controls the placement of the structuring element
+as described in <a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>. If no
+structuring element is provided, an element with connectivity equal
+to one is generated using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a>. The
+<em>border_value</em> parameter gives the value of the array outside
+boundaries. The dilation is repeated <em>iterations</em> times. If
+<em>iterations</em> is less than one, the dilation is repeated until the
+result does not change anymore. If a <em>mask</em> array is given, only
+those elements with a true value at the corresponding mask element
+are modified at each iteration.</p>
+<p>Here is an example of using <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_dilation.html#scipy.ndimage.morphology.binary_dilation" title="scipy.ndimage.morphology.binary_dilation"><tt class="xref py py-func docutils literal"><span class="pre">binary_dilation</span></tt></a> to find all elements
+that touch the border, by repeatedly dilating an empty array from
+the border using the data array as the mask:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">struct</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([[1, 0, 0, 0, 0],</span>
+<span class="go">       [1, 1, 0, 1, 0],</span>
+<span class="go">       [0, 0, 1, 1, 0],</span>
+<span class="go">       [0, 0, 0, 0, 0]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">zeros</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">struct</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">border_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([[ True, False, False, False, False],</span>
+<span class="go">       [ True,  True, False, False, False],</span>
+<span class="go">       [False, False, False, False, False],</span>
+<span class="go">       [False, False, False, False, False]], dtype=bool)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_erosion.html#scipy.ndimage.morphology.binary_erosion" title="scipy.ndimage.morphology.binary_erosion"><tt class="xref py py-func docutils literal"><span class="pre">binary_erosion</span></tt></a> and <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_dilation.html#scipy.ndimage.morphology.binary_dilation" title="scipy.ndimage.morphology.binary_dilation"><tt class="xref py py-func docutils literal"><span class="pre">binary_dilation</span></tt></a> functions both have an
+<em>iterations</em> parameter which allows the erosion or dilation to be
+repeated a number of times. Repeating an erosion or a dilation with
+a given structure <em>n</em> times is equivalent to an erosion or a
+dilation with a structure that is <em>n-1</em> times dilated with itself.
+A function is provided that allows the calculation of a structure
+that is dilated a number of times with itself:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.iterate_structure.html#scipy.ndimage.morphology.iterate_structure" title="scipy.ndimage.morphology.iterate_structure"><tt class="xref py py-func docutils literal"><span class="pre">iterate_structure</span></tt></a> function returns a structure by dilation
+of the input structure <em>iteration</em> - 1 times with itself. For
+instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">struct</span> <span class="o">=</span> <span class="n">generate_binary_structure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">struct</span>
+<span class="go">array([[False,  True, False],</span>
+<span class="go">       [ True,  True,  True],</span>
+<span class="go">       [False,  True, False]], dtype=bool)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iterate_structure</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[False, False,  True, False, False],</span>
+<span class="go">       [False,  True,  True,  True, False],</span>
+<span class="go">       [ True,  True,  True,  True,  True],</span>
+<span class="go">       [False,  True,  True,  True, False],</span>
+<span class="go">       [False, False,  True, False, False]], dtype=bool)</span>
+</pre></div>
+</div>
+<p>If the origin of the original structure is equal to 0, then it is
+also equal to 0 for the iterated structure. If not, the origin must
+also be adapted if the equivalent of the <em>iterations</em> erosions or
+dilations must be achieved with the iterated structure. The adapted
+origin is simply obtained by multiplying with the number of
+iterations. For convenience the <a class="reference internal" href="../generated/scipy.ndimage.morphology.iterate_structure.html#scipy.ndimage.morphology.iterate_structure" title="scipy.ndimage.morphology.iterate_structure"><tt class="xref py py-func docutils literal"><span class="pre">iterate_structure</span></tt></a> also returns
+the adapted origin if the <em>origin</em> parameter is not None:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iterate_structure</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([[False, False,  True, False, False],</span>
+<span class="go">       [False,  True,  True,  True, False],</span>
+<span class="go">       [ True,  True,  True,  True,  True],</span>
+<span class="go">       [False,  True,  True,  True, False],</span>
+<span class="go">       [False, False,  True, False, False]], dtype=bool), [-2, -2])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Other morphology operations can be defined in terms of erosion and
+d dilation. Following functions provide a few of these operations
+for convenience:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_opening.html#scipy.ndimage.morphology.binary_opening" title="scipy.ndimage.morphology.binary_opening"><tt class="xref py py-func docutils literal"><span class="pre">binary_opening</span></tt></a> function implements binary opening of arrays
+of arbitrary rank with the given structuring element. Binary
+opening is equivalent to a binary erosion followed by a binary
+dilation with the same structuring element. The origin parameter
+controls the placement of the structuring element as described in
+<a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>. If no structuring element is
+provided, an element with connectivity equal to one is generated
+using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a>. The <em>iterations</em> parameter
+gives the number of erosions that is performed followed by the same
+number of dilations.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_closing.html#scipy.ndimage.morphology.binary_closing" title="scipy.ndimage.morphology.binary_closing"><tt class="xref py py-func docutils literal"><span class="pre">binary_closing</span></tt></a> function implements binary closing of arrays
+of arbitrary rank with the given structuring element. Binary
+closing is equivalent to a binary dilation followed by a binary
+erosion with the same structuring element. The origin parameter
+controls the placement of the structuring element as described in
+<a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>. If no structuring element is
+provided, an element with connectivity equal to one is generated
+using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a>. The <em>iterations</em> parameter
+gives the number of dilations that is performed followed by the
+same number of erosions.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_fill_holes.html#scipy.ndimage.morphology.binary_fill_holes" title="scipy.ndimage.morphology.binary_fill_holes"><tt class="xref py py-func docutils literal"><span class="pre">binary_fill_holes</span></tt></a> function is used to close holes in
+objects in a binary image, where the structure defines the
+connectivity of the holes. The origin parameter controls the
+placement of the structuring element as described in
+<a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>. If no structuring element is
+provided, an element with connectivity equal to one is generated
+using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a>.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.binary_hit_or_miss.html#scipy.ndimage.morphology.binary_hit_or_miss" title="scipy.ndimage.morphology.binary_hit_or_miss"><tt class="xref py py-func docutils literal"><span class="pre">binary_hit_or_miss</span></tt></a> function implements a binary
+hit-or-miss transform of arrays of arbitrary rank with the given
+structuring elements. The hit-or-miss transform is calculated by
+erosion of the input with the first structure, erosion of the
+logical <em>not</em> of the input with the second structure, followed by
+the logical <em>and</em> of these two erosions. The origin parameters
+control the placement of the structuring elements as described in
+<a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>. If <em>origin2</em> equals None it
+is set equal to the <em>origin1</em> parameter. If the first structuring
+element is not provided, a structuring element with connectivity
+equal to one is generated using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a>, if
+<em>structure2</em> is not provided, it is set equal to the logical <em>not</em>
+of <em>structure1</em>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="grey-scale-morphology">
+<span id="ndimage-grey-morphology"></span><h3>Grey-scale morphology<a class="headerlink" href="#grey-scale-morphology" title="Permalink to this headline">¶</a></h3>
+<p>Grey-scale morphology operations are the equivalents of binary
+morphology operations that operate on arrays with arbitrary values.
+Below we describe the grey-scale equivalents of erosion, dilation,
+opening and closing. These operations are implemented in a similar
+fashion as the filters described in
+<a class="reference internal" href="#ndimage-filter-functions"><em>Filter functions</em></a>, and we refer to this section for the
+description of filter kernels and footprints, and the handling of
+array borders. The grey-scale morphology operations optionally take
+a <em>structure</em> parameter that gives the values of the structuring
+element. If this parameter is not given the structuring element is
+assumed to be flat with a value equal to zero. The shape of the
+structure can optionally be defined by the <em>footprint</em> parameter.
+If this parameter is not given, the structure is assumed to be
+rectangular, with sizes equal to the dimensions of the <em>structure</em>
+array, or by the <em>size</em> parameter if <em>structure</em> is not given. The
+<em>size</em> parameter is only used if both <em>structure</em> and <em>footprint</em>
+are not given, in which case the structuring element is assumed to
+be rectangular and flat with the dimensions given by <em>size</em>. The
+<em>size</em> parameter, if provided, must be a sequence of sizes or a
+single number in which case the size of the filter is assumed to be
+equal along each axis. The <em>footprint</em> parameter, if provided, must
+be an array that defines the shape of the kernel by its non-zero
+elements.</p>
+<p>Similar to binary erosion and dilation there are operations for
+grey-scale erosion and dilation:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.grey_erosion.html#scipy.ndimage.morphology.grey_erosion" title="scipy.ndimage.morphology.grey_erosion"><tt class="xref py py-func docutils literal"><span class="pre">grey_erosion</span></tt></a> function calculates a multi-dimensional grey-
+scale erosion.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.grey_dilation.html#scipy.ndimage.morphology.grey_dilation" title="scipy.ndimage.morphology.grey_dilation"><tt class="xref py py-func docutils literal"><span class="pre">grey_dilation</span></tt></a> function calculates a multi-dimensional grey-
+scale dilation.</p>
+</div></blockquote>
+<p>Grey-scale opening and closing operations can be defined similar to
+their binary counterparts:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.grey_opening.html#scipy.ndimage.morphology.grey_opening" title="scipy.ndimage.morphology.grey_opening"><tt class="xref py py-func docutils literal"><span class="pre">grey_opening</span></tt></a> function implements grey-scale opening of
+arrays of arbitrary rank. Grey-scale opening is equivalent to a
+grey-scale erosion followed by a grey-scale dilation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.grey_closing.html#scipy.ndimage.morphology.grey_closing" title="scipy.ndimage.morphology.grey_closing"><tt class="xref py py-func docutils literal"><span class="pre">grey_closing</span></tt></a> function implements grey-scale closing of
+arrays of arbitrary rank. Grey-scale opening is equivalent to a
+grey-scale dilation followed by a grey-scale erosion.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.morphological_gradient.html#scipy.ndimage.morphology.morphological_gradient" title="scipy.ndimage.morphology.morphological_gradient"><tt class="xref py py-func docutils literal"><span class="pre">morphological_gradient</span></tt></a> function implements a grey-scale
+morphological gradient of arrays of arbitrary rank. The grey-scale
+morphological gradient is equal to the difference of a grey-scale
+dilation and a grey-scale erosion.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.morphological_laplace.html#scipy.ndimage.morphology.morphological_laplace" title="scipy.ndimage.morphology.morphological_laplace"><tt class="xref py py-func docutils literal"><span class="pre">morphological_laplace</span></tt></a> function implements a grey-scale
+morphological laplace of arrays of arbitrary rank. The grey-scale
+morphological laplace is equal to the sum of a grey-scale dilation
+and a grey-scale erosion minus twice the input.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.white_tophat.html#scipy.ndimage.morphology.white_tophat" title="scipy.ndimage.morphology.white_tophat"><tt class="xref py py-func docutils literal"><span class="pre">white_tophat</span></tt></a> function implements a white top-hat filter of
+arrays of arbitrary rank. The white top-hat is equal to the
+difference of the input and a grey-scale opening.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.morphology.black_tophat.html#scipy.ndimage.morphology.black_tophat" title="scipy.ndimage.morphology.black_tophat"><tt class="xref py py-func docutils literal"><span class="pre">black_tophat</span></tt></a> function implements a black top-hat filter of
+arrays of arbitrary rank. The black top-hat is equal to the
+difference of the a grey-scale closing and the input.</p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="distance-transforms">
+<span id="ndimage-distance-transforms"></span><h2>Distance transforms<a class="headerlink" href="#distance-transforms" title="Permalink to this headline">¶</a></h2>
+<p>Distance transforms are used to
+calculate the minimum distance from each element of an object to
+the background. The following functions implement distance
+transforms for three different distance metrics: Euclidean, City
+Block, and Chessboard distances.</p>
+<blockquote>
+<div><p>The function <a class="reference internal" href="../generated/scipy.ndimage.morphology.distance_transform_cdt.html#scipy.ndimage.morphology.distance_transform_cdt" title="scipy.ndimage.morphology.distance_transform_cdt"><tt class="xref py py-func docutils literal"><span class="pre">distance_transform_cdt</span></tt></a> uses a chamfer type
+algorithm to calculate the distance transform of the input, by
+replacing each object element (defined by values larger than zero)
+with the shortest distance to the background (all non-object
+elements). The structure determines the type of chamfering that is
+done. If the structure is equal to &#8216;cityblock&#8217; a structure is
+generated using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a> with a squared
+distance equal to 1. If the structure is equal to &#8216;chessboard&#8217;, a
+structure is generated using <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a> with a
+squared distance equal to the rank of the array. These choices
+correspond to the common interpretations of the cityblock and the
+chessboard distancemetrics in two dimensions.</p>
+<p>In addition to the distance transform, the feature transform can be
+calculated. In this case the index of the closest background
+element is returned along the first axis of the result. The
+<em>return_distances</em>, and <em>return_indices</em> flags can be used to
+indicate if the distance transform, the feature transform, or both
+must be returned.</p>
+<p>The <em>distances</em> and <em>indices</em> arguments can be used to give
+optional output arrays that must be of the correct size and type
+(both <tt class="xref c c-type docutils literal"><span class="pre">Int32</span></tt>).</p>
+<p>The basics of the algorithm used to implement this function is
+described in: G. Borgefors, &#8220;Distance transformations in arbitrary
+dimensions.&#8221;, Computer Vision, Graphics, and Image Processing,
+27:321-345, 1984.</p>
+<p>The function <a class="reference internal" href="../generated/scipy.ndimage.morphology.distance_transform_edt.html#scipy.ndimage.morphology.distance_transform_edt" title="scipy.ndimage.morphology.distance_transform_edt"><tt class="xref py py-func docutils literal"><span class="pre">distance_transform_edt</span></tt></a> calculates the exact
+euclidean distance transform of the input, by replacing each object
+element (defined by values larger than zero) with the shortest
+euclidean distance to the background (all non-object elements).</p>
+<p>In addition to the distance transform, the feature transform can be
+calculated. In this case the index of the closest background
+element is returned along the first axis of the result. The
+<em>return_distances</em>, and <em>return_indices</em> flags can be used to
+indicate if the distance transform, the feature transform, or both
+must be returned.</p>
+<p>Optionally the sampling along each axis can be given by the
+<em>sampling</em> parameter which should be a sequence of length equal to
+the input rank, or a single number in which the sampling is assumed
+to be equal along all axes.</p>
+<p>The <em>distances</em> and <em>indices</em> arguments can be used to give
+optional output arrays that must be of the correct size and type
+(<tt class="xref c c-type docutils literal"><span class="pre">Float64</span></tt> and <tt class="xref c c-type docutils literal"><span class="pre">Int32</span></tt>).</p>
+<p>The algorithm used to implement this function is described in: C.
+R. Maurer, Jr., R. Qi, and V. Raghavan, &#8220;A linear time algorithm
+for computing exact euclidean distance transforms of binary images
+in arbitrary dimensions. IEEE Trans. PAMI 25, 265-270, 2003.</p>
+<p>The function <a class="reference internal" href="../generated/scipy.ndimage.morphology.distance_transform_bf.html#scipy.ndimage.morphology.distance_transform_bf" title="scipy.ndimage.morphology.distance_transform_bf"><tt class="xref py py-func docutils literal"><span class="pre">distance_transform_bf</span></tt></a> uses a brute-force algorithm
+to calculate the distance transform of the input, by replacing each
+object element (defined by values larger than zero) with the
+shortest distance to the background (all non-object elements). The
+metric must be one of &#8220;euclidean&#8221;, &#8220;cityblock&#8221;, or
+&#8220;chessboard&#8221;.</p>
+<p>In addition to the distance transform, the feature transform can be
+calculated. In this case the index of the closest background
+element is returned along the first axis of the result. The
+<em>return_distances</em>, and <em>return_indices</em> flags can be used to
+indicate if the distance transform, the feature transform, or both
+must be returned.</p>
+<p>Optionally the sampling along each axis can be given by the
+<em>sampling</em> parameter which should be a sequence of length equal to
+the input rank, or a single number in which the sampling is assumed
+to be equal along all axes. This parameter is only used in the case
+of the euclidean distance transform.</p>
+<p>The <em>distances</em> and <em>indices</em> arguments can be used to give
+optional output arrays that must be of the correct size and type
+(<tt class="xref c c-type docutils literal"><span class="pre">Float64</span></tt> and <tt class="xref c c-type docutils literal"><span class="pre">Int32</span></tt>).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function uses a slow brute-force algorithm, the function <a class="reference internal" href="../generated/scipy.ndimage.morphology.distance_transform_cdt.html#scipy.ndimage.morphology.distance_transform_cdt" title="scipy.ndimage.morphology.distance_transform_cdt"><tt class="xref py py-func docutils literal"><span class="pre">distance_transform_cdt</span></tt></a> can be used to more efficiently calculate cityblock and chessboard distance transforms. The function <a class="reference internal" href="../generated/scipy.ndimage.morphology.distance_transform_edt.html#scipy.ndimage.morphology.distance_transform_edt" title="scipy.ndimage.morphology.distance_transform_edt"><tt class="xref py py-func docutils literal"><span class="pre">distance_transform_edt</span></tt></a> can be used to more efficiently calculate the exact euclidean distance transform.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="segmentation-and-labeling">
+<h2>Segmentation and labeling<a class="headerlink" href="#segmentation-and-labeling" title="Permalink to this headline">¶</a></h2>
+<p>Segmentation is the process of separating objects of interest from
+the background. The most simple approach is probably intensity
+thresholding, which is easily done with <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.7)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a> functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>           <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>           <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
+<span class="gp">... </span>           <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">where</span><span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">array([[0, 1, 1, 0, 0, 0],</span>
+<span class="go">       [0, 1, 1, 0, 1, 0],</span>
+<span class="go">       [0, 0, 0, 1, 1, 1],</span>
+<span class="go">       [0, 0, 0, 0, 1, 0]])</span>
+</pre></div>
+</div>
+<p>The result is a binary image, in which the individual objects still
+need to be identified and labeled. The function <tt class="xref py py-func docutils literal"><span class="pre">label</span></tt> generates
+an array where each object is assigned a unique number:</p>
+<blockquote>
+<div><p>The <tt class="xref py py-func docutils literal"><span class="pre">label</span></tt> function generates an array where the objects in the
+input are labeled with an integer index. It returns a tuple
+consisting of the array of object labels and the number of objects
+found, unless the <em>output</em> parameter is given, in which case only
+the number of objects is returned. The connectivity of the objects
+is defined by a structuring element. For instance, in two
+dimensions using a four-connected structuring element gives:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">label</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+<span class="go">(array([[0, 1, 1, 0, 0, 0],</span>
+<span class="go">       [0, 1, 1, 0, 2, 0],</span>
+<span class="go">       [0, 0, 0, 2, 2, 2],</span>
+<span class="go">       [0, 0, 0, 0, 2, 0]]), 2)</span>
+</pre></div>
+</div>
+<p>These two objects are not connected because there is no way in
+which we can place the structuring element such that it overlaps
+with both objects. However, an 8-connected structuring element
+results in only a single object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">label</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([[0, 1, 1, 0, 0, 0],</span>
+<span class="go">       [0, 1, 1, 0, 1, 0],</span>
+<span class="go">       [0, 0, 0, 1, 1, 1],</span>
+<span class="go">       [0, 0, 0, 0, 1, 0]])</span>
+</pre></div>
+</div>
+<p>If no structuring element is provided, one is generated by calling
+<a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a> (see
+<a class="reference internal" href="#ndimage-binary-morphology"><em>Binary morphology</em></a>)
+using a connectivity of one (which in 2D is the 4-connected
+structure of the first example). The input can be of any type, any
+value not equal to zero is taken to be part of an object. This is
+useful if you need to &#8216;re-label&#8217; an array of object indices, for
+instance after removing unwanted objects. Just apply the label
+function again to the index array. For instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">label</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span>
+<span class="go">array([1 0 2 0 3])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="n">l</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span>
+<span class="go">array([1 0 0 0 3])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">label</span><span class="p">(</span><span class="n">l</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([1 0 0 0 2])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The structuring element used by <tt class="xref py py-func docutils literal"><span class="pre">label</span></tt> is assumed to be symmetric.</p>
+</div>
+</div></blockquote>
+<p>There is a large number of other approaches for segmentation, for
+instance from an estimation of the borders of the objects that can
+be obtained for instance by derivative filters. One such an
+approach is watershed segmentation. The function <tt class="xref py py-func docutils literal"><span class="pre">watershed_ift</span></tt>
+generates an array where each object is assigned a unique label,
+from an array that localizes the object borders, generated for
+instance by a gradient magnitude filter. It uses an array
+containing initial markers for the objects:</p>
+<blockquote>
+<div><p>The <tt class="xref py py-func docutils literal"><span class="pre">watershed_ift</span></tt> function applies a watershed from markers
+algorithm, using an Iterative Forest Transform, as described in: P.
+Felkel, R. Wegenkittl, and M. Bruckschwaiger, &#8220;Implementation and
+Complexity of the Watershed-from-Markers Algorithm Computed as a
+Minimal Cost Forest.&#8221;, Eurographics 2001, pp. C:26-35.</p>
+<p>The inputs of this function are the array to which the transform is
+applied, and an array of markers that designate the objects by a
+unique label, where any non-zero value is a marker. For instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">watershed_ift</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">markers</span><span class="p">)</span>
+<span class="go">array([[1, 1, 1, 1, 1, 1, 1],</span>
+<span class="go">       [1, 1, 2, 2, 2, 1, 1],</span>
+<span class="go">       [1, 2, 2, 2, 2, 2, 1],</span>
+<span class="go">       [1, 2, 2, 2, 2, 2, 1],</span>
+<span class="go">       [1, 2, 2, 2, 2, 2, 1],</span>
+<span class="go">       [1, 1, 2, 2, 2, 1, 1],</span>
+<span class="go">       [1, 1, 1, 1, 1, 1, 1]], dtype=int8)</span>
+</pre></div>
+</div>
+<p>Here two markers were used to designate an object (<em>marker</em> = 2) and
+the background (<em>marker</em> = 1). The order in which these are processed
+is arbitrary: moving the marker for the background to the lower
+right corner of the array yields a different result:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">watershed_ift</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">markers</span><span class="p">)</span>
+<span class="go">array([[1, 1, 1, 1, 1, 1, 1],</span>
+<span class="go">       [1, 1, 1, 1, 1, 1, 1],</span>
+<span class="go">       [1, 1, 2, 2, 2, 1, 1],</span>
+<span class="go">       [1, 1, 2, 2, 2, 1, 1],</span>
+<span class="go">       [1, 1, 2, 2, 2, 1, 1],</span>
+<span class="go">       [1, 1, 1, 1, 1, 1, 1],</span>
+<span class="go">       [1, 1, 1, 1, 1, 1, 1]], dtype=int8)</span>
+</pre></div>
+</div>
+<p>The result is that the object (<em>marker</em> = 2) is smaller because the
+second marker was processed earlier. This may not be the desired
+effect if the first marker was supposed to designate a background
+object. Therefore <tt class="xref py py-func docutils literal"><span class="pre">watershed_ift</span></tt> treats markers with a negative
+value explicitly as background markers and processes them after the
+normal markers. For instance, replacing the first marker by a
+negative marker gives a result similar to the first example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">watershed_ift</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">markers</span><span class="p">)</span>
+<span class="go">array([[-1, -1, -1, -1, -1, -1, -1],</span>
+<span class="go">       [-1, -1,  2,  2,  2, -1, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1, -1,  2,  2,  2, -1, -1],</span>
+<span class="go">       [-1, -1, -1, -1, -1, -1, -1]], dtype=int8)</span>
+</pre></div>
+</div>
+<p>The connectivity of the objects is defined by a structuring
+element. If no structuring element is provided, one is generated by
+calling <a class="reference internal" href="../generated/scipy.ndimage.morphology.generate_binary_structure.html#scipy.ndimage.morphology.generate_binary_structure" title="scipy.ndimage.morphology.generate_binary_structure"><tt class="xref py py-func docutils literal"><span class="pre">generate_binary_structure</span></tt></a> (see
+<a class="reference internal" href="#ndimage-binary-morphology"><em>Binary morphology</em></a>) using a connectivity of one
+(which in 2D is a 4-connected structure.) For example, using
+an 8-connected structure with the last example yields a different object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">watershed_ift</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">structure</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="go">array([[-1, -1, -1, -1, -1, -1, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1,  2,  2,  2,  2,  2, -1],</span>
+<span class="go">       [-1, -1, -1, -1, -1, -1, -1]], dtype=int8)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The implementation of <tt class="xref py py-func docutils literal"><span class="pre">watershed_ift</span></tt> limits the data types of the input to <tt class="xref c c-type docutils literal"><span class="pre">UInt8</span></tt> and <tt class="xref c c-type docutils literal"><span class="pre">UInt16</span></tt>.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="object-measurements">
+<span id="ndimage-object-measurements"></span><h2>Object measurements<a class="headerlink" href="#object-measurements" title="Permalink to this headline">¶</a></h2>
+<p>Given an array of labeled objects, the properties of the individual
+objects can be measured. The <a class="reference internal" href="../generated/scipy.ndimage.measurements.find_objects.html#scipy.ndimage.measurements.find_objects" title="scipy.ndimage.measurements.find_objects"><tt class="xref py py-func docutils literal"><span class="pre">find_objects</span></tt></a> function can be used
+to generate a list of slices that for each object, give the
+smallest sub-array that fully contains the object:</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.find_objects.html#scipy.ndimage.measurements.find_objects" title="scipy.ndimage.measurements.find_objects"><tt class="xref py py-func docutils literal"><span class="pre">find_objects</span></tt></a> function finds all objects in a labeled array and
+returns a list of slices that correspond to the smallest regions in
+the array that contains the object. For instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">find_objects</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="go">array([[1 1],</span>
+<span class="go">       [1 1]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<span class="go">array([[0, 1, 0],</span>
+<span class="go">       [1, 1, 1],</span>
+<span class="go">       [0, 1, 0]])</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../generated/scipy.ndimage.measurements.find_objects.html#scipy.ndimage.measurements.find_objects" title="scipy.ndimage.measurements.find_objects"><tt class="xref py py-func docutils literal"><span class="pre">find_objects</span></tt></a> returns slices for all objects, unless the
+<em>max_label</em> parameter is larger then zero, in which case only the
+first <em>max_label</em> objects are returned. If an index is missing in
+the <em>label</em> array, None is return instead of a slice. For
+example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">find_objects</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">max_label</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">[(slice(0, 1, None),), None, (slice(2, 3, None),)]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The list of slices generated by <a class="reference internal" href="../generated/scipy.ndimage.measurements.find_objects.html#scipy.ndimage.measurements.find_objects" title="scipy.ndimage.measurements.find_objects"><tt class="xref py py-func docutils literal"><span class="pre">find_objects</span></tt></a> is useful to find
+the position and dimensions of the objects in the array, but can
+also be used to perform measurements on the individual objects. Say
+we want to find the sum of the intensities of an object in image:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slices</span> <span class="o">=</span> <span class="n">find_objects</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then we can calculate the sum of the elements in the second
+object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">where</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">image</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">80</span>
+</pre></div>
+</div>
+<p>That is however not particularly efficient, and may also be more
+complicated for other types of measurements. Therefore a few
+measurements functions are defined that accept the array of object
+labels and the index of the object to be measured. For instance
+calculating the sum of the intensities can be done by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">80</span>
+</pre></div>
+</div>
+<p>For large arrays and small objects it is more efficient to call the
+measurement functions after slicing the array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">labels</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">80</span>
+</pre></div>
+</div>
+<p>Alternatively, we can do the measurements for a number of labels
+with a single function call, returning a list of results. For
+instance, to measure the sum of the values of the background and
+the second object in our example we give a list of labels:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="go">array([178.0, 80.0])</span>
+</pre></div>
+</div>
+<p>The measurement functions described below all support the <em>index</em>
+parameter to indicate which object(s) should be measured. The
+default value of <em>index</em> is None. This indicates that all
+elements where the label is larger than zero should be treated as a
+single object and measured. Thus, in this case the <em>labels</em> array
+is treated as a mask defined by the elements that are larger than
+zero. If <em>index</em> is a number or a sequence of numbers it gives the
+labels of the objects that are measured. If <em>index</em> is a sequence,
+a list of the results is returned. Functions that return more than
+one result, return their result as a tuple if <em>index</em> is a single
+number, or as a tuple of lists, if <em>index</em> is a sequence.</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.sum.html#scipy.ndimage.measurements.sum" title="scipy.ndimage.measurements.sum"><tt class="xref py py-func docutils literal"><span class="pre">sum</span></tt></a> function calculates the sum of the elements of the object
+with label(s) given by <em>index</em>, using the <em>labels</em> array for the
+object labels. If <em>index</em> is None, all elements with a non-zero
+label value are treated as a single object. If <em>label</em> is None,
+all elements of <em>input</em> are used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.mean.html#scipy.ndimage.measurements.mean" title="scipy.ndimage.measurements.mean"><tt class="xref py py-func docutils literal"><span class="pre">mean</span></tt></a> function calculates the mean of the elements of the
+object with label(s) given by <em>index</em>, using the <em>labels</em> array for
+the object labels. If <em>index</em> is None, all elements with a
+non-zero label value are treated as a single object. If <em>label</em> is
+None, all elements of <em>input</em> are used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.variance.html#scipy.ndimage.measurements.variance" title="scipy.ndimage.measurements.variance"><tt class="xref py py-func docutils literal"><span class="pre">variance</span></tt></a> function calculates the variance of the elements of
+the object with label(s) given by <em>index</em>, using the <em>labels</em> array
+for the object labels. If <em>index</em> is None, all elements with a
+non-zero label value are treated as a single object. If <em>label</em> is
+None, all elements of <em>input</em> are used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.standard_deviation.html#scipy.ndimage.measurements.standard_deviation" title="scipy.ndimage.measurements.standard_deviation"><tt class="xref py py-func docutils literal"><span class="pre">standard_deviation</span></tt></a> function calculates the standard
+deviation of the elements of the object with label(s) given by
+<em>index</em>, using the <em>labels</em> array for the object labels. If <em>index</em>
+is None, all elements with a non-zero label value are treated as
+a single object. If <em>label</em> is None, all elements of <em>input</em> are
+used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.minimum.html#scipy.ndimage.measurements.minimum" title="scipy.ndimage.measurements.minimum"><tt class="xref py py-func docutils literal"><span class="pre">minimum</span></tt></a> function calculates the minimum of the elements of
+the object with label(s) given by <em>index</em>, using the <em>labels</em> array
+for the object labels. If <em>index</em> is None, all elements with a
+non-zero label value are treated as a single object. If <em>label</em> is
+None, all elements of <em>input</em> are used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.maximum.html#scipy.ndimage.measurements.maximum" title="scipy.ndimage.measurements.maximum"><tt class="xref py py-func docutils literal"><span class="pre">maximum</span></tt></a> function calculates the maximum of the elements of
+the object with label(s) given by <em>index</em>, using the <em>labels</em> array
+for the object labels. If <em>index</em> is None, all elements with a
+non-zero label value are treated as a single object. If <em>label</em> is
+None, all elements of <em>input</em> are used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.minimum_position.html#scipy.ndimage.measurements.minimum_position" title="scipy.ndimage.measurements.minimum_position"><tt class="xref py py-func docutils literal"><span class="pre">minimum_position</span></tt></a> function calculates the position of the
+minimum of the elements of the object with label(s) given by
+<em>index</em>, using the <em>labels</em> array for the object labels. If <em>index</em>
+is None, all elements with a non-zero label value are treated as
+a single object. If <em>label</em> is None, all elements of <em>input</em> are
+used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.maximum_position.html#scipy.ndimage.measurements.maximum_position" title="scipy.ndimage.measurements.maximum_position"><tt class="xref py py-func docutils literal"><span class="pre">maximum_position</span></tt></a> function calculates the position of the
+maximum of the elements of the object with label(s) given by
+<em>index</em>, using the <em>labels</em> array for the object labels. If <em>index</em>
+is None, all elements with a non-zero label value are treated as
+a single object. If <em>label</em> is None, all elements of <em>input</em> are
+used in the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.extrema.html#scipy.ndimage.measurements.extrema" title="scipy.ndimage.measurements.extrema"><tt class="xref py py-func docutils literal"><span class="pre">extrema</span></tt></a> function calculates the minimum, the maximum, and
+their positions, of the elements of the object with label(s) given
+by <em>index</em>, using the <em>labels</em> array for the object labels. If
+<em>index</em> is None, all elements with a non-zero label value are
+treated as a single object. If <em>label</em> is None, all elements of
+<em>input</em> are used in the calculation. The result is a tuple giving
+the minimum, the maximum, the position of the minimum and the
+postition of the maximum. The result is the same as a tuple formed
+by the results of the functions <em>minimum</em>, <em>maximum</em>,
+<em>minimum_position</em>, and <em>maximum_position</em> that are described
+above.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.center_of_mass.html#scipy.ndimage.measurements.center_of_mass" title="scipy.ndimage.measurements.center_of_mass"><tt class="xref py py-func docutils literal"><span class="pre">center_of_mass</span></tt></a> function calculates the center of mass of
+the of the object with label(s) given by <em>index</em>, using the
+<em>labels</em> array for the object labels. If <em>index</em> is None, all
+elements with a non-zero label value are treated as a single
+object. If <em>label</em> is None, all elements of <em>input</em> are used in
+the calculation.</p>
+<p>The <a class="reference internal" href="../generated/scipy.ndimage.measurements.histogram.html#scipy.ndimage.measurements.histogram" title="scipy.ndimage.measurements.histogram"><tt class="xref py py-func docutils literal"><span class="pre">histogram</span></tt></a> function calculates a histogram of the of the
+object with label(s) given by <em>index</em>, using the <em>labels</em> array for
+the object labels. If <em>index</em> is None, all elements with a
+non-zero label value are treated as a single object. If <em>label</em> is
+None, all elements of <em>input</em> are used in the calculation.
+Histograms are defined by their minimum (<em>min</em>), maximum (<em>max</em>)
+and the number of bins (<em>bins</em>). They are returned as
+one-dimensional arrays of type <tt class="xref c c-type docutils literal"><span class="pre">Int32</span></tt>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="extending-ndimage-in-c">
+<span id="ndimage-ccallbacks"></span><h2>Extending <tt class="xref py py-mod docutils literal"><span class="pre">ndimage</span></tt> in C<a class="headerlink" href="#extending-ndimage-in-c" title="Permalink to this headline">¶</a></h2>
+<p>A few functions in the <a class="reference internal" href="../ndimage.html#module-scipy.ndimage" title="scipy.ndimage"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.ndimage</span></tt></a> take a call-back
+argument. This can be a python function, but also a <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt>
+containing a pointer to a C function. To use this feature, you must
+write your own C extension that defines the function, and define a Python function that returns a <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt> containing a pointer to this function.</p>
+<p>An example of a function that supports this is
+<tt class="xref py py-func docutils literal"><span class="pre">geometric_transform</span></tt> (see <a class="reference internal" href="#ndimage-interpolation"><em>Interpolation functions</em></a>).
+You can pass it a python callable object that defines a mapping
+from all output coordinates to corresponding coordinates in the
+input array. This mapping function can also be a C function, which
+generally will be much more efficient, since the overhead of
+calling a python function at each element is avoided.</p>
+<p>For example to implement a simple shift function we define the
+following function:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="kt">int</span>
+<span class="nf">_shift_function</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">output_coordinates</span><span class="p">,</span> <span class="kt">double</span><span class="o">*</span> <span class="n">input_coordinates</span><span class="p">,</span>
+                <span class="kt">int</span> <span class="n">output_rank</span><span class="p">,</span> <span class="kt">int</span> <span class="n">input_rank</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">callback_data</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">ii</span><span class="p">;</span>
+  <span class="cm">/* get the shift from the callback data pointer: */</span>
+  <span class="kt">double</span> <span class="n">shift</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="p">)</span><span class="n">callback_data</span><span class="p">;</span>
+  <span class="cm">/* calculate the coordinates: */</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">ii</span> <span class="o">&lt;</span> <span class="n">irank</span><span class="p">;</span> <span class="n">ii</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">icoor</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">ocoor</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">-</span> <span class="n">shift</span><span class="p">;</span>
+  <span class="cm">/* return OK status: */</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This function is called at every element of the output array,
+passing the current coordinates in the <em>output_coordinates</em> array.
+On return, the <em>input_coordinates</em> array must contain the
+coordinates at which the input is interpolated. The ranks of the
+input and output array are passed through <em>output_rank</em> and
+<em>input_rank</em>. The value of the shift is passed through the
+<em>callback_data</em> argument, which is a pointer to void. The function
+returns an error status, in this case always 1, since no error can
+occur.</p>
+<p>A pointer to this function and a pointer to the shift value must be
+passed to <tt class="xref py py-func docutils literal"><span class="pre">geometric_transform</span></tt>. Both are passed by a single
+<tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt> which is created by the following python extension
+function:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span> <span class="o">*</span>
+<span class="nf">py_shift_function</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">obj</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">double</span> <span class="n">shift</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s">&quot;d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">shift</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">PyErr_SetString</span><span class="p">(</span><span class="n">PyExc_RuntimeError</span><span class="p">,</span> <span class="s">&quot;invalid parameters&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="cm">/* assign the shift to a dynamically allocated location: */</span>
+    <span class="kt">double</span> <span class="o">*</span><span class="n">cdata</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">double</span><span class="p">));</span>
+    <span class="o">*</span><span class="n">cdata</span> <span class="o">=</span> <span class="n">shift</span><span class="p">;</span>
+    <span class="cm">/* wrap function and callback_data in a CObject: */</span>
+    <span class="k">return</span> <span class="n">PyCObject_FromVoidPtrAndDesc</span><span class="p">(</span><span class="n">_shift_function</span><span class="p">,</span> <span class="n">cdata</span><span class="p">,</span>
+                                        <span class="n">_destructor</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The value of the shift is obtained and then assigned to a
+dynamically allocated memory location. Both this data pointer and
+the function pointer are then wrapped in a <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt>, which is
+returned. Additionally, a pointer to a destructor function is
+given, that will free the memory we allocated for the shift value
+when the <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt> is destroyed. This destructor is very simple:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="kt">void</span>
+<span class="nf">_destructor</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">cobject</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">cdata</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">cdata</span><span class="p">)</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">cdata</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>To use these functions, an extension module is built:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyMethodDef</span> <span class="n">methods</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span><span class="s">&quot;shift_function&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">py_shift_function</span><span class="p">,</span> <span class="n">METH_VARARGS</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">void</span>
+<span class="nf">initexample</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Py_InitModule</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This extension can then be used in Python, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fnc</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">shift_function</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">geometric_transform</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">fnc</span><span class="p">)</span>
+<span class="go">array([[ 0.      0.      0.    ],</span>
+<span class="go">       [ 0.      1.3625  2.7375],</span>
+<span class="go">       [ 0.      4.8125  6.1875],</span>
+<span class="go">       [ 0.      8.2625  9.6375]])</span>
+</pre></div>
+</div>
+<p>C callback functions for use with <tt class="xref py py-mod docutils literal"><span class="pre">ndimage</span></tt> functions must all
+be written according to this scheme. The next section lists the
+<tt class="xref py py-mod docutils literal"><span class="pre">ndimage</span></tt> functions that acccept a C callback function and
+gives the prototype of the callback function.</p>
+</div>
+<div class="section" id="functions-that-support-c-callback-functions">
+<h2>Functions that support C callback functions<a class="headerlink" href="#functions-that-support-c-callback-functions" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">ndimage</span></tt> functions that support C callback functions are
+described here. Obviously, the prototype of the function that is
+provided to these functions must match exactly that what they
+expect. Therefore we give here the prototypes of the callback
+functions. All these callback functions accept a void
+<em>callback_data</em> pointer that must be wrapped in a <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt> using
+the Python <tt class="xref c c-func docutils literal"><span class="pre">PyCObject_FromVoidPtrAndDesc</span></tt> function, which can also
+accept a pointer to a destructor function to free any memory
+allocated for <em>callback_data</em>. If <em>callback_data</em> is not needed,
+<tt class="xref c c-func docutils literal"><span class="pre">PyCObject_FromVoidPtr</span></tt> may be used instead. The callback
+functions must return an integer error status that is equal to zero
+if something went wrong, or 1 otherwise. If an error occurs, you
+should normally set the python error status with an informative
+message before returning, otherwise, a default error message is set
+by the calling function.</p>
+<p>The function <tt class="xref py py-func docutils literal"><span class="pre">generic_filter</span></tt> (see
+<a class="reference internal" href="#ndimage-genericfilters"><em>Generic filter functions</em></a>) accepts a callback function with the
+following prototype:</p>
+<blockquote>
+<div>The calling function iterates over the elements of the input and
+output arrays, calling the callback function at each element. The
+elements within the footprint of the filter at the current element
+are passed through the <em>buffer</em> parameter, and the number of
+elements within the footprint through <em>filter_size</em>. The
+calculated valued should be returned in the <em>return_value</em>
+argument.</div></blockquote>
+<p>The function <tt class="xref py py-func docutils literal"><span class="pre">generic_filter1d</span></tt> (see
+<a class="reference internal" href="#ndimage-genericfilters"><em>Generic filter functions</em></a>) accepts a callback function with the
+following prototype:</p>
+<blockquote>
+<div>The calling function iterates over the lines of the input and
+output arrays, calling the callback function at each line. The
+current line is extended according to the border conditions set by
+the calling function, and the result is copied into the array that
+is passed through the <em>input_line</em> array. The length of the input
+line (after extension) is passed through <em>input_length</em>. The
+callback function should apply the 1D filter and store the result
+in the array passed through <em>output_line</em>. The length of the
+output line is passed through <em>output_length</em>.</div></blockquote>
+<p>The function <tt class="xref py py-func docutils literal"><span class="pre">geometric_transform</span></tt> (see
+<a class="reference internal" href="#ndimage-interpolation"><em>Interpolation functions</em></a>) expects a function with the following
+prototype:</p>
+<blockquote>
+<div>The calling function iterates over the elements of the output
+array, calling the callback function at each element. The
+coordinates of the current output element are passed through
+<em>output_coordinates</em>. The callback function must return the
+coordinates at which the input must be interpolated in
+<em>input_coordinates</em>. The rank of the input and output arrays are
+given by <em>input_rank</em> and <em>output_rank</em> respectively.</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Multi-dimensional image processing (<tt class="docutils literal"><span class="pre">scipy.ndimage</span></tt>)</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#properties-shared-by-all-functions">Properties shared by all functions</a></li>
+<li><a class="reference internal" href="#filter-functions">Filter functions</a><ul>
+<li><a class="reference internal" href="#correlation-and-convolution">Correlation and convolution</a></li>
+<li><a class="reference internal" href="#smoothing-filters">Smoothing filters</a></li>
+<li><a class="reference internal" href="#filters-based-on-order-statistics">Filters based on order statistics</a></li>
+<li><a class="reference internal" href="#derivatives">Derivatives</a></li>
+<li><a class="reference internal" href="#generic-filter-functions">Generic filter functions</a></li>
+<li><a class="reference internal" href="#fourier-domain-filters">Fourier domain filters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interpolation-functions">Interpolation functions</a><ul>
+<li><a class="reference internal" href="#spline-pre-filters">Spline pre-filters</a></li>
+<li><a class="reference internal" href="#id1">Interpolation functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#morphology">Morphology</a><ul>
+<li><a class="reference internal" href="#binary-morphology">Binary morphology</a></li>
+<li><a class="reference internal" href="#grey-scale-morphology">Grey-scale morphology</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#distance-transforms">Distance transforms</a></li>
+<li><a class="reference internal" href="#segmentation-and-labeling">Segmentation and labeling</a></li>
+<li><a class="reference internal" href="#object-measurements">Object measurements</a></li>
+<li><a class="reference internal" href="#extending-ndimage-in-c">Extending <tt class="docutils literal"><span class="pre">ndimage</span></tt> in C</a></li>
+<li><a class="reference internal" href="#functions-that-support-c-callback-functions">Functions that support C callback functions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="stats.html"
+                        title="previous chapter">Statistics (<tt class="docutils literal"><span class="pre">scipy.stats</span></tt>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="io.html"
+                        title="next chapter">File IO (<tt class="docutils literal docutils literal"><span class="pre">scipy.io</span></tt>)</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="io.html" title="File IO (scipy.io)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="stats.html" title="Statistics (scipy.stats)"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" >SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

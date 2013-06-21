@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.signal.find_peaks_cwt — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../signal.html" rel="up" title="Signal processing (scipy.signal)"/><link href="scipy.signal.argrelmin.html" rel="next" title="scipy.signal.argrelmin"/><link href="scipy.signal.cwt.html" rel="prev" title="scipy.signal.cwt"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.signal.argrelmin.html" title="scipy.signal.argrelmin">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.signal.cwt.html" title="scipy.signal.cwt">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a accesskey="U" href="../signal.html">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-signal-find-peaks-cwt">
+<h1>scipy.signal.find_peaks_cwt<a class="headerlink" href="#scipy-signal-find-peaks-cwt" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.signal.find_peaks_cwt"><a name="//apple_ref/cpp/func/scipy.signal.find_peaks_cwt"></a>
+<tt class="descclassname">scipy.signal.</tt><tt class="descname">find_peaks_cwt</tt><big>(</big><em>vector</em>, <em>widths</em>, <em>wavelet=None</em>, <em>max_distances=None</em>, <em>gap_thresh=None</em>, <em>min_length=None</em>, <em>min_snr=1</em>, <em>noise_perc=10</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/signal/_peak_finding.py#L373"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.signal.find_peaks_cwt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to find the peaks in a 1-D array.</p>
+<p>The general approach is to smooth <em class="xref py py-obj">vector</em> by convolving it with
+<em class="xref py py-obj">wavelet(width)</em> for each width in <em class="xref py py-obj">widths</em>. Relative maxima which
+appear at enough length scales, and with sufficiently high SNR, are
+accepted.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.11.0.</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>vector</strong> : ndarray</p>
+<blockquote>
+<div><p>1-D array in which to find the peaks.</p>
+</div></blockquote>
+<p><strong>widths</strong> : sequence</p>
+<blockquote>
+<div><p>1-D array of widths to use for calculating the CWT matrix. In general,
+this range should cover the expected width of peaks of interest.</p>
+</div></blockquote>
+<p><strong>wavelet</strong> : callable, optional</p>
+<blockquote>
+<div><p>Should take a single variable and return a 1-D array to convolve
+with <em class="xref py py-obj">vector</em>.  Should be normalized to unit area.
+Default is the ricker wavelet.</p>
+</div></blockquote>
+<p><strong>max_distances</strong> : ndarray, optional</p>
+<blockquote>
+<div><p>At each row, a ridge line is only connected if the relative max at
+row[n] is within <tt class="docutils literal"><span class="pre">max_distances[n]</span></tt> from the relative max at
+<tt class="docutils literal"><span class="pre">row[n+1]</span></tt>.  Default value is <tt class="docutils literal"><span class="pre">widths/4</span></tt>.</p>
+</div></blockquote>
+<p><strong>gap_thresh</strong> : float, optional</p>
+<blockquote>
+<div><p>If a relative maximum is not found within <em class="xref py py-obj">max_distances</em>,
+there will be a gap. A ridge line is discontinued if there are more
+than <em class="xref py py-obj">gap_thresh</em> points without connecting a new relative maximum.
+Default is 2.</p>
+</div></blockquote>
+<p><strong>min_length</strong> : int, optional</p>
+<blockquote>
+<div><p>Minimum length a ridge line needs to be acceptable.
+Default is <tt class="docutils literal"><span class="pre">cwt.shape[0]</span> <span class="pre">/</span> <span class="pre">4</span></tt>, ie 1/4-th the number of widths.</p>
+</div></blockquote>
+<p><strong>min_snr</strong> : float, optional</p>
+<blockquote>
+<div><p>Minimum SNR ratio. Default 1. The signal is the value of
+the cwt matrix at the shortest length scale (<tt class="docutils literal"><span class="pre">cwt[0,</span> <span class="pre">loc]</span></tt>), the
+noise is the <em class="xref py py-obj">noise_perc`th percentile of datapoints contained within a
+window of `window_size</em> around <tt class="docutils literal"><span class="pre">cwt[0,</span> <span class="pre">loc]</span></tt>.</p>
+</div></blockquote>
+<p><strong>noise_perc</strong> : float, optional</p>
+<blockquote class="last">
+<div><p>When calculating the noise floor, percentile of data points
+examined below which to consider noise. Calculated using
+<em class="xref py py-obj">stats.scoreatpercentile</em>.  Default is 10.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="scipy.signal.cwt.html#scipy.signal.cwt" title="scipy.signal.cwt"><tt class="xref py py-obj docutils literal"><span class="pre">cwt</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>This approach was designed for finding sharp peaks among noisy data,
+however with proper parameter selection it should function well for
+different peak shapes.</p>
+<dl class="docutils">
+<dt>The algorithm is as follows:</dt>
+<dd><ol class="first last arabic simple">
+<li>Perform a continuous wavelet transform on <em class="xref py py-obj">vector</em>, for the supplied
+<em class="xref py py-obj">widths</em>. This is a convolution of <em class="xref py py-obj">vector</em> with <em class="xref py py-obj">wavelet(width)</em> for
+each width in <em class="xref py py-obj">widths</em>. See <a class="reference internal" href="scipy.signal.cwt.html#scipy.signal.cwt" title="scipy.signal.cwt"><tt class="xref py py-obj docutils literal"><span class="pre">cwt</span></tt></a></li>
+<li>Identify “ridge lines” in the cwt matrix. These are relative maxima
+at each row, connected across adjacent rows. See identify_ridge_lines</li>
+<li>Filter the ridge_lines using filter_ridge_lines.</li>
+</ol>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r100" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R100]</a></td><td>Bioinformatics (2006) 22 (17): 2059-2065.
+doi: 10.1093/bioinformatics/btl355
+<a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/22/17/2059.long">http://bioinformatics.oxfordjournals.org/content/22/17/2059.long</a></td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peakind</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">find_peaks_cwt</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peakind</span><span class="p">,</span> <span class="n">xs</span><span class="p">[</span><span class="n">peakind</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">peakind</span><span class="p">]</span>
+<span class="go">([32], array([ 1.6]), array([ 0.9995736]))</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.signal.cwt.html" title="previous chapter">scipy.signal.cwt</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.signal.argrelmin.html" title="next chapter">scipy.signal.argrelmin</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.signal.argrelmin.html" title="scipy.signal.argrelmin">next</a> |</li>
+<li class="right">
+<a href="scipy.signal.cwt.html" title="scipy.signal.cwt">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../signal.html">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

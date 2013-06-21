@@ -1,0 +1,191 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.sparse.linalg.spilu &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../../index.html" />
+    <link rel="up" title="scipy.sparse.linalg" href="../scipy.sparse.linalg.html" />
+    <link rel="next" title="scipy.sparse.linalg.ArpackNoConvergence" href="scipy.sparse.linalg.ArpackNoConvergence.html" />
+    <link rel="prev" title="scipy.sparse.linalg.splu" href="scipy.sparse.linalg.splu.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.ArpackNoConvergence.html" title="scipy.sparse.linalg.ArpackNoConvergence"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.splu.html" title="scipy.sparse.linalg.splu"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../../sparse.html" >Sparse matrices (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.sparse</span></tt>)</a> &raquo;</li>
+          <li><a href="../scipy.sparse.linalg.html" accesskey="U">scipy.sparse.linalg</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-sparse-linalg-spilu">
+<h1>scipy.sparse.linalg.spilu<a class="headerlink" href="#scipy-sparse-linalg-spilu" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.sparse.linalg.spilu">
+<tt class="descclassname">scipy.sparse.linalg.</tt><tt class="descname">spilu</tt><big>(</big><em>A</em>, <em>drop_tol=None</em>, <em>fill_factor=None</em>, <em>drop_rule=None</em>, <em>permc_spec=None</em>, <em>diag_pivot_thresh=None</em>, <em>relax=None</em>, <em>panel_size=None</em>, <em>options=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/sparse/linalg/dsolve/linsolve.py#L235"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.sparse.linalg.spilu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute an incomplete LU decomposition for a sparse, square matrix.</p>
+<p>The resulting object is an approximation to the inverse of <em class="xref py py-obj">A</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>A</strong> : (N, N) array_like</p>
+<blockquote>
+<div><p>Sparse matrix to factorize</p>
+</div></blockquote>
+<p><strong>drop_tol</strong> : float, optional</p>
+<blockquote>
+<div><p>Drop tolerance (0 &lt;= tol &lt;= 1) for an incomplete LU decomposition.
+(default: 1e-4)</p>
+</div></blockquote>
+<p><strong>fill_factor</strong> : float, optional</p>
+<blockquote>
+<div><p>Specifies the fill ratio upper bound (&gt;= 1.0) for ILU. (default: 10)</p>
+</div></blockquote>
+<p><strong>drop_rule</strong> : str, optional</p>
+<blockquote>
+<div><p>Comma-separated string of drop rules to use.
+Available rules: <tt class="docutils literal"><span class="pre">basic</span></tt>, <tt class="docutils literal"><span class="pre">prows</span></tt>, <tt class="docutils literal"><span class="pre">column</span></tt>, <tt class="docutils literal"><span class="pre">area</span></tt>,
+<tt class="docutils literal"><span class="pre">secondary</span></tt>, <tt class="docutils literal"><span class="pre">dynamic</span></tt>, <tt class="docutils literal"><span class="pre">interp</span></tt>. (Default: <tt class="docutils literal"><span class="pre">basic,area</span></tt>)</p>
+<p>See SuperLU documentation for details.</p>
+</div></blockquote>
+<p><strong>milu</strong> : str, optional</p>
+<blockquote>
+<div><p>Which version of modified ILU to use. (Choices: <tt class="docutils literal"><span class="pre">silu</span></tt>,
+<tt class="docutils literal"><span class="pre">smilu_1</span></tt>, <tt class="docutils literal"><span class="pre">smilu_2</span></tt> (default), <tt class="docutils literal"><span class="pre">smilu_3</span></tt>.)</p>
+</div></blockquote>
+<p><strong>Remaining other options</strong> :</p>
+<blockquote>
+<div><p>Same as for <a class="reference internal" href="../scipy.sparse.linalg.splu.html#scipy.sparse.linalg.splu" title="scipy.sparse.linalg.splu"><tt class="xref py py-obj docutils literal"><span class="pre">splu</span></tt></a></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>invA_approx</strong> : scipy.sparse.linalg.dsolve._superlu.SciPyLUType</p>
+<blockquote class="last">
+<div><p>Object, which has a <tt class="docutils literal"><span class="pre">solve</span></tt> method.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="../scipy.sparse.linalg.splu.html#scipy.sparse.linalg.splu" title="scipy.sparse.linalg.splu"><tt class="xref py py-obj docutils literal"><span class="pre">splu</span></tt></a></dt>
+<dd>complete LU decomposition</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>To improve the better approximation to the inverse, you may need to
+increase <em class="xref py py-obj">fill_factor</em> AND decrease <em class="xref py py-obj">drop_tol</em>.</p>
+<p>This function uses the SuperLU library.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.sparse.linalg.splu.html"
+                        title="previous chapter">scipy.sparse.linalg.splu</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.sparse.linalg.ArpackNoConvergence.html"
+                        title="next chapter">scipy.sparse.linalg.ArpackNoConvergence</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.ArpackNoConvergence.html" title="scipy.sparse.linalg.ArpackNoConvergence"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.splu.html" title="scipy.sparse.linalg.splu"
+             >previous</a> |</li>
+        <li><a href="../../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../../sparse.html" >Sparse matrices (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.sparse</span></tt>)</a> &raquo;</li>
+          <li><a href="../scipy.sparse.linalg.html" >scipy.sparse.linalg</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

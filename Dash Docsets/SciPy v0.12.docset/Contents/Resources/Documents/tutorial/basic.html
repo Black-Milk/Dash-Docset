@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Basic functions &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Special functions (scipy.special)" href="special.html" />
+    <link rel="prev" title="Introduction" href="general.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="special.html" title="Special functions (scipy.special)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="general.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="basic-functions">
+<h1><a class="toc-backref" href="#id1">Basic functions</a><a class="headerlink" href="#basic-functions" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#basic-functions" id="id1">Basic functions</a><ul>
+<li><a class="reference internal" href="#interaction-with-numpy" id="id2">Interaction with Numpy</a><ul>
+<li><a class="reference internal" href="#index-tricks" id="id3">Index Tricks</a></li>
+<li><a class="reference internal" href="#shape-manipulation" id="id4">Shape manipulation</a></li>
+<li><a class="reference internal" href="#polynomials" id="id5">Polynomials</a></li>
+<li><a class="reference internal" href="#vectorizing-functions-vectorize" id="id6">Vectorizing functions (vectorize)</a></li>
+<li><a class="reference internal" href="#type-handling" id="id7">Type handling</a></li>
+<li><a class="reference internal" href="#other-useful-functions" id="id8">Other useful functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="interaction-with-numpy">
+<h2><a class="toc-backref" href="#id2">Interaction with Numpy</a><a class="headerlink" href="#interaction-with-numpy" title="Permalink to this headline">¶</a></h2>
+<p>Scipy builds on Numpy, and for all basic array handling needs you can
+use Numpy functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">some_function</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Rather than giving a detailed description of each of these functions
+(which is available in the Numpy Reference Guide or by using the
+<a class="reference external" href="http://docs.python.org/dev/library/functions.html#help" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">help</span></tt></a>, <tt class="xref py py-func docutils literal"><span class="pre">info</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">source</span></tt> commands), this tutorial
+will discuss some of the more useful commands which require a little
+introduction to use to their full potential.</p>
+<p>To use functions from some of the Scipy modules, you can do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">some_module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">some_module</span><span class="o">.</span><span class="n">some_function</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The top level of <tt class="xref py py-mod docutils literal"><span class="pre">scipy</span></tt> also contains functions from
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.7)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a> and <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/routines.emath.html#numpy.lib.scimath" title="(in NumPy v1.7)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy.lib.scimath</span></tt></a>. However, it is better to
+use them directly from the <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#numpy" title="(in NumPy v1.7)"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a> module instead.</p>
+<div class="section" id="index-tricks">
+<h3><a class="toc-backref" href="#id3">Index Tricks</a><a class="headerlink" href="#index-tricks" title="Permalink to this headline">¶</a></h3>
+<p>There are some class instances that make special use of the slicing
+functionality to provide efficient means for array construction. This
+part will discuss the operation of <tt class="xref py py-obj docutils literal"><span class="pre">np.mgrid</span></tt> , <tt class="xref py py-obj docutils literal"><span class="pre">np.ogrid</span></tt> ,
+<tt class="xref py py-obj docutils literal"><span class="pre">np.r_</span></tt> , and <tt class="xref py py-obj docutils literal"><span class="pre">np.c_</span></tt> for quickly constructing arrays.</p>
+<p>For example, rather than writing something like the following</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">3</span><span class="p">],[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">,</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mf">1.002</span><span class="p">,</span><span class="mi">2</span><span class="o">/</span><span class="mf">9.0</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>with the <tt class="xref py py-obj docutils literal"><span class="pre">r_</span></tt> command one can enter this as</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">r_</span><span class="p">[</span><span class="mi">3</span><span class="p">,[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">10j</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>which can ease typing and make for more readable code. Notice how
+objects are concatenated, and the slicing syntax is (ab)used to
+construct ranges. The other term that deserves a little explanation is
+the use of the complex number 10j as the step size in the slicing
+syntax. This non-standard use allows the number to be interpreted as
+the number of points to produce in the range rather than as a step
+size (note we would have used the long integer notation, 10L, but this
+notation may go away in Python as the integers become unified). This
+non-standard usage may be unsightly to some, but it gives the user the
+ability to quickly construct complicated vectors in a very readable
+fashion. When the number of points is specified in this way, the end-
+point is inclusive.</p>
+<p>The &#8220;r&#8221; stands for row concatenation because if the objects between
+commas are 2 dimensional arrays, they are stacked by rows (and thus
+must have commensurate columns). There is an equivalent command
+<tt class="xref py py-obj docutils literal"><span class="pre">c_</span></tt> that stacks 2d arrays by columns but works identically to
+<tt class="xref py py-obj docutils literal"><span class="pre">r_</span></tt> for 1d arrays.</p>
+<p>Another very useful class instance which makes use of extended slicing
+notation is the function <tt class="xref py py-obj docutils literal"><span class="pre">mgrid</span></tt>. In the simplest case, this
+function can be used to construct 1d ranges as a convenient substitute
+for arange. It also allows the use of complex-numbers in the step-size
+to indicate the number of points to place between the (inclusive)
+end-points. The real purpose of this function however is to produce N,
+N-d arrays which provide coordinate arrays for an N-dimensional
+volume. The easiest way to understand this is with an example of its
+usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="go">array([[[0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 1, 1, 1, 1],</span>
+<span class="go">        [2, 2, 2, 2, 2],</span>
+<span class="go">        [3, 3, 3, 3, 3],</span>
+<span class="go">        [4, 4, 4, 4, 4]],</span>
+<span class="go">       [[0, 1, 2, 3, 4],</span>
+<span class="go">        [0, 1, 2, 3, 4],</span>
+<span class="go">        [0, 1, 2, 3, 4],</span>
+<span class="go">        [0, 1, 2, 3, 4],</span>
+<span class="go">        [0, 1, 2, 3, 4]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">:</span><span class="mi">4j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">:</span><span class="mi">4j</span><span class="p">]</span>
+<span class="go">array([[[ 0.    ,  0.    ,  0.    ,  0.    ],</span>
+<span class="go">        [ 1.6667,  1.6667,  1.6667,  1.6667],</span>
+<span class="go">        [ 3.3333,  3.3333,  3.3333,  3.3333],</span>
+<span class="go">        [ 5.    ,  5.    ,  5.    ,  5.    ]],</span>
+<span class="go">       [[ 0.    ,  1.6667,  3.3333,  5.    ],</span>
+<span class="go">        [ 0.    ,  1.6667,  3.3333,  5.    ],</span>
+<span class="go">        [ 0.    ,  1.6667,  3.3333,  5.    ],</span>
+<span class="go">        [ 0.    ,  1.6667,  3.3333,  5.    ]]])</span>
+</pre></div>
+</div>
+<p>Having meshed arrays like this is sometimes very useful. However, it
+is not always needed just to evaluate some N-dimensional function over
+a grid due to the array-broadcasting rules of Numpy and SciPy. If this
+is the only purpose for generating a meshgrid, you should instead use
+the function <tt class="xref py py-obj docutils literal"><span class="pre">ogrid</span></tt> which generates an &#8220;open&#8221; grid using <tt class="xref py py-obj docutils literal"><span class="pre">newaxis</span></tt>
+judiciously to create N, N-d arrays where only one dimension in each
+array has length greater than 1. This will save memory and create the
+same result if the only purpose for the meshgrid is to generate sample
+points for evaluation of an N-d function.</p>
+</div>
+<div class="section" id="shape-manipulation">
+<h3><a class="toc-backref" href="#id4">Shape manipulation</a><a class="headerlink" href="#shape-manipulation" title="Permalink to this headline">¶</a></h3>
+<p>In this category of functions are routines for squeezing out length-
+one dimensions from N-dimensional arrays, ensuring that an array is at
+least 1-, 2-, or 3-dimensional, and stacking (concatenating) arrays by
+rows, columns, and &#8220;pages &#8220;(in the third dimension). Routines for
+splitting arrays (roughly the opposite of stacking arrays) are also
+available.</p>
+</div>
+<div class="section" id="polynomials">
+<h3><a class="toc-backref" href="#id5">Polynomials</a><a class="headerlink" href="#polynomials" title="Permalink to this headline">¶</a></h3>
+<p>There are two (interchangeable) ways to deal with 1-d polynomials in
+SciPy. The first is to use the <tt class="xref py py-class docutils literal"><span class="pre">poly1d</span></tt> class from Numpy. This
+class accepts coefficients or polynomial roots to initialize a
+polynomial. The polynomial object can then be manipulated in algebraic
+expressions, integrated, differentiated, and evaluated. It even prints
+like a polynomial:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">poly1d</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p</span>
+<span class="go">   2</span>
+<span class="go">3 x + 4 x + 5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p</span><span class="o">*</span><span class="n">p</span>
+<span class="go">   4      3      2</span>
+<span class="go">9 x + 24 x + 46 x + 40 x + 25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">integ</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="go"> 3     2</span>
+<span class="go">x + 2 x + 5 x + 6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">deriv</span><span class="p">()</span>
+<span class="go">6 x + 4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="go">array([ 69, 100])</span>
+</pre></div>
+</div>
+<p>The other way to handle polynomials is as an array of coefficients
+with the first element of the array giving the coefficient of the
+highest power. There are explicit functions to add, subtract,
+multiply, divide, integrate, differentiate, and evaluate polynomials
+represented as sequences of coefficients.</p>
+</div>
+<div class="section" id="vectorizing-functions-vectorize">
+<h3><a class="toc-backref" href="#id6">Vectorizing functions (vectorize)</a><a class="headerlink" href="#vectorizing-functions-vectorize" title="Permalink to this headline">¶</a></h3>
+<p>One of the features that NumPy provides is a class <tt class="xref py py-obj docutils literal"><span class="pre">vectorize</span></tt> to
+convert an ordinary Python function which accepts scalars and returns
+scalars into a &#8220;vectorized-function&#8221; with the same broadcasting rules
+as other Numpy functions (<em>i.e.</em> the Universal functions, or
+ufuncs). For example, suppose you have a Python function named
+<tt class="xref py py-obj docutils literal"><span class="pre">addsubtract</span></tt> defined as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">addsubtract</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">:</span>
+<span class="gp">... </span>       <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+<span class="gp">... </span>   <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>       <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div>
+<p>which defines a function of two scalar variables and returns a scalar
+result. The class vectorize can be used to &#8220;vectorize &#8220;this function so that</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vec_addsubtract</span> <span class="o">=</span> <span class="n">vectorize</span><span class="p">(</span><span class="n">addsubtract</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>returns a function which takes array arguments and returns an array
+result:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vec_addsubtract</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">9</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+<span class="go">array([1, 6, 1, 2])</span>
+</pre></div>
+</div>
+<p>This particular function could have been written in vector form
+without the use of <tt class="xref py py-obj docutils literal"><span class="pre">vectorize</span></tt> . But, what if the function you
+have written is the result of some optimization or integration
+routine. Such functions can likely only be vectorized using
+<tt class="docutils literal"><span class="pre">vectorize.</span></tt></p>
+</div>
+<div class="section" id="type-handling">
+<h3><a class="toc-backref" href="#id7">Type handling</a><a class="headerlink" href="#type-handling" title="Permalink to this headline">¶</a></h3>
+<p>Note the difference between <tt class="xref py py-func docutils literal"><span class="pre">np.iscomplex</span></tt>/<tt class="xref py py-func docutils literal"><span class="pre">np.isreal</span></tt> and
+<tt class="xref py py-func docutils literal"><span class="pre">np.iscomplexobj</span></tt>/<tt class="xref py py-func docutils literal"><span class="pre">np.isrealobj</span></tt>. The former command is
+array based and returns byte arrays of ones and zeros providing the
+result of the element-wise test. The latter command is object based
+and returns a scalar describing the result of the test on the entire
+object.</p>
+<p>Often it is required to get just the real and/or imaginary part of a
+complex number. While complex numbers and arrays have attributes that
+return those values, if one is not sure whether or not the object will
+be complex-valued, it is better to use the functional forms
+<tt class="xref py py-func docutils literal"><span class="pre">np.real</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">np.imag</span></tt> . These functions succeed for anything
+that can be turned into a Numpy array. Consider also the function
+<tt class="xref py py-func docutils literal"><span class="pre">np.real_if_close</span></tt> which transforms a complex-valued number with
+tiny imaginary part into a real number.</p>
+<p>Occasionally the need to check whether or not a number is a scalar
+(Python (long)int, Python float, Python complex, or rank-0 array)
+occurs in coding. This functionality is provided in the convenient
+function <tt class="xref py py-func docutils literal"><span class="pre">np.isscalar</span></tt> which returns a 1 or a 0.</p>
+<p>Finally, ensuring that objects are a certain Numpy type occurs often
+enough that it has been given a convenient interface in SciPy through
+the use of the <tt class="xref py py-obj docutils literal"><span class="pre">np.cast</span></tt> dictionary. The dictionary is keyed by the
+type it is desired to cast to and the dictionary stores functions to
+perform the casting. Thus, <tt class="docutils literal"><span class="pre">np.cast['f'](d)</span></tt> returns an array
+of <tt class="xref py py-class docutils literal"><span class="pre">np.float32</span></tt> from <em>d</em>. This function is also useful as an easy
+way to get a scalar of a certain type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">cast</span><span class="p">[</span><span class="s">&#39;f&#39;</span><span class="p">](</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">array(3.1415927410125732, dtype=float32)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="other-useful-functions">
+<h3><a class="toc-backref" href="#id8">Other useful functions</a><a class="headerlink" href="#other-useful-functions" title="Permalink to this headline">¶</a></h3>
+<p>There are also several other useful functions which should be
+mentioned. For doing phase processing, the functions <tt class="xref py py-func docutils literal"><span class="pre">angle</span></tt>,
+and <tt class="xref py py-obj docutils literal"><span class="pre">unwrap</span></tt> are useful. Also, the <tt class="xref py py-obj docutils literal"><span class="pre">linspace</span></tt> and
+<tt class="xref py py-obj docutils literal"><span class="pre">logspace</span></tt> functions return equally spaced samples in a linear or
+log scale.  Finally, it&#8217;s useful to be aware of the indexing
+capabilities of Numpy. Mention should be made of the function
+<a class="reference external" href="http://docs.python.org/dev/library/select.html#select" title="(in Python v3.4)"><tt class="xref py py-obj docutils literal"><span class="pre">select</span></tt></a> which extends the functionality of <tt class="xref py py-obj docutils literal"><span class="pre">where</span></tt> to
+include multiple conditions and multiple choices. The calling
+convention is <tt class="docutils literal"><span class="pre">select(condlist,choicelist,default=0).</span></tt> <a class="reference external" href="http://docs.python.org/dev/library/select.html#select" title="(in Python v3.4)"><tt class="xref py py-obj docutils literal"><span class="pre">select</span></tt></a>
+is a vectorized form of the multiple if-statement. It allows rapid
+construction of a function which returns an array of results based on
+a list of conditions. Each element of the return array is taken from
+the array in a <tt class="docutils literal"><span class="pre">choicelist</span></tt> corresponding to the first condition in
+<tt class="docutils literal"><span class="pre">condlist</span></tt> that is true. For example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">r_</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([-2, -1,  0,  1,  2])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">,</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">array([0, 0, 2, 3, 4])</span>
+</pre></div>
+</div>
+<p>Some additional useful functions can also be found in the module
+<a class="reference internal" href="../misc.html#module-scipy.misc" title="scipy.misc"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.misc</span></tt></a>. For example the <tt class="xref py py-obj docutils literal"><span class="pre">factorial</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">comb</span></tt>
+functions compute <img class="math" src="../_images/math/63f344e7d8b14a7886fc7fb72da53cd0a3271dcc.png" alt="n!" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/61baa2d0ffc3cadcaf09e9dcf4ec0a15278b2d6f.png" alt="n!/k!(n-k)!" style="vertical-align: -5px"/> using either
+exact integer arithmetic (thanks to Python&#8217;s Long integer object), or
+by using floating-point precision and the gamma function. Another
+function returns a common image used in image processing: <tt class="xref py py-obj docutils literal"><span class="pre">lena</span></tt>.</p>
+<p>Finally, two functions are provided that are useful for approximating
+derivatives of functions using discrete-differences. The function
+<tt class="xref py py-obj docutils literal"><span class="pre">central_diff_weights</span></tt> returns weighting coefficients for an
+equally-spaced <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/>-point approximation to the derivative of
+order <em>o</em>. These weights must be multiplied by the function
+corresponding to these points and the results added to obtain the
+derivative approximation. This function is intended for use when only
+samples of the function are avaiable. When the function is an object
+that can be handed to a routine and evaluated, the function
+<tt class="xref py py-obj docutils literal"><span class="pre">derivative</span></tt> can be used to automatically evaluate the object at
+the correct points to obtain an N-point approximation to the <em>o</em>-th
+derivative at a given point.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Basic functions</a><ul>
+<li><a class="reference internal" href="#interaction-with-numpy">Interaction with Numpy</a><ul>
+<li><a class="reference internal" href="#index-tricks">Index Tricks</a></li>
+<li><a class="reference internal" href="#shape-manipulation">Shape manipulation</a></li>
+<li><a class="reference internal" href="#polynomials">Polynomials</a></li>
+<li><a class="reference internal" href="#vectorizing-functions-vectorize">Vectorizing functions (vectorize)</a></li>
+<li><a class="reference internal" href="#type-handling">Type handling</a></li>
+<li><a class="reference internal" href="#other-useful-functions">Other useful functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="general.html"
+                        title="previous chapter">Introduction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="special.html"
+                        title="next chapter">Special functions (<tt class="docutils literal"><span class="pre">scipy.special</span></tt>)</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="special.html" title="Special functions (scipy.special)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="general.html" title="Introduction"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="index.html" >SciPy Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

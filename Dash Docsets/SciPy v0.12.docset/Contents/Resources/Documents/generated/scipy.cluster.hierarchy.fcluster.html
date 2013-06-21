@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.cluster.hierarchy.fcluster — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../cluster.hierarchy.html" rel="up" title="Hierarchical clustering (scipy.cluster.hierarchy)"/><link href="scipy.cluster.hierarchy.fclusterdata.html" rel="next" title="scipy.cluster.hierarchy.fclusterdata"/><link href="scipy.cluster.hierarchy.set_link_color_palette.html" rel="prev" title="scipy.cluster.hierarchy.set_link_color_palette"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.cluster.hierarchy.fclusterdata.html" title="scipy.cluster.hierarchy.fclusterdata">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.cluster.hierarchy.set_link_color_palette.html" title="scipy.cluster.hierarchy.set_link_color_palette">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../cluster.html">Clustering package (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster</span></tt>)</a> »</li>
+<li><a accesskey="U" href="../cluster.hierarchy.html">Hierarchical clustering (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster.hierarchy</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-cluster-hierarchy-fcluster">
+<h1>scipy.cluster.hierarchy.fcluster<a class="headerlink" href="#scipy-cluster-hierarchy-fcluster" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.cluster.hierarchy.fcluster"><a name="//apple_ref/cpp/func/scipy.cluster.hierarchy.fcluster"></a>
+<tt class="descclassname">scipy.cluster.hierarchy.</tt><tt class="descname">fcluster</tt><big>(</big><em>Z</em>, <em>t</em>, <em>criterion='inconsistent'</em>, <em>depth=2</em>, <em>R=None</em>, <em>monocrit=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/cluster/hierarchy.py#L1450"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.cluster.hierarchy.fcluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forms flat clusters from the hierarchical clustering defined by
+the linkage matrix <tt class="docutils literal"><span class="pre">Z</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>Z</strong> : ndarray</p>
+<blockquote>
+<div><p>The hierarchical clustering encoded with the matrix returned
+by the <a class="reference internal" href="scipy.cluster.hierarchy.linkage.html#scipy.cluster.hierarchy.linkage" title="scipy.cluster.hierarchy.linkage"><tt class="xref py py-obj docutils literal"><span class="pre">linkage</span></tt></a> function.</p>
+</div></blockquote>
+<p><strong>t</strong> : float</p>
+<blockquote>
+<div><p>The threshold to apply when forming flat clusters.</p>
+</div></blockquote>
+<p><strong>criterion</strong> : str, optional</p>
+<blockquote>
+<div><p>The criterion to use in forming flat clusters. This can
+be any of the following values:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">inconsistent</span></tt> <span class="classifier-delimiter">:</span> <span class="classifier">If a cluster node and all its</span></dt>
+<dd><p class="first last">descendants have an inconsistent value less than or equal
+to <em class="xref py py-obj">t</em> then all its leaf descendants belong to the
+same flat cluster. When no non-singleton cluster meets
+this criterion, every node is assigned to its own
+cluster. (Default)</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">distance</span></tt> <span class="classifier-delimiter">:</span> <span class="classifier">Forms flat clusters so that the original</span></dt>
+<dd><p class="first last">observations in each flat cluster have no greater a
+cophenetic distance than <em class="xref py py-obj">t</em>.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">maxclust</span></tt> <span class="classifier-delimiter">:</span> <span class="classifier">Finds a minimum threshold <tt class="docutils literal"><span class="pre">r</span></tt> so that</span></dt>
+<dd><p class="first last">the cophenetic distance between any two original
+observations in the same flat cluster is no more than
+<tt class="docutils literal"><span class="pre">r</span></tt> and no more than <em class="xref py py-obj">t</em> flat clusters are formed.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">monocrit</span></tt> <span class="classifier-delimiter">:</span> <span class="classifier">Forms a flat cluster from a cluster node c</span></dt>
+<dd><p class="first">with index i when <tt class="docutils literal"><span class="pre">monocrit[j]</span> <span class="pre">&lt;=</span> <span class="pre">t</span></tt>.</p>
+<p>For example, to threshold on the maximum mean distance
+as computed in the inconsistency matrix R with a
+threshold of 0.8 do:</p>
+<blockquote class="last">
+<div><p>MR = maxRstat(Z, R, 3)</p>
+<p>cluster(Z, t=0.8, criterion=’monocrit’, monocrit=MR)</p>
+</div></blockquote>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">maxclust_monocrit</span></tt> <span class="classifier-delimiter">:</span> <span class="classifier">Forms a flat cluster from a</span></dt>
+<dd><p class="first">non-singleton cluster node <tt class="docutils literal"><span class="pre">c</span></tt> when <tt class="docutils literal"><span class="pre">monocrit[i]</span> <span class="pre">&lt;=</span>
+<span class="pre">r</span></tt> for all cluster indices <tt class="docutils literal"><span class="pre">i</span></tt> below and including
+<tt class="docutils literal"><span class="pre">c</span></tt>. <tt class="docutils literal"><span class="pre">r</span></tt> is minimized such that no more than <tt class="docutils literal"><span class="pre">t</span></tt>
+flat clusters are formed. monocrit must be
+monotonic. For example, to minimize the threshold t on
+maximum inconsistency values so that no more than 3 flat
+clusters are formed, do:</p>
+<blockquote class="last">
+<div><p>MI = maxinconsts(Z, R)</p>
+<p>cluster(Z, t=3, criterion=’maxclust_monocrit’, monocrit=MI)</p>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+<p><strong>depth</strong> : int, optional</p>
+<blockquote>
+<div><p>The maximum depth to perform the inconsistency calculation.
+It has no meaning for the other criteria. Default is 2.</p>
+</div></blockquote>
+<p><strong>R</strong> : ndarray, optional</p>
+<blockquote>
+<div><p>The inconsistency matrix to use for the ‘inconsistent’
+criterion. This matrix is computed if not provided.</p>
+</div></blockquote>
+<p><strong>monocrit</strong> : ndarray, optional</p>
+<blockquote>
+<div><p>An array of length n-1. <em class="xref py py-obj">monocrit[i]</em> is the
+statistics upon which non-singleton i is thresholded. The
+monocrit vector must be monotonic, i.e. given a node c with
+index i, for all node indices j corresponding to nodes
+below c, <em class="xref py py-obj">monocrit[i] &gt;= monocrit[j]</em>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>fcluster</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>An array of length n. T[i] is the flat cluster number to
+which original observation i belongs.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.cluster.hierarchy.set_link_color_palette.html" title="previous chapter">scipy.cluster.hierarchy.set_link_color_palette</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.cluster.hierarchy.fclusterdata.html" title="next chapter">scipy.cluster.hierarchy.fclusterdata</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.cluster.hierarchy.fclusterdata.html" title="scipy.cluster.hierarchy.fclusterdata">next</a> |</li>
+<li class="right">
+<a href="scipy.cluster.hierarchy.set_link_color_palette.html" title="scipy.cluster.hierarchy.set_link_color_palette">previous</a> |</li>
+<li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../cluster.html">Clustering package (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster</span></tt>)</a> »</li>
+<li><a href="../cluster.hierarchy.html">Hierarchical clustering (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster.hierarchy</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>scipy.spatial.distance.cdist — SciPy v0.12 Reference Guide (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../index.html" rel="top" title="SciPy v0.12 Reference Guide (DRAFT)"/><link href="../scipy.spatial.distance.html" rel="up" title="scipy.spatial.distance"/><link href="scipy.spatial.distance.squareform.html" rel="next" title="scipy.spatial.distance.squareform"/><link href="scipy.spatial.distance.pdist.html" rel="prev" title="scipy.spatial.distance.pdist"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="scipy.spatial.distance.squareform.html" title="scipy.spatial.distance.squareform">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="scipy.spatial.distance.pdist.html" title="scipy.spatial.distance.pdist">previous</a> |</li>
+<li><a href="../../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../../spatial.html">Spatial algorithms and data structures (<tt class="docutils literal docutils literal docutils literal"><span class="pre">scipy.spatial</span></tt>)</a> »</li>
+<li><a accesskey="U" href="../scipy.spatial.distance.html">scipy.spatial.distance</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="scipy-spatial-distance-cdist">
+<h1>scipy.spatial.distance.cdist<a class="headerlink" href="#scipy-spatial-distance-cdist" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.spatial.distance.cdist"><a name="//apple_ref/cpp/func/scipy.spatial.distance.cdist"></a>
+<tt class="descclassname">scipy.spatial.distance.</tt><tt class="descname">cdist</tt><big>(</big><em>XA</em>, <em>XB</em>, <em>metric='euclidean'</em>, <em>p=2</em>, <em>V=None</em>, <em>VI=None</em>, <em>w=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/spatial/distance.py#L1712"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.spatial.distance.cdist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes distance between each pair of the two collections of inputs.</p>
+<p>The following are common calling conventions:</p>
+<ol class="arabic">
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'euclidean')</span></tt></p>
+<p>Computes the distance between <img alt="m" class="math" src="../../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" style="vertical-align: 0px"/> points using
+Euclidean distance (2-norm) as the distance metric between the
+points. The points are arranged as <img alt="m" class="math" src="../../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" style="vertical-align: 0px"/>
+<img alt="n" class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" style="vertical-align: 0px"/>-dimensional row vectors in the matrix X.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'minkowski',</span> <span class="pre">p)</span></tt></p>
+<p>Computes the distances using the Minkowski distance
+<img alt="||u-v||_p" class="math" src="../../_images/math/954521af5e2679cd57113b0215bf2b0402699a27.png" style="vertical-align: -6px"/> (<img alt="p" class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" style="vertical-align: -4px"/>-norm) where <img alt="p \geq 1" class="math" src="../../_images/math/7a51ce59afdd4b396899db46e9ca0f9f3a44c321.png" style="vertical-align: -4px"/>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'cityblock')</span></tt></p>
+<p>Computes the city block or Manhattan distance between the
+points.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'seuclidean',</span> <span class="pre">V=None)</span></tt></p>
+<p>Computes the standardized Euclidean distance. The standardized
+Euclidean distance between two n-vectors <tt class="docutils literal"><span class="pre">u</span></tt> and <tt class="docutils literal"><span class="pre">v</span></tt> is</p>
+<div class="math">
+<p><img alt="\sqrt{\sum {(u_i-v_i)^2 / V[x_i]}}." src="../../_images/math/5f14770a5e15ad820d65787eb0fedc44f477e58e.png"/></p>
+</div><p>V is the variance vector; V[i] is the variance computed over all
+the i’th components of the points. If not passed, it is
+automatically computed.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'sqeuclidean')</span></tt></p>
+<p>Computes the squared Euclidean distance <img alt="||u-v||_2^2" class="math" src="../../_images/math/6cffa2f25dc31ecb1861aef6c89855141c1f4991.png" style="vertical-align: -5px"/> between
+the vectors.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'cosine')</span></tt></p>
+<p>Computes the cosine distance between vectors u and v,</p>
+<div class="math">
+<p><img alt="1 - \frac{u \cdot v}
+         {{||u||}_2 {||v||}_2}" src="../../_images/math/09550e7e66761e464a045b6bf0ea87b2c0be457e.png"/></p>
+</div><p>where <img alt="||*||_2" class="math" src="../../_images/math/0b4b521d5d33ccac96dfd80d5923ff4ad942b60b.png" style="vertical-align: -5px"/> is the 2-norm of its argument <tt class="docutils literal"><span class="pre">*</span></tt>, and
+<img alt="u \cdot v" class="math" src="../../_images/math/173648bc40af44346cb859089a89682a55c6267f.png" style="vertical-align: 0px"/> is the dot product of <img alt="u" class="math" src="../../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" style="vertical-align: 0px"/> and <img alt="v" class="math" src="../../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" style="vertical-align: 0px"/>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'correlation')</span></tt></p>
+<p>Computes the correlation distance between vectors u and v. This is</p>
+<div class="math">
+<p><img alt="1 - \frac{(u - \bar{u}) \cdot (v - \bar{v})}
+         {{||(u - \bar{u})||}_2 {||(v - \bar{v})||}_2}" src="../../_images/math/2a7343eb5e79bf84e644f0728a5289474a13c559.png"/></p>
+</div><p>where <img alt="\bar{v}" class="math" src="../../_images/math/397e10bc275bfa54bfa2262cd1f2cf85c0bb8475.png" style="vertical-align: 0px"/> is the mean of the elements of vector v,
+and <img alt="x \cdot y" class="math" src="../../_images/math/a888d4fc0ecf8ce6a5862bac3dc5544ff77150fa.png" style="vertical-align: -4px"/> is the dot product of <img alt="x" class="math" src="../../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" style="vertical-align: 0px"/> and <img alt="y" class="math" src="../../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" style="vertical-align: -4px"/>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'hamming')</span></tt></p>
+<p>Computes the normalized Hamming distance, or the proportion of
+those vector elements between two n-vectors <tt class="docutils literal"><span class="pre">u</span></tt> and <tt class="docutils literal"><span class="pre">v</span></tt>
+which disagree. To save memory, the matrix <tt class="docutils literal"><span class="pre">X</span></tt> can be of type
+boolean.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'jaccard')</span></tt></p>
+<p>Computes the Jaccard distance between the points. Given two
+vectors, <tt class="docutils literal"><span class="pre">u</span></tt> and <tt class="docutils literal"><span class="pre">v</span></tt>, the Jaccard distance is the
+proportion of those elements <tt class="docutils literal"><span class="pre">u[i]</span></tt> and <tt class="docutils literal"><span class="pre">v[i]</span></tt> that
+disagree where at least one of them is non-zero.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'chebyshev')</span></tt></p>
+</li>
+</ol>
+<blockquote>
+<div><p>Computes the Chebyshev distance between the points. The
+Chebyshev distance between two n-vectors <tt class="docutils literal"><span class="pre">u</span></tt> and <tt class="docutils literal"><span class="pre">v</span></tt> is the
+maximum norm-1 distance between their respective elements. More
+precisely, the distance is given by</p>
+<div class="math">
+<p><img alt="d(u,v) = \max_i {|u_i-v_i|}." src="../../_images/math/2216baed393c242b7c89cd3a4d948c8639342b6e.png"/></p>
+</div></div></blockquote>
+<ol class="arabic simple" start="11">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'canberra')</span></tt></li>
+</ol>
+<blockquote>
+<div><p>Computes the Canberra distance between the points. The
+Canberra distance between two points <tt class="docutils literal"><span class="pre">u</span></tt> and <tt class="docutils literal"><span class="pre">v</span></tt> is</p>
+<div class="math">
+<p><img alt="d(u,v) = \sum_i \frac{|u_i-v_i|}
+                     {|u_i|+|v_i|}." src="../../_images/math/00c205642431ee4f45c6f60171ced166478a83a7.png"/></p>
+</div></div></blockquote>
+<ol class="arabic simple" start="12">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'braycurtis')</span></tt></li>
+</ol>
+<blockquote>
+<div><p>Computes the Bray-Curtis distance between the points. The
+Bray-Curtis distance between two points <tt class="docutils literal"><span class="pre">u</span></tt> and <tt class="docutils literal"><span class="pre">v</span></tt> is</p>
+<div class="math">
+<p><img alt="d(u,v) = \frac{\sum_i (u_i-v_i)}
+              {\sum_i (u_i+v_i)}" src="../../_images/math/bea77f57b24f15dbcebcddda96adb63210985a8a.png"/></p>
+</div></div></blockquote>
+<ol class="arabic simple" start="13">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'mahalanobis',</span> <span class="pre">VI=None)</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Mahalanobis distance between the points. The
+Mahalanobis distance between two points <tt class="docutils literal"><span class="pre">u</span></tt> and <tt class="docutils literal"><span class="pre">v</span></tt> is
+<img alt="(u-v)(1/V)(u-v)^T" class="math" src="../../_images/math/0015d0b148f9174594c895568923007938f9ec6d.png" style="vertical-align: -5px"/> where <img alt="(1/V)" class="math" src="../../_images/math/ee93ba7560b87283103a54bc12a66bc27e0809cd.png" style="vertical-align: -5px"/> (the <tt class="docutils literal"><span class="pre">VI</span></tt>
+variable) is the inverse covariance. If <tt class="docutils literal"><span class="pre">VI</span></tt> is not None,
+<tt class="docutils literal"><span class="pre">VI</span></tt> will be used as the inverse covariance matrix.</div></blockquote>
+<ol class="arabic simple" start="14">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'yule')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Yule distance between the boolean
+vectors. (see yule function documentation)</div></blockquote>
+<ol class="arabic simple" start="15">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'matching')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the matching distance between the boolean
+vectors. (see matching function documentation)</div></blockquote>
+<ol class="arabic simple" start="16">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'dice')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Dice distance between the boolean vectors. (see
+dice function documentation)</div></blockquote>
+<ol class="arabic simple" start="17">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'kulsinski')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Kulsinski distance between the boolean
+vectors. (see kulsinski function documentation)</div></blockquote>
+<ol class="arabic simple" start="18">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'rogerstanimoto')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Rogers-Tanimoto distance between the boolean
+vectors. (see rogerstanimoto function documentation)</div></blockquote>
+<ol class="arabic simple" start="19">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'russellrao')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Russell-Rao distance between the boolean
+vectors. (see russellrao function documentation)</div></blockquote>
+<ol class="arabic simple" start="20">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'sokalmichener')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Sokal-Michener distance between the boolean
+vectors. (see sokalmichener function documentation)</div></blockquote>
+<ol class="arabic simple" start="21">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'sokalsneath')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the Sokal-Sneath distance between the vectors. (see
+sokalsneath function documentation)</div></blockquote>
+<ol class="arabic simple" start="22">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">'wminkowski')</span></tt></li>
+</ol>
+<blockquote>
+<div>Computes the weighted Minkowski distance between the
+vectors. (see sokalsneath function documentation)</div></blockquote>
+<ol class="arabic simple" start="23">
+<li><tt class="docutils literal"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">cdist(XA,</span> <span class="pre">XB,</span> <span class="pre">f)</span></tt></li>
+</ol>
+<blockquote>
+<div><p>Computes the distance between all pairs of vectors in X
+using the user supplied 2-arity function f. For example,
+Euclidean distance between the vectors could be computed
+as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dm</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">XA</span><span class="p">,</span> <span class="n">XB</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">u</span><span class="o">-</span><span class="n">v</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+</pre></div>
+</div>
+<p>Note that you should avoid passing a reference to one of
+the distance functions defined in this library. For example,:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dm</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">XA</span><span class="p">,</span> <span class="n">XB</span><span class="p">,</span> <span class="n">sokalsneath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>would calculate the pair-wise distances between the vectors in
+X using the Python function sokalsneath. This would result in
+sokalsneath being called <img alt="{n \choose 2}" class="math" src="../../_images/math/42efa0bbb00cc7380115e9c67af705b54bfec3e8.png" style="vertical-align: -7px"/> times, which
+is inefficient. Instead, the optimized C version is more
+efficient, and we call it using the following syntax.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dm</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">XA</span><span class="p">,</span> <span class="n">XB</span><span class="p">,</span> <span class="s">'sokalsneath'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>XA</strong> : ndarray</p>
+<blockquote>
+<div><p>An <img alt="m_A" class="math" src="../../_images/math/96aaaaa6cc4167b42bf8176bfe827bad2d683f93.png" style="vertical-align: -3px"/> by <img alt="n" class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" style="vertical-align: 0px"/> array of <img alt="m_A" class="math" src="../../_images/math/96aaaaa6cc4167b42bf8176bfe827bad2d683f93.png" style="vertical-align: -3px"/>
+original observations in an <img alt="n" class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" style="vertical-align: 0px"/>-dimensional space.</p>
+</div></blockquote>
+<p><strong>XB</strong> : ndarray</p>
+<blockquote>
+<div><p>An <img alt="m_B" class="math" src="../../_images/math/67450e908bae7c2ecaa76d52c0346af6ab064862.png" style="vertical-align: -3px"/> by <img alt="n" class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" style="vertical-align: 0px"/> array of <img alt="m_B" class="math" src="../../_images/math/67450e908bae7c2ecaa76d52c0346af6ab064862.png" style="vertical-align: -3px"/>
+original observations in an <img alt="n" class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" style="vertical-align: 0px"/>-dimensional space.</p>
+</div></blockquote>
+<p><strong>metric</strong> : string or function</p>
+<blockquote>
+<div><p>The distance metric to use. The distance function can
+be ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’,
+‘correlation’, ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’,
+‘jaccard’, ‘kulsinski’, ‘mahalanobis’, ‘matching’,
+‘minkowski’, ‘rogerstanimoto’, ‘russellrao’, ‘seuclidean’,
+‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘wminkowski’,
+‘yule’.</p>
+</div></blockquote>
+<p><strong>w</strong> : ndarray</p>
+<blockquote>
+<div><p>The weight vector (for weighted Minkowski).</p>
+</div></blockquote>
+<p><strong>p</strong> : double</p>
+<blockquote>
+<div><p>The p-norm to apply (for Minkowski, weighted and unweighted)</p>
+</div></blockquote>
+<p><strong>V</strong> : ndarray</p>
+<blockquote>
+<div><p>The variance vector (for standardized Euclidean).</p>
+</div></blockquote>
+<p><strong>VI</strong> : ndarray</p>
+<blockquote>
+<div><p>The inverse of the covariance matrix (for Mahalanobis).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>Y</strong> : ndarray</p>
+<blockquote>
+<div><p>A <img alt="m_A" class="math" src="../../_images/math/96aaaaa6cc4167b42bf8176bfe827bad2d683f93.png" style="vertical-align: -3px"/> by <img alt="m_B" class="math" src="../../_images/math/67450e908bae7c2ecaa76d52c0346af6ab064862.png" style="vertical-align: -3px"/> distance matrix is returned.
+For each <img alt="i" class="math" src="../../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" style="vertical-align: 0px"/> and <img alt="j" class="math" src="../../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" style="vertical-align: -4px"/>, the metric
+<tt class="docutils literal"><span class="pre">dist(u=XA[i],</span> <span class="pre">v=XB[j])</span></tt> is computed and stored in the
+<img alt="ij" class="math" src="../../_images/math/c26aadb390865e9669bcb79c4e6af904a2dea7cc.png" style="vertical-align: -4px"/> th entry.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>An exception is thrown if ``XA`` and ``XB`` do not have</strong> :</p>
+<p class="last"><strong>the same number of columns.</strong> :</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../index.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.spatial.distance.pdist.html" title="previous chapter">scipy.spatial.distance.pdist</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.spatial.distance.squareform.html" title="next chapter">scipy.spatial.distance.squareform</a></p>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="scipy.spatial.distance.squareform.html" title="scipy.spatial.distance.squareform">next</a> |</li>
+<li class="right">
+<a href="scipy.spatial.distance.pdist.html" title="scipy.spatial.distance.pdist">previous</a> |</li>
+<li><a href="../../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> »</li>
+<li><a href="../../spatial.html">Spatial algorithms and data structures (<tt class="docutils literal docutils literal docutils literal"><span class="pre">scipy.spatial</span></tt>)</a> »</li>
+<li><a href="../scipy.spatial.distance.html">scipy.spatial.distance</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body></html>
