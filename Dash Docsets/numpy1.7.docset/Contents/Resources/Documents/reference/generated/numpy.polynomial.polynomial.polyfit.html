@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.polynomial.polynomial.polyfit — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="../routines.polynomials.polynomial.html" rel="up" title="Polynomial Module (numpy.polynomial.polynomial)"/><link href="numpy.polynomial.polynomial.polyvander.html" rel="next" title="numpy.polynomial.polynomial.polyvander"/><link href="numpy.polynomial.polynomial.polyfromroots.html" rel="prev" title="numpy.polynomial.polynomial.polyfromroots"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="numpy.polynomial.polynomial.polyvander.html" title="numpy.polynomial.polynomial.polyvander">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="numpy.polynomial.polynomial.polyfromroots.html" title="numpy.polynomial.polynomial.polyfromroots">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a href="../routines.polynomials.html">Polynomials</a> »</li>
+<li><a href="../routines.polynomials.package.html">Polynomial Package</a> »</li>
+<li><a accesskey="U" href="../routines.polynomials.polynomial.html">Polynomial Module (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">numpy.polynomial.polynomial</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-polynomial-polynomial-polyfit">
+<h1>numpy.polynomial.polynomial.polyfit<a class="headerlink" href="#numpy-polynomial-polynomial-polyfit" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<a name="//apple_ref/cpp/func/numpy.polynomial.polynomial.polyfit"></a><dt id="numpy.polynomial.polynomial.polyfit">
+<tt class="descclassname">numpy.polynomial.polynomial.</tt><tt class="descname">polyfit</tt><big>(</big><em>x</em>, <em>y</em>, <em>deg</em>, <em>rcond=None</em>, <em>full=False</em>, <em>w=None</em><big>)</big><a class="headerlink" href="#numpy.polynomial.polynomial.polyfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Least-squares fit of a polynomial to data.</p>
+<p>Return the coefficients of a polynomial of degree <em class="xref py py-obj">deg</em> that is the
+least squares fit to the data values <em class="xref py py-obj">y</em> given at points <em class="xref py py-obj">x</em>. If <em class="xref py py-obj">y</em> is
+1-D the returned coefficients will also be 1-D. If <em class="xref py py-obj">y</em> is 2-D multiple
+fits are done, one for each column of <em class="xref py py-obj">y</em>, and the resulting
+coefficients are stored in the corresponding columns of a 2-D return.
+The fitted polynomial(s) are in the form</p>
+<div class="math">
+<p><img alt="p(x) = c_0 + c_1 * x + ... + c_n * x^n," src="../../_images/math/612096ef4df722832138c7bf5032b4fa1d5f4b45.png"/></p>
+</div><p>where <em class="xref py py-obj">n</em> is <em class="xref py py-obj">deg</em>.</p>
+<p>Since numpy version 1.7.0, polyfit also supports NA. If any of the
+elements of <em class="xref py py-obj">x</em>, <em class="xref py py-obj">y</em>, or <em class="xref py py-obj">w</em> are NA, then the corresponding rows of the
+linear least squares problem (see Notes) are set to 0. If <em class="xref py py-obj">y</em> is 2-D,
+then an NA in any row of <em class="xref py py-obj">y</em> invalidates that whole row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>x</strong> : array_like, shape (<em class="xref py py-obj">M</em>,)</p>
+<blockquote>
+<div><p>x-coordinates of the <em class="xref py py-obj">M</em> sample (data) points <tt class="docutils literal"><span class="pre">(x[i],</span> <span class="pre">y[i])</span></tt>.</p>
+</div></blockquote>
+<p><strong>y</strong> : array_like, shape (<em class="xref py py-obj">M</em>,) or (<em class="xref py py-obj">M</em>, <em class="xref py py-obj">K</em>)</p>
+<blockquote>
+<div><p>y-coordinates of the sample points.  Several sets of sample points
+sharing the same x-coordinates can be (independently) fit with one
+call to <a class="reference internal" href="#numpy.polynomial.polynomial.polyfit" title="numpy.polynomial.polynomial.polyfit"><tt class="xref py py-obj docutils literal"><span class="pre">polyfit</span></tt></a> by passing in for <em class="xref py py-obj">y</em> a 2-D array that contains
+one data set per column.</p>
+</div></blockquote>
+<p><strong>deg</strong> : int</p>
+<blockquote>
+<div><p>Degree of the polynomial(s) to be fit.</p>
+</div></blockquote>
+<p><strong>rcond</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative condition number of the fit.  Singular values smaller
+than <em class="xref py py-obj">rcond</em>, relative to the largest singular value, will be
+ignored.  The default value is <tt class="docutils literal"><span class="pre">len(x)*eps</span></tt>, where <em class="xref py py-obj">eps</em> is the
+relative precision of the platform’s float type, about 2e-16 in
+most cases.</p>
+</div></blockquote>
+<p><strong>full</strong> : bool, optional</p>
+<blockquote>
+<div><p>Switch determining the nature of the return value.  When <tt class="xref docutils literal"><span class="pre">False</span></tt>
+(the default) just the coefficients are returned; when <tt class="xref docutils literal"><span class="pre">True</span></tt>,
+diagnostic information from the singular value decomposition (used
+to solve the fit’s matrix equation) is also returned.</p>
+</div></blockquote>
+<p><strong>w</strong> : array_like, shape (<em class="xref py py-obj">M</em>,), optional</p>
+<blockquote>
+<div><p>Weights. If not None, the contribution of each point
+<tt class="docutils literal"><span class="pre">(x[i],y[i])</span></tt> to the fit is weighted by <em class="xref py py-obj">w[i]</em>. Ideally the
+weights are chosen so that the errors of the products <tt class="docutils literal"><span class="pre">w[i]*y[i]</span></tt>
+all have the same variance.  The default value is None.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 1.5.0.</span></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>coef</strong> : ndarray, shape (<em class="xref py py-obj">deg</em> + 1,) or (<em class="xref py py-obj">deg</em> + 1, <em class="xref py py-obj">K</em>)</p>
+<blockquote>
+<div><p>Polynomial coefficients ordered from low to high.  If <em class="xref py py-obj">y</em> was 2-D,
+the coefficients in column <em class="xref py py-obj">k</em> of <em class="xref py py-obj">coef</em> represent the polynomial
+fit to the data in <em class="xref py py-obj">y</em>‘s <em class="xref py py-obj">k</em>-th column.</p>
+</div></blockquote>
+<p><strong>[residuals, rank, singular_values, rcond]</strong> : present when <em class="xref py py-obj">full</em> == True</p>
+<blockquote>
+<div><p>Sum of the squared residuals (SSR) of the least-squares fit; the
+effective rank of the scaled Vandermonde matrix; its singular
+values; and the specified value of <em class="xref py py-obj">rcond</em>.  For more information,
+see <em class="xref py py-obj">linalg.lstsq</em>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>RankWarning</strong> :</p>
+<blockquote class="last">
+<div><p>Raised if the matrix in the least-squares fit is rank deficient.
+The warning is only raised if <em class="xref py py-obj">full</em> == False.  The warnings can
+be turned off by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">'ignore'</span><span class="p">,</span> <span class="n">RankWarning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p><tt class="xref py py-obj docutils literal"><span class="pre">chebfit</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">legfit</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">lagfit</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">hermfit</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">hermefit</span></tt></p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="numpy.polynomial.polynomial.polyval.html#numpy.polynomial.polynomial.polyval" title="numpy.polynomial.polynomial.polyval"><tt class="xref py py-obj docutils literal"><span class="pre">polyval</span></tt></a></dt>
+<dd>Evaluates a polynomial.</dd>
+<dt><a class="reference internal" href="numpy.polynomial.polynomial.polyvander.html#numpy.polynomial.polynomial.polyvander" title="numpy.polynomial.polynomial.polyvander"><tt class="xref py py-obj docutils literal"><span class="pre">polyvander</span></tt></a></dt>
+<dd>Vandermonde matrix for powers.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">linalg.lstsq</span></tt></dt>
+<dd>Computes a least-squares fit from the matrix.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">scipy.interpolate.UnivariateSpline</span></tt></dt>
+<dd>Computes spline fits.</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>The solution is the coefficients of the polynomial <em class="xref py py-obj">p</em> that minimizes
+the sum of the weighted squared errors</p>
+<div class="math">
+<p><img alt="E = \sum_j w_j^2 * |y_j - p(x_j)|^2," src="../../_images/math/093ce911a4cb05f6b9d82dacb90900dbc911224d.png"/></p>
+</div><p>where the <img alt="w_j" class="math" src="../../_images/math/70e112d63216392d128e6b9fbe5a09c2d5d6bd48.png" style="vertical-align: -6px"/> are the weights. This problem is solved by
+setting up the (typically) over-determined matrix equation:</p>
+<div class="math">
+<p><img alt="V(x) * c = w * y," src="../../_images/math/8c57e1ac91c213b73a81ddc29b2bb7e3353ea67f.png"/></p>
+</div><p>where <em class="xref py py-obj">V</em> is the weighted pseudo Vandermonde matrix of <em class="xref py py-obj">x</em>, <em class="xref py py-obj">c</em> are the
+coefficients to be solved for, <em class="xref py py-obj">w</em> are the weights, and <em class="xref py py-obj">y</em> are the
+observed values.  This equation is then solved using the singular value
+decomposition of <em class="xref py py-obj">V</em>.</p>
+<p>If some of the singular values of <em class="xref py py-obj">V</em> are so small that they are
+neglected (and <em class="xref py py-obj">full</em> == <tt class="xref docutils literal"><span class="pre">False</span></tt>), a <em class="xref py py-obj">RankWarning</em> will be raised.
+This means that the coefficient values may be poorly determined.
+Fitting to a lower order polynomial will usually get rid of the warning
+(but may not be what you want, of course; if you have independent
+reason(s) for choosing the degree which isn’t working, you may have to:
+a) reconsider those reasons, and/or b) reconsider the quality of your
+data).  The <em class="xref py py-obj">rcond</em> parameter can also be set to a value smaller than
+its default, but the resulting fit may be spurious and have large
+contributions from roundoff error.</p>
+<p>Polynomial fits using double precision tend to “fail” at about
+(polynomial) degree 20. Fits using Chebyshev or Legendre series are
+generally better conditioned, but much can still depend on the
+distribution of the sample points and the smoothness of the data.  If
+the quality of the fit is inadequate, splines may be a good
+alternative.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">polynomial</span> <span class="k">as</span> <span class="n">P</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">51</span><span class="p">)</span> <span class="c"># x "data": [-1, -0.96, ..., 0.96, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="c"># x^3 - x + N(0,1) "noise"</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="c"># c[0], c[2] should be approx. 0, c[1] approx. -1, c[3] approx. 1</span>
+<span class="go">array([ 0.01909725, -1.30598256, -0.00577963,  1.02644286])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span> <span class="c"># note the large SSR, explaining the rather poor results</span>
+<span class="go">[array([ 38.06116253]), 4, array([ 1.38446749,  1.32119158,  0.50443316,</span>
+<span class="go">0.28853036]), 1.1324274851176597e-014]</span>
+</pre></div>
+</div>
+<p>Same thing without the added noise</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="c"># c[0], c[2] should be "very close to 0", c[1] ~= -1, c[3] ~= 1</span>
+<span class="go">array([ -1.73362882e-17,  -1.00000000e+00,  -2.67471909e-16,</span>
+<span class="go">         1.00000000e+00])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span> <span class="c"># note the minuscule SSR</span>
+<span class="go">[array([  7.46346754e-31]), 4, array([ 1.38446749,  1.32119158,</span>
+<span class="go">0.50443316,  0.28853036]), 1.1324274851176597e-014]</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.polynomial.polynomial.polyfromroots.html" title="previous chapter">numpy.polynomial.polynomial.polyfromroots</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.polynomial.polynomial.polyvander.html" title="next chapter">numpy.polynomial.polynomial.polyvander</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.polynomial.polynomial.polyfit.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.polynomial.polynomial.polyfit">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="numpy.polynomial.polynomial.polyvander.html" title="numpy.polynomial.polynomial.polyvander">next</a> |</li>
+<li class="right">
+<a href="numpy.polynomial.polynomial.polyfromroots.html" title="numpy.polynomial.polynomial.polyfromroots">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a href="../routines.polynomials.html">Polynomials</a> »</li>
+<li><a href="../routines.polynomials.package.html">Polynomial Package</a> »</li>
+<li><a href="../routines.polynomials.polynomial.html">Polynomial Module (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">numpy.polynomial.polynomial</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>

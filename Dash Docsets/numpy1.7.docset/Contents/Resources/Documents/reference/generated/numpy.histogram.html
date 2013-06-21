@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.histogram — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="../routines.statistics.html" rel="up" title="Statistics"/><link href="numpy.histogram2d.html" rel="next" title="numpy.histogram2d"/><link href="numpy.cov.html" rel="prev" title="numpy.cov"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="numpy.histogram2d.html" title="numpy.histogram2d">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="numpy.cov.html" title="numpy.cov">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a accesskey="U" href="../routines.statistics.html">Statistics</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-histogram">
+<h1>numpy.histogram<a class="headerlink" href="#numpy-histogram" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<a name="//apple_ref/cpp/func/numpy.histogram"></a><dt id="numpy.histogram">
+<tt class="descclassname">numpy.</tt><tt class="descname">histogram</tt><big>(</big><em>a</em>, <em>bins=10</em>, <em>range=None</em>, <em>normed=False</em>, <em>weights=None</em>, <em>density=None</em><big>)</big><a class="headerlink" href="#numpy.histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the histogram of a set of data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>a</strong> : array_like</p>
+<blockquote>
+<div><p>Input data. The histogram is computed over the flattened array.</p>
+</div></blockquote>
+<p><strong>bins</strong> : int or sequence of scalars, optional</p>
+<blockquote>
+<div><p>If <em class="xref py py-obj">bins</em> is an int, it defines the number of equal-width
+bins in the given range (10, by default). If <em class="xref py py-obj">bins</em> is a sequence,
+it defines the bin edges, including the rightmost edge, allowing
+for non-uniform bin widths.</p>
+</div></blockquote>
+<p><strong>range</strong> : (float, float), optional</p>
+<blockquote>
+<div><p>The lower and upper range of the bins.  If not provided, range
+is simply <tt class="docutils literal"><span class="pre">(a.min(),</span> <span class="pre">a.max())</span></tt>.  Values outside the range are
+ignored.</p>
+</div></blockquote>
+<p><strong>normed</strong> : bool, optional</p>
+<blockquote>
+<div><p>This keyword is deprecated in Numpy 1.6 due to confusing/buggy
+behavior. It will be removed in Numpy 2.0. Use the density keyword
+instead.
+If False, the result will contain the number of samples
+in each bin.  If True, the result is the value of the
+probability <em>density</em> function at the bin, normalized such that
+the <em>integral</em> over the range is 1. Note that this latter behavior is
+known to be buggy with unequal bin widths; use <em class="xref py py-obj">density</em> instead.</p>
+</div></blockquote>
+<p><strong>weights</strong> : array_like, optional</p>
+<blockquote>
+<div><p>An array of weights, of the same shape as <em class="xref py py-obj">a</em>.  Each value in <em class="xref py py-obj">a</em>
+only contributes its associated weight towards the bin count
+(instead of 1).  If <em class="xref py py-obj">normed</em> is True, the weights are normalized,
+so that the integral of the density over the range remains 1</p>
+</div></blockquote>
+<p><strong>density</strong> : bool, optional</p>
+<blockquote>
+<div><p>If False, the result will contain the number of samples
+in each bin.  If True, the result is the value of the
+probability <em>density</em> function at the bin, normalized such that
+the <em>integral</em> over the range is 1. Note that the sum of the
+histogram values will not be equal to 1 unless bins of unity
+width are chosen; it is not a probability <em>mass</em> function.
+Overrides the <em class="xref py py-obj">normed</em> keyword if given.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>hist</strong> : array</p>
+<blockquote>
+<div><p>The values of the histogram. See <em class="xref py py-obj">normed</em> and <em class="xref py py-obj">weights</em> for a
+description of the possible semantics.</p>
+</div></blockquote>
+<p><strong>bin_edges</strong> : array of dtype float</p>
+<blockquote class="last">
+<div><p>Return the bin edges <tt class="docutils literal"><span class="pre">(length(hist)+1)</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="numpy.histogramdd.html#numpy.histogramdd" title="numpy.histogramdd"><tt class="xref py py-obj docutils literal"><span class="pre">histogramdd</span></tt></a>, <a class="reference internal" href="numpy.bincount.html#numpy.bincount" title="numpy.bincount"><tt class="xref py py-obj docutils literal"><span class="pre">bincount</span></tt></a>, <a class="reference internal" href="numpy.searchsorted.html#numpy.searchsorted" title="numpy.searchsorted"><tt class="xref py py-obj docutils literal"><span class="pre">searchsorted</span></tt></a>, <a class="reference internal" href="numpy.digitize.html#numpy.digitize" title="numpy.digitize"><tt class="xref py py-obj docutils literal"><span class="pre">digitize</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>All but the last (righthand-most) bin is half-open.  In other words, if
+<em class="xref py py-obj">bins</em> is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>then the first bin is <tt class="docutils literal"><span class="pre">[1,</span> <span class="pre">2)</span></tt> (including 1, but excluding 2) and the
+second <tt class="docutils literal"><span class="pre">[2,</span> <span class="pre">3)</span></tt>.  The last bin, however, is <tt class="docutils literal"><span class="pre">[3,</span> <span class="pre">4]</span></tt>, which <em>includes</em>
+4.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">(array([0, 2, 1]), array([0, 1, 2, 3]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">density</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">(array([ 0.25,  0.25,  0.25,  0.25]), array([0, 1, 2, 3, 4]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">(array([1, 4, 1]), array([0, 1, 2, 3]))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hist</span><span class="p">,</span> <span class="n">bin_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hist</span>
+<span class="go">array([ 0.5,  0. ,  0.5,  0. ,  0. ,  0.5,  0. ,  0.5,  0. ,  0.5])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hist</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">2.4999999999999996</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">hist</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bin_edges</span><span class="p">))</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.cov.html" title="previous chapter">numpy.cov</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.histogram2d.html" title="next chapter">numpy.histogram2d</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.histogram.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.histogram">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="numpy.histogram2d.html" title="numpy.histogram2d">next</a> |</li>
+<li class="right">
+<a href="numpy.cov.html" title="numpy.cov">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a href="../routines.statistics.html">Statistics</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>

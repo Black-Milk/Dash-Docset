@@ -1,0 +1,963 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>Constants of the numpy.ma module — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../about.html" rel="author" title="About these documents"/><link href="../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="maskedarray.html" rel="up" title="Masked arrays"/><link href="generated/numpy.ma.MaskedArray.base.html" rel="next" title="numpy.ma.MaskedArray.base"/><link href="generated/numpy.ma.masked_where.html" rel="prev" title="numpy.ma.masked_where"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="generated/numpy.ma.MaskedArray.base.html" title="numpy.ma.MaskedArray.base">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="generated/numpy.ma.masked_where.html" title="numpy.ma.masked_where">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy Reference</a> »</li>
+<li><a href="arrays.html">Array objects</a> »</li>
+<li><a accesskey="U" href="maskedarray.html">Masked arrays</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="constants-of-the-numpy-ma-module">
+<span id="numpy-ma-constants"></span><h1>Constants of the <tt class="xref py py-mod docutils literal"><span class="pre">numpy.ma</span></tt> module<a class="headerlink" href="#constants-of-the-numpy-ma-module" title="Permalink to this headline">¶</a></h1>
+<p>In addition to the <a class="reference internal" href="#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><tt class="xref py py-class docutils literal"><span class="pre">MaskedArray</span></tt></a> class, the <tt class="xref py py-mod docutils literal"><span class="pre">numpy.ma</span></tt> module
+defines several constants.</p>
+<dl class="data">
+<dt id="numpy.ma.masked">
+<tt class="descclassname">numpy.ma.</tt><tt class="descname">masked</tt><a class="headerlink" href="#numpy.ma.masked" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#numpy.ma.masked" title="numpy.ma.masked"><tt class="xref py py-attr docutils literal"><span class="pre">masked</span></tt></a> constant is a special case of <a class="reference internal" href="#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><tt class="xref py py-class docutils literal"><span class="pre">MaskedArray</span></tt></a>,
+with a float datatype and a null shape. It is used to test whether a
+specific entry of a masked array is masked, or to mask one or several
+entries of a masked array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">masked_array(data = [1 -- --],</span>
+<span class="go">             mask = [False  True  True],</span>
+<span class="go">       fill_value = 999999)</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="data">
+<dt id="numpy.ma.nomask">
+<tt class="descclassname">numpy.ma.</tt><tt class="descname">nomask</tt><a class="headerlink" href="#numpy.ma.nomask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Value indicating that a masked array has no invalid entry.
+<a class="reference internal" href="#numpy.ma.nomask" title="numpy.ma.nomask"><tt class="xref py py-attr docutils literal"><span class="pre">nomask</span></tt></a> is used internally to speed up computations when the mask
+is not needed.</p>
+</dd></dl>
+<dl class="data">
+<dt id="numpy.ma.masked_print_options">
+<tt class="descclassname">numpy.ma.</tt><tt class="descname">masked_print_options</tt><a class="headerlink" href="#numpy.ma.masked_print_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>String used in lieu of missing data when a masked array is printed.
+By default, this string is <tt class="docutils literal"><span class="pre">'--'</span></tt>.</p>
+</dd></dl>
+</div>
+<div class="section" id="the-maskedarray-class">
+<span id="maskedarray-baseclass"></span><h1>The <a class="reference internal" href="#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><tt class="xref py py-class docutils literal"><span class="pre">MaskedArray</span></tt></a> class<a class="headerlink" href="#the-maskedarray-class" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<a name="//apple_ref/cpp/cl/numpy.ma.MaskedArray"></a><dt id="numpy.ma.MaskedArray">
+<em class="property">class </em><tt class="descclassname">numpy.ma.</tt><tt class="descname">MaskedArray</tt><a class="headerlink" href="#numpy.ma.MaskedArray" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>A subclass of <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> designed to manipulate numerical arrays with missing data.</div></blockquote>
+<p>An instance of <a class="reference internal" href="#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><tt class="xref py py-class docutils literal"><span class="pre">MaskedArray</span></tt></a> can be thought as the combination of several elements:</p>
+</dd></dl>
+<ul class="simple">
+<li>The <a class="reference internal" href="#numpy.ma.MaskedArray.data" title="numpy.ma.MaskedArray.data"><tt class="xref py py-attr docutils literal"><span class="pre">data</span></tt></a>, as a regular <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> of any shape or datatype (the data).</li>
+<li>A boolean <a class="reference internal" href="#numpy.ma.MaskedArray.mask" title="numpy.ma.MaskedArray.mask"><tt class="xref py py-attr docutils literal"><span class="pre">mask</span></tt></a> with the same shape as the data, where a <tt class="xref docutils literal"><span class="pre">True</span></tt> value indicates that the corresponding element of the data is invalid.
+The special value <a class="reference internal" href="#numpy.ma.nomask" title="numpy.ma.nomask"><tt class="xref py py-const docutils literal"><span class="pre">nomask</span></tt></a> is also acceptable for arrays without named fields, and indicates that no data is invalid.</li>
+<li>A <a class="reference internal" href="#numpy.ma.MaskedArray.fill_value" title="numpy.ma.MaskedArray.fill_value"><tt class="xref py py-attr docutils literal"><span class="pre">fill_value</span></tt></a>, a value that may be used to replace the invalid entries in order to return a standard <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>.</li>
+</ul>
+<div class="section" id="attributes-and-properties-of-masked-arrays">
+<h2>Attributes and properties of masked arrays<a class="headerlink" href="#attributes-and-properties-of-masked-arrays" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="arrays.ndarray.html#arrays-ndarray-attributes"><em>Array Attributes</em></a></p>
+</div>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ma.MaskedArray.data"></a><dt id="numpy.ma.MaskedArray.data">
+<tt class="descclassname">MaskedArray.</tt><tt class="descname">data</tt><a class="headerlink" href="#numpy.ma.MaskedArray.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the underlying data, as a view of the masked array.
+If the underlying data is a subclass of <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, it is
+returned as such.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">data</span>
+<span class="go">matrix([[1, 2],</span>
+<span class="go">        [3, 4]])</span>
+</pre></div>
+</div>
+<p>The type of the data can be accessed through the <a class="reference internal" href="#numpy.ma.MaskedArray.baseclass" title="numpy.ma.MaskedArray.baseclass"><tt class="xref py py-attr docutils literal"><span class="pre">baseclass</span></tt></a>
+attribute.</p>
+</dd></dl>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ma.MaskedArray.mask"></a><dt id="numpy.ma.MaskedArray.mask">
+<tt class="descclassname">MaskedArray.</tt><tt class="descname">mask</tt><a class="headerlink" href="#numpy.ma.MaskedArray.mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the underlying mask, as an array with the same shape and structure
+as the data, but where all fields are atomically booleans.
+A value of <tt class="xref docutils literal"><span class="pre">True</span></tt> indicates an invalid entry.</p>
+</dd></dl>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ma.MaskedArray.recordmask"></a><dt id="numpy.ma.MaskedArray.recordmask">
+<tt class="descclassname">MaskedArray.</tt><tt class="descname">recordmask</tt><a class="headerlink" href="#numpy.ma.MaskedArray.recordmask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mask of the array if it has no named fields. For structured
+arrays, returns a ndarray of booleans where entries are <tt class="xref docutils literal"><span class="pre">True</span></tt> if <strong>all</strong>
+the fields are masked, <tt class="xref docutils literal"><span class="pre">False</span></tt> otherwise:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)],</span>
+<span class="gp">... </span>        <span class="n">mask</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+<span class="gp">... </span>       <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">'a'</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s">'b'</span><span class="p">,</span> <span class="nb">int</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">recordmask</span>
+<span class="go">array([False, False,  True, False, False], dtype=bool)</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ma.MaskedArray.fill_value"></a><dt id="numpy.ma.MaskedArray.fill_value">
+<tt class="descclassname">MaskedArray.</tt><tt class="descname">fill_value</tt><a class="headerlink" href="#numpy.ma.MaskedArray.fill_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value used to fill the invalid entries of a masked array.
+The value is either a scalar (if the masked array has no named fields),
+or a 0-D ndarray with the same <a class="reference internal" href="generated/numpy.ma.MaskedArray.dtype.html#numpy.ma.MaskedArray.dtype" title="numpy.ma.MaskedArray.dtype"><tt class="xref py py-attr docutils literal"><span class="pre">dtype</span></tt></a> as the masked array if it has
+named fields.</p>
+<p>The default filling value depends on the datatype of the array:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%"></col>
+<col width="50%"></col>
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">datatype</th>
+<th class="head">default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>bool</td>
+<td>True</td>
+</tr>
+<tr><td>int</td>
+<td>999999</td>
+</tr>
+<tr><td>float</td>
+<td>1.e20</td>
+</tr>
+<tr><td>complex</td>
+<td>1.e20+0j</td>
+</tr>
+<tr><td>object</td>
+<td>‘?’</td>
+</tr>
+<tr><td>string</td>
+<td>‘N/A’</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ma.MaskedArray.baseclass"></a><dt id="numpy.ma.MaskedArray.baseclass">
+<tt class="descclassname">MaskedArray.</tt><tt class="descname">baseclass</tt><a class="headerlink" href="#numpy.ma.MaskedArray.baseclass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the class of the underlying data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span>  <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">baseclass</span>
+<span class="go">&lt;class 'numpy.matrixlib.defmatrix.matrix'&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ma.MaskedArray.sharedmask"></a><dt id="numpy.ma.MaskedArray.sharedmask">
+<tt class="descclassname">MaskedArray.</tt><tt class="descname">sharedmask</tt><a class="headerlink" href="#numpy.ma.MaskedArray.sharedmask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the mask of the array is shared between several masked arrays.
+If this is the case, any modification to the mask of one array will be
+propagated to the others.</p>
+</dd></dl>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ma.MaskedArray.hardmask"></a><dt id="numpy.ma.MaskedArray.hardmask">
+<tt class="descclassname">MaskedArray.</tt><tt class="descname">hardmask</tt><a class="headerlink" href="#numpy.ma.MaskedArray.hardmask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the mask is hard (<tt class="xref docutils literal"><span class="pre">True</span></tt>) or soft (<tt class="xref docutils literal"><span class="pre">False</span></tt>).
+When the mask is hard, masked entries cannot be unmasked.</p>
+</dd></dl>
+<p>As <a class="reference internal" href="#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><tt class="xref py py-class docutils literal"><span class="pre">MaskedArray</span></tt></a> is a subclass of <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a>, a masked array also inherits all the attributes and properties of a  <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> instance.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.base.html#numpy.ma.MaskedArray.base" title="numpy.ma.MaskedArray.base"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.base</span></tt></a></td>
+<td>Base object if memory is from some other object.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.ctypes.html#numpy.ma.MaskedArray.ctypes" title="numpy.ma.MaskedArray.ctypes"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.ctypes</span></tt></a></td>
+<td>An object to simplify the interaction of the array with the ctypes module.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.dtype.html#numpy.ma.MaskedArray.dtype" title="numpy.ma.MaskedArray.dtype"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.dtype</span></tt></a></td>
+<td>Data-type of the array’s elements.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.flags.html#numpy.ma.MaskedArray.flags" title="numpy.ma.MaskedArray.flags"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.flags</span></tt></a></td>
+<td>Information about the memory layout of the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.itemsize.html#numpy.ma.MaskedArray.itemsize" title="numpy.ma.MaskedArray.itemsize"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.itemsize</span></tt></a></td>
+<td>Length of one array element in bytes.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.nbytes.html#numpy.ma.MaskedArray.nbytes" title="numpy.ma.MaskedArray.nbytes"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.nbytes</span></tt></a></td>
+<td>Total bytes consumed by the elements of the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.ndim.html#numpy.ma.MaskedArray.ndim" title="numpy.ma.MaskedArray.ndim"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.ndim</span></tt></a></td>
+<td>Number of array dimensions.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.shape.html#numpy.ma.MaskedArray.shape" title="numpy.ma.MaskedArray.shape"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.shape</span></tt></a></td>
+<td>Tuple of array dimensions.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.size.html#numpy.ma.MaskedArray.size" title="numpy.ma.MaskedArray.size"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.size</span></tt></a></td>
+<td>Number of elements in the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.strides.html#numpy.ma.MaskedArray.strides" title="numpy.ma.MaskedArray.strides"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.strides</span></tt></a></td>
+<td>Tuple of bytes to step in each dimension when traversing an array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.imag.html#numpy.ma.MaskedArray.imag" title="numpy.ma.MaskedArray.imag"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.imag</span></tt></a></td>
+<td>Imaginary part.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.real.html#numpy.ma.MaskedArray.real" title="numpy.ma.MaskedArray.real"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.real</span></tt></a></td>
+<td>Real part</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.flat.html#numpy.ma.MaskedArray.flat" title="numpy.ma.MaskedArray.flat"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.flat</span></tt></a></td>
+<td>Flat version of the array.</td>
+</tr>
+<tr><td><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__array_priority__</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="maskedarray-methods">
+<h1><a class="reference internal" href="#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><tt class="xref py py-class docutils literal"><span class="pre">MaskedArray</span></tt></a> methods<a class="headerlink" href="#maskedarray-methods" title="Permalink to this headline">¶</a></h1>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="arrays.ndarray.html#array-ndarray-methods"><em>Array methods</em></a></p>
+</div>
+<div class="section" id="conversion">
+<h2>Conversion<a class="headerlink" href="#conversion" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__float__.html#numpy.ma.MaskedArray.__float__" title="numpy.ma.MaskedArray.__float__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__float__</span></tt></a>()</td>
+<td>Convert to float.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__hex__.html#numpy.ma.MaskedArray.__hex__" title="numpy.ma.MaskedArray.__hex__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__hex__</span></tt></a>() &lt;==&gt; hex(x)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__int__.html#numpy.ma.MaskedArray.__int__" title="numpy.ma.MaskedArray.__int__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__int__</span></tt></a>()</td>
+<td>Convert to int.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__long__.html#numpy.ma.MaskedArray.__long__" title="numpy.ma.MaskedArray.__long__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__long__</span></tt></a>() &lt;==&gt; long(x)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__oct__.html#numpy.ma.MaskedArray.__oct__" title="numpy.ma.MaskedArray.__oct__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__oct__</span></tt></a>() &lt;==&gt; oct(x)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.view.html#numpy.ma.MaskedArray.view" title="numpy.ma.MaskedArray.view"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.view</span></tt></a>([dtype, type])</td>
+<td>New view of array with the same data.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.astype.html#numpy.ma.MaskedArray.astype" title="numpy.ma.MaskedArray.astype"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.astype</span></tt></a>(newtype)</td>
+<td>Returns a copy of the MaskedArray cast to given newtype.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.byteswap.html#numpy.ma.MaskedArray.byteswap" title="numpy.ma.MaskedArray.byteswap"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.byteswap</span></tt></a>(inplace)</td>
+<td>Swap the bytes of the array elements</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.compressed.html#numpy.ma.MaskedArray.compressed" title="numpy.ma.MaskedArray.compressed"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.compressed</span></tt></a>()</td>
+<td>Return all the non-masked data as a 1-D array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.filled.html#numpy.ma.MaskedArray.filled" title="numpy.ma.MaskedArray.filled"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.filled</span></tt></a>([fill_value])</td>
+<td>Return a copy of self, with masked values filled with a given value.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.tofile.html#numpy.ma.MaskedArray.tofile" title="numpy.ma.MaskedArray.tofile"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.tofile</span></tt></a>(fid[, sep, format])</td>
+<td>Save a masked array to a file in binary format.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.toflex.html#numpy.ma.MaskedArray.toflex" title="numpy.ma.MaskedArray.toflex"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.toflex</span></tt></a>()</td>
+<td>Transforms a masked array into a flexible-type array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.tolist.html#numpy.ma.MaskedArray.tolist" title="numpy.ma.MaskedArray.tolist"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.tolist</span></tt></a>([fill_value])</td>
+<td>Return the data portion of the masked array as a hierarchical Python list.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.torecords.html#numpy.ma.MaskedArray.torecords" title="numpy.ma.MaskedArray.torecords"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.torecords</span></tt></a>()</td>
+<td>Transforms a masked array into a flexible-type array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.tostring.html#numpy.ma.MaskedArray.tostring" title="numpy.ma.MaskedArray.tostring"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.tostring</span></tt></a>([fill_value, order])</td>
+<td>Return the array data as a string containing the raw bytes in the array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="shape-manipulation">
+<h2>Shape manipulation<a class="headerlink" href="#shape-manipulation" title="Permalink to this headline">¶</a></h2>
+<p>For reshape, resize, and transpose, the single tuple argument may be
+replaced with <tt class="docutils literal"><span class="pre">n</span></tt> integers which will be interpreted as an n-tuple.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.flatten.html#numpy.ma.MaskedArray.flatten" title="numpy.ma.MaskedArray.flatten"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.flatten</span></tt></a>([order])</td>
+<td>Return a copy of the array collapsed into one dimension.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.ravel.html#numpy.ma.MaskedArray.ravel" title="numpy.ma.MaskedArray.ravel"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.ravel</span></tt></a>()</td>
+<td>Returns a 1D version of self, as a view.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.reshape.html#numpy.ma.MaskedArray.reshape" title="numpy.ma.MaskedArray.reshape"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.reshape</span></tt></a>(*s, **kwargs)</td>
+<td>Give a new shape to the array without changing its data.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.resize.html#numpy.ma.MaskedArray.resize" title="numpy.ma.MaskedArray.resize"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.resize</span></tt></a>(newshape[, refcheck, order])</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.squeeze.html#numpy.ma.MaskedArray.squeeze" title="numpy.ma.MaskedArray.squeeze"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.squeeze</span></tt></a>([axis])</td>
+<td>Remove single-dimensional entries from the shape of <em class="xref py py-obj">a</em>.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.swapaxes.html#numpy.ma.MaskedArray.swapaxes" title="numpy.ma.MaskedArray.swapaxes"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.swapaxes</span></tt></a>(axis1, axis2)</td>
+<td>Return a view of the array with <em class="xref py py-obj">axis1</em> and <em class="xref py py-obj">axis2</em> interchanged.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.transpose.html#numpy.ma.MaskedArray.transpose" title="numpy.ma.MaskedArray.transpose"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.transpose</span></tt></a>(*axes)</td>
+<td>Returns a view of the array with axes transposed.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.T.html#numpy.ma.MaskedArray.T" title="numpy.ma.MaskedArray.T"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.T</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="item-selection-and-manipulation">
+<h2>Item selection and manipulation<a class="headerlink" href="#item-selection-and-manipulation" title="Permalink to this headline">¶</a></h2>
+<p>For array methods that take an <em>axis</em> keyword, it defaults to <em class="xref py py-obj">None</em>.
+If axis is <em>None</em>, then the array is treated as a 1-D array.
+Any other value for <em>axis</em> represents the dimension along which
+the operation should proceed.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.argmax.html#numpy.ma.MaskedArray.argmax" title="numpy.ma.MaskedArray.argmax"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.argmax</span></tt></a>([axis, fill_value, out])</td>
+<td>Returns array of indices of the maximum values along the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.argmin.html#numpy.ma.MaskedArray.argmin" title="numpy.ma.MaskedArray.argmin"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.argmin</span></tt></a>([axis, fill_value, out])</td>
+<td>Return array of indices to the minimum values along the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.argsort.html#numpy.ma.MaskedArray.argsort" title="numpy.ma.MaskedArray.argsort"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.argsort</span></tt></a>([axis, kind, order, ...])</td>
+<td>Return an ndarray of indices that sort the array along the specified axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.choose.html#numpy.ma.MaskedArray.choose" title="numpy.ma.MaskedArray.choose"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.choose</span></tt></a>(choices[, out, mode])</td>
+<td>Use an index array to construct a new array from a set of choices.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.compress.html#numpy.ma.MaskedArray.compress" title="numpy.ma.MaskedArray.compress"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.compress</span></tt></a>(condition[, axis, out])</td>
+<td>Return <em class="xref py py-obj">a</em> where condition is <tt class="xref docutils literal"><span class="pre">True</span></tt>.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.diagonal.html#numpy.ma.MaskedArray.diagonal" title="numpy.ma.MaskedArray.diagonal"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.diagonal</span></tt></a>([offset, axis1, axis2])</td>
+<td>Return specified diagonals.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.fill.html#numpy.ma.MaskedArray.fill" title="numpy.ma.MaskedArray.fill"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.fill</span></tt></a>(value)</td>
+<td>Fill the array with a scalar value.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.item.html#numpy.ma.MaskedArray.item" title="numpy.ma.MaskedArray.item"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.item</span></tt></a>(*args)</td>
+<td>Copy an element of an array to a standard Python scalar and return it.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.nonzero.html#numpy.ma.MaskedArray.nonzero" title="numpy.ma.MaskedArray.nonzero"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.nonzero</span></tt></a>()</td>
+<td>Return the indices of unmasked elements that are not zero.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.put.html#numpy.ma.MaskedArray.put" title="numpy.ma.MaskedArray.put"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.put</span></tt></a>(indices, values[, mode])</td>
+<td>Set storage-indexed locations to corresponding values.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.repeat.html#numpy.ma.MaskedArray.repeat" title="numpy.ma.MaskedArray.repeat"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.repeat</span></tt></a>(repeats[, axis])</td>
+<td>Repeat elements of an array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.searchsorted.html#numpy.ma.MaskedArray.searchsorted" title="numpy.ma.MaskedArray.searchsorted"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.searchsorted</span></tt></a>(v[, side])</td>
+<td>Find indices where elements of v should be inserted in a to maintain order.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.sort.html#numpy.ma.MaskedArray.sort" title="numpy.ma.MaskedArray.sort"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.sort</span></tt></a>([axis, kind, order, ...])</td>
+<td>Sort the array, in-place</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.take.html#numpy.ma.MaskedArray.take" title="numpy.ma.MaskedArray.take"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.take</span></tt></a>(indices[, axis, out, mode])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="pickling-and-copy">
+<h2>Pickling and copy<a class="headerlink" href="#pickling-and-copy" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.copy.html#numpy.ma.MaskedArray.copy" title="numpy.ma.MaskedArray.copy"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.copy</span></tt></a>([order, maskna])</td>
+<td>Return a copy of the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.dump.html#numpy.ma.MaskedArray.dump" title="numpy.ma.MaskedArray.dump"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.dump</span></tt></a>(file)</td>
+<td>Dump a pickle of the array to the specified file.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.dumps.html#numpy.ma.MaskedArray.dumps" title="numpy.ma.MaskedArray.dumps"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.dumps</span></tt></a>()</td>
+<td>Returns the pickle of the array as a string.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="calculations">
+<h2>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.all.html#numpy.ma.MaskedArray.all" title="numpy.ma.MaskedArray.all"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.all</span></tt></a>([axis, out])</td>
+<td>Check if all of the elements of <em class="xref py py-obj">a</em> are true.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.anom.html#numpy.ma.MaskedArray.anom" title="numpy.ma.MaskedArray.anom"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.anom</span></tt></a>([axis, dtype])</td>
+<td>Compute the anomalies (deviations from the arithmetic mean) along the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.any.html#numpy.ma.MaskedArray.any" title="numpy.ma.MaskedArray.any"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.any</span></tt></a>([axis, out])</td>
+<td>Check if any of the elements of <em class="xref py py-obj">a</em> are true.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.clip.html#numpy.ma.MaskedArray.clip" title="numpy.ma.MaskedArray.clip"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.clip</span></tt></a>(a_min, a_max[, out])</td>
+<td>Return an array whose values are limited to <tt class="docutils literal"><span class="pre">[a_min,</span> <span class="pre">a_max]</span></tt>.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.conj.html#numpy.ma.MaskedArray.conj" title="numpy.ma.MaskedArray.conj"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.conj</span></tt></a>()</td>
+<td>Complex-conjugate all elements.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.conjugate.html#numpy.ma.MaskedArray.conjugate" title="numpy.ma.MaskedArray.conjugate"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.conjugate</span></tt></a>()</td>
+<td>Return the complex conjugate, element-wise.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.cumprod.html#numpy.ma.MaskedArray.cumprod" title="numpy.ma.MaskedArray.cumprod"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.cumprod</span></tt></a>([axis, dtype, out])</td>
+<td>Return the cumulative product of the elements along the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.cumsum.html#numpy.ma.MaskedArray.cumsum" title="numpy.ma.MaskedArray.cumsum"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.cumsum</span></tt></a>([axis, dtype, out])</td>
+<td>Return the cumulative sum of the elements along the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.max.html#numpy.ma.MaskedArray.max" title="numpy.ma.MaskedArray.max"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.max</span></tt></a>([axis, out, fill_value])</td>
+<td>Return the maximum along a given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.mean.html#numpy.ma.MaskedArray.mean" title="numpy.ma.MaskedArray.mean"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.mean</span></tt></a>([axis, dtype, out])</td>
+<td>Returns the average of the array elements.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.min.html#numpy.ma.MaskedArray.min" title="numpy.ma.MaskedArray.min"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.min</span></tt></a>([axis, out, fill_value])</td>
+<td>Return the minimum along a given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.prod.html#numpy.ma.MaskedArray.prod" title="numpy.ma.MaskedArray.prod"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.prod</span></tt></a>([axis, dtype, out])</td>
+<td>Return the product of the array elements over the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.product.html#numpy.ma.MaskedArray.product" title="numpy.ma.MaskedArray.product"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.product</span></tt></a>([axis, dtype, out])</td>
+<td>Return the product of the array elements over the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.ptp.html#numpy.ma.MaskedArray.ptp" title="numpy.ma.MaskedArray.ptp"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.ptp</span></tt></a>([axis, out, fill_value])</td>
+<td>Return (maximum - minimum) along the the given dimension (i.e.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.round.html#numpy.ma.MaskedArray.round" title="numpy.ma.MaskedArray.round"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.round</span></tt></a>([decimals, out])</td>
+<td>Return <em class="xref py py-obj">a</em> with each element rounded to the given number of decimals.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.std.html#numpy.ma.MaskedArray.std" title="numpy.ma.MaskedArray.std"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.std</span></tt></a>([axis, dtype, out, ddof])</td>
+<td>Compute the standard deviation along the specified axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.sum.html#numpy.ma.MaskedArray.sum" title="numpy.ma.MaskedArray.sum"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.sum</span></tt></a>([axis, dtype, out])</td>
+<td>Return the sum of the array elements over the given axis.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.trace.html#numpy.ma.MaskedArray.trace" title="numpy.ma.MaskedArray.trace"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.trace</span></tt></a>([offset, axis1, axis2, ...])</td>
+<td>Return the sum along diagonals of the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.var.html#numpy.ma.MaskedArray.var" title="numpy.ma.MaskedArray.var"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.var</span></tt></a>([axis, dtype, out, ddof])</td>
+<td>Compute the variance along the specified axis.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="arithmetic-and-comparison-operations">
+<h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="comparison-operators">
+<span id="index-0"></span><h3>Comparison operators:<a class="headerlink" href="#comparison-operators" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__lt__.html#numpy.ma.MaskedArray.__lt__" title="numpy.ma.MaskedArray.__lt__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__lt__</span></tt></a></td>
+<td>x.__lt__(y) &lt;==&gt; x&lt;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__le__.html#numpy.ma.MaskedArray.__le__" title="numpy.ma.MaskedArray.__le__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__le__</span></tt></a></td>
+<td>x.__le__(y) &lt;==&gt; x&lt;=y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__gt__.html#numpy.ma.MaskedArray.__gt__" title="numpy.ma.MaskedArray.__gt__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__gt__</span></tt></a></td>
+<td>x.__gt__(y) &lt;==&gt; x&gt;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ge__.html#numpy.ma.MaskedArray.__ge__" title="numpy.ma.MaskedArray.__ge__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ge__</span></tt></a></td>
+<td>x.__ge__(y) &lt;==&gt; x&gt;=y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__eq__.html#numpy.ma.MaskedArray.__eq__" title="numpy.ma.MaskedArray.__eq__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__eq__</span></tt></a>(other)</td>
+<td>Check whether other equals self elementwise</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ne__.html#numpy.ma.MaskedArray.__ne__" title="numpy.ma.MaskedArray.__ne__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ne__</span></tt></a>(other)</td>
+<td>Check whether other doesn’t equal self elementwise</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="truth-value-of-an-array-bool">
+<h3>Truth value of an array (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.3)"><tt class="xref py py-func docutils literal"><span class="pre">bool</span></tt></a>):<a class="headerlink" href="#truth-value-of-an-array-bool" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__nonzero__.html#numpy.ma.MaskedArray.__nonzero__" title="numpy.ma.MaskedArray.__nonzero__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__nonzero__</span></tt></a></td>
+<td>x.__nonzero__() &lt;==&gt; x != 0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="arithmetic">
+<h3>Arithmetic:<a class="headerlink" href="#arithmetic" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__abs__.html#numpy.ma.MaskedArray.__abs__" title="numpy.ma.MaskedArray.__abs__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__abs__</span></tt></a>() &lt;==&gt; abs(x)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__add__.html#numpy.ma.MaskedArray.__add__" title="numpy.ma.MaskedArray.__add__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__add__</span></tt></a>(other)</td>
+<td>Add other to self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__radd__.html#numpy.ma.MaskedArray.__radd__" title="numpy.ma.MaskedArray.__radd__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__radd__</span></tt></a>(other)</td>
+<td>Add other to self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__sub__.html#numpy.ma.MaskedArray.__sub__" title="numpy.ma.MaskedArray.__sub__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__sub__</span></tt></a>(other)</td>
+<td>Subtract other to self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rsub__.html#numpy.ma.MaskedArray.__rsub__" title="numpy.ma.MaskedArray.__rsub__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rsub__</span></tt></a>(other)</td>
+<td>Subtract other to self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__mul__.html#numpy.ma.MaskedArray.__mul__" title="numpy.ma.MaskedArray.__mul__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__mul__</span></tt></a>(other)</td>
+<td>Multiply other by self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rmul__.html#numpy.ma.MaskedArray.__rmul__" title="numpy.ma.MaskedArray.__rmul__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rmul__</span></tt></a>(other)</td>
+<td>Multiply other by self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__div__.html#numpy.ma.MaskedArray.__div__" title="numpy.ma.MaskedArray.__div__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__div__</span></tt></a>(other)</td>
+<td>Divide other into self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rdiv__.html#numpy.ma.MaskedArray.__rdiv__" title="numpy.ma.MaskedArray.__rdiv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rdiv__</span></tt></a></td>
+<td>x.__rdiv__(y) &lt;==&gt; y/x</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__truediv__.html#numpy.ma.MaskedArray.__truediv__" title="numpy.ma.MaskedArray.__truediv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__truediv__</span></tt></a>(other)</td>
+<td>Divide other into self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rtruediv__.html#numpy.ma.MaskedArray.__rtruediv__" title="numpy.ma.MaskedArray.__rtruediv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rtruediv__</span></tt></a>(other)</td>
+<td>Divide other into self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__floordiv__.html#numpy.ma.MaskedArray.__floordiv__" title="numpy.ma.MaskedArray.__floordiv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__floordiv__</span></tt></a>(other)</td>
+<td>Divide other into self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rfloordiv__.html#numpy.ma.MaskedArray.__rfloordiv__" title="numpy.ma.MaskedArray.__rfloordiv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rfloordiv__</span></tt></a>(other)</td>
+<td>Divide other into self, and return a new masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__mod__.html#numpy.ma.MaskedArray.__mod__" title="numpy.ma.MaskedArray.__mod__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__mod__</span></tt></a></td>
+<td>x.__mod__(y) &lt;==&gt; x%y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rmod__.html#numpy.ma.MaskedArray.__rmod__" title="numpy.ma.MaskedArray.__rmod__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rmod__</span></tt></a></td>
+<td>x.__rmod__(y) &lt;==&gt; y%x</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__divmod__.html#numpy.ma.MaskedArray.__divmod__" title="numpy.ma.MaskedArray.__divmod__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__divmod__</span></tt></a>(y) &lt;==&gt; divmod(x, y)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rdivmod__.html#numpy.ma.MaskedArray.__rdivmod__" title="numpy.ma.MaskedArray.__rdivmod__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rdivmod__</span></tt></a>(y) &lt;==&gt; divmod(y, x)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__pow__.html#numpy.ma.MaskedArray.__pow__" title="numpy.ma.MaskedArray.__pow__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__pow__</span></tt></a>(other)</td>
+<td>Raise self to the power other, masking the potential NaNs/Infs</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rpow__.html#numpy.ma.MaskedArray.__rpow__" title="numpy.ma.MaskedArray.__rpow__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rpow__</span></tt></a>(other)</td>
+<td>Raise self to the power other, masking the potential NaNs/Infs</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__lshift__.html#numpy.ma.MaskedArray.__lshift__" title="numpy.ma.MaskedArray.__lshift__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__lshift__</span></tt></a></td>
+<td>x.__lshift__(y) &lt;==&gt; x&lt;&lt;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rlshift__.html#numpy.ma.MaskedArray.__rlshift__" title="numpy.ma.MaskedArray.__rlshift__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rlshift__</span></tt></a></td>
+<td>x.__rlshift__(y) &lt;==&gt; y&lt;&lt;x</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rshift__.html#numpy.ma.MaskedArray.__rshift__" title="numpy.ma.MaskedArray.__rshift__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rshift__</span></tt></a></td>
+<td>x.__rshift__(y) &lt;==&gt; x&gt;&gt;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rrshift__.html#numpy.ma.MaskedArray.__rrshift__" title="numpy.ma.MaskedArray.__rrshift__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rrshift__</span></tt></a></td>
+<td>x.__rrshift__(y) &lt;==&gt; y&gt;&gt;x</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__and__.html#numpy.ma.MaskedArray.__and__" title="numpy.ma.MaskedArray.__and__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__and__</span></tt></a></td>
+<td>x.__and__(y) &lt;==&gt; x&amp;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rand__.html#numpy.ma.MaskedArray.__rand__" title="numpy.ma.MaskedArray.__rand__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rand__</span></tt></a></td>
+<td>x.__rand__(y) &lt;==&gt; y&amp;x</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__or__.html#numpy.ma.MaskedArray.__or__" title="numpy.ma.MaskedArray.__or__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__or__</span></tt></a></td>
+<td>x.__or__(y) &lt;==&gt; x|y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ror__.html#numpy.ma.MaskedArray.__ror__" title="numpy.ma.MaskedArray.__ror__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ror__</span></tt></a></td>
+<td>x.__ror__(y) &lt;==&gt; y|x</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__xor__.html#numpy.ma.MaskedArray.__xor__" title="numpy.ma.MaskedArray.__xor__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__xor__</span></tt></a></td>
+<td>x.__xor__(y) &lt;==&gt; x^y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__rxor__.html#numpy.ma.MaskedArray.__rxor__" title="numpy.ma.MaskedArray.__rxor__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__rxor__</span></tt></a></td>
+<td>x.__rxor__(y) &lt;==&gt; y^x</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="arithmetic-in-place">
+<h3>Arithmetic, in-place:<a class="headerlink" href="#arithmetic-in-place" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__iadd__.html#numpy.ma.MaskedArray.__iadd__" title="numpy.ma.MaskedArray.__iadd__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__iadd__</span></tt></a>(other)</td>
+<td>Add other to self in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__isub__.html#numpy.ma.MaskedArray.__isub__" title="numpy.ma.MaskedArray.__isub__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__isub__</span></tt></a>(other)</td>
+<td>Subtract other from self in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__imul__.html#numpy.ma.MaskedArray.__imul__" title="numpy.ma.MaskedArray.__imul__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__imul__</span></tt></a>(other)</td>
+<td>Multiply self by other in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__idiv__.html#numpy.ma.MaskedArray.__idiv__" title="numpy.ma.MaskedArray.__idiv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__idiv__</span></tt></a>(other)</td>
+<td>Divide self by other in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__itruediv__.html#numpy.ma.MaskedArray.__itruediv__" title="numpy.ma.MaskedArray.__itruediv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__itruediv__</span></tt></a>(other)</td>
+<td>True divide self by other in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ifloordiv__.html#numpy.ma.MaskedArray.__ifloordiv__" title="numpy.ma.MaskedArray.__ifloordiv__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ifloordiv__</span></tt></a>(other)</td>
+<td>Floor divide self by other in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__imod__.html#numpy.ma.MaskedArray.__imod__" title="numpy.ma.MaskedArray.__imod__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__imod__</span></tt></a></td>
+<td>x.__imod__(y) &lt;==&gt; x%y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ipow__.html#numpy.ma.MaskedArray.__ipow__" title="numpy.ma.MaskedArray.__ipow__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ipow__</span></tt></a>(other)</td>
+<td>Raise self to the power other, in place.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ilshift__.html#numpy.ma.MaskedArray.__ilshift__" title="numpy.ma.MaskedArray.__ilshift__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ilshift__</span></tt></a></td>
+<td>x.__ilshift__(y) &lt;==&gt; x&lt;&lt;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__irshift__.html#numpy.ma.MaskedArray.__irshift__" title="numpy.ma.MaskedArray.__irshift__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__irshift__</span></tt></a></td>
+<td>x.__irshift__(y) &lt;==&gt; x&gt;&gt;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__iand__.html#numpy.ma.MaskedArray.__iand__" title="numpy.ma.MaskedArray.__iand__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__iand__</span></tt></a></td>
+<td>x.__iand__(y) &lt;==&gt; x&amp;y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ior__.html#numpy.ma.MaskedArray.__ior__" title="numpy.ma.MaskedArray.__ior__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ior__</span></tt></a></td>
+<td>x.__ior__(y) &lt;==&gt; x|y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__ixor__.html#numpy.ma.MaskedArray.__ixor__" title="numpy.ma.MaskedArray.__ixor__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__ixor__</span></tt></a></td>
+<td>x.__ixor__(y) &lt;==&gt; x^y</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="representation">
+<h2>Representation<a class="headerlink" href="#representation" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__repr__.html#numpy.ma.MaskedArray.__repr__" title="numpy.ma.MaskedArray.__repr__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__repr__</span></tt></a>()</td>
+<td>Literal string representation.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__str__.html#numpy.ma.MaskedArray.__str__" title="numpy.ma.MaskedArray.__str__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__str__</span></tt></a>()</td>
+<td>String representation.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.ids.html#numpy.ma.MaskedArray.ids" title="numpy.ma.MaskedArray.ids"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.ids</span></tt></a>()</td>
+<td>Return the addresses of the data and mask areas.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.iscontiguous.html#numpy.ma.MaskedArray.iscontiguous" title="numpy.ma.MaskedArray.iscontiguous"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.iscontiguous</span></tt></a>()</td>
+<td>Return a boolean indicating whether the data is contiguous.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special-methods">
+<h2>Special methods<a class="headerlink" href="#special-methods" title="Permalink to this headline">¶</a></h2>
+<p>For standard library functions:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__copy__.html#numpy.ma.MaskedArray.__copy__" title="numpy.ma.MaskedArray.__copy__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__copy__</span></tt></a>([order])</td>
+<td>Return a copy of the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__deepcopy__.html#numpy.ma.MaskedArray.__deepcopy__" title="numpy.ma.MaskedArray.__deepcopy__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__deepcopy__</span></tt></a>([memo])</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__getstate__.html#numpy.ma.MaskedArray.__getstate__" title="numpy.ma.MaskedArray.__getstate__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__getstate__</span></tt></a>()</td>
+<td>Return the internal state of the masked array, for pickling</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__reduce__.html#numpy.ma.MaskedArray.__reduce__" title="numpy.ma.MaskedArray.__reduce__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__reduce__</span></tt></a>()</td>
+<td>Return a 3-tuple for pickling a MaskedArray.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__setstate__.html#numpy.ma.MaskedArray.__setstate__" title="numpy.ma.MaskedArray.__setstate__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__setstate__</span></tt></a>(state)</td>
+<td>Restore the internal state of the masked array, for pickling purposes.</td>
+</tr>
+</tbody>
+</table>
+<p>Basic customization:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__new__.html#numpy.ma.MaskedArray.__new__" title="numpy.ma.MaskedArray.__new__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__new__</span></tt></a>([data, mask, dtype, ...])</td>
+<td>Create a new masked array from scratch.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__array__.html#numpy.ma.MaskedArray.__array__" title="numpy.ma.MaskedArray.__array__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__array__</span></tt></a></td>
+<td>a.__array__(<a href="#id1"><span class="problematic" id="id2">|</span></a>dtype) -&gt; reference if type unchanged, copy otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__array_wrap__.html#numpy.ma.MaskedArray.__array_wrap__" title="numpy.ma.MaskedArray.__array_wrap__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__array_wrap__</span></tt></a>(obj[, context])</td>
+<td>Special hook for ufuncs.</td>
+</tr>
+</tbody>
+</table>
+<p>Container customization: (see <a class="reference internal" href="arrays.indexing.html#arrays-indexing"><em>Indexing</em></a>)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__len__.html#numpy.ma.MaskedArray.__len__" title="numpy.ma.MaskedArray.__len__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__len__</span></tt></a>() &lt;==&gt; len(x)</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__getitem__.html#numpy.ma.MaskedArray.__getitem__" title="numpy.ma.MaskedArray.__getitem__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__getitem__</span></tt></a>(indx)</td>
+<td>x.__getitem__(y) &lt;==&gt; x[y]</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__setitem__.html#numpy.ma.MaskedArray.__setitem__" title="numpy.ma.MaskedArray.__setitem__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__setitem__</span></tt></a>(indx, value)</td>
+<td>x.__setitem__(i, y) &lt;==&gt; x[i]=y</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__delitem__.html#numpy.ma.MaskedArray.__delitem__" title="numpy.ma.MaskedArray.__delitem__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__delitem__</span></tt></a></td>
+<td>x.__delitem__(y) &lt;==&gt; del x[y]</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__getslice__.html#numpy.ma.MaskedArray.__getslice__" title="numpy.ma.MaskedArray.__getslice__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__getslice__</span></tt></a>(i, j)</td>
+<td>x.__getslice__(i, j) &lt;==&gt; x[i:j]</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__setslice__.html#numpy.ma.MaskedArray.__setslice__" title="numpy.ma.MaskedArray.__setslice__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__setslice__</span></tt></a>(i, j, value)</td>
+<td>x.__setslice__(i, j, value) &lt;==&gt; x[i:j]=value</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__contains__.html#numpy.ma.MaskedArray.__contains__" title="numpy.ma.MaskedArray.__contains__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__contains__</span></tt></a></td>
+<td>x.__contains__(y) &lt;==&gt; y in x</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="specific-methods">
+<h2>Specific methods<a class="headerlink" href="#specific-methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="handling-the-mask">
+<h3>Handling the mask<a class="headerlink" href="#handling-the-mask" title="Permalink to this headline">¶</a></h3>
+<p>The following methods can be used to access information about the mask or to
+manipulate the mask.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.__setmask__.html#numpy.ma.MaskedArray.__setmask__" title="numpy.ma.MaskedArray.__setmask__"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.__setmask__</span></tt></a>(mask[, copy])</td>
+<td>Set the mask.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.harden_mask.html#numpy.ma.MaskedArray.harden_mask" title="numpy.ma.MaskedArray.harden_mask"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.harden_mask</span></tt></a>()</td>
+<td>Force the mask to hard.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.soften_mask.html#numpy.ma.MaskedArray.soften_mask" title="numpy.ma.MaskedArray.soften_mask"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.soften_mask</span></tt></a>()</td>
+<td>Force the mask to soft.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.unshare_mask.html#numpy.ma.MaskedArray.unshare_mask" title="numpy.ma.MaskedArray.unshare_mask"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.unshare_mask</span></tt></a>()</td>
+<td>Copy the mask and set the sharedmask flag to False.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.shrink_mask.html#numpy.ma.MaskedArray.shrink_mask" title="numpy.ma.MaskedArray.shrink_mask"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.shrink_mask</span></tt></a>()</td>
+<td>Reduce a mask to nomask when possible.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="handling-the-fill-value">
+<h3>Handling the <em class="xref py py-obj">fill_value</em><a class="headerlink" href="#handling-the-fill-value" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.get_fill_value.html#numpy.ma.MaskedArray.get_fill_value" title="numpy.ma.MaskedArray.get_fill_value"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.get_fill_value</span></tt></a>()</td>
+<td>Return the filling value of the masked array.</td>
+</tr>
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.set_fill_value.html#numpy.ma.MaskedArray.set_fill_value" title="numpy.ma.MaskedArray.set_fill_value"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.set_fill_value</span></tt></a>([value])</td>
+<td>Set the filling value of the masked array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="counting-the-missing-elements">
+<h3>Counting the missing elements<a class="headerlink" href="#counting-the-missing-elements" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="generated/numpy.ma.MaskedArray.count.html#numpy.ma.MaskedArray.count" title="numpy.ma.MaskedArray.count"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray.count</span></tt></a>([axis])</td>
+<td>Count the non-masked elements of the array along the given axis.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../contents.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h3><a href="../contents.html">Table Of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Constants of the <tt class="docutils literal"><span class="pre">numpy.ma</span></tt> module</a></li>
+<li><a class="reference internal" href="#the-maskedarray-class">The <tt class="docutils literal"><span class="pre">MaskedArray</span></tt> class</a><ul>
+<li><a class="reference internal" href="#attributes-and-properties-of-masked-arrays">Attributes and properties of masked arrays</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#maskedarray-methods"><tt class="docutils literal"><span class="pre">MaskedArray</span></tt> methods</a><ul>
+<li><a class="reference internal" href="#conversion">Conversion</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#shape-manipulation">Shape manipulation</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#item-selection-and-manipulation">Item selection and manipulation</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#pickling-and-copy">Pickling and copy</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#calculations">Calculations</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#arithmetic-and-comparison-operations">Arithmetic and comparison operations</a><ul>
+<li><a class="reference internal" href="#comparison-operators">Comparison operators:</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#truth-value-of-an-array-bool">Truth value of an array (<tt class="docutils literal"><span class="pre">bool</span></tt>):</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#arithmetic">Arithmetic:</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#arithmetic-in-place">Arithmetic, in-place:</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#representation">Representation</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#special-methods">Special methods</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#specific-methods">Specific methods</a><ul>
+<li><a class="reference internal" href="#handling-the-mask">Handling the mask</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#handling-the-fill-value">Handling the <em class="xref py py-obj">fill_value</em></a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#counting-the-missing-elements">Counting the missing elements</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Previous topic</h4>
+<p class="topless"><a href="generated/numpy.ma.masked_where.html" title="previous chapter">numpy.ma.masked_where</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="generated/numpy.ma.MaskedArray.base.html" title="next chapter">numpy.ma.MaskedArray.base</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/reference/maskedarray.baseclass.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy-docs/reference/maskedarray.baseclass.rst">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="generated/numpy.ma.MaskedArray.base.html" title="numpy.ma.MaskedArray.base">next</a> |</li>
+<li class="right">
+<a href="generated/numpy.ma.masked_where.html" title="numpy.ma.masked_where">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy Reference</a> »</li>
+<li><a href="arrays.html">Array objects</a> »</li>
+<li><a href="maskedarray.html">Masked arrays</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+<div style="display:none;"><a name="#"></a><h3 class="tasks">TOC</h3><ul class="tooltip"><li class="tooltip"><a href="#">Constants of the numpy.ma module</a></li><li class="tooltip"><a href="#the-maskedarray-class">The MaskedArray class</a></li><li class="tooltip"><a href="#attributes-and-properties-of-masked-arrays">Attributes and properties of masked arrays</a></li><li class="tooltip"><a href="#maskedarray-methods">MaskedArray methods</a></li><li class="tooltip"><a href="#conversion">Conversion</a></li><li class="tooltip"><a href="#shape-manipulation">Shape manipulation</a></li><li class="tooltip"><a href="#item-selection-and-manipulation">Item selection and manipulation</a></li><li class="tooltip"><a href="#pickling-and-copy">Pickling and copy</a></li><li class="tooltip"><a href="#calculations">Calculations</a></li><li class="tooltip"><a href="#arithmetic-and-comparison-operations">Arithmetic and comparison operations</a></li><li class="tooltip"><a href="#comparison-operators">Comparison operators:</a></li><li class="tooltip"><a href="#truth-value-of-an-array-bool">Truth value of an array (bool):</a></li><li class="tooltip"><a href="#arithmetic">Arithmetic:</a></li><li class="tooltip"><a href="#arithmetic-in-place">Arithmetic, in-place:</a></li><li class="tooltip"><a href="#representation">Representation</a></li><li class="tooltip"><a href="#special-methods">Special methods</a></li><li class="tooltip"><a href="#specific-methods">Specific methods</a></li><li class="tooltip"><a href="#handling-the-mask">Handling the mask</a></li><li class="tooltip"><a href="#handling-the-fill-value">Handling the fill_value</a></li><li class="tooltip"><a href="#counting-the-missing-elements">Counting the missing elements</a></li></ul></div></body></html>

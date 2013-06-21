@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.recarray.ctypes — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-recarray-ctypes">
+<h1>numpy.recarray.ctypes<a class="headerlink" href="#numpy-recarray-ctypes" title="Permalink to this headline">¶</a></h1>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.recarray.ctypes"></a><dt id="numpy.recarray.ctypes">
+<tt class="descclassname">recarray.</tt><tt class="descname">ctypes</tt><a class="headerlink" href="#numpy.recarray.ctypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object to simplify the interaction of the array with the ctypes
+module.</p>
+<p>This attribute creates an object that makes it easier to use arrays
+when calling shared libraries with the ctypes module. The returned
+object has, among others, data, shape, and strides attributes (see
+Notes below) which themselves return ctypes objects that can be used
+as arguments to a shared library.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>None</strong> :</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>c</strong> : Python object</p>
+<blockquote class="last">
+<div><p>Possessing attributes data, shape, strides, etc.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.ctypeslib</span></tt></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Below are the public attributes of this object which were documented
+in “Guide to NumPy” (we have omitted undocumented public attributes,
+as well as documented private attributes):</p>
+<ul class="simple">
+<li>data: A pointer to the memory area of the array as a Python integer.
+This memory area may contain data that is not aligned, or not in correct
+byte-order. The memory area may not even be writeable. The array
+flags and data-type of this array should be respected when passing this
+attribute to arbitrary C-code to avoid trouble that can include Python
+crashing. User Beware! The value of this attribute is exactly the same
+as self._array_interface_[‘data’][0].</li>
+<li>shape (c_intp*self.ndim): A ctypes array of length self.ndim where
+the basetype is the C-integer corresponding to dtype(‘p’) on this
+platform. This base-type could be c_int, c_long, or c_longlong
+depending on the platform. The c_intp type is defined accordingly in
+numpy.ctypeslib. The ctypes array contains the shape of the underlying
+array.</li>
+<li>strides (c_intp*self.ndim): A ctypes array of length self.ndim where
+the basetype is the same as for the shape attribute. This ctypes array
+contains the strides information from the underlying array. This strides
+information is important for showing how many bytes must be jumped to
+get to the next element in the array.</li>
+<li>data_as(obj): Return the data pointer cast to a particular c-types object.
+For example, calling self._as_parameter_ is equivalent to
+self.data_as(ctypes.c_void_p). Perhaps you want to use the data as a
+pointer to a ctypes array of floating-point data:
+self.data_as(ctypes.POINTER(ctypes.c_double)).</li>
+<li>shape_as(obj): Return the shape tuple as an array of some other c-types
+type. For example: self.shape_as(ctypes.c_short).</li>
+<li>strides_as(obj): Return the strides tuple as an array of some other
+c-types type. For example: self.strides_as(ctypes.c_longlong).</li>
+</ul>
+<p>Be careful using the ctypes attribute - especially on temporary
+arrays or arrays constructed on the fly. For example, calling
+<tt class="docutils literal"><span class="pre">(a+b).ctypes.data_as(ctypes.c_void_p)</span></tt> returns a pointer to memory
+that is invalid because the array created as (a+b) is deallocated
+before the next Python statement. You can avoid this problem using
+either <tt class="docutils literal"><span class="pre">c=a+b</span></tt> or <tt class="docutils literal"><span class="pre">ct=(a+b).ctypes</span></tt>. In the latter case, ct will
+hold a reference to the array until ct is deleted or re-assigned.</p>
+<p>If the ctypes module is not available, then the ctypes attribute
+of array objects still returns something useful, but ctypes objects
+are not returned and errors may be raised instead. In particular,
+the object will still have the as parameter attribute which will
+return an integer equal to the data attribute.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([[0, 1],</span>
+<span class="go">       [2, 3]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data</span>
+<span class="go">30439712</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">))</span>
+<span class="go">&lt;ctypes.LP_c_long object at 0x01F01300&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">))</span><span class="o">.</span><span class="n">contents</span>
+<span class="go">c_long(0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_longlong</span><span class="p">))</span><span class="o">.</span><span class="n">contents</span>
+<span class="go">c_longlong(4294967296L)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x01FFD580&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">shape_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">)</span>
+<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x01FCE620&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">strides</span>
+<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x01FCE620&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">strides_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_longlong</span><span class="p">)</span>
+<span class="go">&lt;numpy.core._internal.c_longlong_Array_2 object at 0x01F01300&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.recarray.ctypes.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.recarray.ctypes">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>

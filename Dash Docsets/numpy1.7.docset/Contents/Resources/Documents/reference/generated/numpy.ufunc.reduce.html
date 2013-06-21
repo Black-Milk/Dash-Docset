@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.ufunc.reduce — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="../ufuncs.html" rel="up" title="Universal functions (ufunc)"/><link href="numpy.ufunc.accumulate.html" rel="next" title="numpy.ufunc.accumulate"/><link href="numpy.ufunc.identity.html" rel="prev" title="numpy.ufunc.identity"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="numpy.ufunc.accumulate.html" title="numpy.ufunc.accumulate">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="numpy.ufunc.identity.html" title="numpy.ufunc.identity">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a accesskey="U" href="../ufuncs.html">Universal functions (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">ufunc</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-ufunc-reduce">
+<h1>numpy.ufunc.reduce<a class="headerlink" href="#numpy-ufunc-reduce" title="Permalink to this headline">¶</a></h1>
+<dl class="attribute">
+<a name="//apple_ref/cpp/instp/numpy.ufunc.reduce"></a><dt id="numpy.ufunc.reduce">
+<tt class="descclassname">ufunc.</tt><tt class="descname">reduce</tt><big>(</big><em>a</em>, <em>axis=0</em>, <em>dtype=None</em>, <em>out=None</em>, <em>skipna=False</em>, <em>keepdims=False</em><big>)</big><a class="headerlink" href="#numpy.ufunc.reduce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduces <em class="xref py py-obj">a</em>‘s dimension by one, by applying ufunc along one axis.</p>
+<p>Let <img alt="a.shape = (N_0, ..., N_i, ..., N_{M-1})" class="math" src="../../_images/math/5c922dbae40a451033bf8eaeb9968519b566a99c.png" style="vertical-align: -5px"/>.  Then
+<img alt="ufunc.reduce(a, axis=i)[k_0, ..,k_{i-1}, k_{i+1}, .., k_{M-1}]" class="math" src="../../_images/math/23e3c6a9d16bf0696349a05a5b4f23089e321048.png" style="vertical-align: -5px"/> =
+the result of iterating <em class="xref py py-obj">j</em> over <img alt="range(N_i)" class="math" src="../../_images/math/c9b56730b2636e3d39045052aa3c0ba21d192472.png" style="vertical-align: -5px"/>, cumulatively applying
+ufunc to each <img alt="a[k_0, ..,k_{i-1}, j, k_{i+1}, .., k_{M-1}]" class="math" src="../../_images/math/cadd8fc16a76cf5c21a66001cb4cd0a0bbc055b0.png" style="vertical-align: -5px"/>.
+For a one-dimensional array, reduce produces results equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">identity</span> <span class="c"># op = ufunc</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)):</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="k">return</span> <span class="n">r</span>
+</pre></div>
+</div>
+<p>For example, add.reduce() is equivalent to sum().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>a</strong> : array_like</p>
+<blockquote>
+<div><p>The array to act on.</p>
+</div></blockquote>
+<p><strong>axis</strong> : None or int or tuple of ints, optional</p>
+<blockquote>
+<div><p>Axis or axes along which a reduction is performed.
+The default (<em class="xref py py-obj">axis</em> = 0) is perform a reduction over the first
+dimension of the input array. <em class="xref py py-obj">axis</em> may be negative, in
+which case it counts from the last to the first axis.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 1.7.0.</span></p>
+<p>If this is <em class="xref py py-obj">None</em>, a reduction is performed over all the axes.
+If this is a tuple of ints, a reduction is performed on multiple
+axes, instead of a single axis or all the axes as before.</p>
+<p>For operations which are either not commutative or not associative,
+doing a reduction over multiple axes is not well-defined. The
+ufuncs do not currently raise an exception in this case, but will
+likely do so in the future.</p>
+</div></blockquote>
+<p><strong>dtype</strong> : data-type code, optional</p>
+<blockquote>
+<div><p>The type used to represent the intermediate results. Defaults
+to the data-type of the output array if this is provided, or
+the data-type of the input array if no output array is provided.</p>
+</div></blockquote>
+<p><strong>out</strong> : ndarray, optional</p>
+<blockquote>
+<div><p>A location into which the result is stored. If not provided, a
+freshly-allocated array is returned.</p>
+</div></blockquote>
+<p><strong>skipna</strong> : bool, optional</p>
+<blockquote>
+<div><p>If this is set to True, the reduction is done as if any NA elements
+were not counted in the array. The default, False, causes the
+NA values to propagate, so if any element in a set of elements
+being reduced is NA, the result will be NA.</p>
+</div></blockquote>
+<p><strong>keepdims</strong> : bool, optional</p>
+<blockquote>
+<div><p>If this is set to True, the axes which are reduced are left
+in the result as dimensions with size one. With this option,
+the result will broadcast correctly against the original <em class="xref py py-obj">arr</em>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>r</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The reduced array. If <em class="xref py py-obj">out</em> was supplied, <em class="xref py py-obj">r</em> is a reference to it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="o">.</span><span class="n">reduce</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="go">30</span>
+</pre></div>
+</div>
+<p>A multi-dimensional array example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span>
+<span class="go">array([[[0, 1],</span>
+<span class="go">        [2, 3]],</span>
+<span class="go">       [[4, 5],</span>
+<span class="go">        [6, 7]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">array([[ 4,  6],</span>
+<span class="go">       [ 8, 10]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="c"># confirm: default axis value is 0</span>
+<span class="go">array([[ 4,  6],</span>
+<span class="go">       [ 8, 10]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">array([[ 2,  4],</span>
+<span class="go">       [10, 12]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[ 1,  5],</span>
+<span class="go">       [ 9, 13]])</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.ufunc.identity.html" title="previous chapter">numpy.ufunc.identity</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.ufunc.accumulate.html" title="next chapter">numpy.ufunc.accumulate</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.ufunc.reduce.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.ufunc.reduce">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="numpy.ufunc.accumulate.html" title="numpy.ufunc.accumulate">next</a> |</li>
+<li class="right">
+<a href="numpy.ufunc.identity.html" title="numpy.ufunc.identity">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../ufuncs.html">Universal functions (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">ufunc</span></tt>)</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>

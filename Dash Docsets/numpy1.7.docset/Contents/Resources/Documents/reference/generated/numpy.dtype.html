@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.dtype — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="../routines.dtype.html" rel="up" title="Data type routines"/><link href="numpy.dtype.newbyteorder.html" rel="next" title="numpy.dtype.newbyteorder"/><link href="numpy.obj2sctype.html" rel="prev" title="numpy.obj2sctype"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="numpy.dtype.newbyteorder.html" title="numpy.dtype.newbyteorder">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="numpy.obj2sctype.html" title="numpy.obj2sctype">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a accesskey="U" href="../routines.dtype.html">Data type routines</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-dtype">
+<h1>numpy.dtype<a class="headerlink" href="#numpy-dtype" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<a name="//apple_ref/cpp/cl/numpy.dtype"></a><dt id="numpy.dtype">
+<em class="property">class </em><tt class="descclassname">numpy.</tt><tt class="descname">dtype</tt><a class="headerlink" href="#numpy.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a data type object.</p>
+<p>A numpy array is homogeneous, and contains elements described by a
+dtype object. A dtype object can be constructed from different
+combinations of fundamental numeric types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>obj</strong> :</p>
+<blockquote>
+<div><p>Object to be converted to a data type object.</p>
+</div></blockquote>
+<p><strong>align</strong> : bool, optional</p>
+<blockquote>
+<div><p>Add padding to the fields to match what a C compiler would output
+for a similar C-struct. Can be <tt class="xref docutils literal"><span class="pre">True</span></tt> only if <em class="xref py py-obj">obj</em> is a dictionary
+or a comma-separated string. If a struct dtype is being created,
+this also sets a sticky alignment flag <tt class="docutils literal"><span class="pre">isalignedstruct</span></tt>.</p>
+</div></blockquote>
+<p><strong>copy</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>Make a new copy of the data-type object. If <tt class="xref docutils literal"><span class="pre">False</span></tt>, the result
+may just be a reference to a built-in data-type object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="numpy.result_type.html#numpy.result_type" title="numpy.result_type"><tt class="xref py py-obj docutils literal"><span class="pre">result_type</span></tt></a></p>
+</div>
+<p class="rubric">Examples</p>
+<p>Using array-scalar type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+<span class="go">dtype('int16')</span>
+</pre></div>
+</div>
+<p>Record, one field name ‘f1’, containing int16:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s">'f1'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)])</span>
+<span class="go">dtype([('f1', '&lt;i2')])</span>
+</pre></div>
+</div>
+<p>Record, one field named ‘f1’, in itself containing a record with one field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s">'f1'</span><span class="p">,</span> <span class="p">[(</span><span class="s">'f1'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)])])</span>
+<span class="go">dtype([('f1', [('f1', '&lt;i2')])])</span>
+</pre></div>
+</div>
+<p>Record, two fields: the first field contains an unsigned int, the
+second an int32:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s">'f1'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint</span><span class="p">),</span> <span class="p">(</span><span class="s">'f2'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)])</span>
+<span class="go">dtype([('f1', '&lt;u4'), ('f2', '&lt;i4')])</span>
+</pre></div>
+</div>
+<p>Using array-protocol type strings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s">'a'</span><span class="p">,</span><span class="s">'f8'</span><span class="p">),(</span><span class="s">'b'</span><span class="p">,</span><span class="s">'S10'</span><span class="p">)])</span>
+<span class="go">dtype([('a', '&lt;f8'), ('b', '|S10')])</span>
+</pre></div>
+</div>
+<p>Using comma-separated field formats.  The shape is (2,3):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s">"i4, (2,3)f8"</span><span class="p">)</span>
+<span class="go">dtype([('f0', '&lt;i4'), ('f1', '&lt;f8', (2, 3))])</span>
+</pre></div>
+</div>
+<p>Using tuples.  <tt class="docutils literal"><span class="pre">int</span></tt> is a fixed type, 3 the field’s shape.  <tt class="docutils literal"><span class="pre">void</span></tt>
+is a flexible type, here of size 10:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s">'hello'</span><span class="p">,(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">,</span><span class="mi">3</span><span class="p">)),(</span><span class="s">'world'</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">,</span><span class="mi">10</span><span class="p">)])</span>
+<span class="go">dtype([('hello', '&lt;i4', 3), ('world', '|V10')])</span>
+</pre></div>
+</div>
+<p>Subdivide <tt class="docutils literal"><span class="pre">int16</span></tt> into 2 <tt class="docutils literal"><span class="pre">int8</span></tt>‘s, called x and y.  0 and 1 are
+the offsets in bytes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="p">{</span><span class="s">'x'</span><span class="p">:(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="s">'y'</span><span class="p">:(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span><span class="mi">1</span><span class="p">)}))</span>
+<span class="go">dtype(('&lt;i2', [('x', '|i1'), ('y', '|i1')]))</span>
+</pre></div>
+</div>
+<p>Using dictionaries.  Two fields named ‘gender’ and ‘age’:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">({</span><span class="s">'names'</span><span class="p">:[</span><span class="s">'gender'</span><span class="p">,</span><span class="s">'age'</span><span class="p">],</span> <span class="s">'formats'</span><span class="p">:[</span><span class="s">'S1'</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">]})</span>
+<span class="go">dtype([('gender', '|S1'), ('age', '|u1')])</span>
+</pre></div>
+</div>
+<p>Offsets in bytes, here 0 and 25:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">({</span><span class="s">'surname'</span><span class="p">:(</span><span class="s">'S25'</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="s">'age'</span><span class="p">:(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span><span class="mi">25</span><span class="p">)})</span>
+<span class="go">dtype([('surname', '|S25'), ('age', '|u1')])</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="numpy.dtype.newbyteorder.html#numpy.dtype.newbyteorder" title="numpy.dtype.newbyteorder"><tt class="xref py py-obj docutils literal"><span class="pre">newbyteorder</span></tt></a>([new_order])</td>
+<td>Return a new dtype with a different byte order.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.obj2sctype.html" title="previous chapter">numpy.obj2sctype</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.dtype.newbyteorder.html" title="next chapter">numpy.dtype.newbyteorder</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.dtype.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.dtype">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="numpy.dtype.newbyteorder.html" title="numpy.dtype.newbyteorder">next</a> |</li>
+<li class="right">
+<a href="numpy.obj2sctype.html" title="numpy.obj2sctype">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a href="../routines.dtype.html">Data type routines</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>

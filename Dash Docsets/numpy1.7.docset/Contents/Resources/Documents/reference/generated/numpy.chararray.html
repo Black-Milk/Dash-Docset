@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.chararray — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="../arrays.classes.html" rel="up" title="Standard array subclasses"/><link href="numpy.chararray.astype.html" rel="next" title="numpy.chararray.astype"/><link href="numpy.memmap.flush.html" rel="prev" title="numpy.memmap.flush"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="numpy.chararray.astype.html" title="numpy.chararray.astype">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="numpy.memmap.flush.html" title="numpy.memmap.flush">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../arrays.html">Array objects</a> »</li>
+<li><a accesskey="U" href="../arrays.classes.html">Standard array subclasses</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-chararray">
+<h1>numpy.chararray<a class="headerlink" href="#numpy-chararray" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<a name="//apple_ref/cpp/cl/numpy.chararray"></a><dt id="numpy.chararray">
+<em class="property">class </em><tt class="descclassname">numpy.</tt><tt class="descname">chararray</tt><a class="headerlink" href="#numpy.chararray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a convenient view on arrays of string and unicode values.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="#numpy.chararray" title="numpy.chararray"><tt class="xref py py-obj docutils literal"><span class="pre">chararray</span></tt></a> class exists for backwards compatibility with
+Numarray, it is not recommended for new development. Starting from numpy
+1.4, if one needs arrays of strings, it is recommended to use arrays of
+<a class="reference internal" href="numpy.dtype.html#numpy.dtype" title="numpy.dtype"><tt class="xref py py-obj docutils literal"><span class="pre">dtype</span></tt></a> <tt class="xref py py-obj docutils literal"><span class="pre">object_</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">string_</span></tt> or <tt class="xref py py-obj docutils literal"><span class="pre">unicode_</span></tt>, and use the free functions
+in the <tt class="xref py py-obj docutils literal"><span class="pre">numpy.char</span></tt> module for fast vectorized string operations.</p>
+</div>
+<p>Versus a regular Numpy array of type <a class="reference external" href="http://docs.python.org/dev/library/functions.html#str" title="(in Python v3.3)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a> or <tt class="xref py py-obj docutils literal"><span class="pre">unicode</span></tt>, this
+class adds the following functionality:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>values automatically have whitespace removed from the end
+when indexed</li>
+<li>comparison operators automatically remove whitespace from the
+end when comparing values</li>
+<li>vectorized string operations are provided as methods
+(e.g. <a class="reference internal" href="numpy.chararray.endswith.html#numpy.chararray.endswith" title="numpy.chararray.endswith"><tt class="xref py py-obj docutils literal"><span class="pre">endswith</span></tt></a>) and infix operators (e.g. <tt class="docutils literal"><span class="pre">"+",</span> <span class="pre">"*",</span> <span class="pre">"%"</span></tt>)</li>
+</ol>
+</div></blockquote>
+<p>chararrays should be created using <tt class="xref py py-obj docutils literal"><span class="pre">numpy.char.array</span></tt> or
+<tt class="xref py py-obj docutils literal"><span class="pre">numpy.char.asarray</span></tt>, rather than this constructor directly.</p>
+<p>This constructor creates the array, using <em class="xref py py-obj">buffer</em> (with <em class="xref py py-obj">offset</em>
+and <a class="reference internal" href="numpy.chararray.strides.html#numpy.chararray.strides" title="numpy.chararray.strides"><tt class="xref py py-obj docutils literal"><span class="pre">strides</span></tt></a>) if it is not <tt class="xref docutils literal"><span class="pre">None</span></tt>. If <em class="xref py py-obj">buffer</em> is <tt class="xref docutils literal"><span class="pre">None</span></tt>, then
+constructs a new array with <a class="reference internal" href="numpy.chararray.strides.html#numpy.chararray.strides" title="numpy.chararray.strides"><tt class="xref py py-obj docutils literal"><span class="pre">strides</span></tt></a> in “C order”, unless both
+<tt class="docutils literal"><span class="pre">len(shape)</span> <span class="pre">&gt;=</span> <span class="pre">2</span></tt> and <tt class="docutils literal"><span class="pre">order='Fortran'</span></tt>, in which case <a class="reference internal" href="numpy.chararray.strides.html#numpy.chararray.strides" title="numpy.chararray.strides"><tt class="xref py py-obj docutils literal"><span class="pre">strides</span></tt></a>
+is in “Fortran order”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>shape</strong> : tuple</p>
+<blockquote>
+<div><p>Shape of the array.</p>
+</div></blockquote>
+<p><strong>itemsize</strong> : int, optional</p>
+<blockquote>
+<div><p>Length of each array element, in number of characters. Default is 1.</p>
+</div></blockquote>
+<p><strong>unicode</strong> : bool, optional</p>
+<blockquote>
+<div><p>Are the array elements of type unicode (True) or string (False).
+Default is False.</p>
+</div></blockquote>
+<p><strong>buffer</strong> : int, optional</p>
+<blockquote>
+<div><p>Memory address of the start of the array data.  Default is None,
+in which case a new array is created.</p>
+</div></blockquote>
+<p><strong>offset</strong> : int, optional</p>
+<blockquote>
+<div><p>Fixed stride displacement from the beginning of an axis?
+Default is 0. Needs to be &gt;=0.</p>
+</div></blockquote>
+<p><strong>strides</strong> : array_like of ints, optional</p>
+<blockquote>
+<div><p>Strides for the array (see <a class="reference internal" href="numpy.ndarray.strides.html#numpy.ndarray.strides" title="numpy.ndarray.strides"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.strides</span></tt></a> for full description).
+Default is None.</p>
+</div></blockquote>
+<p><strong>order</strong> : {‘C’, ‘F’}, optional</p>
+<blockquote class="last">
+<div><p>The order in which the array data is stored in memory: ‘C’ -&gt;
+“row major” order (the default), ‘F’ -&gt; “column major”
+(Fortran) order.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">charar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">chararray</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">charar</span><span class="p">[:]</span> <span class="o">=</span> <span class="s">'a'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">charar</span>
+<span class="go">chararray([['a', 'a', 'a'],</span>
+<span class="go">       ['a', 'a', 'a'],</span>
+<span class="go">       ['a', 'a', 'a']],</span>
+<span class="go">      dtype='|S1')</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">charar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">chararray</span><span class="p">(</span><span class="n">charar</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">itemsize</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">charar</span><span class="p">[:]</span> <span class="o">=</span> <span class="s">'abc'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">charar</span>
+<span class="go">chararray([['abc', 'abc', 'abc'],</span>
+<span class="go">       ['abc', 'abc', 'abc'],</span>
+<span class="go">       ['abc', 'abc', 'abc']],</span>
+<span class="go">      dtype='|S5')</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr><td><a class="reference internal" href="numpy.chararray.astype.html#numpy.chararray.astype" title="numpy.chararray.astype"><tt class="xref py py-obj docutils literal"><span class="pre">astype</span></tt></a>(dtype[, order, casting, subok, copy])</td>
+<td>Copy of the array, cast to a specified type.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.argsort.html#numpy.chararray.argsort" title="numpy.chararray.argsort"><tt class="xref py py-obj docutils literal"><span class="pre">argsort</span></tt></a>([axis, kind, order])</td>
+<td></td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.copy.html#numpy.chararray.copy" title="numpy.chararray.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>([order, maskna])</td>
+<td>Return a copy of the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.count.html#numpy.chararray.count" title="numpy.chararray.count"><tt class="xref py py-obj docutils literal"><span class="pre">count</span></tt></a>(sub[, start, end])</td>
+<td>Returns an array with the number of non-overlapping occurrences of substring <em class="xref py py-obj">sub</em> in the range [<em class="xref py py-obj">start</em>, <em class="xref py py-obj">end</em>].</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.decode.html#numpy.chararray.decode" title="numpy.chararray.decode"><tt class="xref py py-obj docutils literal"><span class="pre">decode</span></tt></a>([encoding, errors])</td>
+<td>Calls <tt class="xref py py-obj docutils literal"><span class="pre">str.decode</span></tt> element-wise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.dump.html#numpy.chararray.dump" title="numpy.chararray.dump"><tt class="xref py py-obj docutils literal"><span class="pre">dump</span></tt></a>(file)</td>
+<td>Dump a pickle of the array to the specified file.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.dumps.html#numpy.chararray.dumps" title="numpy.chararray.dumps"><tt class="xref py py-obj docutils literal"><span class="pre">dumps</span></tt></a>()</td>
+<td>Returns the pickle of the array as a string.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.encode.html#numpy.chararray.encode" title="numpy.chararray.encode"><tt class="xref py py-obj docutils literal"><span class="pre">encode</span></tt></a>([encoding, errors])</td>
+<td>Calls <a class="reference external" href="http://docs.python.org/dev/library/stdtypes.html#str.encode" title="(in Python v3.3)"><tt class="xref py py-obj docutils literal"><span class="pre">str.encode</span></tt></a> element-wise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.endswith.html#numpy.chararray.endswith" title="numpy.chararray.endswith"><tt class="xref py py-obj docutils literal"><span class="pre">endswith</span></tt></a>(suffix[, start, end])</td>
+<td>Returns a boolean array which is <em class="xref py py-obj">True</em> where the string element</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.expandtabs.html#numpy.chararray.expandtabs" title="numpy.chararray.expandtabs"><tt class="xref py py-obj docutils literal"><span class="pre">expandtabs</span></tt></a>([tabsize])</td>
+<td>Return a copy of each string element where all tab characters are replaced by one or more spaces.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.fill.html#numpy.chararray.fill" title="numpy.chararray.fill"><tt class="xref py py-obj docutils literal"><span class="pre">fill</span></tt></a>(value)</td>
+<td>Fill the array with a scalar value.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.find.html#numpy.chararray.find" title="numpy.chararray.find"><tt class="xref py py-obj docutils literal"><span class="pre">find</span></tt></a>(sub[, start, end])</td>
+<td>For each element, return the lowest index in the string where substring <em class="xref py py-obj">sub</em> is found.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.flatten.html#numpy.chararray.flatten" title="numpy.chararray.flatten"><tt class="xref py py-obj docutils literal"><span class="pre">flatten</span></tt></a>([order])</td>
+<td>Return a copy of the array collapsed into one dimension.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.getfield.html#numpy.chararray.getfield" title="numpy.chararray.getfield"><tt class="xref py py-obj docutils literal"><span class="pre">getfield</span></tt></a>(dtype[, offset])</td>
+<td>Returns a field of the given array as a certain type.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.index.html#numpy.chararray.index" title="numpy.chararray.index"><tt class="xref py py-obj docutils literal"><span class="pre">index</span></tt></a>(sub[, start, end])</td>
+<td>Like <a class="reference internal" href="numpy.chararray.find.html#numpy.chararray.find" title="numpy.chararray.find"><tt class="xref py py-obj docutils literal"><span class="pre">find</span></tt></a>, but raises <em class="xref py py-obj">ValueError</em> when the substring is not found.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.isalnum.html#numpy.chararray.isalnum" title="numpy.chararray.isalnum"><tt class="xref py py-obj docutils literal"><span class="pre">isalnum</span></tt></a>()</td>
+<td>Returns true for each element if all characters in the string are alphanumeric and there is at least one character, false otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.isalpha.html#numpy.chararray.isalpha" title="numpy.chararray.isalpha"><tt class="xref py py-obj docutils literal"><span class="pre">isalpha</span></tt></a>()</td>
+<td>Returns true for each element if all characters in the string are alphabetic and there is at least one character, false otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.isdecimal.html#numpy.chararray.isdecimal" title="numpy.chararray.isdecimal"><tt class="xref py py-obj docutils literal"><span class="pre">isdecimal</span></tt></a>()</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return True if there are only</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.isdigit.html#numpy.chararray.isdigit" title="numpy.chararray.isdigit"><tt class="xref py py-obj docutils literal"><span class="pre">isdigit</span></tt></a>()</td>
+<td>Returns true for each element if all characters in the string are digits and there is at least one character, false otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.islower.html#numpy.chararray.islower" title="numpy.chararray.islower"><tt class="xref py py-obj docutils literal"><span class="pre">islower</span></tt></a>()</td>
+<td>Returns true for each element if all cased characters in the string are lowercase and there is at least one cased character, false otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.isnumeric.html#numpy.chararray.isnumeric" title="numpy.chararray.isnumeric"><tt class="xref py py-obj docutils literal"><span class="pre">isnumeric</span></tt></a>()</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return True if there are only</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.isspace.html#numpy.chararray.isspace" title="numpy.chararray.isspace"><tt class="xref py py-obj docutils literal"><span class="pre">isspace</span></tt></a>()</td>
+<td>Returns true for each element if there are only whitespace characters in the string and there is at least one character, false otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.istitle.html#numpy.chararray.istitle" title="numpy.chararray.istitle"><tt class="xref py py-obj docutils literal"><span class="pre">istitle</span></tt></a>()</td>
+<td>Returns true for each element if the element is a titlecased string and there is at least one character, false otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.isupper.html#numpy.chararray.isupper" title="numpy.chararray.isupper"><tt class="xref py py-obj docutils literal"><span class="pre">isupper</span></tt></a>()</td>
+<td>Returns true for each element if all cased characters in the string are uppercase and there is at least one character, false otherwise.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.item.html#numpy.chararray.item" title="numpy.chararray.item"><tt class="xref py py-obj docutils literal"><span class="pre">item</span></tt></a>(*args)</td>
+<td>Copy an element of an array to a standard Python scalar and return it.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.join.html#numpy.chararray.join" title="numpy.chararray.join"><tt class="xref py py-obj docutils literal"><span class="pre">join</span></tt></a>(seq)</td>
+<td>Return a string which is the concatenation of the strings in the sequence <em class="xref py py-obj">seq</em>.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.ljust.html#numpy.chararray.ljust" title="numpy.chararray.ljust"><tt class="xref py py-obj docutils literal"><span class="pre">ljust</span></tt></a>(width[, fillchar])</td>
+<td>Return an array with the elements of <em class="xref py py-obj">self</em> left-justified in a string of length <em class="xref py py-obj">width</em>.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.lower.html#numpy.chararray.lower" title="numpy.chararray.lower"><tt class="xref py py-obj docutils literal"><span class="pre">lower</span></tt></a>()</td>
+<td>Return an array with the elements of <em class="xref py py-obj">self</em> converted to lowercase.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.lstrip.html#numpy.chararray.lstrip" title="numpy.chararray.lstrip"><tt class="xref py py-obj docutils literal"><span class="pre">lstrip</span></tt></a>([chars])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a copy with the leading characters removed.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.nonzero.html#numpy.chararray.nonzero" title="numpy.chararray.nonzero"><tt class="xref py py-obj docutils literal"><span class="pre">nonzero</span></tt></a>()</td>
+<td>Return the indices of the elements that are non-zero.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.put.html#numpy.chararray.put" title="numpy.chararray.put"><tt class="xref py py-obj docutils literal"><span class="pre">put</span></tt></a>(indices, values[, mode])</td>
+<td>Set <tt class="docutils literal"><span class="pre">a.flat[n]</span> <span class="pre">=</span> <span class="pre">values[n]</span></tt> for all <em class="xref py py-obj">n</em> in indices.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.ravel.html#numpy.chararray.ravel" title="numpy.chararray.ravel"><tt class="xref py py-obj docutils literal"><span class="pre">ravel</span></tt></a>([order])</td>
+<td>Return a flattened array.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.repeat.html#numpy.chararray.repeat" title="numpy.chararray.repeat"><tt class="xref py py-obj docutils literal"><span class="pre">repeat</span></tt></a>(repeats[, axis])</td>
+<td>Repeat elements of an array.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.replace.html#numpy.chararray.replace" title="numpy.chararray.replace"><tt class="xref py py-obj docutils literal"><span class="pre">replace</span></tt></a>(old, new[, count])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a copy of the string with all occurrences of substring <em class="xref py py-obj">old</em> replaced by <tt class="xref py py-obj docutils literal"><span class="pre">new</span></tt>.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.reshape.html#numpy.chararray.reshape" title="numpy.chararray.reshape"><tt class="xref py py-obj docutils literal"><span class="pre">reshape</span></tt></a>(shape[, order])</td>
+<td>Returns an array containing the same data with a new shape.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.resize.html#numpy.chararray.resize" title="numpy.chararray.resize"><tt class="xref py py-obj docutils literal"><span class="pre">resize</span></tt></a>(new_shape[, refcheck])</td>
+<td>Change shape and size of array in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.rfind.html#numpy.chararray.rfind" title="numpy.chararray.rfind"><tt class="xref py py-obj docutils literal"><span class="pre">rfind</span></tt></a>(sub[, start, end])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return the highest index in the string where substring <em class="xref py py-obj">sub</em> is found, such that <em class="xref py py-obj">sub</em> is contained within [<em class="xref py py-obj">start</em>, <em class="xref py py-obj">end</em>].</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.rindex.html#numpy.chararray.rindex" title="numpy.chararray.rindex"><tt class="xref py py-obj docutils literal"><span class="pre">rindex</span></tt></a>(sub[, start, end])</td>
+<td>Like <a class="reference internal" href="numpy.chararray.rfind.html#numpy.chararray.rfind" title="numpy.chararray.rfind"><tt class="xref py py-obj docutils literal"><span class="pre">rfind</span></tt></a>, but raises <em class="xref py py-obj">ValueError</em> when the substring <em class="xref py py-obj">sub</em> is</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.rjust.html#numpy.chararray.rjust" title="numpy.chararray.rjust"><tt class="xref py py-obj docutils literal"><span class="pre">rjust</span></tt></a>(width[, fillchar])</td>
+<td>Return an array with the elements of <em class="xref py py-obj">self</em> right-justified in a string of length <em class="xref py py-obj">width</em>.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.rsplit.html#numpy.chararray.rsplit" title="numpy.chararray.rsplit"><tt class="xref py py-obj docutils literal"><span class="pre">rsplit</span></tt></a>([sep, maxsplit])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a list of the words in the string, using <em class="xref py py-obj">sep</em> as the delimiter string.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.rstrip.html#numpy.chararray.rstrip" title="numpy.chararray.rstrip"><tt class="xref py py-obj docutils literal"><span class="pre">rstrip</span></tt></a>([chars])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a copy with the trailing characters removed.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.searchsorted.html#numpy.chararray.searchsorted" title="numpy.chararray.searchsorted"><tt class="xref py py-obj docutils literal"><span class="pre">searchsorted</span></tt></a>(v[, side])</td>
+<td>Find indices where elements of v should be inserted in a to maintain order.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.setfield.html#numpy.chararray.setfield" title="numpy.chararray.setfield"><tt class="xref py py-obj docutils literal"><span class="pre">setfield</span></tt></a>(val, dtype[, offset])</td>
+<td>Put a value into a specified place in a field defined by a data-type.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.setflags.html#numpy.chararray.setflags" title="numpy.chararray.setflags"><tt class="xref py py-obj docutils literal"><span class="pre">setflags</span></tt></a>([write, align, uic])</td>
+<td>Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.sort.html#numpy.chararray.sort" title="numpy.chararray.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([axis, kind, order])</td>
+<td>Sort an array, in-place.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.split.html#numpy.chararray.split" title="numpy.chararray.split"><tt class="xref py py-obj docutils literal"><span class="pre">split</span></tt></a>([sep, maxsplit])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a list of the words in the string, using <em class="xref py py-obj">sep</em> as the delimiter string.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.splitlines.html#numpy.chararray.splitlines" title="numpy.chararray.splitlines"><tt class="xref py py-obj docutils literal"><span class="pre">splitlines</span></tt></a>([keepends])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a list of the lines in the element, breaking at line boundaries.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.squeeze.html#numpy.chararray.squeeze" title="numpy.chararray.squeeze"><tt class="xref py py-obj docutils literal"><span class="pre">squeeze</span></tt></a>([axis])</td>
+<td>Remove single-dimensional entries from the shape of <em class="xref py py-obj">a</em>.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.startswith.html#numpy.chararray.startswith" title="numpy.chararray.startswith"><tt class="xref py py-obj docutils literal"><span class="pre">startswith</span></tt></a>(prefix[, start, end])</td>
+<td>Returns a boolean array which is <em class="xref py py-obj">True</em> where the string element</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.strip.html#numpy.chararray.strip" title="numpy.chararray.strip"><tt class="xref py py-obj docutils literal"><span class="pre">strip</span></tt></a>([chars])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a copy with the leading and trailing characters removed.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.swapaxes.html#numpy.chararray.swapaxes" title="numpy.chararray.swapaxes"><tt class="xref py py-obj docutils literal"><span class="pre">swapaxes</span></tt></a>(axis1, axis2)</td>
+<td>Return a view of the array with <em class="xref py py-obj">axis1</em> and <em class="xref py py-obj">axis2</em> interchanged.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.swapcase.html#numpy.chararray.swapcase" title="numpy.chararray.swapcase"><tt class="xref py py-obj docutils literal"><span class="pre">swapcase</span></tt></a>()</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a copy of the string with uppercase characters converted to lowercase and vice versa.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.take.html#numpy.chararray.take" title="numpy.chararray.take"><tt class="xref py py-obj docutils literal"><span class="pre">take</span></tt></a>(indices[, axis, out, mode])</td>
+<td>Return an array formed from the elements of <em class="xref py py-obj">a</em> at the given indices.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.title.html#numpy.chararray.title" title="numpy.chararray.title"><tt class="xref py py-obj docutils literal"><span class="pre">title</span></tt></a>()</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a titlecased version of the string: words start with uppercase characters, all remaining cased characters are lowercase.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.tofile.html#numpy.chararray.tofile" title="numpy.chararray.tofile"><tt class="xref py py-obj docutils literal"><span class="pre">tofile</span></tt></a>(fid[, sep, format])</td>
+<td>Write array to a file as text or binary (default).</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.tolist.html#numpy.chararray.tolist" title="numpy.chararray.tolist"><tt class="xref py py-obj docutils literal"><span class="pre">tolist</span></tt></a>()</td>
+<td>Return the array as a (possibly nested) list.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.tostring.html#numpy.chararray.tostring" title="numpy.chararray.tostring"><tt class="xref py py-obj docutils literal"><span class="pre">tostring</span></tt></a>([order])</td>
+<td>Construct a Python string containing the raw data bytes in the array.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.translate.html#numpy.chararray.translate" title="numpy.chararray.translate"><tt class="xref py py-obj docutils literal"><span class="pre">translate</span></tt></a>(table[, deletechars])</td>
+<td>For each element in <em class="xref py py-obj">self</em>, return a copy of the string where all characters occurring in the optional argument <em class="xref py py-obj">deletechars</em> are removed, and the remaining characters have been mapped through the given translation table.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.transpose.html#numpy.chararray.transpose" title="numpy.chararray.transpose"><tt class="xref py py-obj docutils literal"><span class="pre">transpose</span></tt></a>(*axes)</td>
+<td>Returns a view of the array with axes transposed.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.upper.html#numpy.chararray.upper" title="numpy.chararray.upper"><tt class="xref py py-obj docutils literal"><span class="pre">upper</span></tt></a>()</td>
+<td>Return an array with the elements of <em class="xref py py-obj">self</em> converted to uppercase.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.view.html#numpy.chararray.view" title="numpy.chararray.view"><tt class="xref py py-obj docutils literal"><span class="pre">view</span></tt></a>([dtype, type])</td>
+<td>New view of array with the same data.</td>
+</tr>
+<tr><td><a class="reference internal" href="numpy.chararray.zfill.html#numpy.chararray.zfill" title="numpy.chararray.zfill"><tt class="xref py py-obj docutils literal"><span class="pre">zfill</span></tt></a>(width)</td>
+<td>Return the numeric string left-filled with zeros in a string of length <em class="xref py py-obj">width</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.memmap.flush.html" title="previous chapter">numpy.memmap.flush</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.chararray.astype.html" title="next chapter">numpy.chararray.astype</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.chararray.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.chararray">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="numpy.chararray.astype.html" title="numpy.chararray.astype">next</a> |</li>
+<li class="right">
+<a href="numpy.memmap.flush.html" title="numpy.memmap.flush">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../arrays.html">Array objects</a> »</li>
+<li><a href="../arrays.classes.html">Standard array subclasses</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>

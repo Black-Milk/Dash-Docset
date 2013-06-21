@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.loadtxt — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="../routines.io.html" rel="up" title="Input and output"/><link href="numpy.savetxt.html" rel="next" title="numpy.savetxt"/><link href="numpy.savez.html" rel="prev" title="numpy.savez"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="numpy.savetxt.html" title="numpy.savetxt">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="numpy.savez.html" title="numpy.savez">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a accesskey="U" href="../routines.io.html">Input and output</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-loadtxt">
+<h1>numpy.loadtxt<a class="headerlink" href="#numpy-loadtxt" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<a name="//apple_ref/cpp/func/numpy.loadtxt"></a><dt id="numpy.loadtxt">
+<tt class="descclassname">numpy.</tt><tt class="descname">loadtxt</tt><big>(</big><em>fname</em>, <em>dtype=&lt;type 'float'&gt;</em>, <em>comments='#'</em>, <em>delimiter=None</em>, <em>converters=None</em>, <em>skiprows=0</em>, <em>usecols=None</em>, <em>unpack=False</em>, <em>ndmin=0</em><big>)</big><a class="headerlink" href="#numpy.loadtxt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load data from a text file.</p>
+<p>Each row in the text file must have the same number of values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>fname</strong> : file or str</p>
+<blockquote>
+<div><p>File, filename, or generator to read.  If the filename extension is
+<tt class="docutils literal"><span class="pre">.gz</span></tt> or <tt class="docutils literal"><span class="pre">.bz2</span></tt>, the file is first decompressed. Note that
+generators should return byte strings for Python 3k.</p>
+</div></blockquote>
+<p><strong>dtype</strong> : data-type, optional</p>
+<blockquote>
+<div><p>Data-type of the resulting array; default: float.  If this is a
+record data-type, the resulting array will be 1-dimensional, and
+each row will be interpreted as an element of the array.  In this
+case, the number of columns used must match the number of fields in
+the data-type.</p>
+</div></blockquote>
+<p><strong>comments</strong> : str, optional</p>
+<blockquote>
+<div><p>The character used to indicate the start of a comment;
+default: ‘#’.</p>
+</div></blockquote>
+<p><strong>delimiter</strong> : str, optional</p>
+<blockquote>
+<div><p>The string used to separate values.  By default, this is any
+whitespace.</p>
+</div></blockquote>
+<p><strong>converters</strong> : dict, optional</p>
+<blockquote>
+<div><p>A dictionary mapping column number to a function that will convert
+that column to a float.  E.g., if column 0 is a date string:
+<tt class="docutils literal"><span class="pre">converters</span> <span class="pre">=</span> <span class="pre">{0:</span> <span class="pre">datestr2num}</span></tt>.  Converters can also be used to
+provide a default value for missing data (but see also <a class="reference internal" href="numpy.genfromtxt.html#numpy.genfromtxt" title="numpy.genfromtxt"><tt class="xref py py-obj docutils literal"><span class="pre">genfromtxt</span></tt></a>):
+<tt class="docutils literal"><span class="pre">converters</span> <span class="pre">=</span> <span class="pre">{3:</span> <span class="pre">lambda</span> <span class="pre">s:</span> <span class="pre">float(s.strip()</span> <span class="pre">or</span> <span class="pre">0)}</span></tt>.  Default: None.</p>
+</div></blockquote>
+<p><strong>skiprows</strong> : int, optional</p>
+<blockquote>
+<div><p>Skip the first <em class="xref py py-obj">skiprows</em> lines; default: 0.</p>
+</div></blockquote>
+<p><strong>usecols</strong> : sequence, optional</p>
+<blockquote>
+<div><p>Which columns to read, with 0 being the first.  For example,
+<tt class="docutils literal"><span class="pre">usecols</span> <span class="pre">=</span> <span class="pre">(1,4,5)</span></tt> will extract the 2nd, 5th and 6th columns.
+The default, None, results in all columns being read.</p>
+</div></blockquote>
+<p><strong>unpack</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, the returned array is transposed, so that arguments may be
+unpacked using <tt class="docutils literal"><span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z</span> <span class="pre">=</span> <span class="pre">loadtxt(...)</span></tt>.  When used with a record
+data-type, arrays are returned for each field.  Default is False.</p>
+</div></blockquote>
+<p><strong>ndmin</strong> : int, optional</p>
+<blockquote>
+<div><p>The returned array will have at least <em class="xref py py-obj">ndmin</em> dimensions.
+Otherwise mono-dimensional axes will be squeezed.
+Legal values: 0 (default), 1 or 2.
+.. versionadded:: 1.6.0</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Data read from the text file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p><a class="reference internal" href="numpy.load.html#numpy.load" title="numpy.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>, <a class="reference internal" href="numpy.fromstring.html#numpy.fromstring" title="numpy.fromstring"><tt class="xref py py-obj docutils literal"><span class="pre">fromstring</span></tt></a>, <a class="reference internal" href="numpy.fromregex.html#numpy.fromregex" title="numpy.fromregex"><tt class="xref py py-obj docutils literal"><span class="pre">fromregex</span></tt></a></p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="numpy.genfromtxt.html#numpy.genfromtxt" title="numpy.genfromtxt"><tt class="xref py py-obj docutils literal"><span class="pre">genfromtxt</span></tt></a></dt>
+<dd>Load data with missing values handled as specified.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">scipy.io.loadmat</span></tt></dt>
+<dd>reads MATLAB data files</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>This function aims to be a fast reader for simply formatted files.  The
+<a class="reference internal" href="numpy.genfromtxt.html#numpy.genfromtxt" title="numpy.genfromtxt"><tt class="xref py py-obj docutils literal"><span class="pre">genfromtxt</span></tt></a> function provides more sophisticated handling of, e.g.,
+lines with missing values.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>   <span class="c"># StringIO behaves like a file object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="s">"0 1</span><span class="se">\n</span><span class="s">2 3"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">array([[ 0.,  1.],</span>
+<span class="go">       [ 2.,  3.]])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="s">"M 21 72</span><span class="se">\n</span><span class="s">F 35 58"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s">'names'</span><span class="p">:</span> <span class="p">(</span><span class="s">'gender'</span><span class="p">,</span> <span class="s">'age'</span><span class="p">,</span> <span class="s">'weight'</span><span class="p">),</span>
+<span class="gp">... </span>                     <span class="s">'formats'</span><span class="p">:</span> <span class="p">(</span><span class="s">'S1'</span><span class="p">,</span> <span class="s">'i4'</span><span class="p">,</span> <span class="s">'f4'</span><span class="p">)})</span>
+<span class="go">array([('M', 21, 72.0), ('F', 35, 58.0)],</span>
+<span class="go">      dtype=[('gender', '|S1'), ('age', '&lt;i4'), ('weight', '&lt;f4')])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="s">"1,0,2</span><span class="se">\n</span><span class="s">3,0,4"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">','</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">unpack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([ 1.,  3.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
+<span class="go">array([ 2.,  4.])</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.savez.html" title="previous chapter">numpy.savez</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.savetxt.html" title="next chapter">numpy.savetxt</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.loadtxt.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.loadtxt">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="numpy.savetxt.html" title="numpy.savetxt">next</a> |</li>
+<li class="right">
+<a href="numpy.savez.html" title="numpy.savez">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a href="../routines.io.html">Input and output</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>

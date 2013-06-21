@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>Array creation — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../about.html" rel="author" title="About these documents"/><link href="../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="basics.html" rel="up" title="Numpy basics"/><link href="basics.io.html" rel="next" title="I/O with Numpy"/><link href="basics.types.html" rel="prev" title="Data types"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="basics.io.html" title="I/O with Numpy">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="basics.types.html" title="Data types">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy User Guide</a> »</li>
+<li><a accesskey="U" href="basics.html">Numpy basics</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="array-creation">
+<span id="arrays-creation"></span><h1>Array creation<a class="headerlink" href="#array-creation" title="Permalink to this headline">¶</a></h1>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../reference/routines.array-creation.html#routines-array-creation"><em>Array creation routines</em></a></p>
+</div>
+<span class="target" id="module-numpy.doc.creation"></span><div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>There are 5 general mechanisms for creating arrays:</p>
+<ol class="arabic simple">
+<li>Conversion from other Python structures (e.g., lists, tuples)</li>
+<li>Intrinsic numpy array array creation objects (e.g., arange, ones, zeros,
+etc.)</li>
+<li>Reading arrays from disk, either from standard or custom formats</li>
+<li>Creating arrays from raw bytes through the use of strings or buffers</li>
+<li>Use of special library functions (e.g., random)</li>
+</ol>
+<p>This section will not cover means of replicating, joining, or otherwise
+expanding or mutating existing arrays. Nor will it cover creating object
+arrays or record arrays. Both of those are covered in their own sections.</p>
+</div>
+<div class="section" id="converting-python-array-like-objects-to-numpy-arrays">
+<h2>Converting Python array_like Objects to Numpy Arrays<a class="headerlink" href="#converting-python-array-like-objects-to-numpy-arrays" title="Permalink to this headline">¶</a></h2>
+<p>In general, numerical data arranged in an array-like structure in Python can
+be converted to arrays through the use of the array() function. The most
+obvious examples are lists and tuples. See the documentation for array() for
+details for its use. Some objects may support the array-protocol and allow
+conversion to arrays this way. A simple way to find out if the object can be
+converted to a numpy array using array() is simply to try it interactively and
+see if it works! (The Python Way).</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mf">2.0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span><span class="mf">3.</span><span class="p">)])</span> <span class="c"># note mix of tuple and lists,</span>
+<span class="go">    and types</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">1.</span><span class="o">+</span><span class="mf">0.</span><span class="n">j</span><span class="p">,</span> <span class="mf">2.</span><span class="o">+</span><span class="mf">0.</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span> <span class="mf">0.</span><span class="o">+</span><span class="mf">0.</span><span class="n">j</span><span class="p">,</span> <span class="mf">0.</span><span class="o">+</span><span class="mf">0.</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span> <span class="mf">1.</span><span class="o">+</span><span class="mf">1.</span><span class="n">j</span><span class="p">,</span> <span class="mf">3.</span><span class="o">+</span><span class="mf">0.</span><span class="n">j</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="intrinsic-numpy-array-creation">
+<h2>Intrinsic Numpy Array Creation<a class="headerlink" href="#intrinsic-numpy-array-creation" title="Permalink to this headline">¶</a></h2>
+<p>Numpy has built-in functions for creating arrays from scratch:</p>
+<p>zeros(shape) will create an array filled with 0 values with the specified
+shape. The default dtype is float64.</p>
+<p><tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">np.zeros((2,</span> <span class="pre">3))</span>
+<span class="pre">array([[</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.]])</span></tt></p>
+<p>ones(shape) will create an array filled with 1 values. It is identical to
+zeros in all other respects.</p>
+<p>arange() will create arrays with regularly incrementing values. Check the
+docstring for complete information on the various ways it can be used. A few
+examples will be given here:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="go">array([ 2., 3., 4., 5., 6., 7., 8., 9.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="go">array([ 2. , 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9])</span>
+</pre></div>
+</div>
+<p>Note that there are some subtleties regarding the last usage that the user
+should be aware of that are described in the arange docstring.</p>
+<p>linspace() will create arrays with a specified number of elements, and
+spaced equally between the specified beginning and end values. For
+example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">array([ 1. ,  1.6,  2.2,  2.8,  3.4,  4. ])</span>
+</pre></div>
+</div>
+<p>The advantage of this creation function is that one can guarantee the
+number of elements and the starting and end point, which arange()
+generally will not do for arbitrary start, stop, and step values.</p>
+<p>indices() will create a set of arrays (stacked as a one-higher dimensioned
+array), one per dimension with each representing variation in that dimension.
+An example illustrates much better than a verbal description:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">indices</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="go">array([[[0, 0, 0], [1, 1, 1], [2, 2, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]]])</span>
+</pre></div>
+</div>
+<p>This is particularly useful for evaluating functions of multiple dimensions on
+a regular grid.</p>
+</div>
+<div class="section" id="reading-arrays-from-disk">
+<h2>Reading Arrays From Disk<a class="headerlink" href="#reading-arrays-from-disk" title="Permalink to this headline">¶</a></h2>
+<p>This is presumably the most common case of large array creation. The details,
+of course, depend greatly on the format of data on disk and so this section
+can only give general pointers on how to handle various formats.</p>
+<div class="section" id="standard-binary-formats">
+<h3>Standard Binary Formats<a class="headerlink" href="#standard-binary-formats" title="Permalink to this headline">¶</a></h3>
+<p>Various fields have standard formats for array data. The following lists the
+ones with known python libraries to read them and return numpy arrays (there
+may be others for which it is possible to read and convert to numpy arrays so
+check the last section as well)</p>
+<div class="highlight-python"><pre>HDF5: PyTables
+FITS: PyFITS</pre>
+</div>
+<p>Examples of formats that cannot be read directly but for which it is not hard
+to convert are libraries like PIL (able to read and write many image formats
+such as jpg, png, etc).</p>
+</div>
+<div class="section" id="common-ascii-formats">
+<h3>Common ASCII Formats<a class="headerlink" href="#common-ascii-formats" title="Permalink to this headline">¶</a></h3>
+<p>Comma Separated Value files (CSV) are widely used (and an export and import
+option for programs like Excel). There are a number of ways of reading these
+files in Python. There are CSV functions in Python and functions in pylab
+(part of matplotlib).</p>
+<p>More generic ascii files can be read using the io package in scipy.</p>
+</div>
+<div class="section" id="custom-binary-formats">
+<h3>Custom Binary Formats<a class="headerlink" href="#custom-binary-formats" title="Permalink to this headline">¶</a></h3>
+<p>There are a variety of approaches one can use. If the file has a relatively
+simple format then one can write a simple I/O library and use the numpy
+fromfile() function and .tofile() method to read and write numpy arrays
+directly (mind your byteorder though!) If a good C or C++ library exists that
+read the data, one can wrap that library with a variety of techniques though
+that certainly is much more work and requires significantly more advanced
+knowledge to interface with C or C++.</p>
+</div>
+<div class="section" id="use-of-special-libraries">
+<h3>Use of Special Libraries<a class="headerlink" href="#use-of-special-libraries" title="Permalink to this headline">¶</a></h3>
+<p>There are libraries that can be used to generate arrays for special purposes
+and it isn’t possible to enumerate all of them. The most common uses are use
+of the many array generation functions in random that can generate arrays of
+random values, and some utility functions to generate special matrices (e.g.
+diagonal).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../contents.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h3><a href="../contents.html">Table Of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Array creation</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#converting-python-array-like-objects-to-numpy-arrays">Converting Python array_like Objects to Numpy Arrays</a></li>
+<li><a class="reference internal" href="#intrinsic-numpy-array-creation">Intrinsic Numpy Array Creation</a></li>
+<li><a class="reference internal" href="#reading-arrays-from-disk">Reading Arrays From Disk</a><ul>
+<li><a class="reference internal" href="#standard-binary-formats">Standard Binary Formats</a></li>
+<li><a class="reference internal" href="#common-ascii-formats">Common ASCII Formats</a></li>
+<li><a class="reference internal" href="#custom-binary-formats">Custom Binary Formats</a></li>
+<li><a class="reference internal" href="#use-of-special-libraries">Use of Special Libraries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Previous topic</h4>
+<p class="topless"><a href="basics.types.html" title="previous chapter">Data types</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="basics.io.html" title="next chapter">I/O with Numpy</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/user/basics.creation.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy-docs/user/basics.creation.rst">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="basics.io.html" title="I/O with Numpy">next</a> |</li>
+<li class="right">
+<a href="basics.types.html" title="Data types">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy User Guide</a> »</li>
+<li><a href="basics.html">Numpy basics</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+<div style="display:none;"><a name="#"></a><h3 class="tasks">TOC</h3><ul class="tooltip"><li class="tooltip"><a href="#">Array creation</a></li><li class="tooltip"><a href="#introduction">Introduction</a></li><li class="tooltip"><a href="#converting-python-array-like-objects-to-numpy-arrays">Converting Python array_like Objects to Numpy Arrays</a></li><li class="tooltip"><a href="#intrinsic-numpy-array-creation">Intrinsic Numpy Array Creation</a></li><li class="tooltip"><a href="#reading-arrays-from-disk">Reading Arrays From Disk</a></li><li class="tooltip"><a href="#standard-binary-formats">Standard Binary Formats</a></li><li class="tooltip"><a href="#common-ascii-formats">Common ASCII Formats</a></li><li class="tooltip"><a href="#custom-binary-formats">Custom Binary Formats</a></li><li class="tooltip"><a href="#use-of-special-libraries">Use of Special Libraries</a></li></ul></div></body></html>

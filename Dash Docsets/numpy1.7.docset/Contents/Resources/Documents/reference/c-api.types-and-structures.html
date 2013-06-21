@@ -1,0 +1,1403 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>Python Types and C-Structures — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../about.html" rel="author" title="About these documents"/><link href="../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="c-api.html" rel="up" title="Numpy C-API"/><link href="c-api.config.html" rel="next" title="System configuration"/><link href="c-api.html" rel="prev" title="Numpy C-API"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="c-api.config.html" title="System configuration">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="c-api.html" title="Numpy C-API">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy Reference</a> »</li>
+<li><a accesskey="U" href="c-api.html">Numpy C-API</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="python-types-and-c-structures">
+<h1>Python Types and C-Structures<a class="headerlink" href="#python-types-and-c-structures" title="Permalink to this headline">¶</a></h1>
+<p>Several new types are defined in the C-code. Most of these are
+accessible from Python, but a few are not exposed due to their limited
+use. Every new Python type has an associated <tt class="xref c c-type docutils literal"><span class="pre">PyObject</span> <span class="pre">*</span></tt> with an
+internal structure that includes a pointer to a “method table” that
+defines how the new object behaves in Python. When you receive a
+Python object into C code, you always get a pointer to a
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)"><tt class="xref c c-type docutils literal"><span class="pre">PyObject</span></tt></a> structure. Because a <a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)"><tt class="xref c c-type docutils literal"><span class="pre">PyObject</span></tt></a> structure is
+very generic and defines only <a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject_HEAD" title="(in Python v3.3)"><tt class="xref c c-macro docutils literal"><span class="pre">PyObject_HEAD</span></tt></a>, by itself it
+is not very interesting. However, different objects contain more
+details after the <a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject_HEAD" title="(in Python v3.3)"><tt class="xref c c-macro docutils literal"><span class="pre">PyObject_HEAD</span></tt></a> (but you have to cast to the
+correct type to access them — or use accessor functions or macros).</p>
+<div class="section" id="new-python-types-defined">
+<h2>New Python Types Defined<a class="headerlink" href="#new-python-types-defined" title="Permalink to this headline">¶</a></h2>
+<p>Python types are the functional equivalent in C of classes in Python.
+By constructing a new Python type you make available a new object for
+Python. The ndarray object is an example of a new type defined in C.
+New types are defined in C by two basic steps:</p>
+<ol class="arabic simple">
+<li>creating a C-structure (usually named <tt class="xref c c-type docutils literal"><span class="pre">Py{Name}Object</span></tt>) that is
+binary- compatible with the <a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)"><tt class="xref c c-type docutils literal"><span class="pre">PyObject</span></tt></a> structure itself but holds
+the additional information needed for that particular object;</li>
+<li>populating the <a class="reference external" href="http://docs.python.org/dev/c-api/type.html#PyTypeObject" title="(in Python v3.3)"><tt class="xref c c-type docutils literal"><span class="pre">PyTypeObject</span></tt></a> table (pointed to by the ob_type
+member of the <a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)"><tt class="xref c c-type docutils literal"><span class="pre">PyObject</span></tt></a> structure) with pointers to functions
+that implement the desired behavior for the type.</li>
+</ol>
+<p>Instead of special method names which define behavior for Python
+classes, there are “function tables” which point to functions that
+implement the desired results. Since Python 2.2, the PyTypeObject
+itself has become dynamic which allows C types that can be “sub-typed
+“from other C-types in C, and sub-classed in Python. The children
+types inherit the attributes and methods from their parent(s).</p>
+<p>There are two major new types: the ndarray ( <a class="reference internal" href="#PyArray_Type" title="PyArray_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArray_Type</span></tt></a> )
+and the ufunc ( <a class="reference internal" href="#PyUFunc_Type" title="PyUFunc_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyUFunc_Type</span></tt></a> ). Additional types play a
+supportive role: the <a class="reference internal" href="#PyArrayIter_Type" title="PyArrayIter_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayIter_Type</span></tt></a>, the
+<a class="reference internal" href="#PyArrayMultiIter_Type" title="PyArrayMultiIter_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayMultiIter_Type</span></tt></a>, and the <a class="reference internal" href="#PyArrayDescr_Type" title="PyArrayDescr_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayDescr_Type</span></tt></a>
+. The <a class="reference internal" href="#PyArrayIter_Type" title="PyArrayIter_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayIter_Type</span></tt></a> is the type for a flat iterator for an
+ndarray (the object that is returned when getting the flat
+attribute). The <a class="reference internal" href="#PyArrayMultiIter_Type" title="PyArrayMultiIter_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayMultiIter_Type</span></tt></a> is the type of the
+object returned when calling <tt class="docutils literal"><span class="pre">broadcast</span></tt> (). It handles iteration
+and broadcasting over a collection of nested sequences. Also, the
+<a class="reference internal" href="#PyArrayDescr_Type" title="PyArrayDescr_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayDescr_Type</span></tt></a> is the data-type-descriptor type whose
+instances describe the data.  Finally, there are 21 new scalar-array
+types which are new Python scalars corresponding to each of the
+fundamental data types available for arrays. An additional 10 other
+types are place holders that allow the array scalars to fit into a
+hierarchy of actual Python types.</p>
+<div class="section" id="pyarray-type">
+<h3>PyArray_Type<a class="headerlink" href="#pyarray-type" title="Permalink to this headline">¶</a></h3>
+<dl class="var">
+<dt id="PyArray_Type">
+<tt class="descname">PyArray_Type</tt><a class="headerlink" href="#PyArray_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Python type of the ndarray is <a class="reference internal" href="#PyArray_Type" title="PyArray_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArray_Type</span></tt></a>. In C, every
+ndarray is a pointer to a <a class="reference internal" href="#PyArrayObject" title="PyArrayObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayObject</span></tt></a> structure. The ob_type
+member of this structure contains a pointer to the <a class="reference internal" href="#PyArray_Type" title="PyArray_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArray_Type</span></tt></a>
+typeobject.</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyArrayObject">
+<tt class="descname">PyArrayObject</tt><a class="headerlink" href="#PyArrayObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#PyArrayObject" title="PyArrayObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayObject</span></tt></a> C-structure contains all of the required
+information for an array. All instances of an ndarray (and its
+subclasses) will have this structure.  For future compatibility,
+these structure members should normally be accessed using the
+provided macros. If you need a shorter name, then you can make use
+of <tt class="xref c c-type docutils literal"><span class="pre">NPY_AO</span></tt> which is defined to be equivalent to
+<a class="reference internal" href="#PyArrayObject" title="PyArrayObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayObject</span></tt></a>.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="n">PyArrayObject</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">nd</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="o">*</span><span class="n">dimensions</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="o">*</span><span class="n">strides</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
+    <span class="n">PyArray_Descr</span> <span class="o">*</span><span class="n">descr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">weakreflist</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyArrayObject</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="macro">
+<dt id="PyArrayObject.PyObject_HEAD">
+<tt class="descname">PyArrayObject.PyObject_HEAD</tt><a class="headerlink" href="#PyArrayObject.PyObject_HEAD" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is needed by all Python objects. It consists of (at least)
+a reference count member ( <tt class="docutils literal"><span class="pre">ob_refcnt</span></tt> ) and a pointer to the
+typeobject ( <tt class="docutils literal"><span class="pre">ob_type</span></tt> ). (Other elements may also be present
+if Python was compiled with special options see
+Include/object.h in the Python source tree for more
+information). The ob_type member points to a Python type
+object.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.data">
+char *<tt class="descname">PyArrayObject.data</tt><a class="headerlink" href="#PyArrayObject.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to the first element of the array. This pointer can
+(and normally should) be recast to the data type of the array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.nd">
+int <tt class="descname">PyArrayObject.nd</tt><a class="headerlink" href="#PyArrayObject.nd" title="Permalink to this definition">¶</a></dt>
+<dd><p>An integer providing the number of dimensions for this
+array. When nd is 0, the array is sometimes called a rank-0
+array. Such arrays have undefined dimensions and strides and
+cannot be accessed. <a class="reference internal" href="c-api.array.html#NPY_MAXDIMS" title="NPY_MAXDIMS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_MAXDIMS</span></tt></a> is the largest number of
+dimensions for any array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.dimensions">
+npy_intp <tt class="descname">PyArrayObject.dimensions</tt><a class="headerlink" href="#PyArrayObject.dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array of integers providing the shape in each dimension as
+long as nd <img alt="\geq" class="math" src="../_images/math/3fcc68282472210e12994911b95ee7aa9c131856.png" style="vertical-align: -3px"/> 1. The integer is always large enough
+to hold a pointer on the platform, so the dimension size is
+only limited by memory.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.strides">
+npy_intp *<tt class="descname">PyArrayObject.strides</tt><a class="headerlink" href="#PyArrayObject.strides" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array of integers providing for each dimension the number of
+bytes that must be skipped to get to the next element in that
+dimension.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.base">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArrayObject.base</tt><a class="headerlink" href="#PyArrayObject.base" title="Permalink to this definition">¶</a></dt>
+<dd><p>This member is used to hold a pointer to another Python object that
+is related to this array. There are two use cases: 1) If this array
+does not own its own memory, then base points to the Python object
+that owns it (perhaps another array object), 2) If this array has
+the <a class="reference internal" href="c-api.array.html#NPY_ARRAY_UPDATEIFCOPY" title="NPY_ARRAY_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_UPDATEIFCOPY</span></tt></a> flag set, then this array is
+a working copy of a “misbehaved” array. As soon as this array is
+deleted, the array pointed to by base will be updated with the
+contents of this array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.descr">
+<a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a> *<tt class="descname">PyArrayObject.descr</tt><a class="headerlink" href="#PyArrayObject.descr" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a data-type descriptor object (see below). The
+data-type descriptor object is an instance of a new built-in
+type which allows a generic description of memory. There is a
+descriptor structure for each data type supported. This
+descriptor structure contains useful information about the type
+as well as a pointer to a table of function pointers to
+implement specific functionality.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.flags">
+int <tt class="descname">PyArrayObject.flags</tt><a class="headerlink" href="#PyArrayObject.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flags indicating how the memory pointed to by data is to be
+interpreted. Possible flags are <a class="reference internal" href="c-api.array.html#NPY_ARRAY_C_CONTIGUOUS" title="NPY_ARRAY_C_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_C_CONTIGUOUS</span></tt></a>,
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_F_CONTIGUOUS" title="NPY_ARRAY_F_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_F_CONTIGUOUS</span></tt></a>, <a class="reference internal" href="c-api.array.html#NPY_ARRAY_OWNDATA" title="NPY_ARRAY_OWNDATA"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_OWNDATA</span></tt></a>,
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_ALIGNED" title="NPY_ARRAY_ALIGNED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_ALIGNED</span></tt></a>, <a class="reference internal" href="c-api.array.html#NPY_ARRAY_WRITEABLE" title="NPY_ARRAY_WRITEABLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_WRITEABLE</span></tt></a>, and
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_UPDATEIFCOPY" title="NPY_ARRAY_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_UPDATEIFCOPY</span></tt></a>.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayObject.weakreflist">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArrayObject.weakreflist</tt><a class="headerlink" href="#PyArrayObject.weakreflist" title="Permalink to this definition">¶</a></dt>
+<dd><p>This member allows array objects to have weak references (using the
+weakref module).</p>
+</dd></dl>
+</div>
+<div class="section" id="pyarraydescr-type">
+<h3>PyArrayDescr_Type<a class="headerlink" href="#pyarraydescr-type" title="Permalink to this headline">¶</a></h3>
+<dl class="var">
+<dt id="PyArrayDescr_Type">
+<tt class="descname">PyArrayDescr_Type</tt><a class="headerlink" href="#PyArrayDescr_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#PyArrayDescr_Type" title="PyArrayDescr_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayDescr_Type</span></tt></a> is the built-in type of the
+data-type-descriptor objects used to describe how the bytes comprising
+the array are to be interpreted.  There are 21 statically-defined
+<a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Descr</span></tt></a> objects for the built-in data-types. While these
+participate in reference counting, their reference count should never
+reach zero.  There is also a dynamic table of user-defined
+<a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Descr</span></tt></a> objects that is also maintained. Once a
+data-type-descriptor object is “registered” it should never be
+deallocated either. The function <a class="reference internal" href="c-api.array.html#PyArray_DescrFromType" title="PyArray_DescrFromType"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_DescrFromType</span></tt></a> (...) can
+be used to retrieve a <a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Descr</span></tt></a> object from an enumerated
+type-number (either built-in or user- defined).</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyArray_Descr">
+<tt class="descname">PyArray_Descr</tt><a class="headerlink" href="#PyArray_Descr" title="Permalink to this definition">¶</a></dt>
+<dd><p>The format of the <a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Descr</span></tt></a> structure that lies at the
+heart of the <a class="reference internal" href="#PyArrayDescr_Type" title="PyArrayDescr_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayDescr_Type</span></tt></a> is</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="n">PyTypeObject</span> <span class="o">*</span><span class="n">typeobj</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">kind</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">type</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">byteorder</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">unused</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">type_num</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">elsize</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">alignment</span><span class="p">;</span>
+    <span class="n">PyArray_ArrayDescr</span> <span class="o">*</span><span class="n">subarray</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">fields</span><span class="p">;</span>
+    <span class="n">PyArray_ArrFuncs</span> <span class="o">*</span><span class="n">f</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyArray_Descr</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.typeobj">
+<a class="reference external" href="http://docs.python.org/dev/c-api/type.html#PyTypeObject" title="(in Python v3.3)">PyTypeObject</a> *<tt class="descname">PyArray_Descr.typeobj</tt><a class="headerlink" href="#PyArray_Descr.typeobj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pointer to a typeobject that is the corresponding Python type for
+the elements of this array. For the builtin types, this points to
+the corresponding array scalar. For user-defined types, this
+should point to a user-defined typeobject. This typeobject can
+either inherit from array scalars or not. If it does not inherit
+from array scalars, then the <a class="reference internal" href="#NPY_USE_GETITEM" title="NPY_USE_GETITEM"><tt class="xref c c-data docutils literal"><span class="pre">NPY_USE_GETITEM</span></tt></a> and
+<a class="reference internal" href="#NPY_USE_SETITEM" title="NPY_USE_SETITEM"><tt class="xref c c-data docutils literal"><span class="pre">NPY_USE_SETITEM</span></tt></a> flags should be set in the <tt class="docutils literal"><span class="pre">flags</span></tt> member.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.kind">
+char <tt class="descname">PyArray_Descr.kind</tt><a class="headerlink" href="#PyArray_Descr.kind" title="Permalink to this definition">¶</a></dt>
+<dd><p>A character code indicating the kind of array (using the array
+interface typestring notation). A ‘b’ represents Boolean, a ‘i’
+represents signed integer, a ‘u’ represents unsigned integer, ‘f’
+represents floating point, ‘c’ represents complex floating point, ‘S’
+represents 8-bit character string, ‘U’ represents 32-bit/character
+unicode string, and ‘V’ repesents arbitrary.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.type">
+char <tt class="descname">PyArray_Descr.type</tt><a class="headerlink" href="#PyArray_Descr.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>A traditional character code indicating the data type.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.byteorder">
+char <tt class="descname">PyArray_Descr.byteorder</tt><a class="headerlink" href="#PyArray_Descr.byteorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>A character indicating the byte-order: ‘&gt;’ (big-endian), ‘&lt;’ (little-
+endian), ‘=’ (native), ‘|’ (irrelevant, ignore). All builtin data-
+types have byteorder ‘=’.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.flags">
+int <tt class="descname">PyArray_Descr.flags</tt><a class="headerlink" href="#PyArray_Descr.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>A data-type bit-flag that determines if the data-type exhibits object-
+array like behavior. Each bit in this member is a flag which are named
+as:</p>
+<dl class="var">
+<dt id="NPY_ITEM_REFCOUNT">
+<tt class="descname">NPY_ITEM_REFCOUNT</tt><a class="headerlink" href="#NPY_ITEM_REFCOUNT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="var">
+<dt id="NPY_ITEM_HASOBJECT">
+<tt class="descname">NPY_ITEM_HASOBJECT</tt><a class="headerlink" href="#NPY_ITEM_HASOBJECT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates that items of this data-type must be reference
+counted (using <a class="reference external" href="http://docs.python.org/dev/c-api/refcounting.html#Py_INCREF" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_INCREF</span></tt></a> and <a class="reference external" href="http://docs.python.org/dev/c-api/refcounting.html#Py_DECREF" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_DECREF</span></tt></a> ).</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_ITEM_LISTPICKLE">
+<tt class="descname">NPY_ITEM_LISTPICKLE</tt><a class="headerlink" href="#NPY_ITEM_LISTPICKLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates arrays of this data-type must be converted to a list
+before pickling.</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_ITEM_IS_POINTER">
+<tt class="descname">NPY_ITEM_IS_POINTER</tt><a class="headerlink" href="#NPY_ITEM_IS_POINTER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates the item is a pointer to some other data-type</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_NEEDS_INIT">
+<tt class="descname">NPY_NEEDS_INIT</tt><a class="headerlink" href="#NPY_NEEDS_INIT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates memory for this data-type must be initialized (set
+to 0) on creation.</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_NEEDS_PYAPI">
+<tt class="descname">NPY_NEEDS_PYAPI</tt><a class="headerlink" href="#NPY_NEEDS_PYAPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates this data-type requires the Python C-API during
+access (so don’t give up the GIL if array access is going to
+be needed).</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_USE_GETITEM">
+<tt class="descname">NPY_USE_GETITEM</tt><a class="headerlink" href="#NPY_USE_GETITEM" title="Permalink to this definition">¶</a></dt>
+<dd><p>On array access use the <tt class="docutils literal"><span class="pre">f-&gt;getitem</span></tt> function pointer
+instead of the standard conversion to an array scalar. Must
+use if you don’t define an array scalar to go along with
+the data-type.</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_USE_SETITEM">
+<tt class="descname">NPY_USE_SETITEM</tt><a class="headerlink" href="#NPY_USE_SETITEM" title="Permalink to this definition">¶</a></dt>
+<dd><p>When creating a 0-d array from an array scalar use
+<tt class="docutils literal"><span class="pre">f-&gt;setitem</span></tt> instead of the standard copy from an array
+scalar. Must use if you don’t define an array scalar to go
+along with the data-type.</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_FROM_FIELDS">
+<tt class="descname">NPY_FROM_FIELDS</tt><a class="headerlink" href="#NPY_FROM_FIELDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The bits that are inherited for the parent data-type if these
+bits are set in any field of the data-type. Currently (
+<a class="reference internal" href="#NPY_NEEDS_INIT" title="NPY_NEEDS_INIT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NEEDS_INIT</span></tt></a> | <tt class="xref c c-data docutils literal"><span class="pre">NPY_LIST_PICKLE</span></tt> |
+<a class="reference internal" href="#NPY_ITEM_REFCOUNT" title="NPY_ITEM_REFCOUNT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITEM_REFCOUNT</span></tt></a> | <a class="reference internal" href="#NPY_NEEDS_PYAPI" title="NPY_NEEDS_PYAPI"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NEEDS_PYAPI</span></tt></a> ).</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_OBJECT_DTYPE_FLAGS">
+<tt class="descname">NPY_OBJECT_DTYPE_FLAGS</tt><a class="headerlink" href="#NPY_OBJECT_DTYPE_FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bits set for the object data-type: ( <tt class="xref c c-data docutils literal"><span class="pre">NPY_LIST_PICKLE</span></tt>
+| <a class="reference internal" href="#NPY_USE_GETITEM" title="NPY_USE_GETITEM"><tt class="xref c c-data docutils literal"><span class="pre">NPY_USE_GETITEM</span></tt></a> | <a class="reference internal" href="#NPY_ITEM_IS_POINTER" title="NPY_ITEM_IS_POINTER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITEM_IS_POINTER</span></tt></a> |
+<tt class="xref c c-data docutils literal"><span class="pre">NPY_REFCOUNT</span></tt> | <a class="reference internal" href="#NPY_NEEDS_INIT" title="NPY_NEEDS_INIT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NEEDS_INIT</span></tt></a> |
+<a class="reference internal" href="#NPY_NEEDS_PYAPI" title="NPY_NEEDS_PYAPI"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NEEDS_PYAPI</span></tt></a>).</p>
+</dd></dl>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyDataType_FLAGCHK"></a><dt id="PyDataType_FLAGCHK">
+<tt class="descname">PyDataType_FLAGCHK</tt><big>(</big><a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a><em> *dtype</em>, int<em> flags</em><big>)</big><a class="headerlink" href="#PyDataType_FLAGCHK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if all the given flags are set for the data-type
+object.</p>
+</dd></dl>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyDataType_REFCHK"></a><dt id="PyDataType_REFCHK">
+<tt class="descname">PyDataType_REFCHK</tt><big>(</big><a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a><em> *dtype</em><big>)</big><a class="headerlink" href="#PyDataType_REFCHK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to <a class="reference internal" href="#PyDataType_FLAGCHK" title="PyDataType_FLAGCHK"><tt class="xref c c-func docutils literal"><span class="pre">PyDataType_FLAGCHK</span></tt></a> (<em>dtype</em>,
+<a class="reference internal" href="#NPY_ITEM_REFCOUNT" title="NPY_ITEM_REFCOUNT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITEM_REFCOUNT</span></tt></a>).</p>
+</dd></dl>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.type_num">
+int <tt class="descname">PyArray_Descr.type_num</tt><a class="headerlink" href="#PyArray_Descr.type_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>A number that uniquely identifies the data type. For new data-types,
+this number is assigned when the data-type is registered.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.elsize">
+int <tt class="descname">PyArray_Descr.elsize</tt><a class="headerlink" href="#PyArray_Descr.elsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>For data types that are always the same size (such as long), this
+holds the size of the data type. For flexible data types where
+different arrays can have a different elementsize, this should be
+0.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.alignment">
+int <tt class="descname">PyArray_Descr.alignment</tt><a class="headerlink" href="#PyArray_Descr.alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A number providing alignment information for this data type.
+Specifically, it shows how far from the start of a 2-element
+structure (whose first element is a <tt class="docutils literal"><span class="pre">char</span></tt> ), the compiler
+places an item of this type: <tt class="docutils literal"><span class="pre">offsetof(struct</span> <span class="pre">{char</span> <span class="pre">c;</span> <span class="pre">type</span> <span class="pre">v;},</span>
+<span class="pre">v)</span></tt></p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.subarray">
+PyArray_ArrayDescr *<tt class="descname">PyArray_Descr.subarray</tt><a class="headerlink" href="#PyArray_Descr.subarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this is non- <tt class="docutils literal"><span class="pre">NULL</span></tt>, then this data-type descriptor is a
+C-style contiguous array of another data-type descriptor. In
+other-words, each element that this descriptor describes is
+actually an array of some other base descriptor. This is most
+useful as the data-type descriptor for a field in another
+data-type descriptor. The fields member should be <tt class="docutils literal"><span class="pre">NULL</span></tt> if this
+is non- <tt class="docutils literal"><span class="pre">NULL</span></tt> (the fields member of the base descriptor can be
+non- <tt class="docutils literal"><span class="pre">NULL</span></tt> however). The <tt class="xref c c-type docutils literal"><span class="pre">PyArray_ArrayDescr</span></tt> structure is
+defined using</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyArray_Descr</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">shape</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyArray_ArrayDescr</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The elements of this structure are:</p>
+<dl class="member">
+<dt id="PyArray_ArrayDescr.base">
+<a class="reference internal" href="#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a> *<tt class="descname">PyArray_ArrayDescr.base</tt><a class="headerlink" href="#PyArray_ArrayDescr.base" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data-type-descriptor object of the base-type.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrayDescr.shape">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArray_ArrayDescr.shape</tt><a class="headerlink" href="#PyArray_ArrayDescr.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>The shape (always C-style contiguous) of the sub-array as a Python
+tuple.</p>
+</dd></dl>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.fields">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArray_Descr.fields</tt><a class="headerlink" href="#PyArray_Descr.fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this is non-NULL, then this data-type-descriptor has fields
+described by a Python dictionary whose keys are names (and also
+titles if given) and whose values are tuples that describe the
+fields. Recall that a data-type-descriptor always describes a
+fixed-length set of bytes. A field is a named sub-region of that
+total, fixed-length collection. A field is described by a tuple
+composed of another data- type-descriptor and a byte
+offset. Optionally, the tuple may contain a title which is
+normally a Python string. These tuples are placed in this
+dictionary keyed by name (and also title if given).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Descr.f">
+<a class="reference internal" href="#PyArray_ArrFuncs" title="PyArray_ArrFuncs">PyArray_ArrFuncs</a> *<tt class="descname">PyArray_Descr.f</tt><a class="headerlink" href="#PyArray_Descr.f" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a structure containing functions that the type needs
+to implement internal features. These functions are not the same
+thing as the universal functions (ufuncs) described later. Their
+signatures can vary arbitrarily.</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyArray_ArrFuncs">
+<tt class="descname">PyArray_ArrFuncs</tt><a class="headerlink" href="#PyArray_ArrFuncs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Functions implementing internal features. Not all of these
+function pointers must be defined for a given type. The required
+members are <tt class="docutils literal"><span class="pre">nonzero</span></tt>, <tt class="docutils literal"><span class="pre">copyswap</span></tt>, <tt class="docutils literal"><span class="pre">copyswapn</span></tt>, <tt class="docutils literal"><span class="pre">setitem</span></tt>,
+<tt class="docutils literal"><span class="pre">getitem</span></tt>, and <tt class="docutils literal"><span class="pre">cast</span></tt>. These are assumed to be non- <tt class="docutils literal"><span class="pre">NULL</span></tt>
+and <tt class="docutils literal"><span class="pre">NULL</span></tt> entries will cause a program crash. The other
+functions may be <tt class="docutils literal"><span class="pre">NULL</span></tt> which will just mean reduced
+functionality for that data-type. (Also, the nonzero function will
+be filled in with a default function if it is <tt class="docutils literal"><span class="pre">NULL</span></tt> when you
+register a user-defined data-type).</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyArray_VectorUnaryFunc</span> <span class="o">*</span><span class="n">cast</span><span class="p">[</span><span class="n">NPY_NTYPES</span><span class="p">];</span>
+    <span class="n">PyArray_GetItemFunc</span> <span class="o">*</span><span class="n">getitem</span><span class="p">;</span>
+    <span class="n">PyArray_SetItemFunc</span> <span class="o">*</span><span class="n">setitem</span><span class="p">;</span>
+    <span class="n">PyArray_CopySwapNFunc</span> <span class="o">*</span><span class="n">copyswapn</span><span class="p">;</span>
+    <span class="n">PyArray_CopySwapFunc</span> <span class="o">*</span><span class="n">copyswap</span><span class="p">;</span>
+    <span class="n">PyArray_CompareFunc</span> <span class="o">*</span><span class="n">compare</span><span class="p">;</span>
+    <span class="n">PyArray_ArgFunc</span> <span class="o">*</span><span class="n">argmax</span><span class="p">;</span>
+    <span class="n">PyArray_DotFunc</span> <span class="o">*</span><span class="n">dotfunc</span><span class="p">;</span>
+    <span class="n">PyArray_ScanFunc</span> <span class="o">*</span><span class="n">scanfunc</span><span class="p">;</span>
+    <span class="n">PyArray_FromStrFunc</span> <span class="o">*</span><span class="n">fromstr</span><span class="p">;</span>
+    <span class="n">PyArray_NonzeroFunc</span> <span class="o">*</span><span class="n">nonzero</span><span class="p">;</span>
+    <span class="n">PyArray_FillFunc</span> <span class="o">*</span><span class="n">fill</span><span class="p">;</span>
+    <span class="n">PyArray_FillWithScalarFunc</span> <span class="o">*</span><span class="n">fillwithscalar</span><span class="p">;</span>
+    <span class="n">PyArray_SortFunc</span> <span class="o">*</span><span class="n">sort</span><span class="p">[</span><span class="n">NPY_NSORTS</span><span class="p">];</span>
+    <span class="n">PyArray_ArgSortFunc</span> <span class="o">*</span><span class="n">argsort</span><span class="p">[</span><span class="n">NPY_NSORTS</span><span class="p">];</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">castdict</span><span class="p">;</span>
+    <span class="n">PyArray_ScalarKindFunc</span> <span class="o">*</span><span class="n">scalarkind</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="o">**</span><span class="n">cancastscalarkindto</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">cancastto</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">listpickle</span>
+<span class="p">}</span> <span class="n">PyArray_ArrFuncs</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The concept of a behaved segment is used in the description of the
+function pointers. A behaved segment is one that is aligned and in
+native machine byte-order for the data-type. The <tt class="docutils literal"><span class="pre">nonzero</span></tt>,
+<tt class="docutils literal"><span class="pre">copyswap</span></tt>, <tt class="docutils literal"><span class="pre">copyswapn</span></tt>, <tt class="docutils literal"><span class="pre">getitem</span></tt>, and <tt class="docutils literal"><span class="pre">setitem</span></tt>
+functions can (and must) deal with mis-behaved arrays. The other
+functions require behaved memory segments.</p>
+<dl class="member">
+<dt>
+<tt class="descname">void cast(void *from, void *to, npy_intp n, void *fromarr,</tt></dt>
+<dt>
+<tt class="descname">void *toarr)</tt></dt>
+<dd><p>An array of function pointers to cast from the current type to
+all of the other builtin types. Each function casts a
+contiguous, aligned, and notswapped buffer pointed at by
+<em>from</em> to a contiguous, aligned, and notswapped buffer pointed
+at by <em>to</em> The number of items to cast is given by <em>n</em>, and
+the arguments <em>fromarr</em> and <em>toarr</em> are interpreted as
+PyArrayObjects for flexible arrays to get itemsize
+information.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.getitem">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">getitem</tt><big>(</big>void<em> *data</em>, void<em> *arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.getitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a function that returns a standard Python object
+from a single element of the array object <em>arr</em> pointed to by
+<em>data</em>. This function must be able to deal with “misbehaved
+“(misaligned and/or swapped) arrays correctly.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.setitem">
+int <tt class="descname">setitem</tt><big>(</big><a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a><em> *item</em>, void<em> *data</em>, void<em> *arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.setitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a function that sets the Python object <em>item</em>
+into the array, <em>arr</em>, at the position pointed to by <em>data</em>
+. This function deals with “misbehaved” arrays. If successful,
+a zero is returned, otherwise, a negative one is returned (and
+a Python error set).</p>
+</dd></dl>
+<dl class="member">
+<dt>
+<tt class="descname">void copyswapn(void *dest, npy_intp dstride, void *src,</tt></dt>
+<dt>
+<tt class="descname">npy_intp sstride, npy_intp n, int swap, void *arr)</tt></dt>
+<dd></dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.copyswap">
+void <tt class="descname">copyswap</tt><big>(</big>void<em> *dest</em>, void<em> *src</em>, int<em> swap</em>, void<em> *arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.copyswap" title="Permalink to this definition">¶</a></dt>
+<dd><p>These members are both pointers to functions to copy data from
+<em>src</em> to <em>dest</em> and <em>swap</em> if indicated. The value of arr is
+only used for flexible ( <a class="reference internal" href="c-api.dtype.html#NPY_STRING" title="NPY_STRING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_STRING</span></tt></a>, <a class="reference internal" href="c-api.dtype.html#NPY_UNICODE" title="NPY_UNICODE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UNICODE</span></tt></a>,
+and <a class="reference internal" href="c-api.dtype.html#NPY_VOID" title="NPY_VOID"><tt class="xref c c-data docutils literal"><span class="pre">NPY_VOID</span></tt></a> ) arrays (and is obtained from
+<tt class="docutils literal"><span class="pre">arr-&gt;descr-&gt;elsize</span></tt> ). The second function copies a single
+value, while the first loops over n values with the provided
+strides. These functions can deal with misbehaved <em>src</em>
+data. If <em>src</em> is NULL then no copy is performed. If <em>swap</em> is
+0, then no byteswapping occurs. It is assumed that <em>dest</em> and
+<em>src</em> do not overlap. If they overlap, then use <tt class="docutils literal"><span class="pre">memmove</span></tt>
+(...) first followed by <tt class="docutils literal"><span class="pre">copyswap(n)</span></tt> with NULL valued
+<tt class="docutils literal"><span class="pre">src</span></tt>.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.compare">
+int <tt class="descname">compare</tt><big>(</big>const void*<em> d1</em>, const void*<em> d2</em>, void*<em> arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a function that compares two elements of the
+array, <tt class="docutils literal"><span class="pre">arr</span></tt>, pointed to by <tt class="docutils literal"><span class="pre">d1</span></tt> and <tt class="docutils literal"><span class="pre">d2</span></tt>. This
+function requires behaved arrays. The return value is 1 if *
+<tt class="docutils literal"><span class="pre">d1</span></tt> &gt; * <tt class="docutils literal"><span class="pre">d2</span></tt>, 0 if * <tt class="docutils literal"><span class="pre">d1</span></tt> == * <tt class="docutils literal"><span class="pre">d2</span></tt>, and -1 if *
+<tt class="docutils literal"><span class="pre">d1</span></tt> &lt; * <tt class="docutils literal"><span class="pre">d2</span></tt>. The array object arr is used to retrieve
+itemsize and field information for flexible arrays.</p>
+</dd></dl>
+<dl class="member">
+<dt>
+<tt class="descname">int argmax(void* data, npy_intp n, npy_intp* max_ind,</tt></dt>
+<dt>
+<tt class="descname">void* arr)</tt></dt>
+<dd><p>A pointer to a function that retrieves the index of the
+largest of <tt class="docutils literal"><span class="pre">n</span></tt> elements in <tt class="docutils literal"><span class="pre">arr</span></tt> beginning at the element
+pointed to by <tt class="docutils literal"><span class="pre">data</span></tt>. This function requires that the
+memory segment be contiguous and behaved. The return value is
+always 0. The index of the largest element is returned in
+<tt class="docutils literal"><span class="pre">max_ind</span></tt>.</p>
+</dd></dl>
+<dl class="member">
+<dt>
+<tt class="descname">void dotfunc(void* ip1, npy_intp is1, void* ip2, npy_intp is2,</tt></dt>
+<dt>
+<tt class="descname">void* op, npy_intp n, void* arr)</tt></dt>
+<dd><p>A pointer to a function that multiplies two <tt class="docutils literal"><span class="pre">n</span></tt> -length
+sequences together, adds them, and places the result in
+element pointed to by <tt class="docutils literal"><span class="pre">op</span></tt> of <tt class="docutils literal"><span class="pre">arr</span></tt>. The start of the two
+sequences are pointed to by <tt class="docutils literal"><span class="pre">ip1</span></tt> and <tt class="docutils literal"><span class="pre">ip2</span></tt>. To get to
+the next element in each sequence requires a jump of <tt class="docutils literal"><span class="pre">is1</span></tt>
+and <tt class="docutils literal"><span class="pre">is2</span></tt> <em>bytes</em>, respectively. This function requires
+behaved (though not necessarily contiguous) memory.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.scanfunc">
+int <tt class="descname">scanfunc</tt><big>(</big>FILE*<em> fd</em>, void*<em> ip</em>, void*<em> sep</em>, void*<em> arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.scanfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a function that scans (scanf style) one element
+of the corresponding type from the file descriptor <tt class="docutils literal"><span class="pre">fd</span></tt> into
+the array memory pointed to by <tt class="docutils literal"><span class="pre">ip</span></tt>. The array is assumed
+to be behaved. If <tt class="docutils literal"><span class="pre">sep</span></tt> is not NULL, then a separator string
+is also scanned from the file before returning. The last
+argument <tt class="docutils literal"><span class="pre">arr</span></tt> is the array to be scanned into. A 0 is
+returned if the scan is successful. A negative number
+indicates something went wrong: -1 means the end of file was
+reached before the separator string could be scanned, -4 means
+that the end of file was reached before the element could be
+scanned, and -3 means that the element could not be
+interpreted from the format string. Requires a behaved array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.fromstr">
+int <tt class="descname">fromstr</tt><big>(</big>char*<em> str</em>, void*<em> ip</em>, char**<em> endptr</em>, void*<em> arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.fromstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a function that converts the string pointed to by
+<tt class="docutils literal"><span class="pre">str</span></tt> to one element of the corresponding type and places it
+in the memory location pointed to by <tt class="docutils literal"><span class="pre">ip</span></tt>. After the
+conversion is completed, <tt class="docutils literal"><span class="pre">*endptr</span></tt> points to the rest of the
+string. The last argument <tt class="docutils literal"><span class="pre">arr</span></tt> is the array into which ip
+points (needed for variable-size data- types). Returns 0 on
+success or -1 on failure. Requires a behaved array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.nonzero">
+Bool <tt class="descname">nonzero</tt><big>(</big>void*<em> data</em>, void*<em> arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.nonzero" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a function that returns TRUE if the item of
+<tt class="docutils literal"><span class="pre">arr</span></tt> pointed to by <tt class="docutils literal"><span class="pre">data</span></tt> is nonzero. This function can
+deal with misbehaved arrays.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.fill">
+void <tt class="descname">fill</tt><big>(</big>void*<em> data</em>, npy_intp<em> length</em>, void*<em> arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a function that fills a contiguous array of given
+length with data. The first two elements of the array must
+already be filled- in. From these two values, a delta will be
+computed and the values from item 3 to the end will be
+computed by repeatedly adding this computed delta. The data
+buffer must be well-behaved.</p>
+</dd></dl>
+<dl class="member">
+<dt>
+<tt class="descname">void fillwithscalar(void* buffer, npy_intp length,</tt></dt>
+<dt>
+<tt class="descname">void* value, void* arr)</tt></dt>
+<dd><p>A pointer to a function that fills a contiguous <tt class="docutils literal"><span class="pre">buffer</span></tt> of
+the given <tt class="docutils literal"><span class="pre">length</span></tt> with a single scalar <tt class="docutils literal"><span class="pre">value</span></tt> whose
+address is given. The final argument is the array which is
+needed to get the itemsize for variable-length arrays.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.sort">
+int <tt class="descname">sort</tt><big>(</big>void*<em> start</em>, npy_intp<em> length</em>, void*<em> arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array of function pointers to a particular sorting
+algorithms. A particular sorting algorithm is obtained using a
+key (so far <tt class="xref c c-data docutils literal"><span class="pre">NPY_QUICKSORT</span></tt>, :data`NPY_HEAPSORT`, and
+<tt class="xref c c-data docutils literal"><span class="pre">NPY_MERGESORT</span></tt> are defined). These sorts are done
+in-place assuming contiguous and aligned data.</p>
+</dd></dl>
+<dl class="member">
+<dt>
+<tt class="descname">int argsort(void* start, npy_intp* result, npy_intp length,</tt></dt>
+<dt>
+<tt class="descname">void *arr)</tt></dt>
+<dd><p>An array of function pointers to sorting algorithms for this
+data type. The same sorting algorithms as for sort are
+available. The indices producing the sort are returned in
+result (which must be initialized with indices 0 to length-1
+inclusive).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.castdict">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">castdict</tt><a class="headerlink" href="#PyArray_ArrFuncs.castdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either <tt class="docutils literal"><span class="pre">NULL</span></tt> or a dictionary containing low-level casting
+functions for user- defined data-types. Each function is
+wrapped in a <tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span> <span class="pre">*</span></tt> and keyed by the data-type number.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.scalarkind">
+<a class="reference internal" href="c-api.array.html#NPY_SCALARKIND" title="NPY_SCALARKIND">NPY_SCALARKIND</a> <tt class="descname">scalarkind</tt><big>(</big><a class="reference internal" href="#PyArrayObject" title="PyArrayObject">PyArrayObject</a>*<em> arr</em><big>)</big><a class="headerlink" href="#PyArray_ArrFuncs.scalarkind" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to determine how scalars of this type should be
+interpreted. The argument is <tt class="docutils literal"><span class="pre">NULL</span></tt> or a 0-dimensional array
+containing the data (if that is needed to determine the kind
+of scalar). The return value must be of type
+<a class="reference internal" href="c-api.array.html#NPY_SCALARKIND" title="NPY_SCALARKIND"><tt class="xref c c-type docutils literal"><span class="pre">NPY_SCALARKIND</span></tt></a>.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.cancastscalarkindto">
+int **<tt class="descname">cancastscalarkindto</tt><a class="headerlink" href="#PyArray_ArrFuncs.cancastscalarkindto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either <tt class="docutils literal"><span class="pre">NULL</span></tt> or an array of <a class="reference internal" href="c-api.array.html#NPY_NSCALARKINDS" title="NPY_NSCALARKINDS"><tt class="xref c c-type docutils literal"><span class="pre">NPY_NSCALARKINDS</span></tt></a>
+pointers. These pointers should each be either <tt class="docutils literal"><span class="pre">NULL</span></tt> or a
+pointer to an array of integers (terminated by
+<a class="reference internal" href="c-api.dtype.html#NPY_NOTYPE" title="NPY_NOTYPE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NOTYPE</span></tt></a>) indicating data-types that a scalar of
+this data-type of the specified kind can be cast to safely
+(this usually means without losing precision).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.cancastto">
+int *<tt class="descname">cancastto</tt><a class="headerlink" href="#PyArray_ArrFuncs.cancastto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either <tt class="docutils literal"><span class="pre">NULL</span></tt> or an array of integers (terminated by
+<a class="reference internal" href="c-api.dtype.html#NPY_NOTYPE" title="NPY_NOTYPE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NOTYPE</span></tt></a> ) indicated data-types that this data-type
+can be cast to safely (this usually means without losing
+precision).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_ArrFuncs.listpickle">
+int <tt class="descname">listpickle</tt><a class="headerlink" href="#PyArray_ArrFuncs.listpickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unused.</p>
+</dd></dl>
+</dd></dl>
+<p>The <a class="reference internal" href="#PyArray_Type" title="PyArray_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArray_Type</span></tt></a> typeobject implements many of the features of
+Python objects including the tp_as_number, tp_as_sequence,
+tp_as_mapping, and tp_as_buffer interfaces. The rich comparison
+(tp_richcompare) is also used along with new-style attribute lookup
+for methods (tp_methods) and properties (tp_getset). The
+<a class="reference internal" href="#PyArray_Type" title="PyArray_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArray_Type</span></tt></a> can also be sub-typed.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">The tp_as_number methods use a generic approach to call whatever
+function has been registered for handling the operation. The
+function PyNumeric_SetOps(..) can be used to register functions to
+handle particular mathematical operations (for all arrays). When
+the umath module is imported, it sets the numeric operations for
+all arrays to the corresponding ufuncs.  The tp_str and tp_repr
+methods can also be altered using PyString_SetStringFunction(...).</p>
+</div>
+</div>
+<div class="section" id="pyufunc-type">
+<h3>PyUFunc_Type<a class="headerlink" href="#pyufunc-type" title="Permalink to this headline">¶</a></h3>
+<dl class="var">
+<dt id="PyUFunc_Type">
+<tt class="descname">PyUFunc_Type</tt><a class="headerlink" href="#PyUFunc_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ufunc object is implemented by creation of the
+<a class="reference internal" href="#PyUFunc_Type" title="PyUFunc_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyUFunc_Type</span></tt></a>. It is a very simple type that implements only
+basic getattribute behavior, printing behavior, and has call
+behavior which allows these objects to act like functions. The
+basic idea behind the ufunc is to hold a reference to fast
+1-dimensional (vector) loops for each data type that supports the
+operation. These one-dimensional loops all have the same signature
+and are the key to creating a new ufunc. They are called by the
+generic looping code as appropriate to implement the N-dimensional
+function. There are also some generic 1-d loops defined for
+floating and complexfloating arrays that allow you to define a
+ufunc using a single scalar function (<em>e.g.</em> atanh).</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyUFuncObject">
+<tt class="descname">PyUFuncObject</tt><a class="headerlink" href="#PyUFuncObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>The core of the ufunc is the <a class="reference internal" href="#PyUFuncObject" title="PyUFuncObject"><tt class="xref c c-type docutils literal"><span class="pre">PyUFuncObject</span></tt></a> which contains all
+the information needed to call the underlying C-code loops that
+perform the actual work. It has the following structure:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="kt">int</span> <span class="n">nin</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">nout</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">nargs</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">identity</span><span class="p">;</span>
+    <span class="n">PyUFuncGenericFunction</span> <span class="o">*</span><span class="n">functions</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="o">**</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">ntypes</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">check_return</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">types</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">doc</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">userloops</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyUFuncObject</span><span class="p">;</span>
+</pre></div>
+</div>
+<dl class="macro">
+<dt id="PyUFuncObject.PyObject_HEAD">
+<tt class="descname">PyUFuncObject.PyObject_HEAD</tt><a class="headerlink" href="#PyUFuncObject.PyObject_HEAD" title="Permalink to this definition">¶</a></dt>
+<dd><p>required for all Python objects.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.nin">
+int <tt class="descname">PyUFuncObject.nin</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.nin" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of input arguments.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.nout">
+int <tt class="descname">PyUFuncObject.nout</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.nout" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of output arguments.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.nargs">
+int <tt class="descname">PyUFuncObject.nargs</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.nargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of arguments (<em>nin</em> + <em>nout</em>). This must be
+less than <tt class="xref c c-data docutils literal"><span class="pre">NPY_MAXARGS</span></tt>.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.identity">
+int <tt class="descname">PyUFuncObject.identity</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either <tt class="xref c c-data docutils literal"><span class="pre">PyUFunc_One</span></tt>, <tt class="xref c c-data docutils literal"><span class="pre">PyUFunc_Zero</span></tt>, or
+<tt class="xref c c-data docutils literal"><span class="pre">PyUFunc_None</span></tt> to indicate the identity for this operation.
+It is only used for a reduce-like call on an empty array.</p>
+</dd></dl>
+<dl class="member">
+<dt>
+<tt class="descname">void PyUFuncObject.functions(char** args, npy_intp* dims,</tt></dt>
+<dt>
+<tt class="descname">npy_intp* steps, void* extradata)</tt></dt>
+<dd><p>An array of function pointers — one for each data type
+supported by the ufunc. This is the vector loop that is called
+to implement the underlying function <em>dims</em> [0] times. The
+first argument, <em>args</em>, is an array of <em>nargs</em> pointers to
+behaved memory. Pointers to the data for the input arguments
+are first, followed by the pointers to the data for the output
+arguments. How many bytes must be skipped to get to the next
+element in the sequence is specified by the corresponding entry
+in the <em>steps</em> array. The last argument allows the loop to
+receive extra information.  This is commonly used so that a
+single, generic vector loop can be used for multiple
+functions. In this case, the actual scalar function to call is
+passed in as <em>extradata</em>. The size of this function pointer
+array is ntypes.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.data">
+void **<tt class="descname">PyUFuncObject.data</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra data to be passed to the 1-d vector loops or <tt class="docutils literal"><span class="pre">NULL</span></tt> if
+no extra-data is needed. This C-array must be the same size (
+<em>i.e.</em> ntypes) as the functions array. <tt class="docutils literal"><span class="pre">NULL</span></tt> is used if
+extra_data is not needed. Several C-API calls for UFuncs are
+just 1-d vector loops that make use of this extra data to
+receive a pointer to the actual function to call.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.ntypes">
+int <tt class="descname">PyUFuncObject.ntypes</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.ntypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of supported data types for the ufunc. This number
+specifies how many different 1-d loops (of the builtin data types) are
+available.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.check_return">
+int <tt class="descname">PyUFuncObject.check_return</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.check_return" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obsolete and unused. However, it is set by the corresponding entry in
+the main ufunc creation routine: <tt class="xref c c-func docutils literal"><span class="pre">PyUFunc_FromFuncAndData</span></tt> (...).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.name">
+char *<tt class="descname">PyUFuncObject.name</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string name for the ufunc. This is used dynamically to build
+the __doc__ attribute of ufuncs.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.types">
+char *<tt class="descname">PyUFuncObject.types</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.types" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array of <em>nargs</em> <img alt="\times" class="math" src="../_images/math/bac4dbe1c696d11e8dc43dd7f613199b2120daa1.png" style="vertical-align: 0px"/> <em>ntypes</em> 8-bit type_numbers
+which contains the type signature for the function for each of
+the supported (builtin) data types. For each of the <em>ntypes</em>
+functions, the corresponding set of type numbers in this array
+shows how the <em>args</em> argument should be interpreted in the 1-d
+vector loop. These type numbers do not have to be the same type
+and mixed-type ufuncs are supported.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.doc">
+char *<tt class="descname">PyUFuncObject.doc</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.doc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Documentation for the ufunc. Should not contain the function
+signature as this is generated dynamically when __doc__ is
+retrieved.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.ptr">
+void *<tt class="descname">PyUFuncObject.ptr</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.ptr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any dynamically allocated memory. Currently, this is used for dynamic
+ufuncs created from a python function to store room for the types,
+data, and name members.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.obj">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyUFuncObject.obj</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>For ufuncs dynamically created from python functions, this member
+holds a reference to the underlying Python function.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyUFuncObject.PyUFuncObject.userloops">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyUFuncObject.userloops</tt><a class="headerlink" href="#PyUFuncObject.PyUFuncObject.userloops" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary of user-defined 1-d vector loops (stored as CObject ptrs)
+for user-defined types. A loop may be registered by the user for any
+user-defined type. It is retrieved by type number. User defined type
+numbers are always larger than <a class="reference internal" href="c-api.dtype.html#NPY_USERDEF" title="NPY_USERDEF"><tt class="xref c c-data docutils literal"><span class="pre">NPY_USERDEF</span></tt></a>.</p>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="pyarrayiter-type">
+<h3>PyArrayIter_Type<a class="headerlink" href="#pyarrayiter-type" title="Permalink to this headline">¶</a></h3>
+<dl class="var">
+<dt id="PyArrayIter_Type">
+<tt class="descname">PyArrayIter_Type</tt><a class="headerlink" href="#PyArrayIter_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an iterator object that makes it easy to loop over an N-dimensional
+array. It is the object returned from the flat attribute of an
+ndarray. It is also used extensively throughout the implementation
+internals to loop over an N-dimensional array. The tp_as_mapping
+interface is implemented so that the iterator object can be indexed
+(using 1-d indexing), and a few methods are implemented through the
+tp_methods table. This object implements the next method and can be
+used anywhere an iterator can be used in Python.</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyArrayIterObject">
+<tt class="descname">PyArrayIterObject</tt><a class="headerlink" href="#PyArrayIterObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>The C-structure corresponding to an object of <a class="reference internal" href="#PyArrayIter_Type" title="PyArrayIter_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayIter_Type</span></tt></a> is
+the <a class="reference internal" href="#PyArrayIterObject" title="PyArrayIterObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayIterObject</span></tt></a>. The <a class="reference internal" href="#PyArrayIterObject" title="PyArrayIterObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayIterObject</span></tt></a> is used to
+keep track of a pointer into an N-dimensional array. It contains associated
+information used to quickly march through the array. The pointer can
+be adjusted in three basic ways: 1) advance to the “next” position in
+the array in a C-style contiguous fashion, 2) advance to an arbitrary
+N-dimensional coordinate in the array, and 3) advance to an arbitrary
+one-dimensional index into the array. The members of the
+<a class="reference internal" href="#PyArrayIterObject" title="PyArrayIterObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayIterObject</span></tt></a> structure are used in these
+calculations. Iterator objects keep their own dimension and strides
+information about an array. This can be adjusted as needed for
+“broadcasting,” or to loop over only specific dimensions.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="kt">int</span>   <span class="n">nd_m1</span><span class="p">;</span>
+    <span class="n">npy_intp</span>  <span class="n">index</span><span class="p">;</span>
+    <span class="n">npy_intp</span>  <span class="n">size</span><span class="p">;</span>
+    <span class="n">npy_intp</span>  <span class="n">coordinates</span><span class="p">[</span><span class="n">NPY_MAXDIMS</span><span class="p">];</span>
+    <span class="n">npy_intp</span>  <span class="n">dims_m1</span><span class="p">[</span><span class="n">NPY_MAXDIMS</span><span class="p">];</span>
+    <span class="n">npy_intp</span>  <span class="n">strides</span><span class="p">[</span><span class="n">NPY_MAXDIMS</span><span class="p">];</span>
+    <span class="n">npy_intp</span>  <span class="n">backstrides</span><span class="p">[</span><span class="n">NPY_MAXDIMS</span><span class="p">];</span>
+    <span class="n">npy_intp</span>  <span class="n">factors</span><span class="p">[</span><span class="n">NPY_MAXDIMS</span><span class="p">];</span>
+    <span class="n">PyArrayObject</span> <span class="o">*</span><span class="n">ao</span><span class="p">;</span>
+    <span class="kt">char</span>  <span class="o">*</span><span class="n">dataptr</span><span class="p">;</span>
+    <span class="n">Bool</span>  <span class="n">contiguous</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyArrayIterObject</span><span class="p">;</span>
+</pre></div>
+</div>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.nd_m1">
+int <tt class="descname">PyArrayIterObject.nd_m1</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.nd_m1" title="Permalink to this definition">¶</a></dt>
+<dd><p><img alt="N-1" class="math" src="../_images/math/a256c70ad4c46ec1127c5be68f8bb3075e9ced31.png" style="vertical-align: 0px"/> where <img alt="N" class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" style="vertical-align: 0px"/> is the number of dimensions in the
+underlying array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.index">
+npy_intp <tt class="descname">PyArrayIterObject.index</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current 1-d index into the array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.size">
+npy_intp <tt class="descname">PyArrayIterObject.size</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total size of the underlying array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.coordinates">
+npy_intp *<tt class="descname">PyArrayIterObject.coordinates</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <img alt="N" class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" style="vertical-align: 0px"/> -dimensional index into the array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.dims_m1">
+npy_intp *<tt class="descname">PyArrayIterObject.dims_m1</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.dims_m1" title="Permalink to this definition">¶</a></dt>
+<dd><p>The size of the array minus 1 in each dimension.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.strides">
+npy_intp *<tt class="descname">PyArrayIterObject.strides</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.strides" title="Permalink to this definition">¶</a></dt>
+<dd><p>The strides of the array. How many bytes needed to jump to the next
+element in each dimension.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.backstrides">
+npy_intp *<tt class="descname">PyArrayIterObject.backstrides</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.backstrides" title="Permalink to this definition">¶</a></dt>
+<dd><p>How many bytes needed to jump from the end of a dimension back
+to its beginning. Note that <em>backstrides</em> [k]= <em>strides</em> [k]*d
+<em>ims_m1</em> [k], but it is stored here as an optimization.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.factors">
+npy_intp *<tt class="descname">PyArrayIterObject.factors</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.factors" title="Permalink to this definition">¶</a></dt>
+<dd><p>This array is used in computing an N-d index from a 1-d index. It
+contains needed products of the dimensions.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.ao">
+<a class="reference internal" href="#PyArrayObject" title="PyArrayObject">PyArrayObject</a> *<tt class="descname">PyArrayIterObject.ao</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.ao" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to the underlying ndarray this iterator was created to
+represent.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.dataptr">
+char *<tt class="descname">PyArrayIterObject.dataptr</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.dataptr" title="Permalink to this definition">¶</a></dt>
+<dd><p>This member points to an element in the ndarray indicated by the
+index.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayIterObject.PyArrayIterObject.contiguous">
+Bool <tt class="descname">PyArrayIterObject.contiguous</tt><a class="headerlink" href="#PyArrayIterObject.PyArrayIterObject.contiguous" title="Permalink to this definition">¶</a></dt>
+<dd><p>This flag is true if the underlying array is
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_C_CONTIGUOUS" title="NPY_ARRAY_C_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_C_CONTIGUOUS</span></tt></a>. It is used to simplify
+calculations when possible.</p>
+</dd></dl>
+</dd></dl>
+<p>How to use an array iterator on a C-level is explained more fully in
+later sections. Typically, you do not need to concern yourself with
+the internal structure of the iterator object, and merely interact
+with it through the use of the macros <a class="reference internal" href="c-api.array.html#PyArray_ITER_NEXT" title="PyArray_ITER_NEXT"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_NEXT</span></tt></a> (it),
+<a class="reference internal" href="c-api.array.html#PyArray_ITER_GOTO" title="PyArray_ITER_GOTO"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_GOTO</span></tt></a> (it, dest), or <a class="reference internal" href="c-api.array.html#PyArray_ITER_GOTO1D" title="PyArray_ITER_GOTO1D"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_GOTO1D</span></tt></a> (it,
+index). All of these macros require the argument <em>it</em> to be a
+<a class="reference internal" href="#PyArrayIterObject" title="PyArrayIterObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayIterObject</span> <span class="pre">*</span></tt></a>.</p>
+</div>
+<div class="section" id="pyarraymultiiter-type">
+<h3>PyArrayMultiIter_Type<a class="headerlink" href="#pyarraymultiiter-type" title="Permalink to this headline">¶</a></h3>
+<dl class="var">
+<dt id="PyArrayMultiIter_Type">
+<tt class="descname">PyArrayMultiIter_Type</tt><a class="headerlink" href="#PyArrayMultiIter_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This type provides an iterator that encapsulates the concept of
+broadcasting. It allows <img alt="N" class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" style="vertical-align: 0px"/> arrays to be broadcast together
+so that the loop progresses in C-style contiguous fashion over the
+broadcasted array. The corresponding C-structure is the
+<a class="reference internal" href="#PyArrayMultiIterObject" title="PyArrayMultiIterObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayMultiIterObject</span></tt></a> whose memory layout must begin any
+object, <em>obj</em>, passed in to the <a class="reference internal" href="c-api.array.html#PyArray_Broadcast" title="PyArray_Broadcast"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_Broadcast</span></tt></a> (obj)
+function. Broadcasting is performed by adjusting array iterators so
+that each iterator represents the broadcasted shape and size, but
+has its strides adjusted so that the correct element from the array
+is used at each iteration.</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyArrayMultiIterObject">
+<tt class="descname">PyArrayMultiIterObject</tt><a class="headerlink" href="#PyArrayMultiIterObject" title="Permalink to this definition">¶</a></dt>
+<dd><div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="kt">int</span> <span class="n">numiter</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="n">size</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="n">index</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">nd</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="n">dimensions</span><span class="p">[</span><span class="n">NPY_MAXDIMS</span><span class="p">];</span>
+    <span class="n">PyArrayIterObject</span> <span class="o">*</span><span class="n">iters</span><span class="p">[</span><span class="n">NPY_MAXDIMS</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">PyArrayMultiIterObject</span><span class="p">;</span>
+</pre></div>
+</div>
+<dl class="macro">
+<dt id="PyArrayMultiIterObject.PyObject_HEAD">
+<tt class="descname">PyArrayMultiIterObject.PyObject_HEAD</tt><a class="headerlink" href="#PyArrayMultiIterObject.PyObject_HEAD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Needed at the start of every Python object (holds reference count and
+type identification).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayMultiIterObject.PyArrayMultiIterObject.numiter">
+int <tt class="descname">PyArrayMultiIterObject.numiter</tt><a class="headerlink" href="#PyArrayMultiIterObject.PyArrayMultiIterObject.numiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of arrays that need to be broadcast to the same shape.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayMultiIterObject.PyArrayMultiIterObject.size">
+npy_intp <tt class="descname">PyArrayMultiIterObject.size</tt><a class="headerlink" href="#PyArrayMultiIterObject.PyArrayMultiIterObject.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total broadcasted size.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayMultiIterObject.PyArrayMultiIterObject.index">
+npy_intp <tt class="descname">PyArrayMultiIterObject.index</tt><a class="headerlink" href="#PyArrayMultiIterObject.PyArrayMultiIterObject.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current (1-d) index into the broadcasted result.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayMultiIterObject.PyArrayMultiIterObject.nd">
+int <tt class="descname">PyArrayMultiIterObject.nd</tt><a class="headerlink" href="#PyArrayMultiIterObject.PyArrayMultiIterObject.nd" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of dimensions in the broadcasted result.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayMultiIterObject.PyArrayMultiIterObject.dimensions">
+npy_intp *<tt class="descname">PyArrayMultiIterObject.dimensions</tt><a class="headerlink" href="#PyArrayMultiIterObject.PyArrayMultiIterObject.dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>The shape of the broadcasted result (only <tt class="docutils literal"><span class="pre">nd</span></tt> slots are used).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayMultiIterObject.PyArrayMultiIterObject.iters">
+<a class="reference internal" href="#PyArrayIterObject" title="PyArrayIterObject">PyArrayIterObject</a> **<tt class="descname">PyArrayMultiIterObject.iters</tt><a class="headerlink" href="#PyArrayMultiIterObject.PyArrayMultiIterObject.iters" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array of iterator objects that holds the iterators for the arrays
+to be broadcast together. On return, the iterators are adjusted for
+broadcasting.</p>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="pyarrayneighborhooditer-type">
+<h3>PyArrayNeighborhoodIter_Type<a class="headerlink" href="#pyarrayneighborhooditer-type" title="Permalink to this headline">¶</a></h3>
+<dl class="var">
+<dt id="PyArrayNeighborhoodIter_Type">
+<tt class="descname">PyArrayNeighborhoodIter_Type</tt><a class="headerlink" href="#PyArrayNeighborhoodIter_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an iterator object that makes it easy to loop over an N-dimensional
+neighborhood.</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyArrayNeighborhoodIterObject">
+<tt class="descname">PyArrayNeighborhoodIterObject</tt><a class="headerlink" href="#PyArrayNeighborhoodIterObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>The C-structure corresponding to an object of
+<a class="reference internal" href="#PyArrayNeighborhoodIter_Type" title="PyArrayNeighborhoodIter_Type"><tt class="xref c c-data docutils literal"><span class="pre">PyArrayNeighborhoodIter_Type</span></tt></a> is the
+<a class="reference internal" href="#PyArrayNeighborhoodIterObject" title="PyArrayNeighborhoodIterObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayNeighborhoodIterObject</span></tt></a>.</p>
+</dd></dl>
+</div>
+<div class="section" id="pyarrayflags-type">
+<h3>PyArrayFlags_Type<a class="headerlink" href="#pyarrayflags-type" title="Permalink to this headline">¶</a></h3>
+<dl class="var">
+<dt id="PyArrayFlags_Type">
+<tt class="descname">PyArrayFlags_Type</tt><a class="headerlink" href="#PyArrayFlags_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the flags attribute is retrieved from Python, a special
+builtin object of this type is constructed. This special type makes
+it easier to work with the different flags by accessing them as
+attributes or by accessing them as if the object were a dictionary
+with the flag names as entries.</p>
+</dd></dl>
+</div>
+<div class="section" id="scalararraytypes">
+<h3>ScalarArrayTypes<a class="headerlink" href="#scalararraytypes" title="Permalink to this headline">¶</a></h3>
+<p>There is a Python type for each of the different built-in data types
+that can be present in the array Most of these are simple wrappers
+around the corresponding data type in C. The C-names for these types
+are <tt class="xref c c-data docutils literal"><span class="pre">Py{TYPE}ArrType_Type</span></tt> where <tt class="docutils literal"><span class="pre">{TYPE}</span></tt> can be</p>
+<blockquote>
+<div><strong>Bool</strong>, <strong>Byte</strong>, <strong>Short</strong>, <strong>Int</strong>, <strong>Long</strong>, <strong>LongLong</strong>,
+<strong>UByte</strong>, <strong>UShort</strong>, <strong>UInt</strong>, <strong>ULong</strong>, <strong>ULongLong</strong>,
+<strong>Half</strong>, <strong>Float</strong>, <strong>Double</strong>, <strong>LongDouble</strong>, <strong>CFloat</strong>, <strong>CDouble</strong>,
+<strong>CLongDouble</strong>, <strong>String</strong>, <strong>Unicode</strong>, <strong>Void</strong>, and
+<strong>Object</strong>.</div></blockquote>
+<p>These type names are part of the C-API and can therefore be created in
+extension C-code. There is also a <tt class="xref c c-data docutils literal"><span class="pre">PyIntpArrType_Type</span></tt> and a
+<tt class="xref c c-data docutils literal"><span class="pre">PyUIntpArrType_Type</span></tt> that are simple substitutes for one of the
+integer types that can hold a pointer on the platform. The structure
+of these scalar objects is not exposed to C-code. The function
+<a class="reference internal" href="c-api.array.html#PyArray_ScalarAsCtype" title="PyArray_ScalarAsCtype"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ScalarAsCtype</span></tt></a> (..) can be used to extract the C-type value
+from the array scalar and the function <a class="reference internal" href="c-api.array.html#PyArray_Scalar" title="PyArray_Scalar"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_Scalar</span></tt></a> (...) can be
+used to construct an array scalar from a C-value.</p>
+</div>
+</div>
+<div class="section" id="other-c-structures">
+<h2>Other C-Structures<a class="headerlink" href="#other-c-structures" title="Permalink to this headline">¶</a></h2>
+<p>A few new C-structures were found to be useful in the development of
+NumPy. These C-structures are used in at least one C-API call and are
+therefore documented here. The main reason these structures were
+defined is to make it easy to use the Python ParseTuple C-API to
+convert from Python objects to a useful C-Object.</p>
+<div class="section" id="pyarray-dims">
+<h3>PyArray_Dims<a class="headerlink" href="#pyarray-dims" title="Permalink to this headline">¶</a></h3>
+<dl class="type">
+<dt id="PyArray_Dims">
+<tt class="descname">PyArray_Dims</tt><a class="headerlink" href="#PyArray_Dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>This structure is very useful when shape and/or strides information is
+supposed to be interpreted. The structure is:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">npy_intp</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyArray_Dims</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The members of this structure are</p>
+<dl class="member">
+<dt id="PyArray_Dims.PyArray_Dims.ptr">
+npy_intp *<tt class="descname">PyArray_Dims.ptr</tt><a class="headerlink" href="#PyArray_Dims.PyArray_Dims.ptr" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to a list of (<tt class="xref c c-type docutils literal"><span class="pre">npy_intp</span></tt>) integers which usually
+represent array shape or array strides.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Dims.PyArray_Dims.len">
+int <tt class="descname">PyArray_Dims.len</tt><a class="headerlink" href="#PyArray_Dims.PyArray_Dims.len" title="Permalink to this definition">¶</a></dt>
+<dd><p>The length of the list of integers. It is assumed safe to
+access <em>ptr</em> [0] to <em>ptr</em> [len-1].</p>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="pyarray-chunk">
+<h3>PyArray_Chunk<a class="headerlink" href="#pyarray-chunk" title="Permalink to this headline">¶</a></h3>
+<dl class="type">
+<dt id="PyArray_Chunk">
+<tt class="descname">PyArray_Chunk</tt><a class="headerlink" href="#PyArray_Chunk" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is equivalent to the buffer object structure in Python up to
+the ptr member. On 32-bit platforms (<em>i.e.</em> if <a class="reference internal" href="c-api.config.html#NPY_SIZEOF_INT" title="NPY_SIZEOF_INT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_SIZEOF_INT</span></tt></a>
+== <tt class="xref c c-data docutils literal"><span class="pre">NPY_SIZEOF_INTP</span></tt> ) or in Python 2.5, the len member also
+matches an equivalent member of the buffer object. It is useful to
+represent a generic single- segment chunk of memory.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="n">len</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyArray_Chunk</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The members are</p>
+<dl class="macro">
+<dt id="PyArray_Chunk.PyObject_HEAD">
+<tt class="descname">PyArray_Chunk.PyObject_HEAD</tt><a class="headerlink" href="#PyArray_Chunk.PyObject_HEAD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Necessary for all Python objects. Included here so that the
+<a class="reference internal" href="#PyArray_Chunk" title="PyArray_Chunk"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Chunk</span></tt></a> structure matches that of the buffer object
+(at least to the len member).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Chunk.PyArray_Chunk.base">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArray_Chunk.base</tt><a class="headerlink" href="#PyArray_Chunk.PyArray_Chunk.base" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Python object this chunk of memory comes from. Needed so that
+memory can be accounted for properly.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Chunk.PyArray_Chunk.ptr">
+void *<tt class="descname">PyArray_Chunk.ptr</tt><a class="headerlink" href="#PyArray_Chunk.PyArray_Chunk.ptr" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer to the start of the single-segment chunk of memory.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Chunk.PyArray_Chunk.len">
+npy_intp <tt class="descname">PyArray_Chunk.len</tt><a class="headerlink" href="#PyArray_Chunk.PyArray_Chunk.len" title="Permalink to this definition">¶</a></dt>
+<dd><p>The length of the segment in bytes.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArray_Chunk.PyArray_Chunk.flags">
+int <tt class="descname">PyArray_Chunk.flags</tt><a class="headerlink" href="#PyArray_Chunk.PyArray_Chunk.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any data flags (<em>e.g.</em> <a class="reference internal" href="c-api.array.html#NPY_ARRAY_WRITEABLE" title="NPY_ARRAY_WRITEABLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_WRITEABLE</span></tt></a> ) that should
+be used to interpret the memory.</p>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="pyarrayinterface">
+<h3>PyArrayInterface<a class="headerlink" href="#pyarrayinterface" title="Permalink to this headline">¶</a></h3>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="arrays.interface.html#arrays-interface"><em>The Array Interface</em></a></p>
+</div>
+<dl class="type">
+<dt id="PyArrayInterface">
+<tt class="descname">PyArrayInterface</tt><a class="headerlink" href="#PyArrayInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#PyArrayInterface" title="PyArrayInterface"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayInterface</span></tt></a> structure is defined so that NumPy and
+other extension modules can use the rapid array interface
+protocol. The <tt class="xref py py-obj docutils literal"><span class="pre">__array_struct__</span></tt> method of an object that
+supports the rapid array interface protocol should return a
+<tt class="xref c c-type docutils literal"><span class="pre">PyCObject</span></tt> that contains a pointer to a <a class="reference internal" href="#PyArrayInterface" title="PyArrayInterface"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayInterface</span></tt></a>
+structure with the relevant details of the array. After the new
+array is created, the attribute should be <tt class="docutils literal"><span class="pre">DECREF</span></tt>‘d which will
+free the <a class="reference internal" href="#PyArrayInterface" title="PyArrayInterface"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayInterface</span></tt></a> structure. Remember to <tt class="docutils literal"><span class="pre">INCREF</span></tt> the
+object (whose <tt class="xref py py-obj docutils literal"><span class="pre">__array_struct__</span></tt> attribute was retrieved) and
+point the base member of the new <a class="reference internal" href="#PyArrayObject" title="PyArrayObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayObject</span></tt></a> to this same
+object. In this way the memory for the array will be managed
+correctly.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">two</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">nd</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">typekind</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">itemsize</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="o">*</span><span class="n">shape</span><span class="p">;</span>
+    <span class="n">npy_intp</span> <span class="o">*</span><span class="n">strides</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">descr</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyArrayInterface</span><span class="p">;</span>
+</pre></div>
+</div>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.two">
+int <tt class="descname">PyArrayInterface.two</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.two" title="Permalink to this definition">¶</a></dt>
+<dd><p>the integer 2 as a sanity check.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.nd">
+int <tt class="descname">PyArrayInterface.nd</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.nd" title="Permalink to this definition">¶</a></dt>
+<dd><p>the number of dimensions in the array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.typekind">
+char <tt class="descname">PyArrayInterface.typekind</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.typekind" title="Permalink to this definition">¶</a></dt>
+<dd><p>A character indicating what kind of array is present according to the
+typestring convention with ‘t’ -&gt; bitfield, ‘b’ -&gt; Boolean, ‘i’ -&gt;
+signed integer, ‘u’ -&gt; unsigned integer, ‘f’ -&gt; floating point, ‘c’ -&gt;
+complex floating point, ‘O’ -&gt; object, ‘S’ -&gt; string, ‘U’ -&gt; unicode,
+‘V’ -&gt; void.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.itemsize">
+int <tt class="descname">PyArrayInterface.itemsize</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.itemsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of bytes each item in the array requires.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.flags">
+int <tt class="descname">PyArrayInterface.flags</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any of the bits <a class="reference internal" href="c-api.array.html#NPY_ARRAY_C_CONTIGUOUS" title="NPY_ARRAY_C_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_C_CONTIGUOUS</span></tt></a> (1),
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_F_CONTIGUOUS" title="NPY_ARRAY_F_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_F_CONTIGUOUS</span></tt></a> (2), <a class="reference internal" href="c-api.array.html#NPY_ARRAY_ALIGNED" title="NPY_ARRAY_ALIGNED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_ALIGNED</span></tt></a> (0x100),
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_NOTSWAPPED" title="NPY_ARRAY_NOTSWAPPED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_NOTSWAPPED</span></tt></a> (0x200), or <a class="reference internal" href="c-api.array.html#NPY_ARRAY_WRITEABLE" title="NPY_ARRAY_WRITEABLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_WRITEABLE</span></tt></a>
+(0x400) to indicate something about the data. The
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_ALIGNED" title="NPY_ARRAY_ALIGNED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_ALIGNED</span></tt></a>, <a class="reference internal" href="c-api.array.html#NPY_ARRAY_C_CONTIGUOUS" title="NPY_ARRAY_C_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_C_CONTIGUOUS</span></tt></a>, and
+<a class="reference internal" href="c-api.array.html#NPY_ARRAY_F_CONTIGUOUS" title="NPY_ARRAY_F_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_F_CONTIGUOUS</span></tt></a> flags can actually be determined from
+the other parameters. The flag <tt class="xref c c-data docutils literal"><span class="pre">NPY_ARR_HAS_DESCR</span></tt>
+(0x800) can also be set to indicate to objects consuming the
+version 3 array interface that the descr member of the
+structure is present (it will be ignored by objects consuming
+version 2 of the array interface).</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.shape">
+npy_intp *<tt class="descname">PyArrayInterface.shape</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array containing the size of the array in each dimension.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.strides">
+npy_intp *<tt class="descname">PyArrayInterface.strides</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.strides" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array containing the number of bytes to jump to get to the next
+element in each dimension.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.data">
+void *<tt class="descname">PyArrayInterface.data</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pointer <em>to</em> the first element of the array.</p>
+</dd></dl>
+<dl class="member">
+<dt id="PyArrayInterface.PyArrayInterface.descr">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArrayInterface.descr</tt><a class="headerlink" href="#PyArrayInterface.PyArrayInterface.descr" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Python object describing the data-type in more detail (same
+as the <em>descr</em> key in <a class="reference internal" href="arrays.interface.html#__array_interface__" title="__array_interface__"><tt class="xref py py-obj docutils literal"><span class="pre">__array_interface__</span></tt></a>). This can be
+<tt class="docutils literal"><span class="pre">NULL</span></tt> if <em>typekind</em> and <em>itemsize</em> provide enough
+information. This field is also ignored unless
+<tt class="xref c c-data docutils literal"><span class="pre">ARR_HAS_DESCR</span></tt> flag is on in <em>flags</em>.</p>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="internally-used-structures">
+<h3>Internally used structures<a class="headerlink" href="#internally-used-structures" title="Permalink to this headline">¶</a></h3>
+<p>Internally, the code uses some additional Python objects primarily for
+memory management. These types are not accessible directly from
+Python, and are not exposed to the C-API. They are included here only
+for completeness and assistance in understanding the code.</p>
+<dl class="type">
+<dt id="PyUFuncLoopObject">
+<tt class="descname">PyUFuncLoopObject</tt><a class="headerlink" href="#PyUFuncLoopObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>A loose wrapper for a C-structure that contains the information
+needed for looping. This is useful if you are trying to understand
+the ufunc looping code. The <a class="reference internal" href="#PyUFuncLoopObject" title="PyUFuncLoopObject"><tt class="xref c c-type docutils literal"><span class="pre">PyUFuncLoopObject</span></tt></a> is the associated
+C-structure. It is defined in the <tt class="docutils literal"><span class="pre">ufuncobject.h</span></tt> header.</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyUFuncReduceObject">
+<tt class="descname">PyUFuncReduceObject</tt><a class="headerlink" href="#PyUFuncReduceObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>A loose wrapper for the C-structure that contains the information
+needed for reduce-like methods of ufuncs. This is useful if you are
+trying to understand the reduce, accumulate, and reduce-at
+code. The <a class="reference internal" href="#PyUFuncReduceObject" title="PyUFuncReduceObject"><tt class="xref c c-type docutils literal"><span class="pre">PyUFuncReduceObject</span></tt></a> is the associated C-structure. It
+is defined in the <tt class="docutils literal"><span class="pre">ufuncobject.h</span></tt> header.</p>
+</dd></dl>
+<dl class="type">
+<dt id="PyUFunc_Loop1d">
+<tt class="descname">PyUFunc_Loop1d</tt><a class="headerlink" href="#PyUFunc_Loop1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple linked-list of C-structures containing the information needed
+to define a 1-d loop for a ufunc for every defined signature of a
+user-defined data-type.</p>
+</dd></dl>
+<dl class="var">
+<dt id="PyArrayMapIter_Type">
+<tt class="descname">PyArrayMapIter_Type</tt><a class="headerlink" href="#PyArrayMapIter_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Advanced indexing is handled with this Python type. It is simply a
+loose wrapper around the C-structure containing the variables
+needed for advanced array indexing. The associated C-structure,
+<tt class="xref c c-type docutils literal"><span class="pre">PyArrayMapIterObject</span></tt>, is useful if you are trying to
+understand the advanced-index mapping code. It is defined in the
+<tt class="docutils literal"><span class="pre">arrayobject.h</span></tt> header. This type is not exposed to Python and
+could be replaced with a C-structure. As a Python type it takes
+advantage of reference- counted memory management.</p>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../contents.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h3><a href="../contents.html">Table Of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Python Types and C-Structures</a><ul>
+<li><a class="reference internal" href="#new-python-types-defined">New Python Types Defined</a><ul>
+<li><a class="reference internal" href="#pyarray-type">PyArray_Type</a></li>
+<li><a class="reference internal" href="#pyarraydescr-type">PyArrayDescr_Type</a></li>
+<li><a class="reference internal" href="#pyufunc-type">PyUFunc_Type</a></li>
+<li><a class="reference internal" href="#pyarrayiter-type">PyArrayIter_Type</a></li>
+<li><a class="reference internal" href="#pyarraymultiiter-type">PyArrayMultiIter_Type</a></li>
+<li><a class="reference internal" href="#pyarrayneighborhooditer-type">PyArrayNeighborhoodIter_Type</a></li>
+<li><a class="reference internal" href="#pyarrayflags-type">PyArrayFlags_Type</a></li>
+<li><a class="reference internal" href="#scalararraytypes">ScalarArrayTypes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-c-structures">Other C-Structures</a><ul>
+<li><a class="reference internal" href="#pyarray-dims">PyArray_Dims</a></li>
+<li><a class="reference internal" href="#pyarray-chunk">PyArray_Chunk</a></li>
+<li><a class="reference internal" href="#pyarrayinterface">PyArrayInterface</a></li>
+<li><a class="reference internal" href="#internally-used-structures">Internally used structures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Previous topic</h4>
+<p class="topless"><a href="c-api.html" title="previous chapter">Numpy C-API</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="c-api.config.html" title="next chapter">System configuration</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/reference/c-api.types-and-structures.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy-docs/reference/c-api.types-and-structures.rst">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="c-api.config.html" title="System configuration">next</a> |</li>
+<li class="right">
+<a href="c-api.html" title="Numpy C-API">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy Reference</a> »</li>
+<li><a href="c-api.html">Numpy C-API</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+<div style="display:none;"><a name="#"></a><h3 class="tasks">TOC</h3><ul class="tooltip"><li class="tooltip"><a href="#">Python Types and C-Structures</a></li><li class="tooltip"><a href="#new-python-types-defined">New Python Types Defined</a></li><li class="tooltip"><a href="#pyarray-type">PyArray_Type</a></li><li class="tooltip"><a href="#pyarraydescr-type">PyArrayDescr_Type</a></li><li class="tooltip"><a href="#pyufunc-type">PyUFunc_Type</a></li><li class="tooltip"><a href="#pyarrayiter-type">PyArrayIter_Type</a></li><li class="tooltip"><a href="#pyarraymultiiter-type">PyArrayMultiIter_Type</a></li><li class="tooltip"><a href="#pyarrayneighborhooditer-type">PyArrayNeighborhoodIter_Type</a></li><li class="tooltip"><a href="#pyarrayflags-type">PyArrayFlags_Type</a></li><li class="tooltip"><a href="#scalararraytypes">ScalarArrayTypes</a></li><li class="tooltip"><a href="#other-c-structures">Other C-Structures</a></li><li class="tooltip"><a href="#pyarray-dims">PyArray_Dims</a></li><li class="tooltip"><a href="#pyarray-chunk">PyArray_Chunk</a></li><li class="tooltip"><a href="#pyarrayinterface">PyArrayInterface</a></li><li class="tooltip"><a href="#internally-used-structures">Internally used structures</a></li></ul></div></body></html>

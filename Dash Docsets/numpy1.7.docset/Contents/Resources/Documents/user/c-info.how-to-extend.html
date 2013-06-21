@@ -1,0 +1,707 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>How to extend NumPy — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../_static/jquery.js" type="text/javascript"></script><script src="../_static/underscore.js" type="text/javascript"></script><script src="../_static/doctools.js" type="text/javascript"></script><link href="../about.html" rel="author" title="About these documents"/><link href="../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="c-info.html" rel="up" title="Using Numpy C-API"/><link href="c-info.python-as-glue.html" rel="next" title="Using Python as glue"/><link href="c-info.html" rel="prev" title="Using Numpy C-API"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="c-info.python-as-glue.html" title="Using Python as glue">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="c-info.html" title="Using Numpy C-API">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy User Guide</a> »</li>
+<li><a accesskey="U" href="c-info.html">Using Numpy C-API</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="how-to-extend-numpy">
+<h1>How to extend NumPy<a class="headerlink" href="#how-to-extend-numpy" title="Permalink to this headline">¶</a></h1>
+<div class="line-block">
+<div class="line">That which is static and repetitive is boring. That which is dynamic</div>
+<div class="line">and random is confusing. In between lies art.</div>
+<div class="line">— <em>John A. Locke</em></div>
+</div>
+<div class="line-block">
+<div class="line">Science is a differential equation. Religion is a boundary condition.</div>
+<div class="line">— <em>Alan Turing</em></div>
+</div>
+<div class="section" id="writing-an-extension-module">
+<span id="sec-writing-an-extension"></span><h2>Writing an extension module<a class="headerlink" href="#writing-an-extension-module" title="Permalink to this headline">¶</a></h2>
+<p>While the ndarray object is designed to allow rapid computation in
+Python, it is also designed to be general-purpose and satisfy a wide-
+variety of computational needs. As a result, if absolute speed is
+essential, there is no replacement for a well-crafted, compiled loop
+specific to your application and hardware. This is one of the reasons
+that numpy includes f2py so that an easy-to-use mechanisms for linking
+(simple) C/C++ and (arbitrary) Fortran code directly into Python are
+available. You are encouraged to use and improve this mechanism. The
+purpose of this section is not to document this tool but to document
+the more basic steps to writing an extension module that this tool
+depends on.</p>
+<p id="index-0">When an extension module is written, compiled, and installed to
+somewhere in the Python path (sys.path), the code can then be imported
+into Python as if it were a standard python file. It will contain
+objects and methods that have been defined and compiled in C code. The
+basic steps for doing this in Python are well-documented and you can
+find more information in the documentation for Python itself available
+online at <a class="reference external" href="http://www.python.org">www.python.org</a> .</p>
+<p>In addition to the Python C-API, there is a full and rich C-API for
+NumPy allowing sophisticated manipulations on a C-level. However, for
+most applications, only a few API calls will typically be used. If all
+you need to do is extract a pointer to memory along with some shape
+information to pass to another calculation routine, then you will use
+very different calls, then if you are trying to create a new array-
+like type or add a new data type for ndarrays. This chapter documents
+the API calls and macros that are most commonly used.</p>
+</div>
+<div class="section" id="required-subroutine">
+<h2>Required subroutine<a class="headerlink" href="#required-subroutine" title="Permalink to this headline">¶</a></h2>
+<p>There is exactly one function that must be defined in your C-code in
+order for Python to use it as an extension module. The function must
+be called init{name} where {name} is the name of the module from
+Python. This function must be declared so that it is visible to code
+outside of the routine. Besides adding the methods and constants you
+desire, this subroutine must also contain calls to import_array()
+and/or import_ufunc() depending on which C-API is needed. Forgetting
+to place these commands will show itself as an ugly segmentation fault
+(crash) as soon as any C-API subroutine is actually called. It is
+actually possible to have multiple init{name} functions in a single
+file in which case multiple modules will be defined by that file.
+However, there are some tricks to get that to work correctly and it is
+not covered here.</p>
+<p>A minimal <tt class="docutils literal"><span class="pre">init{name}</span></tt> method looks like:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">PyMODINIT_FUNC</span>
+<span class="n">init</span><span class="p">{</span><span class="n">name</span><span class="p">}(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">Py_InitModule</span><span class="p">({</span><span class="n">name</span><span class="p">},</span> <span class="n">mymethods</span><span class="p">);</span>
+   <span class="n">import_array</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The mymethods must be an array (usually statically declared) of
+PyMethodDef structures which contain method names, actual C-functions,
+a variable indicating whether the method uses keyword arguments or
+not, and docstrings. These are explained in the next section. If you
+want to add constants to the module, then you store the returned value
+from Py_InitModule which is a module object. The most general way to
+add itmes to the module is to get the module dictionary using
+PyModule_GetDict(module). With the module dictionary, you can add
+whatever you like to the module manually. An easier way to add objects
+to the module is to use one of three additional Python C-API calls
+that do not require a separate extraction of the module dictionary.
+These are documented in the Python documentation, but repeated here
+for convenience:</p>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyModule_AddObject"></a><dt id="PyModule_AddObject">
+int <tt class="descname">PyModule_AddObject</tt><big>(</big><a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a>*<em> module</em>, char*<em> name</em>, <a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a>*<em> value</em><big>)</big><a class="headerlink" href="#PyModule_AddObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyModule_AddIntConstant"></a><dt id="PyModule_AddIntConstant">
+int <tt class="descname">PyModule_AddIntConstant</tt><big>(</big><a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a>*<em> module</em>, char*<em> name</em>, long<em> value</em><big>)</big><a class="headerlink" href="#PyModule_AddIntConstant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyModule_AddStringConstant"></a><dt id="PyModule_AddStringConstant">
+int <tt class="descname">PyModule_AddStringConstant</tt><big>(</big><a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a>*<em> module</em>, char*<em> name</em>, char*<em> value</em><big>)</big><a class="headerlink" href="#PyModule_AddStringConstant" title="Permalink to this definition">¶</a></dt>
+<dd><p>All three of these functions require the <em>module</em> object (the
+return value of Py_InitModule). The <em>name</em> is a string that
+labels the value in the module. Depending on which function is
+called, the <em>value</em> argument is either a general object
+(<a class="reference internal" href="#PyModule_AddObject" title="PyModule_AddObject"><tt class="xref c c-func docutils literal"><span class="pre">PyModule_AddObject</span></tt></a> steals a reference to it), an integer
+constant, or a string constant.</p>
+</dd></dl>
+</div>
+<div class="section" id="defining-functions">
+<h2>Defining functions<a class="headerlink" href="#defining-functions" title="Permalink to this headline">¶</a></h2>
+<p>The second argument passed in to the Py_InitModule function is a
+structure that makes it easy to to define functions in the module. In
+the example given above, the mymethods structure would have been
+defined earlier in the file (usually right before the init{name}
+subroutine) to:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyMethodDef</span> <span class="n">mymethods</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span> <span class="n">nokeywordfunc</span><span class="p">,</span><span class="n">nokeyword_cfunc</span><span class="p">,</span>
+      <span class="n">METH_VARARGS</span><span class="p">,</span>
+      <span class="n">Doc</span> <span class="n">string</span><span class="p">},</span>
+    <span class="p">{</span> <span class="n">keywordfunc</span><span class="p">,</span> <span class="n">keyword_cfunc</span><span class="p">,</span>
+      <span class="n">METH_VARARGS</span><span class="o">|</span><span class="n">METH_KEYWORDS</span><span class="p">,</span>
+      <span class="n">Doc</span> <span class="n">string</span><span class="p">},</span>
+    <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span> <span class="cm">/* Sentinel */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Each entry in the mymethods array is a <a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyMethodDef" title="(in Python v3.3)"><tt class="xref c c-type docutils literal"><span class="pre">PyMethodDef</span></tt></a> structure
+containing 1) the Python name, 2) the C-function that implements the
+function, 3) flags indicating whether or not keywords are accepted for
+this function, and 4) The docstring for the function. Any number of
+functions may be defined for a single module by adding more entries to
+this table. The last entry must be all NULL as shown to act as a
+sentinel. Python looks for this entry to know that all of the
+functions for the module have been defined.</p>
+<p>The last thing that must be done to finish the extension module is to
+actually write the code that performs the desired functions. There are
+two kinds of functions: those that don’t accept keyword arguments, and
+those that do.</p>
+<div class="section" id="functions-without-keyword-arguments">
+<h3>Functions without keyword arguments<a class="headerlink" href="#functions-without-keyword-arguments" title="Permalink to this headline">¶</a></h3>
+<p>Functions that don’t accept keyword arguments should be written as:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span>
+<span class="nf">nokeyword_cfunc</span> <span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">dummy</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="cm">/* convert Python arguments */</span>
+    <span class="cm">/* do function */</span>
+    <span class="cm">/* return something */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The dummy argument is not used in this context and can be safely
+ignored. The <em>args</em> argument contains all of the arguments passed in
+to the function as a tuple. You can do anything you want at this
+point, but usually the easiest way to manage the input arguments is to
+call <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_ParseTuple" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_ParseTuple</span></tt></a> (args, format_string,
+addresses_to_C_variables...) or <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_UnpackTuple" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_UnpackTuple</span></tt></a> (tuple, “name” ,
+min, max, ...). A good description of how to use the first function is
+contained in the Python C-API reference manual under section 5.5
+(Parsing arguments and building values). You should pay particular
+attention to the “O&amp;” format which uses converter functions to go
+between the Python object and the C object. All of the other format
+functions can be (mostly) thought of as special cases of this general
+rule. There are several converter functions defined in the NumPy C-API
+that may be of use. In particular, the <a class="reference internal" href="../reference/c-api.array.html#PyArray_DescrConverter" title="PyArray_DescrConverter"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_DescrConverter</span></tt></a>
+function is very useful to support arbitrary data-type specification.
+This function transforms any valid data-type Python object into a
+<a class="reference internal" href="../reference/c-api.types-and-structures.html#PyArray_Descr" title="PyArray_Descr"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Descr</span> <span class="pre">*</span></tt></a> object. Remember to pass in the address of the
+C-variables that should be filled in.</p>
+<p>There are lots of examples of how to use <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_ParseTuple" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_ParseTuple</span></tt></a>
+throughout the NumPy source code. The standard usage is like this:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="n">input</span><span class="p">;</span>
+<span class="n">PyArray_Descr</span> <span class="o">*</span><span class="n">dtype</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s">"OO&amp;"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">input</span><span class="p">,</span>
+                      <span class="n">PyArray_DescrConverter</span><span class="p">,</span>
+                      <span class="o">&amp;</span><span class="n">dtype</span><span class="p">))</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>It is important to keep in mind that you get a <em>borrowed</em> reference to
+the object when using the “O” format string. However, the converter
+functions usually require some form of memory handling. In this
+example, if the conversion is successful, <em>dtype</em> will hold a new
+reference to a <a class="reference internal" href="../reference/c-api.types-and-structures.html#PyArray_Descr" title="PyArray_Descr"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Descr</span> <span class="pre">*</span></tt></a> object, while <em>input</em> will hold a
+borrowed reference. Therefore, if this conversion were mixed with
+another conversion (say to an integer) and the data-type conversion
+was successful but the integer conversion failed, then you would need
+to release the reference count to the data-type object before
+returning. A typical way to do this is to set <em>dtype</em> to <tt class="docutils literal"><span class="pre">NULL</span></tt>
+before calling <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_ParseTuple" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_ParseTuple</span></tt></a> and then use <a class="reference external" href="http://docs.python.org/dev/c-api/refcounting.html#Py_XDECREF" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_XDECREF</span></tt></a>
+on <em>dtype</em> before returning.</p>
+<p>After the input arguments are processed, the code that actually does
+the work is written (likely calling other functions as needed). The
+final step of the C-function is to return something. If an error is
+encountered then <tt class="docutils literal"><span class="pre">NULL</span></tt> should be returned (making sure an error has
+actually been set). If nothing should be returned then increment
+<a class="reference external" href="http://docs.python.org/dev/c-api/none.html#Py_None" title="(in Python v3.3)"><tt class="xref c c-data docutils literal"><span class="pre">Py_None</span></tt></a> and return it. If a single object should be returned then
+it is returned (ensuring that you own a reference to it first). If
+multiple objects should be returned then you need to return a tuple.
+The <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#Py_BuildValue" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_BuildValue</span></tt></a> (format_string, c_variables...) function makes
+it easy to build tuples of Python objects from C variables. Pay
+special attention to the difference between ‘N’ and ‘O’ in the format
+string or you can easily create memory leaks. The ‘O’ format string
+increments the reference count of the <tt class="xref c c-type docutils literal"><span class="pre">PyObject</span> <span class="pre">*</span></tt> C-variable it
+corresponds to, while the ‘N’ format string steals a reference to the
+corresponding <tt class="xref c c-type docutils literal"><span class="pre">PyObject</span> <span class="pre">*</span></tt> C-variable. You should use ‘N’ if you ave
+already created a reference for the object and just want to give that
+reference to the tuple. You should use ‘O’ if you only have a borrowed
+reference to an object and need to create one to provide for the
+tuple.</p>
+</div>
+<div class="section" id="functions-with-keyword-arguments">
+<h3>Functions with keyword arguments<a class="headerlink" href="#functions-with-keyword-arguments" title="Permalink to this headline">¶</a></h3>
+<p>These functions are very similar to functions without keyword
+arguments. The only difference is that the function signature is:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span>
+<span class="nf">keyword_cfunc</span> <span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">dummy</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">kwds</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The kwds argument holds a Python dictionary whose keys are the names
+of the keyword arguments and whose values are the corresponding
+keyword-argument values. This dictionary can be processed however you
+see fit. The easiest way to handle it, however, is to replace the
+<a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_ParseTuple" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_ParseTuple</span></tt></a> (args, format_string, addresses...) function with
+a call to <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_ParseTupleAndKeywords" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_ParseTupleAndKeywords</span></tt></a> (args, kwds, format_string,
+char *kwlist[], addresses...). The kwlist parameter to this function
+is a <tt class="docutils literal"><span class="pre">NULL</span></tt> -terminated array of strings providing the expected
+keyword arguments.  There should be one string for each entry in the
+format_string. Using this function will raise a TypeError if invalid
+keyword arguments are passed in.</p>
+<p>For more help on this function please see section 1.8 (Keyword
+Paramters for Extension Functions) of the Extending and Embedding
+tutorial in the Python documentation.</p>
+</div>
+<div class="section" id="reference-counting">
+<h3>Reference counting<a class="headerlink" href="#reference-counting" title="Permalink to this headline">¶</a></h3>
+<p>The biggest difficulty when writing extension modules is reference
+counting. It is an important reason for the popularity of f2py, weave,
+pyrex, ctypes, etc.... If you mis-handle reference counts you can get
+problems from memory-leaks to segmentation faults. The only strategy I
+know of to handle reference counts correctly is blood, sweat, and
+tears. First, you force it into your head that every Python variable
+has a reference count. Then, you understand exactly what each function
+does to the reference count of your objects, so that you can properly
+use DECREF and INCREF when you need them. Reference counting can
+really test the amount of patience and diligence you have towards your
+programming craft. Despite the grim depiction, most cases of reference
+counting are quite straightforward with the most common difficulty
+being not using DECREF on objects before exiting early from a routine
+due to some error. In second place, is the common error of not owning
+the reference on an object that is passed to a function or macro that
+is going to steal the reference ( <em>e.g.</em> <a class="reference external" href="http://docs.python.org/dev/c-api/tuple.html#PyTuple_SET_ITEM" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyTuple_SET_ITEM</span></tt></a>, and
+most functions that take <a class="reference internal" href="../reference/c-api.types-and-structures.html#PyArray_Descr" title="PyArray_Descr"><tt class="xref c c-type docutils literal"><span class="pre">PyArray_Descr</span></tt></a> objects).</p>
+<p id="index-1">Typically you get a new reference to a variable when it is created or
+is the return value of some function (there are some prominent
+exceptions, however — such as getting an item out of a tuple or a
+dictionary). When you own the reference, you are responsible to make
+sure that <a class="reference external" href="http://docs.python.org/dev/c-api/refcounting.html#Py_DECREF" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_DECREF</span></tt></a> (var) is called when the variable is no
+longer necessary (and no other function has “stolen” its
+reference). Also, if you are passing a Python object to a function
+that will “steal” the reference, then you need to make sure you own it
+(or use <a class="reference external" href="http://docs.python.org/dev/c-api/refcounting.html#Py_INCREF" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_INCREF</span></tt></a> to get your own reference). You will also
+encounter the notion of borrowing a reference. A function that borrows
+a reference does not alter the reference count of the object and does
+not expect to “hold on “to the reference. It’s just going to use the
+object temporarily.  When you use <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_ParseTuple" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_ParseTuple</span></tt></a> or
+<a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#PyArg_UnpackTuple" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">PyArg_UnpackTuple</span></tt></a> you receive a borrowed reference to the
+objects in the tuple and should not alter their reference count inside
+your function. With practice, you can learn to get reference counting
+right, but it can be frustrating at first.</p>
+<p>One common source of reference-count errors is the <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#Py_BuildValue" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_BuildValue</span></tt></a>
+function. Pay careful attention to the difference between the ‘N’
+format character and the ‘O’ format character. If you create a new
+object in your subroutine (such as an output array), and you are
+passing it back in a tuple of return values, then you should most-
+likely use the ‘N’ format character in <a class="reference external" href="http://docs.python.org/dev/c-api/arg.html#Py_BuildValue" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_BuildValue</span></tt></a>. The ‘O’
+character will increase the reference count by one. This will leave
+the caller with two reference counts for a brand-new array.  When the
+variable is deleted and the reference count decremented by one, there
+will still be that extra reference count, and the array will never be
+deallocated. You will have a reference-counting induced memory leak.
+Using the ‘N’ character will avoid this situation as it will return to
+the caller an object (inside the tuple) with a single reference count.</p>
+</div>
+</div>
+<div class="section" id="dealing-with-array-objects">
+<span id="index-2"></span><h2>Dealing with array objects<a class="headerlink" href="#dealing-with-array-objects" title="Permalink to this headline">¶</a></h2>
+<p>Most extension modules for NumPy will need to access the memory for an
+ndarray object (or one of it’s sub-classes). The easiest way to do
+this doesn’t require you to know much about the internals of NumPy.
+The method is to</p>
+<ol class="arabic">
+<li><p class="first">Ensure you are dealing with a well-behaved array (aligned, in machine
+byte-order and single-segment) of the correct type and number of
+dimensions.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>By converting it from some Python object using
+<a class="reference internal" href="../reference/c-api.array.html#PyArray_FromAny" title="PyArray_FromAny"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_FromAny</span></tt></a> or a macro built on it.</li>
+<li>By constructing a new ndarray of your desired shape and type
+using <a class="reference internal" href="../reference/c-api.array.html#PyArray_NewFromDescr" title="PyArray_NewFromDescr"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_NewFromDescr</span></tt></a> or a simpler macro or function
+based on it.</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p class="first">Get the shape of the array and a pointer to its actual data.</p>
+</li>
+<li><p class="first">Pass the data and shape information on to a subroutine or other
+section of code that actually performs the computation.</p>
+</li>
+<li><p class="first">If you are writing the algorithm, then I recommend that you use the
+stride information contained in the array to access the elements of
+the array (the <tt class="xref c c-func docutils literal"><span class="pre">PyArray_GETPTR</span></tt> macros make this painless). Then,
+you can relax your requirements so as not to force a single-segment
+array and the data-copying that might result.</p>
+</li>
+</ol>
+<p>Each of these sub-topics is covered in the following sub-sections.</p>
+<div class="section" id="converting-an-arbitrary-sequence-object">
+<h3>Converting an arbitrary sequence object<a class="headerlink" href="#converting-an-arbitrary-sequence-object" title="Permalink to this headline">¶</a></h3>
+<p>The main routine for obtaining an array from any Python object that
+can be converted to an array is <a class="reference internal" href="../reference/c-api.array.html#PyArray_FromAny" title="PyArray_FromAny"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_FromAny</span></tt></a>. This
+function is very flexible with many input arguments. Several macros
+make it easier to use the basic function. <a class="reference internal" href="#PyArray_FROM_OTF" title="PyArray_FROM_OTF"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_FROM_OTF</span></tt></a> is
+arguably the most useful of these macros for the most common uses.  It
+allows you to convert an arbitrary Python object to an array of a
+specific builtin data-type ( <em>e.g.</em> float), while specifying a
+particular set of requirements ( <em>e.g.</em> contiguous, aligned, and
+writeable). The syntax is</p>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyArray_FROM_OTF"></a><dt id="PyArray_FROM_OTF">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArray_FROM_OTF</tt><big>(</big><a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a>*<em> obj</em>, int<em> typenum</em>, int<em> requirements</em><big>)</big><a class="headerlink" href="#PyArray_FROM_OTF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an ndarray from any Python object, <em>obj</em>, that can be
+converted to an array. The number of dimensions in the returned
+array is determined by the object. The desired data-type of the
+returned array is provided in <em>typenum</em> which should be one of the
+enumerated types. The <em>requirements</em> for the returned array can be
+any combination of standard array flags.  Each of these arguments
+is explained in more detail below. You receive a new reference to
+the array on success. On failure, <tt class="docutils literal"><span class="pre">NULL</span></tt> is returned and an
+exception is set.</p>
+<p><em>obj</em></p>
+<blockquote>
+<div>The object can be any Python object convertable to an ndarray.
+If the object is already (a subclass of) the ndarray that
+satisfies the requirements then a new reference is returned.
+Otherwise, a new array is constructed. The contents of <em>obj</em>
+are copied to the new array unless the array interface is used
+so that data does not have to be copied. Objects that can be
+converted to an array include: 1) any nested sequence object,
+2) any object exposing the array interface, 3) any object with
+an <tt class="xref py py-obj docutils literal"><span class="pre">__array__</span></tt> method (which should return an ndarray),
+and 4) any scalar object (becomes a zero-dimensional
+array). Sub-classes of the ndarray that otherwise fit the
+requirements will be passed through. If you want to ensure
+a base-class ndarray, then use <tt class="xref c c-data docutils literal"><span class="pre">NPY_ENSUREARRAY</span></tt> in the
+requirements flag. A copy is made only if necessary. If you
+want to guarantee a copy, then pass in <tt class="xref c c-data docutils literal"><span class="pre">NPY_ENSURECOPY</span></tt>
+to the requirements flag.</div></blockquote>
+<p><em>typenum</em></p>
+<blockquote>
+<div><p>One of the enumerated types or <a class="reference internal" href="../reference/c-api.dtype.html#NPY_NOTYPE" title="NPY_NOTYPE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NOTYPE</span></tt></a> if the data-type
+should be determined from the object itself. The C-based names
+can be used:</p>
+<blockquote>
+<div><a class="reference internal" href="../reference/c-api.dtype.html#NPY_BOOL" title="NPY_BOOL"><tt class="xref c c-data docutils literal"><span class="pre">NPY_BOOL</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_BYTE" title="NPY_BYTE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_BYTE</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_UBYTE" title="NPY_UBYTE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UBYTE</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_SHORT" title="NPY_SHORT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_SHORT</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_USHORT" title="NPY_USHORT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_USHORT</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_INT" title="NPY_INT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_INT</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_UINT" title="NPY_UINT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UINT</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_LONG" title="NPY_LONG"><tt class="xref c c-data docutils literal"><span class="pre">NPY_LONG</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_ULONG" title="NPY_ULONG"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ULONG</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_LONGLONG" title="NPY_LONGLONG"><tt class="xref c c-data docutils literal"><span class="pre">NPY_LONGLONG</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_ULONGLONG" title="NPY_ULONGLONG"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ULONGLONG</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_DOUBLE" title="NPY_DOUBLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_DOUBLE</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_LONGDOUBLE" title="NPY_LONGDOUBLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_LONGDOUBLE</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_CFLOAT" title="NPY_CFLOAT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_CFLOAT</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_CDOUBLE" title="NPY_CDOUBLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_CDOUBLE</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_CLONGDOUBLE" title="NPY_CLONGDOUBLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_CLONGDOUBLE</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_OBJECT" title="NPY_OBJECT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_OBJECT</span></tt></a>.</div></blockquote>
+<p>Alternatively, the bit-width names can be used as supported on the
+platform. For example:</p>
+<blockquote>
+<div><a class="reference internal" href="../reference/c-api.dtype.html#NPY_INT8" title="NPY_INT8"><tt class="xref c c-data docutils literal"><span class="pre">NPY_INT8</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_INT16" title="NPY_INT16"><tt class="xref c c-data docutils literal"><span class="pre">NPY_INT16</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_INT32" title="NPY_INT32"><tt class="xref c c-data docutils literal"><span class="pre">NPY_INT32</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_INT64" title="NPY_INT64"><tt class="xref c c-data docutils literal"><span class="pre">NPY_INT64</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_UINT8" title="NPY_UINT8"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UINT8</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_UINT16" title="NPY_UINT16"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UINT16</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_UINT32" title="NPY_UINT32"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UINT32</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_UINT64" title="NPY_UINT64"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UINT64</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_FLOAT32" title="NPY_FLOAT32"><tt class="xref c c-data docutils literal"><span class="pre">NPY_FLOAT32</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_FLOAT64" title="NPY_FLOAT64"><tt class="xref c c-data docutils literal"><span class="pre">NPY_FLOAT64</span></tt></a>, <a class="reference internal" href="../reference/c-api.dtype.html#NPY_COMPLEX64" title="NPY_COMPLEX64"><tt class="xref c c-data docutils literal"><span class="pre">NPY_COMPLEX64</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.dtype.html#NPY_COMPLEX128" title="NPY_COMPLEX128"><tt class="xref c c-data docutils literal"><span class="pre">NPY_COMPLEX128</span></tt></a>.</div></blockquote>
+<p>The object will be converted to the desired type only if it
+can be done without losing precision. Otherwise <tt class="docutils literal"><span class="pre">NULL</span></tt> will
+be returned and an error raised. Use <tt class="xref c c-data docutils literal"><span class="pre">NPY_FORCECAST</span></tt> in the
+requirements flag to override this behavior.</p>
+</div></blockquote>
+<p><em>requirements</em></p>
+<blockquote>
+<div><p>The memory model for an ndarray admits arbitrary strides in
+each dimension to advance to the next element of the array.
+Often, however, you need to interface with code that expects a
+C-contiguous or a Fortran-contiguous memory layout. In
+addition, an ndarray can be misaligned (the address of an
+element is not at an integral multiple of the size of the
+element) which can cause your program to crash (or at least
+work more slowly) if you try and dereference a pointer into
+the array data. Both of these problems can be solved by
+converting the Python object into an array that is more
+“well-behaved” for your specific usage.</p>
+<p>The requirements flag allows specification of what kind of
+array is acceptable. If the object passed in does not satisfy
+this requirements then a copy is made so that thre returned
+object will satisfy the requirements. these ndarray can use a
+very generic pointer to memory.  This flag allows specification
+of the desired properties of the returned array object. All
+of the flags are explained in the detailed API chapter. The
+flags most commonly needed are <a class="reference internal" href="#NPY_ARRAY_IN_ARRAY" title="NPY_ARRAY_IN_ARRAY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_IN_ARRAY</span></tt></a>,
+<a class="reference internal" href="../reference/c-api.array.html#NPY_OUT_ARRAY" title="NPY_OUT_ARRAY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_OUT_ARRAY</span></tt></a>, and <a class="reference internal" href="#NPY_ARRAY_INOUT_ARRAY" title="NPY_ARRAY_INOUT_ARRAY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_INOUT_ARRAY</span></tt></a>:</p>
+<dl class="var">
+<dt id="NPY_ARRAY_IN_ARRAY">
+<tt class="descname">NPY_ARRAY_IN_ARRAY</tt><a class="headerlink" href="#NPY_ARRAY_IN_ARRAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_C_CONTIGUOUS" title="NPY_ARRAY_C_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_C_CONTIGUOUS</span></tt></a> |
+<a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_ALIGNED" title="NPY_ARRAY_ALIGNED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_ALIGNED</span></tt></a>. This combination of flags is useful
+for arrays that must be in C-contiguous order and aligned.
+These kinds of arrays are usually input arrays for some
+algorithm.</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_ARRAY_OUT_ARRAY">
+<tt class="descname">NPY_ARRAY_OUT_ARRAY</tt><a class="headerlink" href="#NPY_ARRAY_OUT_ARRAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_C_CONTIGUOUS" title="NPY_ARRAY_C_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_C_CONTIGUOUS</span></tt></a> |
+<a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_ALIGNED" title="NPY_ARRAY_ALIGNED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_ALIGNED</span></tt></a> | <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_WRITEABLE" title="NPY_ARRAY_WRITEABLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_WRITEABLE</span></tt></a>. This
+combination of flags is useful to specify an array that is
+in C-contiguous order, is aligned, and can be written to
+as well. Such an array is usually returned as output
+(although normally such output arrays are created from
+scratch).</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_ARRAY_INOUT_ARRAY">
+<tt class="descname">NPY_ARRAY_INOUT_ARRAY</tt><a class="headerlink" href="#NPY_ARRAY_INOUT_ARRAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_C_CONTIGUOUS" title="NPY_ARRAY_C_CONTIGUOUS"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_C_CONTIGUOUS</span></tt></a> |
+<a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_ALIGNED" title="NPY_ARRAY_ALIGNED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_ALIGNED</span></tt></a> | <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_WRITEABLE" title="NPY_ARRAY_WRITEABLE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_WRITEABLE</span></tt></a> |
+<a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_UPDATEIFCOPY" title="NPY_ARRAY_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_UPDATEIFCOPY</span></tt></a>. This combination of flags is
+useful to specify an array that will be used for both
+input and output. If a copy is needed, then when the
+temporary is deleted (by your use of <a class="reference external" href="http://docs.python.org/dev/c-api/refcounting.html#Py_DECREF" title="(in Python v3.3)"><tt class="xref c c-func docutils literal"><span class="pre">Py_DECREF</span></tt></a> at
+the end of the interface routine), the temporary array
+will be copied back into the original array passed in. Use
+of the <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_UPDATEIFCOPY" title="NPY_ARRAY_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_UPDATEIFCOPY</span></tt></a> flag requires that the input
+object is already an array (because other objects cannot
+be automatically updated in this fashion). If an error
+occurs use <tt class="xref c c-func docutils literal"><span class="pre">PyArray_DECREF_ERR</span></tt> (obj) on an array
+with the <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_UPDATEIFCOPY" title="NPY_ARRAY_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_UPDATEIFCOPY</span></tt></a> flag set. This will
+delete the array without causing the contents to be copied
+back into the original array.</p>
+</dd></dl>
+<p>Other useful flags that can be OR’d as additional requirements are:</p>
+<dl class="var">
+<dt id="NPY_ARRAY_FORCECAST">
+<tt class="descname">NPY_ARRAY_FORCECAST</tt><a class="headerlink" href="#NPY_ARRAY_FORCECAST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cast to the desired type, even if it can’t be done without losing
+information.</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_ARRAY_ENSURECOPY">
+<tt class="descname">NPY_ARRAY_ENSURECOPY</tt><a class="headerlink" href="#NPY_ARRAY_ENSURECOPY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure the resulting array is a copy of the original.</p>
+</dd></dl>
+<dl class="var">
+<dt id="NPY_ARRAY_ENSUREARRAY">
+<tt class="descname">NPY_ARRAY_ENSUREARRAY</tt><a class="headerlink" href="#NPY_ARRAY_ENSUREARRAY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure the resulting object is an actual ndarray and not a sub-
+class.</p>
+</dd></dl>
+</div></blockquote>
+</dd></dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Whether or not an array is byte-swapped is determined by the
+data-type of the array. Native byte-order arrays are always
+requested by <a class="reference internal" href="#PyArray_FROM_OTF" title="PyArray_FROM_OTF"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_FROM_OTF</span></tt></a> and so there is no need for
+a <a class="reference internal" href="../reference/c-api.array.html#NPY_ARRAY_NOTSWAPPED" title="NPY_ARRAY_NOTSWAPPED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ARRAY_NOTSWAPPED</span></tt></a> flag in the requirements argument. There
+is also no way to get a byte-swapped array from this routine.</p>
+</div>
+</div>
+<div class="section" id="creating-a-brand-new-ndarray">
+<h3>Creating a brand-new ndarray<a class="headerlink" href="#creating-a-brand-new-ndarray" title="Permalink to this headline">¶</a></h3>
+<p>Quite often new arrays must be created from within extension-module
+code. Perhaps an output array is needed and you don’t want the caller
+to have to supply it. Perhaps only a temporary array is needed to hold
+an intermediate calculation. Whatever the need there are simple ways
+to get an ndarray object of whatever data-type is needed. The most
+general function for doing this is <a class="reference internal" href="../reference/c-api.array.html#PyArray_NewFromDescr" title="PyArray_NewFromDescr"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_NewFromDescr</span></tt></a>. All array
+creation functions go through this heavily re-used code. Because of
+its flexibility, it can be somewhat confusing to use. As a result,
+simpler forms exist that are easier to use.</p>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyArray_SimpleNew"></a><dt id="PyArray_SimpleNew">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArray_SimpleNew</tt><big>(</big>int<em> nd</em>, npy_intp*<em> dims</em>, int<em> typenum</em><big>)</big><a class="headerlink" href="#PyArray_SimpleNew" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allocates new memory and places it in an ndarray
+with <em>nd</em> dimensions whose shape is determined by the array of
+at least <em>nd</em> items pointed to by <em>dims</em>. The memory for the
+array is uninitialized (unless typenum is <a class="reference internal" href="../reference/c-api.dtype.html#NPY_OBJECT" title="NPY_OBJECT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_OBJECT</span></tt></a> in
+which case each element in the array is set to NULL). The
+<em>typenum</em> argument allows specification of any of the builtin
+data-types such as <a class="reference internal" href="../reference/c-api.dtype.html#NPY_FLOAT" title="NPY_FLOAT"><tt class="xref c c-data docutils literal"><span class="pre">NPY_FLOAT</span></tt></a> or <a class="reference internal" href="../reference/c-api.dtype.html#NPY_LONG" title="NPY_LONG"><tt class="xref c c-data docutils literal"><span class="pre">NPY_LONG</span></tt></a>. The
+memory for the array can be set to zero if desired using
+<a class="reference internal" href="../reference/c-api.array.html#PyArray_FILLWBYTE" title="PyArray_FILLWBYTE"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_FILLWBYTE</span></tt></a> (return_object, 0).</p>
+</dd></dl>
+<dl class="function">
+<a name="//apple_ref/cpp/func/PyArray_SimpleNewFromData"></a><dt id="PyArray_SimpleNewFromData">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.3)">PyObject</a> *<tt class="descname">PyArray_SimpleNewFromData</tt><big>(</big>int<em> nd</em>, npy_intp*<em> dims</em>, int<em> typenum</em>, void*<em> data</em><big>)</big><a class="headerlink" href="#PyArray_SimpleNewFromData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sometimes, you want to wrap memory allocated elsewhere into an
+ndarray object for downstream use. This routine makes it
+straightforward to do that. The first three arguments are the same
+as in <a class="reference internal" href="#PyArray_SimpleNew" title="PyArray_SimpleNew"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_SimpleNew</span></tt></a>, the final argument is a pointer to a
+block of contiguous memory that the ndarray should use as it’s
+data-buffer which will be interpreted in C-style contiguous
+fashion. A new reference to an ndarray is returned, but the
+ndarray will not own its data. When this ndarray is deallocated,
+the pointer will not be freed.</p>
+<p>You should ensure that the provided memory is not freed while the
+returned array is in existence. The easiest way to handle this is
+if data comes from another reference-counted Python object. The
+reference count on this object should be increased after the
+pointer is passed in, and the base member of the returned ndarray
+should point to the Python object that owns the data. Then, when
+the ndarray is deallocated, the base-member will be DECREF’d
+appropriately. If you want the memory to be freed as soon as the
+ndarray is deallocated then simply set the OWNDATA flag on the
+returned ndarray.</p>
+</dd></dl>
+</div>
+<div class="section" id="getting-at-ndarray-memory-and-accessing-elements-of-the-ndarray">
+<h3>Getting at ndarray memory and accessing elements of the ndarray<a class="headerlink" href="#getting-at-ndarray-memory-and-accessing-elements-of-the-ndarray" title="Permalink to this headline">¶</a></h3>
+<p>If obj is an ndarray (<a class="reference internal" href="../reference/c-api.types-and-structures.html#PyArrayObject" title="PyArrayObject"><tt class="xref c c-type docutils literal"><span class="pre">PyArrayObject</span> <span class="pre">*</span></tt></a>), then the data-area of the
+ndarray is pointed to by the void* pointer <a class="reference internal" href="../reference/c-api.array.html#PyArray_DATA" title="PyArray_DATA"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_DATA</span></tt></a> (obj) or
+the char* pointer <a class="reference internal" href="../reference/c-api.array.html#PyArray_BYTES" title="PyArray_BYTES"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_BYTES</span></tt></a> (obj). Remember that (in general)
+this data-area may not be aligned according to the data-type, it may
+represent byte-swapped data, and/or it may not be writeable. If the
+data area is aligned and in native byte-order, then how to get at a
+specific element of the array is determined only by the array of
+npy_intp variables, <a class="reference internal" href="../reference/c-api.array.html#PyArray_STRIDES" title="PyArray_STRIDES"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_STRIDES</span></tt></a> (obj). In particular, this
+c-array of integers shows how many <strong>bytes</strong> must be added to the
+current element pointer to get to the next element in each dimension.
+For arrays less than 4-dimensions there are <tt class="xref c c-func docutils literal"><span class="pre">PyArray_GETPTR{k}</span></tt>
+(obj, ...) macros where {k} is the integer 1, 2, 3, or 4 that make
+using the array strides easier. The arguments .... represent {k} non-
+negative integer indices into the array. For example, suppose <tt class="docutils literal"><span class="pre">E</span></tt> is
+a 3-dimensional ndarray. A (void*) pointer to the element <tt class="docutils literal"><span class="pre">E[i,j,k]</span></tt>
+is obtained as <a class="reference internal" href="../reference/c-api.array.html#PyArray_GETPTR3" title="PyArray_GETPTR3"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_GETPTR3</span></tt></a> (E, i, j, k).</p>
+<p>As explained previously, C-style contiguous arrays and Fortran-style
+contiguous arrays have particular striding patterns. Two array flags
+(<tt class="xref c c-data docutils literal"><span class="pre">NPY_C_CONTIGUOUS</span></tt> and :cdata`NPY_F_CONTIGUOUS`) indicate
+whether or not the striding pattern of a particular array matches the
+C-style contiguous or Fortran-style contiguous or neither. Whether or
+not the striding pattern matches a standard C or Fortran one can be
+tested Using <a class="reference internal" href="../reference/c-api.array.html#PyArray_ISCONTIGUOUS" title="PyArray_ISCONTIGUOUS"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ISCONTIGUOUS</span></tt></a> (obj) and
+<a class="reference internal" href="../reference/c-api.array.html#PyArray_ISFORTRAN" title="PyArray_ISFORTRAN"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ISFORTRAN</span></tt></a> (obj) respectively. Most third-party
+libraries expect contiguous arrays.  But, often it is not difficult to
+support general-purpose striding. I encourage you to use the striding
+information in your own code whenever possible, and reserve
+single-segment requirements for wrapping third-party code. Using the
+striding information provided with the ndarray rather than requiring a
+contiguous striding reduces copying that otherwise must be made.</p>
+</div>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p id="index-3">The following example shows how you might write a wrapper that accepts
+two input arguments (that will be converted to an array) and an output
+argument (that must be an array). The function returns None and
+updates the output array.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="n">PyObject</span> <span class="o">*</span>
+<span class="nf">example_wrapper</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">dummy</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">arg1</span><span class="o">=</span><span class="nb">NULL</span><span class="p">,</span> <span class="o">*</span><span class="n">arg2</span><span class="o">=</span><span class="nb">NULL</span><span class="p">,</span> <span class="o">*</span><span class="n">out</span><span class="o">=</span><span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">arr1</span><span class="o">=</span><span class="nb">NULL</span><span class="p">,</span> <span class="o">*</span><span class="n">arr2</span><span class="o">=</span><span class="nb">NULL</span><span class="p">,</span> <span class="o">*</span><span class="n">oarr</span><span class="o">=</span><span class="nb">NULL</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s">"OOO!"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">arg1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">arg2</span><span class="p">,</span>
+        <span class="o">&amp;</span><span class="n">PyArray_Type</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">))</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+
+    <span class="n">arr1</span> <span class="o">=</span> <span class="n">PyArray_FROM_OTF</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">NPY_DOUBLE</span><span class="p">,</span> <span class="n">NPY_IN_ARRAY</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">arr1</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">arr2</span> <span class="o">=</span> <span class="n">PyArray_FROM_OTF</span><span class="p">(</span><span class="n">arg2</span><span class="p">,</span> <span class="n">NPY_DOUBLE</span><span class="p">,</span> <span class="n">NPY_IN_ARRAY</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">arr2</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">goto</span> <span class="n">fail</span><span class="p">;</span>
+    <span class="n">oarr</span> <span class="o">=</span> <span class="n">PyArray_FROM_OTF</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">NPY_DOUBLE</span><span class="p">,</span> <span class="n">NPY_INOUT_ARRAY</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">oarr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">goto</span> <span class="n">fail</span><span class="p">;</span>
+
+    <span class="cm">/* code that makes use of arguments */</span>
+    <span class="cm">/* You will probably need at least</span>
+<span class="cm">       nd = PyArray_NDIM(&lt;..&gt;)    -- number of dimensions</span>
+<span class="cm">       dims = PyArray_DIMS(&lt;..&gt;)  -- npy_intp array of length nd</span>
+<span class="cm">                                     showing length in each dim.</span>
+<span class="cm">       dptr = (double *)PyArray_DATA(&lt;..&gt;) -- pointer to data.</span>
+
+<span class="cm">       If an error occurs goto fail.</span>
+<span class="cm">     */</span>
+
+    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">arr1</span><span class="p">);</span>
+    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">arr2</span><span class="p">);</span>
+    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">oarr</span><span class="p">);</span>
+    <span class="n">Py_INCREF</span><span class="p">(</span><span class="n">Py_None</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">Py_None</span><span class="p">;</span>
+
+ <span class="nl">fail:</span>
+    <span class="n">Py_XDECREF</span><span class="p">(</span><span class="n">arr1</span><span class="p">);</span>
+    <span class="n">Py_XDECREF</span><span class="p">(</span><span class="n">arr2</span><span class="p">);</span>
+    <span class="n">PyArray_XDECREF_ERR</span><span class="p">(</span><span class="n">oarr</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../contents.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h3><a href="../contents.html">Table Of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">How to extend NumPy</a><ul>
+<li><a class="reference internal" href="#writing-an-extension-module">Writing an extension module</a></li>
+<li><a class="reference internal" href="#required-subroutine">Required subroutine</a></li>
+<li><a class="reference internal" href="#defining-functions">Defining functions</a><ul>
+<li><a class="reference internal" href="#functions-without-keyword-arguments">Functions without keyword arguments</a></li>
+<li><a class="reference internal" href="#functions-with-keyword-arguments">Functions with keyword arguments</a></li>
+<li><a class="reference internal" href="#reference-counting">Reference counting</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dealing-with-array-objects">Dealing with array objects</a><ul>
+<li><a class="reference internal" href="#converting-an-arbitrary-sequence-object">Converting an arbitrary sequence object</a></li>
+<li><a class="reference internal" href="#creating-a-brand-new-ndarray">Creating a brand-new ndarray</a></li>
+<li><a class="reference internal" href="#getting-at-ndarray-memory-and-accessing-elements-of-the-ndarray">Getting at ndarray memory and accessing elements of the ndarray</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+<h4>Previous topic</h4>
+<p class="topless"><a href="c-info.html" title="previous chapter">Using Numpy C-API</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="c-info.python-as-glue.html" title="next chapter">Using Python as glue</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/user/c-info.how-to-extend.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy-docs/user/c-info.how-to-extend.rst">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="c-info.python-as-glue.html" title="Using Python as glue">next</a> |</li>
+<li class="right">
+<a href="c-info.html" title="Using Numpy C-API">previous</a> |</li>
+<li><a href="../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="index.html">NumPy User Guide</a> »</li>
+<li><a href="c-info.html">Using Numpy C-API</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+<div style="display:none;"><a name="#"></a><h3 class="tasks">TOC</h3><ul class="tooltip"><li class="tooltip"><a href="#">How to extend NumPy</a></li><li class="tooltip"><a href="#writing-an-extension-module">Writing an extension module</a></li><li class="tooltip"><a href="#required-subroutine">Required subroutine</a></li><li class="tooltip"><a href="#defining-functions">Defining functions</a></li><li class="tooltip"><a href="#functions-without-keyword-arguments">Functions without keyword arguments</a></li><li class="tooltip"><a href="#functions-with-keyword-arguments">Functions with keyword arguments</a></li><li class="tooltip"><a href="#reference-counting">Reference counting</a></li><li class="tooltip"><a href="#dealing-with-array-objects">Dealing with array objects</a></li><li class="tooltip"><a href="#converting-an-arbitrary-sequence-object">Converting an arbitrary sequence object</a></li><li class="tooltip"><a href="#creating-a-brand-new-ndarray">Creating a brand-new ndarray</a></li><li class="tooltip"><a href="#getting-at-ndarray-memory-and-accessing-elements-of-the-ndarray">Getting at ndarray memory and accessing elements of the ndarray</a></li><li class="tooltip"><a href="#example">Example</a></li></ul></div></body></html>

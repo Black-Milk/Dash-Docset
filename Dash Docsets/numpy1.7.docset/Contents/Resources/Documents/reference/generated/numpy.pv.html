@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>numpy.pv — NumPy v1.7.dev-3f685a1 Manual (DRAFT)</title><link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.7.0.dev-3f685a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="NumPy v1.7.dev-3f685a1 Manual (DRAFT)"/><link href="../routines.financial.html" rel="up" title="Financial functions"/><link href="numpy.npv.html" rel="next" title="numpy.npv"/><link href="numpy.fv.html" rel="prev" title="numpy.fv"/></head><body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="numpy.npv.html" title="numpy.npv">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="numpy.fv.html" title="numpy.fv">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a accesskey="U" href="../routines.financial.html">Financial functions</a> »</li>
+</ul>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="numpy-pv">
+<h1>numpy.pv<a class="headerlink" href="#numpy-pv" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<a name="//apple_ref/cpp/func/numpy.pv"></a><dt id="numpy.pv">
+<tt class="descclassname">numpy.</tt><tt class="descname">pv</tt><big>(</big><em>rate</em>, <em>nper</em>, <em>pmt</em>, <em>fv=0.0</em>, <em>when='end'</em><big>)</big><a class="headerlink" href="#numpy.pv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the present value.</p>
+<dl class="docutils">
+<dt>Given:</dt>
+<dd><ul class="first last simple">
+<li>a future value, <a class="reference internal" href="numpy.fv.html#numpy.fv" title="numpy.fv"><tt class="xref py py-obj docutils literal"><span class="pre">fv</span></tt></a></li>
+<li>an interest <a class="reference internal" href="numpy.rate.html#numpy.rate" title="numpy.rate"><tt class="xref py py-obj docutils literal"><span class="pre">rate</span></tt></a> compounded once per period, of which
+there are</li>
+<li><a class="reference internal" href="numpy.nper.html#numpy.nper" title="numpy.nper"><tt class="xref py py-obj docutils literal"><span class="pre">nper</span></tt></a> total</li>
+<li>a (fixed) payment, <a class="reference internal" href="numpy.pmt.html#numpy.pmt" title="numpy.pmt"><tt class="xref py py-obj docutils literal"><span class="pre">pmt</span></tt></a>, paid either</li>
+<li>at the beginning (<em class="xref py py-obj">when</em> = {‘begin’, 1}) or the end
+(<em class="xref py py-obj">when</em> = {‘end’, 0}) of each period</li>
+</ul>
+</dd>
+<dt>Return:</dt>
+<dd>the value now</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>rate</strong> : array_like</p>
+<blockquote>
+<div><p>Rate of interest (per period)</p>
+</div></blockquote>
+<p><strong>nper</strong> : array_like</p>
+<blockquote>
+<div><p>Number of compounding periods</p>
+</div></blockquote>
+<p><strong>pmt</strong> : array_like</p>
+<blockquote>
+<div><p>Payment</p>
+</div></blockquote>
+<p><strong>fv</strong> : array_like, optional</p>
+<blockquote>
+<div><p>Future value</p>
+</div></blockquote>
+<p><strong>when</strong> : {{‘begin’, 1}, {‘end’, 0}}, {string, int}, optional</p>
+<blockquote>
+<div><p>When payments are due (‘begin’ (1) or ‘end’ (0))</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : ndarray, float</p>
+<blockquote class="last">
+<div><p>Present value of a series of payments or investments.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The present value is computed by solving the equation:</p>
+<div class="highlight-python"><pre>fv +
+pv*(1 + rate)**nper +
+pmt*(1 + rate*when)/rate*((1 + rate)**nper - 1) = 0</pre>
+</div>
+<p>or, when <tt class="docutils literal"><span class="pre">rate</span> <span class="pre">=</span> <span class="pre">0</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fv</span> <span class="o">+</span> <span class="n">pv</span> <span class="o">+</span> <span class="n">pmt</span> <span class="o">*</span> <span class="n">nper</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>for <a class="reference internal" href="#numpy.pv" title="numpy.pv"><tt class="xref py py-obj docutils literal"><span class="pre">pv</span></tt></a>, which is then returned.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="wrw" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[WRW]</a></td><td>Wheeler, D. A., E. Rathke, and R. Weir (Eds.) (2009, May).
+Open Document Format for Office Applications (OpenDocument)v1.2,
+Part 2: Recalculated Formula (OpenFormula) Format - Annotated Version,
+Pre-Draft 12. Organization for the Advancement of Structured Information
+Standards (OASIS). Billerica, MA, USA. [ODT Document].
+Available:
+<a class="reference external" href="http://www.oasis-open.org/committees/documents.php?wg_abbrev=office-formula">http://www.oasis-open.org/committees/documents.php?wg_abbrev=office-formula</a>
+OpenDocument-formula-20090508.odt</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>What is the present value (e.g., the initial investment)
+of an investment that needs to total $15692.93
+after 10 years of saving $100 every month?  Assume the
+interest rate is 5% (annually) compounded monthly.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">pv</span><span class="p">(</span><span class="mf">0.05</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mf">15692.93</span><span class="p">)</span>
+<span class="go">-100.00067131625819</span>
+</pre></div>
+</div>
+<p>By convention, the negative sign represents cash flow out
+(i.e., money not available today).  Thus, to end up with
+$15,692.93 in 10 years saving $100 a month at 5% annual
+interest, one’s initial deposit should also be $100.</p>
+<p>If any input is array_like, <tt class="docutils literal"><span class="pre">pv</span></tt> returns an array of equal shape.
+Let’s compare different interest rates in the example above:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">))</span><span class="o">/</span><span class="mi">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">pv</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mf">15692.93</span><span class="p">)</span>
+<span class="go">array([ -100.00067132,  -649.26771385, -1273.78633713])</span>
+</pre></div>
+</div>
+<p>So, to end up with the same $15692.93 under the same $100 per month
+“savings plan,” for annual interest rates of 4% and 3%, one would
+need initial investments of $649.27 and $1273.79, respectively.</p>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../../contents.html">
+<img alt="Logo" class="logo" src="../../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.fv.html" title="previous chapter">numpy.fv</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.npv.html" title="next chapter">numpy.npv</a></p>
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../../_sources/reference/generated/numpy.pv.txt" rel="nofollow">Show Source</a></li>
+</ul>
+<ul class="this-page-menu">
+<li><a href="/numpy/docs/numpy.pv">Edit page</a></li>
+</ul>
+<div id="searchbox" style="display: none">
+<h3>Quick search</h3>
+<form action="../../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="../../np-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="numpy.npv.html" title="numpy.npv">next</a> |</li>
+<li class="right">
+<a href="numpy.fv.html" title="numpy.fv">previous</a> |</li>
+<li><a href="../../index.html">NumPy v1.7.dev-3f685a1 Manual (DRAFT)</a> »</li>
+<li><a href="../index.html">NumPy Reference</a> »</li>
+<li><a href="../routines.html">Routines</a> »</li>
+<li><a href="../routines.financial.html">Financial functions</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2009, The Scipy community.
+      Last updated on Feb 24, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+</body></html>
