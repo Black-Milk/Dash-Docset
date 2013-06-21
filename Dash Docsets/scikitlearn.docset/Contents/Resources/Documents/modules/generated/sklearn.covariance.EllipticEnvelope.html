@@ -1,0 +1,592 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>8.2.2. sklearn.covariance.EllipticEnvelope — scikit-learn 0.13.1 documentation</title><link href="../../_static/nature.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><script src="../../_static/sidebar.js" type="text/javascript"></script><link href="../../_static/favicon.ico" rel="shortcut icon"/><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="scikit-learn 0.13.1 documentation"/><link href="../classes.html" rel="up" title="8. Reference"/><link href="sklearn.covariance.GraphLasso.html" rel="next" title="8.2.3. sklearn.covariance.GraphLasso"/><link href="sklearn.covariance.EmpiricalCovariance.html" rel="prev" title="8.2.1. sklearn.covariance.EmpiricalCovariance"/><script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script></head><body>
+<div class="header-wrapper">
+<div class="header">
+<p class="logo"><a href="../../index.html">
+<img alt="Logo" src="../../_static/scikit-learn-logo-small.png"/>
+</a>
+</p><div class="navbar">
+<ul>
+<li><a href="../../install.html">Download</a></li>
+<li><a href="../../support.html">Support</a></li>
+<li><a href="../../user_guide.html">User Guide</a></li>
+<li><a href="../../auto_examples/index.html">Examples</a></li>
+<li><a href="../classes.html">Reference</a></li>
+</ul>
+<div class="search_form">
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+</div>
+</div> <!-- end navbar --></div>
+</div>
+<div class="content-wrapper">
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<div class="rel">
+<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+<div class="rellink">
+<a accesskey="P" href="sklearn.covariance.EmpiricalCovariance.html" title="8.2.1. sklearn.covariance.EmpiricalCovariance">Previous
+	    <br/>
+<span class="smallrellink">
+	    8.2.1. sklearn.c...
+	    </span>
+<span class="hiddenrellink">
+	    8.2.1. sklearn.covariance.EmpiricalCovariance
+	    </span>
+</a>
+</div>
+<div class="spacer">
+	     
+	    </div>
+<div class="rellink">
+<a accesskey="N" href="sklearn.covariance.GraphLasso.html" title="8.2.3. sklearn.covariance.GraphLasso">Next
+	    <br/>
+<span class="smallrellink">
+	    8.2.3. sklearn.c...
+	    </span>
+<span class="hiddenrellink">
+	    8.2.3. sklearn.covariance.GraphLasso
+	    </span>
+</a>
+</div>
+<div class="spacer">
+	     
+	    </div>
+<div class="rellink">
+<a href="../../np-modindex.html" title="Python Module Index">Modules
+	    <br/>
+<span class="smallrellink">
+	    Python Module In...
+	    </span>
+<span class="hiddenrellink">
+	    Python Module Index
+	    </span>
+</a>
+</div>
+<div class="spacer">
+	     
+	    </div>
+<div class="rellink">
+<a href="../../py-modindex.html" title="Python Module Index">Modules
+	    <br/>
+<span class="smallrellink">
+	    Python Module In...
+	    </span>
+<span class="hiddenrellink">
+	    Python Module Index
+	    </span>
+</a>
+</div>
+<!-- Ad a link to the 'up' page -->
+<div class="spacer">
+	 
+	</div>
+<div class="rellink">
+<a href="../classes.html" title="8. Reference">
+	Up
+	<br/>
+<span class="smallrellink">
+	8. Reference
+	</span>
+<span class="hiddenrellink">
+	8. Reference
+	</span>
+</a>
+</div>
+</div>
+<p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    — <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+<h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+<p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+<h3>This page</h3>
+<ul>
+<li><a class="reference internal" href="#">8.2.2. sklearn.covariance.EllipticEnvelope</a></li>
+</ul>
+</div>
+</div>
+<div class="content">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="sklearn-covariance-ellipticenvelope">
+<h1>8.2.2. sklearn.covariance.EllipticEnvelope<a class="headerlink" href="#sklearn-covariance-ellipticenvelope" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="sklearn.covariance.EllipticEnvelope"><a name="//apple_ref/cpp/cl/sklearn.covariance.EllipticEnvelope"></a>
+<em class="property">class </em><tt class="descclassname">sklearn.covariance.</tt><tt class="descname">EllipticEnvelope</tt><big>(</big><em>store_precision=True</em>, <em>assume_centered=False</em>, <em>support_fraction=None</em>, <em>contamination=0.1</em>, <em>random_state=None</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object for detecting outliers in a Gaussian distributed dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>store_precision: bool</strong> :</p>
+<blockquote>
+<div><p>Specify if the estimated precision is stored</p>
+</div></blockquote>
+<p><strong>assume_centered: Boolean</strong> :</p>
+<blockquote>
+<div><p>If True, the support of robust location and covariance estimates
+is computed, and a covariance estimate is recomputed from it,
+without centering the data.
+Useful to work with data whose mean is significantly equal to
+zero but is not exactly zero.
+If False, the robust location and covariance are directly computed
+with the FastMCD algorithm without additional treatment.</p>
+</div></blockquote>
+<p><strong>support_fraction: float, 0 &lt; support_fraction &lt; 1</strong> :</p>
+<blockquote>
+<div><p>The proportion of points to be included in the support of the raw
+MCD estimate. Default is <tt class="docutils literal"><span class="pre">None</span></tt>, which implies that the minimum
+value of support_fraction will be used within the algorithm:
+[n_sample + n_features + 1] / 2</p>
+</div></blockquote>
+<p><strong>contamination: float, 0. &lt; contamination &lt; 0.5</strong> :</p>
+<blockquote class="last">
+<div><p>The amount of contamination of the data set, i.e. the proportion
+of outliers in the data set.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="sklearn.covariance.EmpiricalCovariance.html#sklearn.covariance.EmpiricalCovariance" title="sklearn.covariance.EmpiricalCovariance"><tt class="xref py py-obj docutils literal"><span class="pre">EmpiricalCovariance</span></tt></a>, <a class="reference internal" href="sklearn.covariance.MinCovDet.html#sklearn.covariance.MinCovDet" title="sklearn.covariance.MinCovDet"><tt class="xref py py-obj docutils literal"><span class="pre">MinCovDet</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Outlier detection from covariance estimation may break or not
+perform well in high-dimensional settings. In particular, one will
+always take care to work with <tt class="docutils literal"><span class="pre">n_samples</span> <span class="pre">&gt;</span> <span class="pre">n_features</span> <span class="pre">**</span> <span class="pre">2</span></tt>.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Rousseeuw, P.J., Van Driessen, K. “A fast algorithm for the minimum
+covariance determinant estimator” Technometrics 41(3), 212 (1999)</td></tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%"></col>
+<col width="63%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>contamination</cite>: float, 0. &lt; contamination &lt; 0.5</td>
+<td>The amount of contamination of the data set, i.e. the proportion of       outliers in the data set.</td>
+</tr>
+<tr class="row-even"><td><cite>location_</cite>: array-like, shape (n_features,)</td>
+<td>Estimated robust location</td>
+</tr>
+<tr class="row-odd"><td><cite>covariance_</cite>: array-like, shape (n_features, n_features)</td>
+<td>Estimated robust covariance matrix</td>
+</tr>
+<tr class="row-even"><td><cite>precision_</cite>: array-like, shape (n_features, n_features)</td>
+<td>Estimated pseudo inverse matrix.
+(stored only if store_precision is True)</td>
+</tr>
+<tr class="row-odd"><td><cite>support_</cite>: array-like, shape (n_samples,)</td>
+<td>A mask of the observations that have been used to compute the
+robust estimates of location and shape.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.correct_covariance" title="sklearn.covariance.EllipticEnvelope.correct_covariance"><tt class="xref py py-obj docutils literal"><span class="pre">correct_covariance</span></tt></a>(data)</td>
+<td>Apply a correction to raw Minimum Covariance Determinant estimates.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.decision_function" title="sklearn.covariance.EllipticEnvelope.decision_function"><tt class="xref py py-obj docutils literal"><span class="pre">decision_function</span></tt></a>(X[, raw_values])</td>
+<td>Compute the decision function of the given observations.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.error_norm" title="sklearn.covariance.EllipticEnvelope.error_norm"><tt class="xref py py-obj docutils literal"><span class="pre">error_norm</span></tt></a>(comp_cov[, norm, scaling, squared])</td>
+<td>Computes the Mean Squared Error between two covariance estimators.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.fit" title="sklearn.covariance.EllipticEnvelope.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[, y])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.get_params" title="sklearn.covariance.EllipticEnvelope.get_params"><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt></a>([deep])</td>
+<td>Get parameters for the estimator</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.get_precision" title="sklearn.covariance.EllipticEnvelope.get_precision"><tt class="xref py py-obj docutils literal"><span class="pre">get_precision</span></tt></a>()</td>
+<td>Getter for the precision matrix.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.mahalanobis" title="sklearn.covariance.EllipticEnvelope.mahalanobis"><tt class="xref py py-obj docutils literal"><span class="pre">mahalanobis</span></tt></a>(observations)</td>
+<td>Computes the mahalanobis distances of given observations.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.predict" title="sklearn.covariance.EllipticEnvelope.predict"><tt class="xref py py-obj docutils literal"><span class="pre">predict</span></tt></a>(X)</td>
+<td>Outlyingness of observations in X according to the fitted model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.reweight_covariance" title="sklearn.covariance.EllipticEnvelope.reweight_covariance"><tt class="xref py py-obj docutils literal"><span class="pre">reweight_covariance</span></tt></a>(data)</td>
+<td>Reweight raw Minimum Covariance Determinant estimates.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.score" title="sklearn.covariance.EllipticEnvelope.score"><tt class="xref py py-obj docutils literal"><span class="pre">score</span></tt></a>(X, y)</td>
+<td>Returns the mean accuracy on the given test data and labels.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.covariance.EllipticEnvelope.set_params" title="sklearn.covariance.EllipticEnvelope.set_params"><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt></a>(**params)</td>
+<td>Set the parameters of the estimator.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.__init__"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><em>store_precision=True</em>, <em>assume_centered=False</em>, <em>support_fraction=None</em>, <em>contamination=0.1</em>, <em>random_state=None</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.correct_covariance"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.correct_covariance"></a>
+<tt class="descname">correct_covariance</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.correct_covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a correction to raw Minimum Covariance Determinant estimates.</p>
+<p>Correction using the empirical correction factor suggested
+by Rousseeuw and Van Driessen in <a class="reference internal" href="sklearn.covariance.MinCovDet.html#rouseeuw1984">[Rouseeuw1984]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data: array-like, shape (n_samples, n_features)</strong> :</p>
+<blockquote>
+<div><p>The data matrix, with p features and n samples.
+The data set must be the one which was used to compute
+the raw estimates.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>covariance_corrected: array-like, shape (n_features, n_features)</strong> :</p>
+<blockquote class="last">
+<div><p>Corrected robust covariance estimate.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.decision_function"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.decision_function"></a>
+<tt class="descname">decision_function</tt><big>(</big><em>X</em>, <em>raw_values=False</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.decision_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the decision function of the given observations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X: array-like, shape (n_samples, n_features)</strong> :</p>
+<p><strong>raw_values: bool</strong> :</p>
+<blockquote>
+<div><p>Whether or not to consider raw Mahalanobis distances as the
+decision function. Must be False (default) for compatibility
+with the others outlier detection tools.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>decision: array-like, shape (n_samples, )</strong> :</p>
+<blockquote class="last">
+<div><p>The values of the decision function for each observations.
+It is equal to the Mahalanobis distances if <cite>raw_values</cite>
+is True. By default (<tt class="docutils literal"><span class="pre">raw_values=True</span></tt>), it is equal
+to the cubic root of the shifted Mahalanobis distances.
+In that case, the threshold for being an outlier is 0, which
+ensures a compatibility with other outlier detection tools
+such as the One-Class SVM.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.error_norm"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.error_norm"></a>
+<tt class="descname">error_norm</tt><big>(</big><em>comp_cov</em>, <em>norm='frobenius'</em>, <em>scaling=True</em>, <em>squared=True</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.error_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Mean Squared Error between two covariance estimators.
+(In the sense of the Frobenius norm)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>comp_cov: array-like, shape = [n_features, n_features]</strong> :</p>
+<blockquote>
+<div><p>The covariance to compare with.</p>
+</div></blockquote>
+<p><strong>norm: str</strong> :</p>
+<blockquote>
+<div><p>The type of norm used to compute the error. Available error types:
+- ‘frobenius’ (default): sqrt(tr(A^t.A))
+- ‘spectral’: sqrt(max(eigenvalues(A^t.A))
+where A is the error <tt class="docutils literal"><span class="pre">(comp_cov</span> <span class="pre">-</span> <span class="pre">self.covariance_)</span></tt>.</p>
+</div></blockquote>
+<p><strong>scaling: bool</strong> :</p>
+<blockquote>
+<div><p>If True (default), the squared error norm is divided by n_features.
+If False, the squared error norm is not rescaled.</p>
+</div></blockquote>
+<p><strong>squared: bool</strong> :</p>
+<blockquote>
+<div><p>Whether to compute the squared error norm or the error norm.
+If True (default), the squared error norm is returned.
+If False, the error norm is returned.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>The Mean Squared Error (in the sense of the Frobenius norm) between</strong> :</p>
+<p class="last"><strong>`self` and `comp_cov` covariance estimators.</strong> :</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.fit"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.fit"></a>
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.get_params"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.get_params"></a>
+<tt class="descname">get_params</tt><big>(</big><em>deep=True</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for the estimator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>deep: boolean, optional</strong> :</p>
+<blockquote class="last">
+<div><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.get_precision"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.get_precision"></a>
+<tt class="descname">get_precision</tt><big>(</big><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.get_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the precision matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>precision_: array-like,</strong> :</p>
+<blockquote class="last">
+<div><p>The precision matrix associated to the current covariance object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.mahalanobis"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.mahalanobis"></a>
+<tt class="descname">mahalanobis</tt><big>(</big><em>observations</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.mahalanobis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the mahalanobis distances of given observations.</p>
+<p>The provided observations are assumed to be centered. One may want to
+center them using a location estimate first.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>observations: array-like, shape = [n_observations, n_features]</strong> :</p>
+<blockquote>
+<div><p>The observations, the Mahalanobis distances of the which we compute.
+Observations are assumed to be drawn from the same distribution than
+tha data used in fit (including centering).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>mahalanobis_distance: array, shape = [n_observations,]</strong> :</p>
+<blockquote class="last">
+<div><p>Mahalanobis distances of the observations.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.predict"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.predict"></a>
+<tt class="descname">predict</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outlyingness of observations in X according to the fitted model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X: array-like, shape = (n_samples, n_features)</strong> :</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>is_outliers: array, shape = (n_samples, ), dtype = bool</strong> :</p>
+<blockquote>
+<div><p>For each observations, tells whether or not it should be considered
+as an outlier according to the fitted model.</p>
+</div></blockquote>
+<p><strong>threshold: float,</strong> :</p>
+<blockquote class="last">
+<div><p>The values of the less outlying point’s decision function.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.reweight_covariance"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.reweight_covariance"></a>
+<tt class="descname">reweight_covariance</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.reweight_covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reweight raw Minimum Covariance Determinant estimates.</p>
+<p>Reweight observations using Rousseeuw’s method (equivalent to
+deleting outlying observations from the data set before
+computing location and covariance estimates). <a class="reference internal" href="sklearn.covariance.MinCovDet.html#rouseeuw1984">[Rouseeuw1984]</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data: array-like, shape (n_samples, n_features)</strong> :</p>
+<blockquote>
+<div><p>The data matrix, with p features and n samples.
+The data set must be the one which was used to compute
+the raw estimates.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>location_reweighted: array-like, shape (n_features, )</strong> :</p>
+<blockquote>
+<div><p>Reweighted robust location estimate.</p>
+</div></blockquote>
+<p><strong>covariance_reweighted: array-like, shape (n_features, n_features)</strong> :</p>
+<blockquote>
+<div><p>Reweighted robust covariance estimate.</p>
+</div></blockquote>
+<p><strong>support_reweighted: array-like, type boolean, shape (n_samples,)</strong> :</p>
+<blockquote class="last">
+<div><p>A mask of the observations that have been used to compute
+the reweighted robust location and covariance estimates.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.score"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.score"></a>
+<tt class="descname">score</tt><big>(</big><em>X</em>, <em>y</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mean accuracy on the given test data and labels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [n_samples, n_features]</p>
+<blockquote>
+<div><p>Training set.</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like, shape = [n_samples]</p>
+<blockquote>
+<div><p>Labels for X.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last"><strong>z</strong> : float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.covariance.EllipticEnvelope.set_params"><a name="//apple_ref/cpp/clm/sklearn.covariance.EllipticEnvelope.set_params"></a>
+<tt class="descname">set_params</tt><big>(</big><em>**params</em><big>)</big><a class="headerlink" href="#sklearn.covariance.EllipticEnvelope.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of the estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The former have parameters of the form
+<tt class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></tt> so that it’s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><strong>self</strong> :</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+</div>
+<div class="footer">
+        © 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+<a href="../../_sources/modules/generated/sklearn.covariance.EllipticEnvelope.txt" rel="nofollow">Show this page source</a>
+</span>
+</div>
+<div class="rel">
+<div class="buttonPrevious">
+<a href="sklearn.covariance.EmpiricalCovariance.html">
+        Previous
+      </a>
+</div>
+<div class="buttonNext">
+<a href="sklearn.covariance.GraphLasso.html">
+        Next
+      </a>
+</div>
+<div class="buttonPrevious">
+<a href="../../np-modindex.html">
+        Previous
+      </a>
+</div>
+<div class="buttonNext">
+<a href="../../py-modindex.html">
+        Next
+      </a>
+</div>
+</div>
+<script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+</body></html>

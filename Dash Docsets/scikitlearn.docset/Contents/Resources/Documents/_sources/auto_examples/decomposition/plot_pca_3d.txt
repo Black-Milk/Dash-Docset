@@ -1,0 +1,20 @@
+
+
+.. _example_decomposition_plot_pca_3d.py:
+
+
+=========================================================
+Principal components analysis (PCA)
+=========================================================
+
+These figures aid in illustrating how a point cloud
+can be very flat in one direction--which is where PCA
+comes in to choose a direction that is not flat.
+
+
+
+**Python source code:** :download:`plot_pca_3d.py <plot_pca_3d.py>`
+
+.. literalinclude:: plot_pca_3d.py
+    :lines: 14-
+    

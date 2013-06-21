@@ -1,0 +1,415 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/><title>8.21.2. sklearn.multiclass.OneVsRestClassifier — scikit-learn 0.13.1 documentation</title><link href="../../_static/nature.css" rel="stylesheet" type="text/css"/><link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/><script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script><script src="../../_static/jquery.js" type="text/javascript"></script><script src="../../_static/underscore.js" type="text/javascript"></script><script src="../../_static/doctools.js" type="text/javascript"></script><script src="../../_static/sidebar.js" type="text/javascript"></script><link href="../../_static/favicon.ico" rel="shortcut icon"/><link href="../../about.html" rel="author" title="About these documents"/><link href="../../index.html" rel="top" title="scikit-learn 0.13.1 documentation"/><link href="../classes.html" rel="up" title="8. Reference"/><link href="sklearn.multiclass.OneVsOneClassifier.html" rel="next" title="8.21.3. sklearn.multiclass.OneVsOneClassifier"/><link href="sklearn.mixture.VBGMM.html" rel="prev" title="8.20.3. sklearn.mixture.VBGMM"/><script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script></head><body>
+<div class="header-wrapper">
+<div class="header">
+<p class="logo"><a href="../../index.html">
+<img alt="Logo" src="../../_static/scikit-learn-logo-small.png"/>
+</a>
+</p><div class="navbar">
+<ul>
+<li><a href="../../install.html">Download</a></li>
+<li><a href="../../support.html">Support</a></li>
+<li><a href="../../user_guide.html">User Guide</a></li>
+<li><a href="../../auto_examples/index.html">Examples</a></li>
+<li><a href="../classes.html">Reference</a></li>
+</ul>
+<div class="search_form">
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+</div>
+</div> <!-- end navbar --></div>
+</div>
+<div class="content-wrapper">
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<div class="rel">
+<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+<div class="rellink">
+<a accesskey="P" href="sklearn.mixture.VBGMM.html" title="8.20.3. sklearn.mixture.VBGMM">Previous
+	    <br/>
+<span class="smallrellink">
+	    8.20.3. sklearn....
+	    </span>
+<span class="hiddenrellink">
+	    8.20.3. sklearn.mixture.VBGMM
+	    </span>
+</a>
+</div>
+<div class="spacer">
+	     
+	    </div>
+<div class="rellink">
+<a accesskey="N" href="sklearn.multiclass.OneVsOneClassifier.html" title="8.21.3. sklearn.multiclass.OneVsOneClassifier">Next
+	    <br/>
+<span class="smallrellink">
+	    8.21.3. sklearn....
+	    </span>
+<span class="hiddenrellink">
+	    8.21.3. sklearn.multiclass.OneVsOneClassifier
+	    </span>
+</a>
+</div>
+<div class="spacer">
+	     
+	    </div>
+<div class="rellink">
+<a href="../../np-modindex.html" title="Python Module Index">Modules
+	    <br/>
+<span class="smallrellink">
+	    Python Module In...
+	    </span>
+<span class="hiddenrellink">
+	    Python Module Index
+	    </span>
+</a>
+</div>
+<div class="spacer">
+	     
+	    </div>
+<div class="rellink">
+<a href="../../py-modindex.html" title="Python Module Index">Modules
+	    <br/>
+<span class="smallrellink">
+	    Python Module In...
+	    </span>
+<span class="hiddenrellink">
+	    Python Module Index
+	    </span>
+</a>
+</div>
+<!-- Ad a link to the 'up' page -->
+<div class="spacer">
+	 
+	</div>
+<div class="rellink">
+<a href="../classes.html" title="8. Reference">
+	Up
+	<br/>
+<span class="smallrellink">
+	8. Reference
+	</span>
+<span class="hiddenrellink">
+	8. Reference
+	</span>
+</a>
+</div>
+</div>
+<p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    — <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+<h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+<p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+<h3>This page</h3>
+<ul>
+<li><a class="reference internal" href="#">8.21.2. sklearn.multiclass.OneVsRestClassifier</a></li>
+</ul>
+</div>
+</div>
+<div class="content">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="sklearn-multiclass-onevsrestclassifier">
+<h1>8.21.2. sklearn.multiclass.OneVsRestClassifier<a class="headerlink" href="#sklearn-multiclass-onevsrestclassifier" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="sklearn.multiclass.OneVsRestClassifier"><a name="//apple_ref/cpp/cl/sklearn.multiclass.OneVsRestClassifier"></a>
+<em class="property">class </em><tt class="descclassname">sklearn.multiclass.</tt><tt class="descname">OneVsRestClassifier</tt><big>(</big><em>estimator</em>, <em>n_jobs=1</em><big>)</big><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-vs-the-rest (OvR) multiclass/multilabel strategy</p>
+<p>Also known as one-vs-all, this strategy consists in fitting one classifier
+per class. For each classifier, the class is fitted against all the other
+classes. In addition to its computational efficiency (only <cite>n_classes</cite>
+classifiers are needed), one advantage of this approach is its
+interpretability. Since each class is represented by one and one classifier
+only, it is possible to gain knowledge about the class by inspecting its
+corresponding classifier. This is the most commonly used strategy for
+multiclass classification and is a fair default choice.</p>
+<p>This strategy can also be used for multilabel learning, where a classifier
+is used to predict multiple labels for instance, by fitting on a sequence
+of sequences of labels (e.g., a list of tuples) rather than a single
+target vector. For multilabel learning, the number of classes must be at
+least three, since otherwise OvR reduces to binary classification.</p>
+<p>In the multilabel learning literature, OvR is also known as the binary
+relevance method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>estimator</strong> : estimator object</p>
+<blockquote>
+<div><p>An estimator object implementing <cite>fit</cite> and one of <cite>decision_function</cite>
+or <cite>predict_proba</cite>.</p>
+</div></blockquote>
+<p><strong>n_jobs</strong> : int, optional, default: 1</p>
+<blockquote class="last">
+<div><p>The number of jobs to use for the computation. If -1 all CPUs are used.
+If 1 is given, no parallel computing code is used at all, which is
+useful for debugging. For n_jobs below -1, (n_cpus + 1 + n_jobs) are
+used. Thus for n_jobs = -2, all CPUs but one are used.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%"></col>
+<col width="27%"></col>
+<col width="57%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>estimators_</cite></td>
+<td>list of <cite>n_classes</cite> estimators</td>
+<td>Estimators used for predictions.</td>
+</tr>
+<tr class="row-even"><td><cite>classes_</cite></td>
+<td>array, shape = [<cite>n_classes</cite>]</td>
+<td>Class labels.</td>
+</tr>
+<tr class="row-odd"><td><cite>label_binarizer_</cite></td>
+<td>LabelBinarizer object</td>
+<td>Object used to transform multiclass labels to binary labels and
+vice-versa.</td>
+</tr>
+<tr class="row-even"><td><cite>multilabel_</cite></td>
+<td>boolean</td>
+<td>Whether a OneVsRestClassifier is a multilabel classifier.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.multiclass.OneVsRestClassifier.fit" title="sklearn.multiclass.OneVsRestClassifier.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X, y)</td>
+<td>Fit underlying estimators.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.multiclass.OneVsRestClassifier.get_params" title="sklearn.multiclass.OneVsRestClassifier.get_params"><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt></a>([deep])</td>
+<td>Get parameters for the estimator</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.multiclass.OneVsRestClassifier.predict" title="sklearn.multiclass.OneVsRestClassifier.predict"><tt class="xref py py-obj docutils literal"><span class="pre">predict</span></tt></a>(X)</td>
+<td>Predict multi-class targets using underlying estimators.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.multiclass.OneVsRestClassifier.predict_proba" title="sklearn.multiclass.OneVsRestClassifier.predict_proba"><tt class="xref py py-obj docutils literal"><span class="pre">predict_proba</span></tt></a>(X)</td>
+<td>Probability estimates.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">score</span></tt>(X, y)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.multiclass.OneVsRestClassifier.set_params" title="sklearn.multiclass.OneVsRestClassifier.set_params"><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt></a>(**params)</td>
+<td>Set the parameters of the estimator.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sklearn.multiclass.OneVsRestClassifier.__init__"><a name="//apple_ref/cpp/clm/sklearn.multiclass.OneVsRestClassifier.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><em>estimator</em>, <em>n_jobs=1</em><big>)</big><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="sklearn.multiclass.OneVsRestClassifier.fit"><a name="//apple_ref/cpp/clm/sklearn.multiclass.OneVsRestClassifier.fit"></a>
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y</em><big>)</big><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit underlying estimators.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : {array-like, sparse matrix}, shape = [n_samples, n_features]</p>
+<blockquote>
+<div><p>Data.</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like, shape = [n_samples]</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>or sequence of sequences, len = n_samples</dt>
+<dd><p class="first last">Multi-class targets. A sequence of sequences turns on multilabel
+classification.</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last"><strong>self</strong> :</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.multiclass.OneVsRestClassifier.get_params"><a name="//apple_ref/cpp/clm/sklearn.multiclass.OneVsRestClassifier.get_params"></a>
+<tt class="descname">get_params</tt><big>(</big><em>deep=True</em><big>)</big><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for the estimator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>deep: boolean, optional</strong> :</p>
+<blockquote class="last">
+<div><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="attribute">
+<dt id="sklearn.multiclass.OneVsRestClassifier.multilabel_"><a name="//apple_ref/cpp/Attribute/sklearn.multiclass.OneVsRestClassifier.multilabel_"></a>
+<tt class="descname">multilabel_</tt><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier.multilabel_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this is a multilabel classifier</p>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.multiclass.OneVsRestClassifier.predict"><a name="//apple_ref/cpp/clm/sklearn.multiclass.OneVsRestClassifier.predict"></a>
+<tt class="descname">predict</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict multi-class targets using underlying estimators.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X: {array-like, sparse matrix}, shape = [n_samples, n_features]</strong> :</p>
+<blockquote>
+<div><p>Data.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y</strong> : array-like, shape = [n_samples]</p>
+<blockquote class="last">
+<div><p>Predicted multi-class targets.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.multiclass.OneVsRestClassifier.predict_proba"><a name="//apple_ref/cpp/clm/sklearn.multiclass.OneVsRestClassifier.predict_proba"></a>
+<tt class="descname">predict_proba</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability estimates.</p>
+<p>The returned estimates for all classes are ordered by label of classes.</p>
+<p>Note that in the multilabel case, each sample can have any number of
+labels. This returns the marginal probability that the given sample has
+the label in question. For example, it is entirely consistent that two
+labels both have a 90% probability of applying to a given sample.</p>
+<p>In the single label multiclass case, the rows of the returned matrix
+sum to 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [n_samples, n_features]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>T</strong> : array-like, shape = [n_samples, n_classes]</p>
+<blockquote class="last">
+<div><p>Returns the probability of the sample for each class in the model,
+where classes are ordered as they are in <cite>self.classes_</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.multiclass.OneVsRestClassifier.set_params"><a name="//apple_ref/cpp/clm/sklearn.multiclass.OneVsRestClassifier.set_params"></a>
+<tt class="descname">set_params</tt><big>(</big><em>**params</em><big>)</big><a class="headerlink" href="#sklearn.multiclass.OneVsRestClassifier.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of the estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The former have parameters of the form
+<tt class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></tt> so that it’s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><strong>self</strong> :</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+</div>
+<div class="footer">
+        © 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+<a href="../../_sources/modules/generated/sklearn.multiclass.OneVsRestClassifier.txt" rel="nofollow">Show this page source</a>
+</span>
+</div>
+<div class="rel">
+<div class="buttonPrevious">
+<a href="sklearn.mixture.VBGMM.html">
+        Previous
+      </a>
+</div>
+<div class="buttonNext">
+<a href="sklearn.multiclass.OneVsOneClassifier.html">
+        Next
+      </a>
+</div>
+<div class="buttonPrevious">
+<a href="../../np-modindex.html">
+        Previous
+      </a>
+</div>
+<div class="buttonNext">
+<a href="../../py-modindex.html">
+        Next
+      </a>
+</div>
+</div>
+<script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+</body></html>
