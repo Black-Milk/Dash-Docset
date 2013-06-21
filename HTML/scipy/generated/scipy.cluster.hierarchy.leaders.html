@@ -1,0 +1,192 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.cluster.hierarchy.leaders &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Hierarchical clustering (scipy.cluster.hierarchy)" href="../cluster.hierarchy.html" />
+    <link rel="next" title="scipy.cluster.hierarchy.linkage" href="scipy.cluster.hierarchy.linkage.html" />
+    <link rel="prev" title="scipy.cluster.hierarchy.fclusterdata" href="scipy.cluster.hierarchy.fclusterdata.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.hierarchy.linkage.html" title="scipy.cluster.hierarchy.linkage"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.hierarchy.fclusterdata.html" title="scipy.cluster.hierarchy.fclusterdata"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../cluster.html" >Clustering package (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster</span></tt>)</a> &raquo;</li>
+          <li><a href="../cluster.hierarchy.html" accesskey="U">Hierarchical clustering (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster.hierarchy</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-cluster-hierarchy-leaders">
+<h1>scipy.cluster.hierarchy.leaders<a class="headerlink" href="#scipy-cluster-hierarchy-leaders" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.cluster.hierarchy.leaders">
+<tt class="descclassname">scipy.cluster.hierarchy.</tt><tt class="descname">leaders</tt><big>(</big><em>Z</em>, <em>T</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/cluster/hierarchy.py#L2639"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.cluster.hierarchy.leaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the root nodes in a hierarchical clustering.</p>
+<p>Returns the root nodes in a hierarchical clustering corresponding
+to a cut defined by a flat cluster assignment vector <tt class="docutils literal"><span class="pre">T</span></tt>. See
+the <tt class="docutils literal"><span class="pre">fcluster</span></tt> function for more information on the format of <tt class="docutils literal"><span class="pre">T</span></tt>.</p>
+<p>For each flat cluster <img class="math" src="../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j" style="vertical-align: -4px"/> of the <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/> flat clusters
+represented in the n-sized flat cluster assignment vector <tt class="docutils literal"><span class="pre">T</span></tt>,
+this function finds the lowest cluster node <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" style="vertical-align: 0px"/> in the linkage
+tree Z such that:</p>
+<blockquote>
+<div><ul class="simple">
+<li>leaf descendents belong only to flat cluster j
+(i.e. <tt class="docutils literal"><span class="pre">T[p]==j</span></tt> for all <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> in <img class="math" src="../_images/math/d221eea535a09ca59bd81d958832daf0fe2c88d5.png" alt="S(i)" style="vertical-align: -4px"/> where
+<img class="math" src="../_images/math/d221eea535a09ca59bd81d958832daf0fe2c88d5.png" alt="S(i)" style="vertical-align: -4px"/> is the set of leaf ids of leaf nodes descendent
+with cluster node <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" style="vertical-align: 0px"/>)</li>
+<li>there does not exist a leaf that is not descendent with
+<img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" style="vertical-align: 0px"/> that also belongs to cluster <img class="math" src="../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j" style="vertical-align: -4px"/>
+(i.e. <tt class="docutils literal"><span class="pre">T[q]!=j</span></tt> for all <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" style="vertical-align: -4px"/> not in <img class="math" src="../_images/math/d221eea535a09ca59bd81d958832daf0fe2c88d5.png" alt="S(i)" style="vertical-align: -4px"/>).  If
+this condition is violated, <tt class="docutils literal"><span class="pre">T</span></tt> is not a valid cluster
+assignment vector, and an exception will be thrown.</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>Z</strong> : ndarray</p>
+<blockquote>
+<div><p>The hierarchical clustering encoded as a matrix. See
+<tt class="docutils literal"><span class="pre">linkage</span></tt> for more information.</p>
+</div></blockquote>
+<p><strong>T</strong> : ndarray</p>
+<blockquote>
+<div><p>The flat cluster assignment vector.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>L</strong> : ndarray</p>
+<blockquote>
+<div><p>The leader linkage node id&#8217;s stored as a k-element 1-D array
+where <tt class="docutils literal"><span class="pre">k</span></tt> is the number of flat clusters found in <tt class="docutils literal"><span class="pre">T</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">L[j]=i</span></tt> is the linkage cluster node id that is the
+leader of flat cluster with id M[j].  If <tt class="docutils literal"><span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">n</span></tt>, <tt class="docutils literal"><span class="pre">i</span></tt>
+corresponds to an original observation, otherwise it
+corresponds to a non-singleton cluster.</p>
+<p>For example: if <tt class="docutils literal"><span class="pre">L[3]=2</span></tt> and <tt class="docutils literal"><span class="pre">M[3]=8</span></tt>, the flat cluster with
+id 8&#8217;s leader is linkage node 2.</p>
+</div></blockquote>
+<p><strong>M</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The leader linkage node id&#8217;s stored as a k-element 1-D array where
+<tt class="docutils literal"><span class="pre">k</span></tt> is the number of flat clusters found in <tt class="docutils literal"><span class="pre">T</span></tt>. This allows the
+set of flat cluster ids to be any arbitrary set of <tt class="docutils literal"><span class="pre">k</span></tt> integers.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.cluster.hierarchy.fclusterdata.html"
+                        title="previous chapter">scipy.cluster.hierarchy.fclusterdata</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.cluster.hierarchy.linkage.html"
+                        title="next chapter">scipy.cluster.hierarchy.linkage</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.hierarchy.linkage.html" title="scipy.cluster.hierarchy.linkage"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.hierarchy.fclusterdata.html" title="scipy.cluster.hierarchy.fclusterdata"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../cluster.html" >Clustering package (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster</span></tt>)</a> &raquo;</li>
+          <li><a href="../cluster.hierarchy.html" >Hierarchical clustering (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster.hierarchy</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

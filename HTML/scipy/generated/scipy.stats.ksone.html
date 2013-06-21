@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.stats.ksone &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-stats-ksone">
+<h1>scipy.stats.ksone<a class="headerlink" href="#scipy-stats-ksone" title="Permalink to this headline">¶</a></h1>
+<dl class="data">
+<dt id="scipy.stats.ksone">
+<tt class="descclassname">scipy.stats.</tt><tt class="descname">ksone</tt><em class="property"> = &lt;scipy.stats.distributions.ksone_gen object at 0x49f8310&gt;</em><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/stats/distributions.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.stats.ksone" title="Permalink to this definition">¶</a></dt>
+<dd><p>General Kolmogorov-Smirnov one-sided test.</p>
+<p>Continuous random variables are defined from a standard form and may
+require some shape parameters to complete its specification.  Any
+optional keyword parameters can be passed to the methods of the RV
+object as given below:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>x</strong> : array_like</p>
+<blockquote>
+<div><p>quantiles</p>
+</div></blockquote>
+<p><strong>q</strong> : array_like</p>
+<blockquote>
+<div><p>lower or upper tail probability</p>
+</div></blockquote>
+<p><strong>n</strong> : array_like</p>
+<blockquote>
+<div><p>shape parameters</p>
+</div></blockquote>
+<p><strong>loc</strong> : array_like, optional</p>
+<blockquote>
+<div><p>location parameter (default=0)</p>
+</div></blockquote>
+<p><strong>scale</strong> : array_like, optional</p>
+<blockquote>
+<div><p>scale parameter (default=1)</p>
+</div></blockquote>
+<p><strong>size</strong> : int or tuple of ints, optional</p>
+<blockquote>
+<div><p>shape of random variates (default computed from input arguments )</p>
+</div></blockquote>
+<p><strong>moments</strong> : str, optional</p>
+<blockquote>
+<div><p>composed of letters [&#8216;mvsk&#8217;] specifying which moments to compute where
+&#8216;m&#8217; = mean, &#8216;v&#8217; = variance, &#8216;s&#8217; = (Fisher&#8217;s) skew and
+&#8216;k&#8217; = (Fisher&#8217;s) kurtosis. (default=&#8217;mv&#8217;)</p>
+</div></blockquote>
+<p><strong>Alternatively, the object may be called (as a function) to fix the shape,</strong> :</p>
+<p><strong>location, and scale parameters returning a &#8220;frozen&#8221; continuous RV object:</strong> :</p>
+<p><strong>rv = ksone(n, loc=0, scale=1)</strong> :</p>
+<blockquote>
+<div><ul class="simple">
+<li>Frozen RV object with the same methods but holding the given shape,
+location, and scale fixed.</li>
+</ul>
+</div></blockquote>
+<p><strong>Examples</strong> :</p>
+<p><strong>&#8212;&#8212;&#8211;</strong> :</p>
+<p><strong>&gt;&gt;&gt; from scipy.stats import ksone</strong> :</p>
+<p><strong>&gt;&gt;&gt; numargs = ksone.numargs</strong> :</p>
+<p><strong>&gt;&gt;&gt; [ n ] = [0.9,] * numargs</strong> :</p>
+<p><strong>&gt;&gt;&gt; rv = ksone(n)</strong> :</p>
+<p><strong>Display frozen pdf</strong> :</p>
+<p><strong>&gt;&gt;&gt; x = np.linspace(0, np.minimum(rv.dist.b, 3))</strong> :</p>
+<p><strong>&gt;&gt;&gt; h = plt.plot(x, rv.pdf(x))</strong> :</p>
+<p><strong>Here, ``rv.dist.b`` is the right endpoint of the support of ``rv.dist``.</strong> :</p>
+<p><strong>Check accuracy of cdf and ppf</strong> :</p>
+<p><strong>&gt;&gt;&gt; prb = ksone.cdf(x, n)</strong> :</p>
+<p><strong>&gt;&gt;&gt; h = plt.semilogy(np.abs(x - ksone.ppf(prb, n)) + 1e-20)</strong> :</p>
+<p><strong>Random number generation</strong> :</p>
+<p class="last"><strong>&gt;&gt;&gt; R = ksone.rvs(n, size=100)</strong> :</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>rvs(n, loc=0, scale=1, size=1)</td>
+<td>Random variates.</td>
+</tr>
+<tr class="row-even"><td>pdf(x, n, loc=0, scale=1)</td>
+<td>Probability density function.</td>
+</tr>
+<tr class="row-odd"><td>logpdf(x, n, loc=0, scale=1)</td>
+<td>Log of the probability density function.</td>
+</tr>
+<tr class="row-even"><td>cdf(x, n, loc=0, scale=1)</td>
+<td>Cumulative density function.</td>
+</tr>
+<tr class="row-odd"><td>logcdf(x, n, loc=0, scale=1)</td>
+<td>Log of the cumulative density function.</td>
+</tr>
+<tr class="row-even"><td>sf(x, n, loc=0, scale=1)</td>
+<td>Survival function (1-cdf &#8212; sometimes more accurate).</td>
+</tr>
+<tr class="row-odd"><td>logsf(x, n, loc=0, scale=1)</td>
+<td>Log of the survival function.</td>
+</tr>
+<tr class="row-even"><td>ppf(q, n, loc=0, scale=1)</td>
+<td>Percent point function (inverse of cdf &#8212; percentiles).</td>
+</tr>
+<tr class="row-odd"><td>isf(q, n, loc=0, scale=1)</td>
+<td>Inverse survival function (inverse of sf).</td>
+</tr>
+<tr class="row-even"><td>moment(n, n, loc=0, scale=1)</td>
+<td>Non-central moment of order n</td>
+</tr>
+<tr class="row-odd"><td>stats(n, loc=0, scale=1, moments=&#8217;mv&#8217;)</td>
+<td>Mean(&#8216;m&#8217;), variance(&#8216;v&#8217;), skew(&#8216;s&#8217;), and/or kurtosis(&#8216;k&#8217;).</td>
+</tr>
+<tr class="row-even"><td>entropy(n, loc=0, scale=1)</td>
+<td>(Differential) entropy of the RV.</td>
+</tr>
+<tr class="row-odd"><td>fit(data, n, loc=0, scale=1)</td>
+<td>Parameter estimates for generic data.</td>
+</tr>
+<tr class="row-even"><td>expect(func, n, loc=0, scale=1, lb=None, ub=None, conditional=False, <a href="#id1"><span class="problematic" id="id2">**</span></a>kwds)</td>
+<td>Expected value of a function (of one argument) with respect to the distribution.</td>
+</tr>
+<tr class="row-odd"><td>median(n, loc=0, scale=1)</td>
+<td>Median of the distribution.</td>
+</tr>
+<tr class="row-even"><td>mean(n, loc=0, scale=1)</td>
+<td>Mean of the distribution.</td>
+</tr>
+<tr class="row-odd"><td>var(n, loc=0, scale=1)</td>
+<td>Variance of the distribution.</td>
+</tr>
+<tr class="row-even"><td>std(n, loc=0, scale=1)</td>
+<td>Standard deviation of the distribution.</td>
+</tr>
+<tr class="row-odd"><td>interval(alpha, n, loc=0, scale=1)</td>
+<td>Endpoints of the range that contains alpha percent of the distribution</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

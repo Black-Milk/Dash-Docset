@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.2.4. Unsupervised learning: seeking representations of the data &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../../index.html" />
+    <link rel="up" title="2.2. A tutorial on statistical-learning for scientific data processing" href="index.html" />
+    <link rel="next" title="2.2.5. Putting it all together" href="putting_together.html" />
+    <link rel="prev" title="2.2.3. Model selection: choosing estimators and their parameters" href="model_selection.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../../install.html">Download</a></li>
+            <li><a href="../../support.html">Support</a></li>
+            <li><a href="../../user_guide.html">User Guide</a></li>
+            <li><a href="../../auto_examples/index.html">Examples</a></li>
+            <li><a href="../../modules/classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="model_selection.html" title="2.2.3. Model selection: choosing estimators and their parameters"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    2.2.3. Model sel...
+	    </span>
+	    <span class="hiddenrellink">
+	    2.2.3. Model selection: choosing estimators and their parameters
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="putting_together.html" title="2.2.5. Putting it all together"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    2.2.5. Putting i...
+	    </span>
+	    <span class="hiddenrellink">
+	    2.2.5. Putting it all together
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="index.html" title="2.2. A tutorial on statistical-learning for scientific data processing" >
+	Up
+	<br>
+	<span class="smallrellink">
+	2.2. A tutorial ...
+	</span>
+	<span class="hiddenrellink">
+	2.2. A tutorial on statistical-learning for scientific data processing
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">2.2.4. Unsupervised learning: seeking representations of the data</a><ul>
+<li><a class="reference internal" href="#clustering-grouping-observations-together">2.2.4.1. Clustering: grouping observations together</a><ul>
+<li><a class="reference internal" href="#k-means-clustering">2.2.4.1.1. K-means clustering</a></li>
+<li><a class="reference internal" href="#hierarchical-agglomerative-clustering-ward">2.2.4.1.2. Hierarchical agglomerative clustering: Ward</a><ul>
+<li><a class="reference internal" href="#connectivity-constrained-clustering">2.2.4.1.2.1. Connectivity-constrained clustering</a></li>
+<li><a class="reference internal" href="#feature-agglomeration">2.2.4.1.2.2. Feature agglomeration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#decompositions-from-a-signal-to-components-and-loadings">2.2.4.2. Decompositions: from a signal to components and loadings</a><ul>
+<li><a class="reference internal" href="#principal-component-analysis-pca">2.2.4.2.1. Principal component analysis: PCA</a></li>
+<li><a class="reference internal" href="#independent-component-analysis-ica">2.2.4.2.2. Independent Component Analysis: ICA</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="unsupervised-learning-seeking-representations-of-the-data">
+<h1>2.2.4. Unsupervised learning: seeking representations of the data<a class="headerlink" href="#unsupervised-learning-seeking-representations-of-the-data" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="clustering-grouping-observations-together">
+<h2>2.2.4.1. Clustering: grouping observations together<a class="headerlink" href="#clustering-grouping-observations-together" title="Permalink to this headline">¶</a></h2>
+<div class="topic">
+<p class="topic-title first">The problem solved in clustering</p>
+<p>Given the iris dataset, if we knew that there were 3 types of iris, but
+did not have access to a taxonomist to label them: we could try a
+<strong>clustering task</strong>: split the observations into well-separated group
+called <em>clusters</em>.</p>
+</div>
+<div class="section" id="k-means-clustering">
+<h3>2.2.4.1.1. K-means clustering<a class="headerlink" href="#k-means-clustering" title="Permalink to this headline">¶</a></h3>
+<p>Note that there exist a lot of different clustering criteria and associated
+algorithms. The simplest clustering algorithm is
+<a class="reference internal" href="../../modules/clustering.html#k-means"><em>K-means</em></a>.</p>
+<a class="reference external image-reference" href="../../auto_examples/cluster/plot_cluster_iris.html"><img alt="../../_images/plot_cluster_iris_2.png" class="align-right" src="../../_images/plot_cluster_iris_2.png" style="width: 280.0px; height: 210.0px;" /></a>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">datasets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_iris</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_iris</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k_means</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k_means</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_iris</span><span class="p">)</span> 
+<span class="go">KMeans(copy_x=True, init=&#39;k-means++&#39;, ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">k_means</span><span class="o">.</span><span class="n">labels_</span><span class="p">[::</span><span class="mi">10</span><span class="p">])</span>
+<span class="go">[1 1 1 1 1 0 0 0 0 0 2 2 2 2 2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">y_iris</span><span class="p">[::</span><span class="mi">10</span><span class="p">])</span>
+<span class="go">[0 0 0 0 0 1 1 1 1 1 2 2 2 2 2]</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>There is absolutely no guarantee of recovering a ground truth. First,
+choosing the right number of clusters is hard. Second, the algorithm
+is sensitive to initialization, and can fall into local minima,
+although in the <cite>sklearn</cite> package we play many tricks to mitigate this
+issue.</p>
+<table border="1" class="centered docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference external" href="../../auto_examples/cluster/plot_cluster_iris.html"><img alt="k_means_iris_bad_init" src="../../_images/plot_cluster_iris_3.png" style="width: 252.0px; height: 189.0px;" /></a></td>
+<td><a class="reference external" href="../../auto_examples/cluster/plot_cluster_iris.html"><img alt="k_means_iris_8" src="../../_images/plot_cluster_iris_1.png" style="width: 252.0px; height: 189.0px;" /></a></td>
+<td><a class="reference external" href="../../auto_examples/cluster/plot_cluster_iris.html"><img alt="cluster_iris_truth" src="../../_images/plot_cluster_iris_4.png" style="width: 252.0px; height: 189.0px;" /></a></td>
+</tr>
+<tr class="row-even"><td><strong>Bad initialization</strong></td>
+<td><strong>8 clusters</strong></td>
+<td><strong>Ground truth</strong></td>
+</tr>
+</tbody>
+</table>
+<p class="last"><strong>Don&#8217;t over-interpret clustering results</strong></p>
+</div>
+<div class="topic">
+<p class="topic-title first"><strong>Application example: vector quantization</strong></p>
+<p>Clustering in general and KMeans, in particular, can be seen as a way
+of choosing a small number of exemplars to compress the information.
+The problem is sometimes known as
+<a class="reference external" href="http://en.wikipedia.org/wiki/Vector_quantization">vector quantization</a>.
+For instance, this can be used to posterize an image:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="n">lena</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">lena</span><span class="p">()</span>
+<span class="gp">... </span><span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">misc</span>
+<span class="gp">... </span>   <span class="n">lena</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">lena</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">lena</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="c"># We need an (n_sample, n_feature) array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k_means</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k_means</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> 
+<span class="go">KMeans(copy_x=True, init=&#39;k-means++&#39;, ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">k_means</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span> <span class="o">=</span> <span class="n">k_means</span><span class="o">.</span><span class="n">labels_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lena_compressed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lena_compressed</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">lena</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<table border="1" class="centered docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference external" href="../../auto_examples/cluster/plot_lena_compress.html"><img alt="lena" src="../../_images/plot_lena_compress_1.png" style="width: 180.0px; height: 132.0px;" /></a></td>
+<td><a class="reference external" href="../../auto_examples/cluster/plot_lena_compress.html"><img alt="lena_compressed" src="../../_images/plot_lena_compress_3.png" style="width: 180.0px; height: 132.0px;" /></a></td>
+<td><a class="reference external" href="../../auto_examples/cluster/plot_lena_compress.html"><img alt="lena_regular" src="../../_images/plot_lena_compress_2.png" style="width: 180.0px; height: 132.0px;" /></a></td>
+<td><a class="reference external" href="../../auto_examples/cluster/plot_lena_compress.html"><img alt="lena_histogram" src="../../_images/plot_lena_compress_4.png" style="width: 180.0px; height: 132.0px;" /></a></td>
+</tr>
+<tr class="row-even"><td>Raw image</td>
+<td>K-means quantization</td>
+<td>Equal bins</td>
+<td>Image histogram</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="hierarchical-agglomerative-clustering-ward">
+<h3>2.2.4.1.2. Hierarchical agglomerative clustering: Ward<a class="headerlink" href="#hierarchical-agglomerative-clustering-ward" title="Permalink to this headline">¶</a></h3>
+<p>A <a class="reference internal" href="../../modules/clustering.html#hierarchical-clustering"><em>Hierarchical clustering</em></a> method is a type of cluster analysis
+that aims to build a hierarchy of clusters. In general, the various approaches
+of this technique are either:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Agglomerative</strong> - <cite>bottom-up</cite> approaches, or</li>
+<li><strong>Divisive</strong> - <cite>top-down</cite> approaches.</li>
+</ul>
+</div></blockquote>
+<p>For estimating a large number of clusters, top-down approaches are both
+statistically ill-posed and slow due to it starting with all observations
+as one cluster, which it splits recursively. Agglomerative
+hierarchical-clustering is a bottom-up approach that successively merges
+observations together and is particularly useful when the clusters of interest
+are made of only a few observations. <em>Ward</em> clustering minimizes a criterion
+similar to k-means in a bottom-up approach. When the number of clusters is large,
+it is much more computationally efficient than k-means.</p>
+<div class="section" id="connectivity-constrained-clustering">
+<h4>2.2.4.1.2.1. Connectivity-constrained clustering<a class="headerlink" href="#connectivity-constrained-clustering" title="Permalink to this headline">¶</a></h4>
+<p>With Ward clustering, it is possible to specify which samples can be
+clustered together by giving a connectivity graph. Graphs in the scikit
+are represented by their adjacency matrix. Often, a sparse matrix is used.
+This can be useful, for instance, to retrieve connected regions (sometimes
+also referred to as connected components) when
+clustering an image:</p>
+<a class="reference external image-reference" href="../../auto_examples/cluster/plot_lena_ward_segmentation.html"><img alt="../../_images/plot_lena_ward_segmentation_12.png" class="align-right" src="../../_images/plot_lena_ward_segmentation_12.png" style="width: 200.0px; height: 200.0px;" /></a>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">###############################################################################</span>
+<span class="c"># Generate data</span>
+<span class="n">lena</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">lena</span><span class="p">()</span>
+<span class="c"># Downsample the image by a factor of 4</span>
+<span class="n">lena</span> <span class="o">=</span> <span class="n">lena</span><span class="p">[::</span><span class="mi">2</span><span class="p">,</span> <span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">lena</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">lena</span><span class="p">[::</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">lena</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">lena</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c">###############################################################################</span>
+<span class="c"># Define the structure A of the data. Pixels connected to their neighbors.</span>
+<span class="n">connectivity</span> <span class="o">=</span> <span class="n">grid_to_graph</span><span class="p">(</span><span class="o">*</span><span class="n">lena</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c">###############################################################################</span>
+<span class="c"># Compute clustering</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Compute structured hierarchical clustering...&quot;</span><span class="p">)</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">n_clusters</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c"># number of regions</span>
+<span class="n">ward</span> <span class="o">=</span> <span class="n">Ward</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ward</span><span class="o">.</span><span class="n">labels_</span><span class="p">,</span> <span class="n">lena</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Elapsed time: &quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">st</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Number of pixels: &quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Number of clusters: &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="feature-agglomeration">
+<h4>2.2.4.1.2.2. Feature agglomeration<a class="headerlink" href="#feature-agglomeration" title="Permalink to this headline">¶</a></h4>
+<p>We have seen that sparsity could be used to mitigate the curse of
+dimensionality, <em>i.e</em> an insufficient amount of observations compared to the
+number of features. Another approach is to merge together similar
+features: <strong>feature agglomeration</strong>. This approach can be implemented by
+clustering in the feature direction, in other words clustering the
+transposed data.</p>
+<a class="reference external image-reference" href="../../auto_examples/cluster/plot_digits_agglomeration.html"><img alt="../../_images/plot_digits_agglomeration_1.png" class="align-right" src="../../_images/plot_digits_agglomeration_1.png" style="width: 228.0px; height: 199.5px;" /></a>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">digits</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_digits</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">images</span> <span class="o">=</span> <span class="n">digits</span><span class="o">.</span><span class="n">images</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">connectivity</span> <span class="o">=</span> <span class="n">grid_to_graph</span><span class="p">(</span><span class="o">*</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agglo</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">WardAgglomeration</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">,</span>
+<span class="gp">... </span>                                  <span class="n">n_clusters</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agglo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> 
+<span class="go">WardAgglomeration(compute_full_tree=&#39;auto&#39;,...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_reduced</span> <span class="o">=</span> <span class="n">agglo</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_approx</span> <span class="o">=</span> <span class="n">agglo</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">X_reduced</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">images_approx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X_approx</span><span class="p">,</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first"><cite>transform</cite> and <cite>inverse_transform</cite> methods</p>
+<p>Some estimators expose a <cite>transform</cite> method, for instance to reduce
+the dimensionality of the dataset.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="decompositions-from-a-signal-to-components-and-loadings">
+<h2>2.2.4.2. Decompositions: from a signal to components and loadings<a class="headerlink" href="#decompositions-from-a-signal-to-components-and-loadings" title="Permalink to this headline">¶</a></h2>
+<div class="topic">
+<p class="topic-title first"><strong>Components and loadings</strong></p>
+<p>If X is our multivariate data, then the problem that we are trying to solve
+is to rewrite it on a different observational basis: we want to learn
+loadings L and a set of components C such that <em>X = L C</em>.
+Different criteria exist to choose the components</p>
+</div>
+<div class="section" id="principal-component-analysis-pca">
+<h3>2.2.4.2.1. Principal component analysis: PCA<a class="headerlink" href="#principal-component-analysis-pca" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../../modules/decomposition.html#pca"><em>Principal component analysis (PCA)</em></a> selects the successive components that
+explain the maximum variance in the signal.</p>
+<p class="centered"><a class="reference external" href="../../auto_examples/decomposition/plot_pca_3d.html"><img alt="pca_3d_axis" src="../../_images/plot_pca_3d_1.png" style="width: 280.0px; height: 210.0px;" /></a> <a class="reference external" href="../../auto_examples/decomposition/plot_pca_3d.html"><img alt="pca_3d_aligned" src="../../_images/plot_pca_3d_2.png" style="width: 280.0px; height: 210.0px;" /></a></p>
+<p>The point cloud spanned by the observations above is very flat in one
+direction: one of the three univariate features can almost be exactly
+computed using the other two. PCA finds the directions in which the data is
+not <em>flat</em></p>
+<p>When used to <em>transform</em> data, PCA can reduce the dimensionality of the
+data by projecting on a principal subspace.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Create a signal with only 2 useful dimensions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x3</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x3</span><span class="p">]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">decomposition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pca</span> <span class="o">=</span> <span class="n">decomposition</span><span class="o">.</span><span class="n">PCA</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">PCA(copy=True, n_components=None, whiten=False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">)</span>  
+<span class="go">[  2.18565811e+00   1.19346747e+00   8.43026679e-32]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># As we can see, only the 2 first components are useful</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pca</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_reduced</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_reduced</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(100, 2)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="independent-component-analysis-ica">
+<h3>2.2.4.2.2. Independent Component Analysis: ICA<a class="headerlink" href="#independent-component-analysis-ica" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../../modules/decomposition.html#ica"><em>Independent component analysis (ICA)</em></a> selects components so that the distribution of their loadings carries
+a maximum amount of independent information. It is able to recover
+<strong>non-Gaussian</strong> independent signals:</p>
+<a class="reference external image-reference" href="../../auto_examples/decomposition/plot_ica_blind_source_separation.html"><img alt="../../_images/plot_ica_blind_source_separation_1.png" class="align-center" src="../../_images/plot_ica_blind_source_separation_1.png" style="width: 560.0px; height: 420.0px;" /></a>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Generate sample data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span>  <span class="c"># Signal 1 : sinusoidal signal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">time</span><span class="p">))</span>  <span class="c"># Signal 2 : square signal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">+=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c"># Add noise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">/=</span> <span class="n">S</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c"># Standardize data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Mix data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>  <span class="c"># Mixing matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c"># Generate observations</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Compute ICA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ica</span> <span class="o">=</span> <span class="n">decomposition</span><span class="o">.</span><span class="n">FastICA</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S_</span> <span class="o">=</span> <span class="n">ica</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c"># Get the estimated sources</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A_</span> <span class="o">=</span> <span class="n">ica</span><span class="o">.</span><span class="n">get_mixing_matrix</span><span class="p">()</span>  <span class="c"># Get estimated mixing matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">S_</span><span class="p">,</span> <span class="n">A_</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../../_sources/tutorial/statistical_inference/unsupervised_learning.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="model_selection.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="putting_together.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

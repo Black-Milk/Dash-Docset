@@ -1,0 +1,173 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.signal.cascade &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Signal processing (scipy.signal)" href="../signal.html" />
+    <link rel="next" title="scipy.signal.daub" href="scipy.signal.daub.html" />
+    <link rel="prev" title="scipy.signal.triang" href="scipy.signal.triang.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.daub.html" title="scipy.signal.daub"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.triang.html" title="scipy.signal.triang"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../signal.html" accesskey="U">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-signal-cascade">
+<h1>scipy.signal.cascade<a class="headerlink" href="#scipy-signal-cascade" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.signal.cascade">
+<tt class="descclassname">scipy.signal.</tt><tt class="descname">cascade</tt><big>(</big><em>hk</em>, <em>J=7</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/signal/wavelets.py#L101"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.signal.cascade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return (x, phi, psi) at dyadic points <tt class="docutils literal"><span class="pre">K/2**J</span></tt> from filter coefficients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>hk</strong> : array_like</p>
+<blockquote>
+<div><p>Coefficients of low-pass filter.</p>
+</div></blockquote>
+<p><strong>J</strong> : int, optional</p>
+<blockquote>
+<div><p>Values will be computed at grid points <tt class="docutils literal"><span class="pre">K/2**J</span></tt>. Default is 7.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>x</strong> : ndarray</p>
+<blockquote>
+<div><p>The dyadic points <tt class="docutils literal"><span class="pre">K/2**J</span></tt> for <tt class="docutils literal"><span class="pre">K=0...N</span> <span class="pre">*</span> <span class="pre">(2**J)-1</span></tt> where
+<tt class="docutils literal"><span class="pre">len(hk)</span> <span class="pre">=</span> <span class="pre">len(gk)</span> <span class="pre">=</span> <span class="pre">N+1</span></tt>.</p>
+</div></blockquote>
+<p><strong>phi</strong> : ndarray</p>
+<blockquote>
+<div><p>The scaling function <tt class="docutils literal"><span class="pre">phi(x)</span></tt> at <em class="xref py py-obj">x</em>:
+<tt class="docutils literal"><span class="pre">phi(x)</span> <span class="pre">=</span> <span class="pre">sum(hk</span> <span class="pre">*</span> <span class="pre">phi(2x-k))</span></tt>, where k is from 0 to N.</p>
+</div></blockquote>
+<p><strong>psi</strong> : ndarray, optional</p>
+<blockquote class="last">
+<div><p>The wavelet function <tt class="docutils literal"><span class="pre">psi(x)</span></tt> at <em class="xref py py-obj">x</em>:
+<tt class="docutils literal"><span class="pre">phi(x)</span> <span class="pre">=</span> <span class="pre">sum(gk</span> <span class="pre">*</span> <span class="pre">phi(2x-k))</span></tt>, where k is from 0 to N.
+<em class="xref py py-obj">psi</em> is only returned if <em class="xref py py-obj">gk</em> is not None.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The algorithm uses the vector cascade algorithm described by Strang and
+Nguyen in &#8220;Wavelets and Filter Banks&#8221;.  It builds a dictionary of values
+and slices for quick reuse.  Then inserts vectors into final vector at the
+end.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.signal.triang.html"
+                        title="previous chapter">scipy.signal.triang</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.signal.daub.html"
+                        title="next chapter">scipy.signal.daub</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.daub.html" title="scipy.signal.daub"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.triang.html" title="scipy.signal.triang"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../signal.html" >Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

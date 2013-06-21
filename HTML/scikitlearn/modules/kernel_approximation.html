@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>6.3. Kernel Approximation &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../index.html" />
+    <link rel="up" title="6. Dataset transformations" href="../data_transforms.html" />
+    <link rel="next" title="6.4. Random Projection" href="random_projection.html" />
+    <link rel="prev" title="6.2. Preprocessing data" href="preprocessing.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../install.html">Download</a></li>
+            <li><a href="../support.html">Support</a></li>
+            <li><a href="../user_guide.html">User Guide</a></li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            <li><a href="classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="preprocessing.html" title="6.2. Preprocessing data"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    6.2. Preprocessi...
+	    </span>
+	    <span class="hiddenrellink">
+	    6.2. Preprocessing data
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="random_projection.html" title="6.4. Random Projection"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    6.4. Random Proj...
+	    </span>
+	    <span class="hiddenrellink">
+	    6.4. Random Projection
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../data_transforms.html" title="6. Dataset transformations" >
+	Up
+	<br>
+	<span class="smallrellink">
+	6. Dataset trans...
+	</span>
+	<span class="hiddenrellink">
+	6. Dataset transformations
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">6.3. Kernel Approximation</a><ul>
+<li><a class="reference internal" href="#nystroem-method-for-kernel-approximation">6.3.1. Nystroem Method for Kernel Approximation</a></li>
+<li><a class="reference internal" href="#radial-basis-function-kernel">6.3.2. Radial Basis Function Kernel</a></li>
+<li><a class="reference internal" href="#additive-chi-squared-kernel">6.3.3. Additive Chi Squared Kernel</a></li>
+<li><a class="reference internal" href="#skewed-chi-squared-kernel">6.3.4. Skewed Chi Squared Kernel</a></li>
+<li><a class="reference internal" href="#mathematical-details">6.3.5. Mathematical Details</a></li>
+</ul>
+</li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="kernel-approximation">
+<span id="id1"></span><h1>6.3. Kernel Approximation<a class="headerlink" href="#kernel-approximation" title="Permalink to this headline">¶</a></h1>
+<p>This submodule contains functions that approximate the feature mappings that
+correspond to certain kernels, as they are used for example in support vector
+machines (see <a class="reference internal" href="svm.html#svm"><em>Support Vector Machines</em></a>).
+The following feature functions perform non-linear transformations of the
+input, which can serve as a basis for linear classification or other
+algorithms.</p>
+<p>The advantage of using approximate explicit feature maps compared to the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Kernel_trick">kernel trick</a>,
+which makes use of feature maps implicitly, is that explicit mappings
+can be better suited for online learning and can significantly reduce the cost
+of learning with very large datasets.
+Standard kernelized SVMs do not scale well to large datasets, but using an
+approximate kernel map it is possible to use much more efficient linear SVMs.
+In particularly the combination of kernel map approximations with
+<a class="reference internal" href="generated/sklearn.linear_model.SGDClassifier.html#sklearn.linear_model.SGDClassifier" title="sklearn.linear_model.SGDClassifier"><tt class="xref py py-class docutils literal"><span class="pre">SGDClassifier</span></tt></a> can make nonlinear learning on large datasets possible.</p>
+<p>Since there has not been much empirical work using approximate embeddings, it
+is advisable to compare results against exact kernel methods when possible.</p>
+<div class="section" id="nystroem-method-for-kernel-approximation">
+<span id="nystroem-kernel-approx"></span><h2>6.3.1. Nystroem Method for Kernel Approximation<a class="headerlink" href="#nystroem-method-for-kernel-approximation" title="Permalink to this headline">¶</a></h2>
+<p>The Nystroem method, as implemented in <a class="reference internal" href="generated/sklearn.kernel_approximation.Nystroem.html#sklearn.kernel_approximation.Nystroem" title="sklearn.kernel_approximation.Nystroem"><tt class="xref py py-class docutils literal"><span class="pre">Nystroem</span></tt></a> is a general method
+for low-rank approximations of kernels. It achieves this by essentially subsampling
+the data on which the kernel is evaluated.
+By default <a class="reference internal" href="generated/sklearn.kernel_approximation.Nystroem.html#sklearn.kernel_approximation.Nystroem" title="sklearn.kernel_approximation.Nystroem"><tt class="xref py py-class docutils literal"><span class="pre">Nystroem</span></tt></a> uses the <tt class="docutils literal"><span class="pre">rbf</span></tt> kernel, but it can use any
+kernel function or a precomputed kernel matrix.
+The number of samples used - which is also the dimensionality of the features computed -
+is given by the parameter <tt class="docutils literal"><span class="pre">n_components</span></tt>.</p>
+</div>
+<div class="section" id="radial-basis-function-kernel">
+<h2>6.3.2. Radial Basis Function Kernel<a class="headerlink" href="#radial-basis-function-kernel" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="sklearn.kernel_approximation.RBFSampler"><tt class="xref py py-class docutils literal"><span class="pre">RBFSampler</span></tt></a> constructs an approximate mapping for the radial basis
+function kernel. This transformation can be used to explicitly model a kernel map,
+prior to applying a linear algorithm, for example a linear SVM:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.kernel_approximation</span> <span class="kn">import</span> <span class="n">RBFSampler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">SGDClassifier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rbf_feature</span> <span class="o">=</span> <span class="n">RBFSampler</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_features</span> <span class="o">=</span> <span class="n">rbf_feature</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span> <span class="o">=</span> <span class="n">SGDClassifier</span><span class="p">()</span>   
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_features</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">SGDClassifier(alpha=0.0001, class_weight=None, epsilon=0.1, eta0=0.0,</span>
+<span class="go">       fit_intercept=True, l1_ratio=0.15, learning_rate=&#39;optimal&#39;,</span>
+<span class="go">       loss=&#39;hinge&#39;, n_iter=5, n_jobs=1, penalty=&#39;l2&#39;, power_t=0.5,</span>
+<span class="go">       random_state=None, rho=None, shuffle=False, verbose=0,</span>
+<span class="go">       warm_start=False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_features</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<p>The mapping relies on a Monte Carlo approximation to the
+kernel values. The <tt class="docutils literal"><span class="pre">fit</span></tt> function performs the Monte Carlo sampling, whereas
+the <tt class="docutils literal"><span class="pre">transform</span></tt> method performs the mapping of the data.  Because of the
+inherent randomness of the process, results may vary between different calls to
+the <tt class="docutils literal"><span class="pre">fit</span></tt> function.</p>
+<p>The <tt class="docutils literal"><span class="pre">fit</span></tt> function takes two arguments:
+<cite>n_components</cite>, which is the target dimensionality of the feature transform,
+and <cite>gamma</cite>, the parameter of the RBF-kernel.  A higher <cite>n_components</cite> will
+result in a better approximation of the kernel and will yield results more
+similar to those produced by a kernel SVM. Note that &#8220;fitting&#8221; the feature
+function does not actually depend on the data given to the <tt class="docutils literal"><span class="pre">fit</span></tt> function.
+Only the dimensionality of the data is used.
+Details on the method can be found in <a class="reference internal" href="#rr2007">[RR2007]</a>.</p>
+<p>For a given value of <tt class="docutils literal"><span class="pre">n_components</span></tt> <a class="reference internal" href="generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="sklearn.kernel_approximation.RBFSampler"><tt class="xref py py-class docutils literal"><span class="pre">RBFSampler</span></tt></a> is often less acurate
+as <a class="reference internal" href="generated/sklearn.kernel_approximation.Nystroem.html#sklearn.kernel_approximation.Nystroem" title="sklearn.kernel_approximation.Nystroem"><tt class="xref py py-class docutils literal"><span class="pre">Nystroem</span></tt></a>. <a class="reference internal" href="generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="sklearn.kernel_approximation.RBFSampler"><tt class="xref py py-class docutils literal"><span class="pre">RBFSampler</span></tt></a> is cheaper to compute, though, making
+use of larger feature spaces more efficient.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="../auto_examples/plot_kernel_approximation.html"><img alt="../_images/plot_kernel_approximation_21.png" src="../_images/plot_kernel_approximation_21.png" style="width: 600.0px; height: 250.0px;" /></a>
+<p class="caption">Comparing an exact RBF kernel (left) with the approximation (right)</p>
+</div>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../auto_examples/plot_kernel_approximation.html#example-plot-kernel-approximation-py"><em>Explicit feature map approximation for RBF kernels</em></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="additive-chi-squared-kernel">
+<h2>6.3.3. Additive Chi Squared Kernel<a class="headerlink" href="#additive-chi-squared-kernel" title="Permalink to this headline">¶</a></h2>
+<p>The additive chi squared kernel is a kernel on histograms, often used in computer vision.</p>
+<p>The additive chi squared kernel as used here is given by</p>
+<div class="math">
+<p><img src="../_images/math/5aca6584a9fc03470380d2c5a34ecd6da1bf321b.png" alt="k(x, y) = \sum_i \frac{2x_iy_i}{x_i+y_i}"/></p>
+</div><p>This is not exactly the same as <tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.additive_chi2_kernel</span></tt>.
+The authors of <a class="reference internal" href="#vz2010">[VZ2010]</a> prefer the version above as it is always positive
+definite.
+Since the kernel is additive, it is possible to treat all components
+<img class="math" src="../_images/math/67bc6daa9d6b964201d6cef60cbeb1ac5fd26ead.png" alt="x_i"/> separately for embedding. This makes it possible to sample
+the Fourier transform in regular intervals, instead of approximating
+using Monte Carlo sampling.</p>
+<p>The class <a class="reference internal" href="generated/sklearn.kernel_approximation.AdditiveChi2Sampler.html#sklearn.kernel_approximation.AdditiveChi2Sampler" title="sklearn.kernel_approximation.AdditiveChi2Sampler"><tt class="xref py py-class docutils literal"><span class="pre">AdditiveChi2Sampler</span></tt></a> implements this component wise
+deterministic sampling. Each component is sampled <cite>n</cite> times, yielding
+<cite>2n+1</cite> dimensions per input dimension (the multiple of two stems
+from the real and complex part of the Fourier transform).
+In the literature, <cite>n</cite> is usually chosen to be <cite>1</cite> or <cite>2</cite>, transforming
+the dataset to size <cite>n_samples x 5 * n_features</cite> (in the case of <cite>n=2</cite>).</p>
+<p>The approximate feature map provided by <a class="reference internal" href="generated/sklearn.kernel_approximation.AdditiveChi2Sampler.html#sklearn.kernel_approximation.AdditiveChi2Sampler" title="sklearn.kernel_approximation.AdditiveChi2Sampler"><tt class="xref py py-class docutils literal"><span class="pre">AdditiveChi2Sampler</span></tt></a> can be combined
+with the approximate feature map provided by <a class="reference internal" href="generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="sklearn.kernel_approximation.RBFSampler"><tt class="xref py py-class docutils literal"><span class="pre">RBFSampler</span></tt></a> to yield an approximate
+feature map for the exponentiated chi squared kernel.
+See the <a class="reference internal" href="#vz2010">[VZ2010]</a> for details and <a class="reference internal" href="#vvz2010">[VVZ2010]</a> for combination with the <a class="reference internal" href="generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="sklearn.kernel_approximation.RBFSampler"><tt class="xref py py-class docutils literal"><span class="pre">RBFSampler</span></tt></a>.</p>
+</div>
+<div class="section" id="skewed-chi-squared-kernel">
+<h2>6.3.4. Skewed Chi Squared Kernel<a class="headerlink" href="#skewed-chi-squared-kernel" title="Permalink to this headline">¶</a></h2>
+<p>The skewed chi squared kernel is given by:</p>
+<div class="math">
+<p><img src="../_images/math/a002d98fd3e535e5ce55f9569f52135ca9eaefb4.png" alt="k(x,y) = \prod_i \frac{2\sqrt{x_i+c}\sqrt{y_i+c}}{x_i + y_i + 2c}"/></p>
+</div><p>It has properties that are similar to the exponentiated chi squared kernel
+often used in computer vision, but allows for a simple Monte Carlo
+approximation of the feature map.</p>
+<p>The usage of the <a class="reference internal" href="generated/sklearn.kernel_approximation.SkewedChi2Sampler.html#sklearn.kernel_approximation.SkewedChi2Sampler" title="sklearn.kernel_approximation.SkewedChi2Sampler"><tt class="xref py py-class docutils literal"><span class="pre">SkewedChi2Sampler</span></tt></a> is the same as the usage described
+above for the <a class="reference internal" href="generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="sklearn.kernel_approximation.RBFSampler"><tt class="xref py py-class docutils literal"><span class="pre">RBFSampler</span></tt></a>. The only difference is in the free
+parameter, that is called <cite>c</cite>.
+For a motivation for this mapping and the mathematical details see <a class="reference internal" href="#ls2010">[LS2010]</a>.</p>
+</div>
+<div class="section" id="mathematical-details">
+<h2>6.3.5. Mathematical Details<a class="headerlink" href="#mathematical-details" title="Permalink to this headline">¶</a></h2>
+<p>Kernel methods like support vector machines or kernelized
+PCA rely on a property of reproducing kernel Hilbert spaces.
+For any positive definite kernel function <cite>k</cite> (a so called Mercer kernel),
+it is guaranteed that there exists a mapping <img class="math" src="../_images/math/2c175f60eecef1de7560c3bdea495d69f26f719d.png" alt="\phi"/>
+into a Hilbert space <img class="math" src="../_images/math/094215a028a80a31054721ded9ee0f700ec5f31a.png" alt="\mathcal{H}"/>, such that</p>
+<div class="math">
+<p><img src="../_images/math/606a6ae0031859b6d5a224b1f66a24a8529259fb.png" alt="k(x,y) = &lt; \phi(x), \phi(y)&gt;"/></p>
+</div><p>Where <img class="math" src="../_images/math/da643a118e92177891b8ffc0280b4882b8c8f3ac.png" alt="&lt; \cdot, \cdot &gt;"/> denotes the inner product in the
+Hilbert space.</p>
+<p>If an algorithm, such as a linear support vector machine or PCA,
+relies only on the scalar product of data points <img class="math" src="../_images/math/67bc6daa9d6b964201d6cef60cbeb1ac5fd26ead.png" alt="x_i"/>, one may use
+the value of <img class="math" src="../_images/math/5ebf8952471963e717e913c4c4ebbf62be8e0ee3.png" alt="k(x_i, x_j)"/>, which corresponds to applying the algorithm
+to the mapped data points <img class="math" src="../_images/math/89fad0e3d227883a02e8bc187b23e29912d122cf.png" alt="\phi(x_i)"/>.
+The advantage of using <cite>k</cite> is that the mapping <img class="math" src="../_images/math/2c175f60eecef1de7560c3bdea495d69f26f719d.png" alt="\phi"/> never has
+to be calculated explicitly, allowing for arbitrary large
+features (even infinite).</p>
+<p>One drawback of kernel methods is, that it might be necessary
+to store many kernel values <img class="math" src="../_images/math/5ebf8952471963e717e913c4c4ebbf62be8e0ee3.png" alt="k(x_i, x_j)"/> during optimization.
+If a kernelized classifier is applied to new data <img class="math" src="../_images/math/30c472b0981d0e017b3914f324344a888c22607c.png" alt="y_j"/>,
+<img class="math" src="../_images/math/8ba9b17f88229fdcbb0e97f33b8ea3a7414aceb9.png" alt="k(x_i, y_j)"/> needs to be computed to make predictions,
+possibly for many different <img class="math" src="../_images/math/67bc6daa9d6b964201d6cef60cbeb1ac5fd26ead.png" alt="x_i"/> in the training set.</p>
+<p>The classes in this submodule allow to approximate the embedding
+<img class="math" src="../_images/math/2c175f60eecef1de7560c3bdea495d69f26f719d.png" alt="\phi"/>, thereby working explicitly with the representations
+<img class="math" src="../_images/math/89fad0e3d227883a02e8bc187b23e29912d122cf.png" alt="\phi(x_i)"/>, which obviates the need to apply the kernel
+or store training examples.</p>
+<div class="topic">
+<p class="topic-title first">References:</p>
+<table class="docutils citation" frame="void" id="rr2007" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[RR2007]</a></td><td><a class="reference external" href="http://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf">&#8220;Random features for large-scale kernel machines&#8221;</a>
+Rahimi, A. and Recht, B. - Advances in neural information processing 2007,</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="ls2010" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[LS2010]</a></td><td><a class="reference external" href="http://sminchisescu.ins.uni-bonn.de/papers/lis_dagm10.pdf">&#8220;Random Fourier approximations for skewed multiplicative histogram kernels&#8221;</a>
+Random Fourier approximations for skewed multiplicative histogram kernels
+- Lecture Notes for Computer Sciencd (DAGM)</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="vz2010" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[VZ2010]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> <a class="reference external" href="http://eprints.pascal-network.org/archive/00006964/01/vedaldi10.pdf">&#8220;Efficient additive kernels via explicit feature maps&#8221;</a>
+Vedaldi, A. and Zisserman, A. - Computer Vision and Pattern Recognition 2010</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="vvz2010" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[VVZ2010]</a></td><td><a class="reference external" href="http://eprints.pascal-network.org/archive/00007024/01/inproceedings.pdf.8a865c2a5421e40d.537265656b616e7468313047656e6572616c697a65642e706466.pdf">&#8220;Generalized RBF feature maps for Efficient Detection&#8221;</a>
+Vempati, S. and Vedaldi, A. and Zisserman, A. and Jawahar, CV - 2010</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../_sources/modules/kernel_approximation.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="preprocessing.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="random_projection.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

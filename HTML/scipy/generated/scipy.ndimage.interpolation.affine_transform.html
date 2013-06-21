@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.ndimage.interpolation.affine_transform &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Multi-dimensional image processing (scipy.ndimage)" href="../ndimage.html" />
+    <link rel="next" title="scipy.ndimage.interpolation.geometric_transform" href="scipy.ndimage.interpolation.geometric_transform.html" />
+    <link rel="prev" title="scipy.ndimage.fourier.fourier_uniform" href="scipy.ndimage.fourier.fourier_uniform.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.ndimage.interpolation.geometric_transform.html" title="scipy.ndimage.interpolation.geometric_transform"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.ndimage.fourier.fourier_uniform.html" title="scipy.ndimage.fourier.fourier_uniform"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../ndimage.html" accesskey="U">Multi-dimensional image processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.ndimage</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-ndimage-interpolation-affine-transform">
+<h1>scipy.ndimage.interpolation.affine_transform<a class="headerlink" href="#scipy-ndimage-interpolation-affine-transform" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.ndimage.interpolation.affine_transform">
+<tt class="descclassname">scipy.ndimage.interpolation.</tt><tt class="descname">affine_transform</tt><big>(</big><em>input</em>, <em>matrix</em>, <em>offset=0.0</em>, <em>output_shape=None</em>, <em>output=None</em>, <em>order=3</em>, <em>mode='constant'</em>, <em>cval=0.0</em>, <em>prefilter=True</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/ndimage/interpolation.py#L308"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.ndimage.interpolation.affine_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an affine transformation.</p>
+<p>The given matrix and offset are used to find for each point in the
+output the corresponding coordinates in the input by an affine
+transformation. The value of the input at those coordinates is
+determined by spline interpolation of the requested order. Points
+outside the boundaries of the input are filled according to the given
+mode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>input</strong> : ndarray</p>
+<blockquote>
+<div><p>The input array.</p>
+</div></blockquote>
+<p><strong>matrix</strong> : ndarray</p>
+<blockquote>
+<div><p>The matrix must be two-dimensional or can also be given as a
+one-dimensional sequence or array. In the latter case, it is assumed
+that the matrix is diagonal. A more efficient algorithms is then
+applied that exploits the separability of the problem.</p>
+</div></blockquote>
+<p><strong>offset</strong> : float or sequence, optional</p>
+<blockquote>
+<div><p>The offset into the array where the transform is applied. If a float,
+<em class="xref py py-obj">offset</em> is the same for each axis. If a sequence, <em class="xref py py-obj">offset</em> should
+contain one value for each axis.</p>
+</div></blockquote>
+<p><strong>output_shape</strong> : tuple of ints, optional</p>
+<blockquote>
+<div><p>Shape tuple.</p>
+</div></blockquote>
+<p><strong>output</strong> : ndarray or dtype, optional</p>
+<blockquote>
+<div><p>The array in which to place the output, or the dtype of the returned
+array.</p>
+</div></blockquote>
+<p><strong>order</strong> : int, optional</p>
+<blockquote>
+<div><p>The order of the spline interpolation, default is 3.
+The order has to be in the range 0-5.</p>
+</div></blockquote>
+<p><strong>mode</strong> : str, optional</p>
+<blockquote>
+<div><p>Points outside the boundaries of the input are filled according
+to the given mode (&#8216;constant&#8217;, &#8216;nearest&#8217;, &#8216;reflect&#8217; or &#8216;wrap&#8217;).
+Default is &#8216;constant&#8217;.</p>
+</div></blockquote>
+<p><strong>cval</strong> : scalar, optional</p>
+<blockquote>
+<div><p>Value used for points outside the boundaries of the input if
+<tt class="docutils literal"><span class="pre">mode='constant'</span></tt>. Default is 0.0</p>
+</div></blockquote>
+<p><strong>prefilter</strong> : bool, optional</p>
+<blockquote>
+<div><p>The parameter prefilter determines if the input is pre-filtered with
+<a class="reference internal" href="scipy.ndimage.interpolation.spline_filter.html#scipy.ndimage.interpolation.spline_filter" title="scipy.ndimage.interpolation.spline_filter"><tt class="xref py py-obj docutils literal"><span class="pre">spline_filter</span></tt></a> before interpolation (necessary for spline
+interpolation of order &gt; 1).  If False, it is assumed that the input is
+already filtered. Default is True.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>affine_transform</strong> : ndarray or None</p>
+<blockquote class="last">
+<div><p>The transformed input. If <em class="xref py py-obj">output</em> is given as a parameter, None is
+returned.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.ndimage.fourier.fourier_uniform.html"
+                        title="previous chapter">scipy.ndimage.fourier.fourier_uniform</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.ndimage.interpolation.geometric_transform.html"
+                        title="next chapter">scipy.ndimage.interpolation.geometric_transform</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.ndimage.interpolation.geometric_transform.html" title="scipy.ndimage.interpolation.geometric_transform"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.ndimage.fourier.fourier_uniform.html" title="scipy.ndimage.fourier.fourier_uniform"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../ndimage.html" >Multi-dimensional image processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.ndimage</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

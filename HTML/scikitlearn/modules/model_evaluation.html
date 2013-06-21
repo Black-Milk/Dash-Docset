@@ -1,0 +1,1307 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5.5. Model evaluation &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../index.html" />
+    <link rel="up" title="5. Model selection and evaluation" href="../model_selection.html" />
+    <link rel="next" title="6. Dataset transformations" href="../data_transforms.html" />
+    <link rel="prev" title="5.3. Pipeline: chaining estimators" href="pipeline.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../install.html">Download</a></li>
+            <li><a href="../support.html">Support</a></li>
+            <li><a href="../user_guide.html">User Guide</a></li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            <li><a href="classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="pipeline.html" title="5.3. Pipeline: chaining estimators"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    5.3. Pipeline: c...
+	    </span>
+	    <span class="hiddenrellink">
+	    5.3. Pipeline: chaining estimators
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="../data_transforms.html" title="6. Dataset transformations"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    6. Dataset trans...
+	    </span>
+	    <span class="hiddenrellink">
+	    6. Dataset transformations
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../model_selection.html" title="5. Model selection and evaluation" >
+	Up
+	<br>
+	<span class="smallrellink">
+	5. Model selecti...
+	</span>
+	<span class="hiddenrellink">
+	5. Model selection and evaluation
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">5.5. Model evaluation</a><ul>
+<li><a class="reference internal" href="#classification-metrics">5.5.1. Classification metrics</a><ul>
+<li><a class="reference internal" href="#accuracy-score">5.5.1.1. Accuracy score</a></li>
+<li><a class="reference internal" href="#area-under-the-curve-auc">5.5.1.2. Area under the curve (AUC)</a></li>
+<li><a class="reference internal" href="#average-precision-score">5.5.1.3. Average precision score</a></li>
+<li><a class="reference internal" href="#confusion-matrix">5.5.1.4. Confusion matrix</a></li>
+<li><a class="reference internal" href="#classification-report">5.5.1.5. Classification report</a></li>
+<li><a class="reference internal" href="#hamming-loss">5.5.1.6. Hamming loss</a></li>
+<li><a class="reference internal" href="#jaccard-similarity-coefficient-score">5.5.1.7. Jaccard similarity coefficient score</a></li>
+<li><a class="reference internal" href="#precision-recall-and-f-measures">5.5.1.8. Precision, recall and F-measures</a><ul>
+<li><a class="reference internal" href="#binary-classification">5.5.1.8.1. Binary classification</a></li>
+<li><a class="reference internal" href="#multiclass-and-multilabel-classification">5.5.1.8.2. Multiclass and multilabel classification</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hinge-loss">5.5.1.9. Hinge loss</a></li>
+<li><a class="reference internal" href="#matthews-correlation-coefficient">5.5.1.10. Matthews correlation coefficient</a></li>
+<li><a class="reference internal" href="#receiver-operating-characteristic-roc">5.5.1.11. Receiver operating characteristic (ROC)</a></li>
+<li><a class="reference internal" href="#zero-one-loss">5.5.1.12. Zero one loss</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regression-metrics">5.5.2. Regression metrics</a><ul>
+<li><a class="reference internal" href="#explained-variance-score">5.5.2.1. Explained variance score</a></li>
+<li><a class="reference internal" href="#mean-absolute-error">5.5.2.2. Mean absolute error</a></li>
+<li><a class="reference internal" href="#mean-squared-error">5.5.2.3. Mean squared error</a></li>
+<li><a class="reference internal" href="#r2-score-the-coefficient-of-determination">5.5.2.4. R² score, the coefficient of determination</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clustering-metrics">5.5.3. Clustering metrics</a></li>
+<li><a class="reference internal" href="#scoring-objects-defining-your-scoring-rules">5.5.4. <cite>Scoring</cite> objects: defining your scoring rules</a><ul>
+<li><a class="reference internal" href="#creating-scoring-objects-from-score-functions">5.5.4.1. Creating scoring objects from score functions</a></li>
+<li><a class="reference internal" href="#implementing-your-own-scoring-object">5.5.4.2. Implementing your own scoring object</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dummy-estimators">5.5.5. Dummy estimators</a></li>
+</ul>
+</li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="model-evaluation">
+<span id="id1"></span><h1>5.5. Model evaluation<a class="headerlink" href="#model-evaluation" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="classes.html#module-sklearn.metrics" title="sklearn.metrics"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.metrics</span></tt></a> module implements useful functions for assessing the
+performance of an estimator under a specific criterion.  Functions whose name
+ends with <tt class="docutils literal"><span class="pre">_score</span></tt> return a scalar value to maximize (the higher the better).
+Functions whose name ends with  <tt class="docutils literal"><span class="pre">_error</span></tt> or <tt class="docutils literal"><span class="pre">_loss</span></tt> return a scalar value
+to minimize (the lower the better).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Estimators usually define a <tt class="docutils literal"><span class="pre">score</span></tt> method which provides a suitable evaluation
+score for this estimator.</p>
+</div>
+<p>For pairwise metrics, see the <a class="reference internal" href="metrics.html#metrics"><em>Pairwise metrics, Affinities and Kernels</em></a> section.</p>
+<div class="section" id="classification-metrics">
+<span id="id2"></span><h2>5.5.1. Classification metrics<a class="headerlink" href="#classification-metrics" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="classes.html#module-sklearn.metrics" title="sklearn.metrics"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.metrics</span></tt></a> implements several losses, scores and utility
+functions to measure classification performance.</p>
+<p>Some of these are restricted to the binary classification case:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.auc_score.html#sklearn.metrics.auc_score" title="sklearn.metrics.auc_score"><tt class="xref py py-obj docutils literal"><span class="pre">auc_score</span></tt></a>(y_true,&nbsp;y_score)</td>
+<td>Compute Area Under the Curve (AUC) from prediction scores</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.average_precision_score.html#sklearn.metrics.average_precision_score" title="sklearn.metrics.average_precision_score"><tt class="xref py py-obj docutils literal"><span class="pre">average_precision_score</span></tt></a>(y_true,&nbsp;y_score)</td>
+<td>Compute average precision (AP) from prediction scores</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.hinge_loss.html#sklearn.metrics.hinge_loss" title="sklearn.metrics.hinge_loss"><tt class="xref py py-obj docutils literal"><span class="pre">hinge_loss</span></tt></a>(y_true,&nbsp;pred_decision[,&nbsp;...])</td>
+<td>Average hinge loss (non-regularized)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.matthews_corrcoef.html#sklearn.metrics.matthews_corrcoef" title="sklearn.metrics.matthews_corrcoef"><tt class="xref py py-obj docutils literal"><span class="pre">matthews_corrcoef</span></tt></a>(y_true,&nbsp;y_pred)</td>
+<td>Compute the Matthews correlation coefficient (MCC) for binary classes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.precision_recall_curve.html#sklearn.metrics.precision_recall_curve" title="sklearn.metrics.precision_recall_curve"><tt class="xref py py-obj docutils literal"><span class="pre">precision_recall_curve</span></tt></a>(y_true,&nbsp;probas_pred)</td>
+<td>Compute precision-recall pairs for different probability thresholds</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.roc_curve.html#sklearn.metrics.roc_curve" title="sklearn.metrics.roc_curve"><tt class="xref py py-obj docutils literal"><span class="pre">roc_curve</span></tt></a>(y_true,&nbsp;y_score[,&nbsp;pos_label])</td>
+<td>Compute Receiver operating characteristic (ROC)</td>
+</tr>
+</tbody>
+</table>
+<p>Others also work in the multiclass case:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.confusion_matrix.html#sklearn.metrics.confusion_matrix" title="sklearn.metrics.confusion_matrix"><tt class="xref py py-obj docutils literal"><span class="pre">confusion_matrix</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;labels])</td>
+<td>Compute confusion matrix to evaluate the accuracy of a classification</td>
+</tr>
+</tbody>
+</table>
+<p>And some also work in the multilabel case:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score"><tt class="xref py py-obj docutils literal"><span class="pre">accuracy_score</span></tt></a>(y_true,&nbsp;y_pred)</td>
+<td>Accuracy classification score</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.classification_report.html#sklearn.metrics.classification_report" title="sklearn.metrics.classification_report"><tt class="xref py py-obj docutils literal"><span class="pre">classification_report</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;...])</td>
+<td>Build a text report showing the main classification metrics</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.f1_score.html#sklearn.metrics.f1_score" title="sklearn.metrics.f1_score"><tt class="xref py py-obj docutils literal"><span class="pre">f1_score</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the F1 score, also known as balanced F-score or F-measure</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.fbeta_score.html#sklearn.metrics.fbeta_score" title="sklearn.metrics.fbeta_score"><tt class="xref py py-obj docutils literal"><span class="pre">fbeta_score</span></tt></a>(y_true,&nbsp;y_pred,&nbsp;beta[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the F-beta score</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">hamming_loss</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">jaccard_similarity_score</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.precision_recall_fscore_support.html#sklearn.metrics.precision_recall_fscore_support" title="sklearn.metrics.precision_recall_fscore_support"><tt class="xref py py-obj docutils literal"><span class="pre">precision_recall_fscore_support</span></tt></a>(y_true,&nbsp;y_pred)</td>
+<td>Compute precision, recall, F-measure and support for each class</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score" title="sklearn.metrics.precision_score"><tt class="xref py py-obj docutils literal"><span class="pre">precision_score</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the precision</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score" title="sklearn.metrics.recall_score"><tt class="xref py py-obj docutils literal"><span class="pre">recall_score</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the recall</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.zero_one_loss.html#sklearn.metrics.zero_one_loss" title="sklearn.metrics.zero_one_loss"><tt class="xref py py-obj docutils literal"><span class="pre">zero_one_loss</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;normalize])</td>
+<td>Zero-One classification loss</td>
+</tr>
+</tbody>
+</table>
+<p>Some metrics might require probability estimates of the positive class,
+confidence values or binary decisions value.</p>
+<p>In the following sub-sections, we will describe each of those functions.</p>
+<div class="section" id="accuracy-score">
+<h3>5.5.1.1. Accuracy score<a class="headerlink" href="#accuracy-score" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score"><tt class="xref py py-func docutils literal"><span class="pre">accuracy_score</span></tt></a> function computes the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Accuracy_and_precision">accuracy</a>, the fraction
+(default) or the number of correct predictions.</p>
+<p>In multilabel classification, the function returns the subset accuracy: if
+the entire set of predicted labels for a sample strictly match with the true
+set of labels, then the subset accuracy is 1.0, otherwise it is 0.0.</p>
+<p>If <img class="math" src="../_images/math/893679832eefebfdd6b79dbd91c6219a96de76a0.png" alt="\hat{y}_i"/> is the predicted value of
+the <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>-th sample and <img class="math" src="../_images/math/6e6ceb79ebc4bf613298e0144eae25dd73de9be3.png" alt="y_i"/> is the corresponding true value,
+then the fraction of correct predictions over <img class="math" src="../_images/math/5d6f1aea754fe9282e002d6118a0818a52effd01.png" alt="n_\text{samples}"/> is
+defined as</p>
+<div class="math">
+<p><img src="../_images/math/0ee88f60b07dd5471d195475b082ee97cda896b9.png" alt="\texttt{accuracy}(y, \hat{y}) = \frac{1}{n_\text{samples}} \sum_{i=0}^{n_\text{samples}-1} 1(\hat{y}_i = y_i)"/></p>
+</div><p>where <img class="math" src="../_images/math/0d4b4c28168e2d4ef79fb483891c05e772e1aa2b.png" alt="1(x)"/> is the <a class="reference external" href="http://en.wikipedia.org/wiki/Indicator_function">indicator function</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<p>In the multilabel case with binary indicator format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
+<p>and with a list of labels format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy_score</span><span class="p">([(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)],</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">()])</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">Example:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/plot_permutation_test_for_classification.html#example-plot-permutation-test-for-classification-py"><em>Test with permutations the significance of a classification score</em></a>
+for an example of accuracy score usage using permutations of
+the dataset.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="area-under-the-curve-auc">
+<h3>5.5.1.2. Area under the curve (AUC)<a class="headerlink" href="#area-under-the-curve-auc" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.auc_score.html#sklearn.metrics.auc_score" title="sklearn.metrics.auc_score"><tt class="xref py py-func docutils literal"><span class="pre">auc_score</span></tt></a> function computes the &#8216;area under the curve&#8217; (AUC) which
+is the area under the receiver operating characteristic (ROC) curve.</p>
+<p>This function requires  the true binary value and the target scores, which can
+either be probability estimates of the positive class, confidence values, or
+binary decisions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">auc_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">auc_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_scores</span><span class="p">)</span>
+<span class="go">0.75</span>
+</pre></div>
+</div>
+<p>For more information see the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_curve">Wikipedia article on AUC</a>
+and the <a class="reference internal" href="#roc-metrics"><em>Receiver operating characteristic (ROC)</em></a> section.</p>
+</div>
+<div class="section" id="average-precision-score">
+<span id="average-precision-metrics"></span><h3>5.5.1.3. Average precision score<a class="headerlink" href="#average-precision-score" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.average_precision_score.html#sklearn.metrics.average_precision_score" title="sklearn.metrics.average_precision_score"><tt class="xref py py-func docutils literal"><span class="pre">average_precision_score</span></tt></a> function computes the average precision
+(AP) from prediction scores. This score corresponds to the area under the
+precision-recall curve.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">average_precision_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">average_precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_scores</span><span class="p">)</span>  
+<span class="go">0.79...</span>
+</pre></div>
+</div>
+<p>For more information see the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Information_retrieval#Average_precision">Wikipedia article on average precision</a>
+and the <a class="reference internal" href="#precision-recall-f-measure-metrics"><em>Precision, recall and F-measures</em></a> section.</p>
+</div>
+<div class="section" id="confusion-matrix">
+<h3>5.5.1.4. Confusion matrix<a class="headerlink" href="#confusion-matrix" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.confusion_matrix.html#sklearn.metrics.confusion_matrix" title="sklearn.metrics.confusion_matrix"><tt class="xref py py-func docutils literal"><span class="pre">confusion_matrix</span></tt></a> function computes the <a class="reference external" href="http://en.wikipedia.org/wiki/Confusion_matrix">confusion matrix</a> to evaluate
+the accuracy on a classification problem.</p>
+<p>By definition, a confusion matrix <img class="math" src="../_images/math/c3355896da590fc491a10150a50416687626d7cc.png" alt="C"/> is such that <img class="math" src="../_images/math/f468c9fba3c965c89e60abf6e9826fbd709bf7e4.png" alt="C_{i, j}"/> is
+equal to the number of observations known to be in group <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/> but
+predicted to be in group <img class="math" src="../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j"/>. Here an example of such confusion matrix:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">array([[2, 0, 0],</span>
+<span class="go">       [0, 0, 1],</span>
+<span class="go">       [1, 0, 2]])</span>
+</pre></div>
+</div>
+<p>Here a visual representation of such confusion matrix (this figure comes
+from the <a class="reference internal" href="../auto_examples/plot_confusion_matrix.html#example-plot-confusion-matrix-py"><em>Confusion matrix</em></a> example):</p>
+<a class="reference external image-reference" href="../auto_examples/plot_confusion_matrix.html"><img alt="../_images/plot_confusion_matrix_11.png" class="align-center" src="../_images/plot_confusion_matrix_11.png" style="width: 450.0px; height: 450.0px;" /></a>
+<div class="topic">
+<p class="topic-title first">Example:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/plot_confusion_matrix.html#example-plot-confusion-matrix-py"><em>Confusion matrix</em></a>
+for an example of confusion matrix usage to evaluate the quality of the
+output of a classifier.</li>
+<li>See <a class="reference internal" href="../auto_examples/plot_digits_classification.html#example-plot-digits-classification-py"><em>Recognizing hand-written digits</em></a>
+for an example of confusion matrix usage in the classification of
+hand-written digits.</li>
+<li>See <a class="reference internal" href="../auto_examples/document_classification_20newsgroups.html#example-document-classification-20newsgroups-py"><em>Classification of text documents using sparse features</em></a>
+for an example of confusion matrix usage in the classification of text
+documents.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="classification-report">
+<h3>5.5.1.5. Classification report<a class="headerlink" href="#classification-report" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.classification_report.html#sklearn.metrics.classification_report" title="sklearn.metrics.classification_report"><tt class="xref py py-func docutils literal"><span class="pre">classification_report</span></tt></a> function builds a text report showing the
+main classification metrics. Here a small example with custom <tt class="docutils literal"><span class="pre">target_names</span></tt>
+and inferred labels:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;class 0&#39;</span><span class="p">,</span> <span class="s">&#39;class 1&#39;</span><span class="p">,</span> <span class="s">&#39;class 2&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">target_names</span><span class="o">=</span><span class="n">target_names</span><span class="p">))</span>
+<span class="go">             precision    recall  f1-score   support</span>
+
+<span class="go">    class 0       0.67      1.00      0.80         2</span>
+<span class="go">    class 1       0.00      0.00      0.00         1</span>
+<span class="go">    class 2       1.00      1.00      1.00         2</span>
+
+<span class="go">avg / total       0.67      0.80      0.72         5</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">Example:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/plot_digits_classification.html#example-plot-digits-classification-py"><em>Recognizing hand-written digits</em></a>
+for an example of classification report usage in the classification of the
+hand-written digits.</li>
+<li>See <a class="reference internal" href="../auto_examples/document_classification_20newsgroups.html#example-document-classification-20newsgroups-py"><em>Classification of text documents using sparse features</em></a>
+for an example of classification report usage in the classification of text
+documents.</li>
+<li>See <a class="reference internal" href="../auto_examples/grid_search_digits.html#example-grid-search-digits-py"><em>Parameter estimation using grid search with a nested cross-validation</em></a>
+for an example of classification report usage in parameter estimation using
+grid search with a nested cross-validation.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="hamming-loss">
+<h3>5.5.1.6. Hamming loss<a class="headerlink" href="#hamming-loss" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">hamming_loss</span></tt> computes the average Hamming loss or <a class="reference external" href="http://en.wikipedia.org/wiki/Hamming_distance">Hamming
+distance</a> between two sets
+of samples.</p>
+<p>If <img class="math" src="../_images/math/23aa086bb04bc04c2545ba4c5987ba6c526730c6.png" alt="\hat{y}_j"/> is the predicted value for the <img class="math" src="../_images/math/8122aa89ea6e80784c6513d22787ad86e36ad0cc.png" alt="j"/>-th labels of
+a given sample, <img class="math" src="../_images/math/30c472b0981d0e017b3914f324344a888c22607c.png" alt="y_j"/> is the corresponding true value and
+<img class="math" src="../_images/math/7025d2f5fe38ef4dc01dec771ffa6cace4d7ca32.png" alt="n_\text{labels}"/> is the number of class or labels, then the
+Hamming loss <img class="math" src="../_images/math/efd87375416e66a14a4bdbd3faa96204f9f56058.png" alt="L_{Hamming}"/> between two samples is defined as:</p>
+<div class="math">
+<p><img src="../_images/math/7d82eb4e9405409217313c68ca6cd08bb8ccded7.png" alt="L_{Hamming}(y, \hat{y}) = \frac{1}{n_\text{labels}} \sum_{j=0}^{n_\text{labels} - 1} 1(\hat{y}_j \not= y_j)"/></p>
+</div><p>where <img class="math" src="../_images/math/0d4b4c28168e2d4ef79fb483891c05e772e1aa2b.png" alt="1(x)"/> is the <a class="reference external" href="http://en.wikipedia.org/wiki/Indicator_function">indicator function</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">hamming_loss</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hamming_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.25</span>
+</pre></div>
+</div>
+<p>In the multilabel case with binary indicator format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hamming_loss</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="go">0.75</span>
+</pre></div>
+</div>
+<p>and with a list of labels format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hamming_loss</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)],</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">()])</span>  
+<span class="go">0.166...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>In multiclass classification, the Hamming loss correspond to the Hamming
+distance between <tt class="docutils literal"><span class="pre">y_true</span></tt> and <tt class="docutils literal"><span class="pre">y_pred</span></tt> which is equivalent to the
+<a class="reference internal" href="#zero-one-loss"><em>Zero one loss</em></a> function.</p>
+<p>In multilabel classification, the Hamming loss is different from the
+zero-one loss. The zero-one loss penalizes any predictions that don&#8217;t
+exactly match the true required set of labels,
+while Hamming loss will penalize the individual labels.
+So, predicting a subset or superset of the true labels
+will give a Hamming loss strictly between zero and one.</p>
+<p class="last">The Hamming loss is upperbounded by the zero-one loss. When normalized
+over samples, the Hamming loss is always between zero and one.</p>
+</div>
+</div>
+<div class="section" id="jaccard-similarity-coefficient-score">
+<h3>5.5.1.7. Jaccard similarity coefficient score<a class="headerlink" href="#jaccard-similarity-coefficient-score" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">jaccard_similarity_score</span></tt> function computes the average (default)
+or sum of <a class="reference external" href="http://en.wikipedia.org/wiki/Jaccard_index">Jaccard similarity coefficients</a>, also called Jaccard index,
+between pairs of label sets.</p>
+<p>The Jaccard similarity coefficient of the <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>-th samples
+with a ground truth label set <img class="math" src="../_images/math/6e6ceb79ebc4bf613298e0144eae25dd73de9be3.png" alt="y_i"/> and a predicted label set
+<img class="math" src="../_images/math/893679832eefebfdd6b79dbd91c6219a96de76a0.png" alt="\hat{y}_i"/>  is defined as</p>
+<div class="math">
+<p><img src="../_images/math/e38ce1a7299a9fbc67b04fe92dc67c80b55529bf.png" alt="J(y_i, \hat{y}_i) = \frac{|y_i \cap \hat{y}_i|}{|y_i \cup \hat{y}_i|}."/></p>
+</div><p>In binary and multiclass classification, the Jaccard similarity coefficient
+score is equal to the classification accuracy.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">jaccard_similarity_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jaccard_similarity_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jaccard_similarity_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<p>In the multilabel case with binary indicator format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jaccard_similarity_score</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="go">0.75</span>
+</pre></div>
+</div>
+<p>and with a list of labels format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jaccard_similarity_score</span><span class="p">([(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)],</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">()])</span>
+<span class="go">0.25</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="precision-recall-and-f-measures">
+<span id="precision-recall-f-measure-metrics"></span><h3>5.5.1.8. Precision, recall and F-measures<a class="headerlink" href="#precision-recall-and-f-measures" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference external" href="http://en.wikipedia.org/wiki/Precision_and_recall#Precision">precision</a>
+is intuitively the ability of the classifier not to label as
+positive a sample that is negative.</p>
+<p>The <a class="reference external" href="http://en.wikipedia.org/wiki/Precision_and_recall#Recall">recall</a> is
+intuitively the ability of the classifier to find all the positive samples.</p>
+<p>The  <a class="reference external" href="http://en.wikipedia.org/wiki/F1_score">F-measure</a>
+(<img class="math" src="../_images/math/8ddb84c6f24186c6e64f4383b2ea1272fd9ff4e9.png" alt="F_\beta"/> and <img class="math" src="../_images/math/3a2731abbb0e2524327bba81e355d6d886e5a6cb.png" alt="F_1"/> measures) can be interpreted as a weighted
+harmonic mean of the precision and recall. A
+<img class="math" src="../_images/math/8ddb84c6f24186c6e64f4383b2ea1272fd9ff4e9.png" alt="F_\beta"/> measure reaches its best value at 1 and worst score at 0.
+With <img class="math" src="../_images/math/ed74e1fe1af469dda3514568dd916dfe462d2575.png" alt="\beta = 1"/>, the <img class="math" src="../_images/math/8ddb84c6f24186c6e64f4383b2ea1272fd9ff4e9.png" alt="F_\beta"/> measure leads to the
+<img class="math" src="../_images/math/3a2731abbb0e2524327bba81e355d6d886e5a6cb.png" alt="F_1"/> measure, wheres the recall and the precsion are equally important.</p>
+<p>Several functions allow you to analyze the precision, recall and F-measures
+score:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.f1_score.html#sklearn.metrics.f1_score" title="sklearn.metrics.f1_score"><tt class="xref py py-obj docutils literal"><span class="pre">f1_score</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the F1 score, also known as balanced F-score or F-measure</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.fbeta_score.html#sklearn.metrics.fbeta_score" title="sklearn.metrics.fbeta_score"><tt class="xref py py-obj docutils literal"><span class="pre">fbeta_score</span></tt></a>(y_true,&nbsp;y_pred,&nbsp;beta[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the F-beta score</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.precision_recall_curve.html#sklearn.metrics.precision_recall_curve" title="sklearn.metrics.precision_recall_curve"><tt class="xref py py-obj docutils literal"><span class="pre">precision_recall_curve</span></tt></a>(y_true,&nbsp;probas_pred)</td>
+<td>Compute precision-recall pairs for different probability thresholds</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.precision_recall_fscore_support.html#sklearn.metrics.precision_recall_fscore_support" title="sklearn.metrics.precision_recall_fscore_support"><tt class="xref py py-obj docutils literal"><span class="pre">precision_recall_fscore_support</span></tt></a>(y_true,&nbsp;y_pred)</td>
+<td>Compute precision, recall, F-measure and support for each class</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score" title="sklearn.metrics.precision_score"><tt class="xref py py-obj docutils literal"><span class="pre">precision_score</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the precision</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score" title="sklearn.metrics.recall_score"><tt class="xref py py-obj docutils literal"><span class="pre">recall_score</span></tt></a>(y_true,&nbsp;y_pred[,&nbsp;labels,&nbsp;...])</td>
+<td>Compute the recall</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the <a class="reference internal" href="generated/sklearn.metrics.precision_recall_curve.html#sklearn.metrics.precision_recall_curve" title="sklearn.metrics.precision_recall_curve"><tt class="xref py py-func docutils literal"><span class="pre">precision_recall_curve</span></tt></a> function is restricted to the
+binary case.</p>
+<p>The average precision score might also interest you. See the
+<a class="reference internal" href="#average-precision-metrics"><em>Average precision score</em></a> section.</p>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/document_classification_20newsgroups.html#example-document-classification-20newsgroups-py"><em>Classification of text documents using sparse features</em></a>
+for an example of <a class="reference internal" href="generated/sklearn.metrics.f1_score.html#sklearn.metrics.f1_score" title="sklearn.metrics.f1_score"><tt class="xref py py-func docutils literal"><span class="pre">f1_score</span></tt></a> usage with classification of text
+documents.</li>
+<li>See <a class="reference internal" href="../auto_examples/grid_search_digits.html#example-grid-search-digits-py"><em>Parameter estimation using grid search with a nested cross-validation</em></a>
+for an example of <a class="reference internal" href="generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score" title="sklearn.metrics.precision_score"><tt class="xref py py-func docutils literal"><span class="pre">precision_score</span></tt></a> and <a class="reference internal" href="generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score" title="sklearn.metrics.recall_score"><tt class="xref py py-func docutils literal"><span class="pre">recall_score</span></tt></a> usage
+in parameter estimation using grid search with a nested cross-validation.</li>
+<li>See <a class="reference internal" href="../auto_examples/plot_precision_recall.html#example-plot-precision-recall-py"><em>Precision-Recall</em></a>
+for an example of precision-Recall metric to evaluate the quality of the
+output of a classifier with <a class="reference internal" href="generated/sklearn.metrics.precision_recall_curve.html#sklearn.metrics.precision_recall_curve" title="sklearn.metrics.precision_recall_curve"><tt class="xref py py-func docutils literal"><span class="pre">precision_recall_curve</span></tt></a>.</li>
+<li>See <a class="reference internal" href="../auto_examples/linear_model/plot_sparse_recovery.html#example-linear-model-plot-sparse-recovery-py"><em>Sparse recovery: feature selection for sparse linear models</em></a>
+for an example of <a class="reference internal" href="generated/sklearn.metrics.precision_recall_curve.html#sklearn.metrics.precision_recall_curve" title="sklearn.metrics.precision_recall_curve"><tt class="xref py py-func docutils literal"><span class="pre">precision_recall_curve</span></tt></a> usage in feature selection
+for sparse linear models.</li>
+</ul>
+</div>
+<div class="section" id="binary-classification">
+<h4>5.5.1.8.1. Binary classification<a class="headerlink" href="#binary-classification" title="Permalink to this headline">¶</a></h4>
+<p>In a binary classification task, the terms &#8216;&#8217;positive&#8217;&#8217; and &#8216;&#8217;negative&#8217;&#8217; refer
+to the classifier&#8217;s prediction and the terms &#8216;&#8217;true&#8217;&#8217; and &#8216;&#8217;false&#8217;&#8217; refer to
+whether that prediction corresponds to the external judgment (sometimes known
+as the &#8216;&#8217;observation&#8217;&#8216;). Given these definitions, we can formulate the
+following table:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="32%" />
+<col width="39%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&nbsp;</td>
+<td colspan="2">Actual class (observation)</td>
+</tr>
+<tr class="row-even"><td rowspan="2">Predicted class
+(expectation)</td>
+<td>tp (true positive)
+Correct result</td>
+<td>fp (false positive)
+Unexpected result</td>
+</tr>
+<tr class="row-odd"><td>fn (false negative)
+Missing result</td>
+<td>tn (true negative)
+Correct absence of result</td>
+</tr>
+</tbody>
+</table>
+<p>In this context, we can define the notions of precision, recall and F-measure:</p>
+<div class="math">
+<p><img src="../_images/math/688216a08d751ad4cd66a863be10b05b9028a703.png" alt="\text{precision} = \frac{tp}{tp + fp},"/></p>
+</div><div class="math">
+<p><img src="../_images/math/fb806bd88b2ec2eec0ab4c263ef02e858523bc4b.png" alt="\text{recall} = \frac{tp}{tp + fn},"/></p>
+</div><div class="math">
+<p><img src="../_images/math/00e48e340f1254f19f827a05a73372ccbcb5b2ec.png" alt="F_\beta = (1 + \beta^2) \frac{\text{precision} \times \text{recall}}{\beta^2 \text{precision} + \text{recall}}."/></p>
+</div><p>Here some small examples in binary classification:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>  
+<span class="go">0.66...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  
+<span class="go">0.83...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  
+<span class="go">0.66...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> 
+<span class="go">0.55...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_fscore_support</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  
+<span class="go">(array([ 0.66...,  1.        ]), array([ 1. ,  0.5]), array([ 0.71...,  0.83...]), array([2, 2]...))</span>
+
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">precision_recall_curve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">precision_recall_curve</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_scores</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">precision</span>  
+<span class="go">array([ 0.66...,  0.5       ,  1.        ,  1.        ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recall</span>
+<span class="go">array([ 1. ,  0.5,  0.5,  0. ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">threshold</span>
+<span class="go">array([ 0.35,  0.4 ,  0.8 ])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multiclass-and-multilabel-classification">
+<h4>5.5.1.8.2. Multiclass and multilabel classification<a class="headerlink" href="#multiclass-and-multilabel-classification" title="Permalink to this headline">¶</a></h4>
+<p>In multiclass and multilabel classification task, the notions of precision,
+recall and F-measures can be applied to each label independently.
+There are a few ways to combine results across labels,
+specified by the <tt class="docutils literal"><span class="pre">average</span></tt> argument to the <a class="reference internal" href="generated/sklearn.metrics.f1_score.html#sklearn.metrics.f1_score" title="sklearn.metrics.f1_score"><tt class="xref py py-func docutils literal"><span class="pre">f1_score</span></tt></a>,
+<a class="reference internal" href="generated/sklearn.metrics.fbeta_score.html#sklearn.metrics.fbeta_score" title="sklearn.metrics.fbeta_score"><tt class="xref py py-func docutils literal"><span class="pre">fbeta_score</span></tt></a>, <a class="reference internal" href="generated/sklearn.metrics.precision_recall_fscore_support.html#sklearn.metrics.precision_recall_fscore_support" title="sklearn.metrics.precision_recall_fscore_support"><tt class="xref py py-func docutils literal"><span class="pre">precision_recall_fscore_support</span></tt></a>,
+<a class="reference internal" href="generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score" title="sklearn.metrics.precision_score"><tt class="xref py py-func docutils literal"><span class="pre">precision_score</span></tt></a>  and <a class="reference internal" href="generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score" title="sklearn.metrics.recall_score"><tt class="xref py py-func docutils literal"><span class="pre">recall_score</span></tt></a> functions:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&quot;micro&quot;</span></tt>: calculate metrics globally by counting the total true
+positives, false negatives and false positives. Except in the multi-label
+case this implies that precision, recall and <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F"/> are equal.</li>
+<li><tt class="docutils literal"><span class="pre">&quot;samples&quot;</span></tt>: calculate metrics for each sample, comparing sets of
+labels assigned to each, and find the mean across all samples.
+This is only meaningful and available in the multilabel case.</li>
+<li><tt class="docutils literal"><span class="pre">&quot;macro&quot;</span></tt>: calculate metrics for each label, and find their mean.
+This does not take label imbalance into account.</li>
+<li><tt class="docutils literal"><span class="pre">&quot;weighted&quot;</span></tt>: calculate metrics for each label, and find their average
+weighted by the number of occurrences of the label in the true data.
+This alters <tt class="docutils literal"><span class="pre">&quot;macro&quot;</span></tt> to account for label imbalance; it may produce an
+F-score that is not between precision and recall.</li>
+<li><tt class="docutils literal"><span class="pre">None</span></tt>: calculate metrics for each label and do not average them.</li>
+</ul>
+<p>To make this more explicit, consider the following notation:</p>
+<ul class="simple">
+<li><img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> the set of <em>predicted</em> <img class="math" src="../_images/math/8fbad1829302e98de076be9eea8720e2b8130ee9.png" alt="(sample, label)"/> pairs</li>
+<li><img class="math" src="../_images/math/ab480a17c2d0cff51b14f3bd5eed54e1b7e142dd.png" alt="\hat{y}"/> the set of <em>true</em> <img class="math" src="../_images/math/8fbad1829302e98de076be9eea8720e2b8130ee9.png" alt="(sample, label)"/> pairs</li>
+<li><img class="math" src="../_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L"/> the set of labels</li>
+<li><img class="math" src="../_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> the set of samples</li>
+<li><img class="math" src="../_images/math/9abba17d4f0529757beeefd5fb2c4ae282b68632.png" alt="y_s"/> the subset of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> with sample <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>,
+i.e. <img class="math" src="../_images/math/70622a4949fe921ed160fc10712b494fd609c8ab.png" alt="y_s := \left\{(s', l) \in y | s' = s\right\}"/></li>
+<li><img class="math" src="../_images/math/f19c043e50a0fd21e6ad1c2c7b35189c07ab39a4.png" alt="y_l"/> the subset of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> with label <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/></li>
+<li>similarly, <img class="math" src="../_images/math/cc8711be2692a6b3cec1d3c3a648c353a4db3875.png" alt="\hat{y}_s"/> and <img class="math" src="../_images/math/00ee26e2c93a8330715d3ca4ce0a8103a26858ff.png" alt="\hat{y}_l"/> are subsets of
+<img class="math" src="../_images/math/ab480a17c2d0cff51b14f3bd5eed54e1b7e142dd.png" alt="\hat{y}"/></li>
+<li><img class="math" src="../_images/math/777dd54039d1d4b9062fa6ffa2fe692a6c0b2db3.png" alt="P(A, B) := \frac{\left| A \cap B \right|}{\left|A\right|}"/></li>
+<li><img class="math" src="../_images/math/e9f3dd0c5641c8946571746e486a1da6a032b55a.png" alt="R(A, B) := \frac{\left| A \cap B \right|}{\left|B\right|}"/>
+(Conventions vary on handling <img class="math" src="../_images/math/d0d27c56b4e82d1f4324efa55f3e6e9a150daf81.png" alt="B = \emptyset"/>; this implementation uses
+<img class="math" src="../_images/math/61f4bc2722ec7079e6491234236329d56f917eb1.png" alt="R(A, B):=0"/>, and similar for <cite>P</cite>.)</li>
+<li><img class="math" src="../_images/math/b76a94224f13ec0023a0c95e038902b686b321bf.png" alt="F_\beta(A, B) := \left(1 + \beta^2\right) \frac{P(A, B) \times R(A, B)}{\beta^2 P(A, B) + R(A, B)}"/></li>
+</ul>
+<p>Then the metrics are defined as:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="32%" />
+<col width="32%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><tt class="docutils literal"><span class="pre">average</span></tt></th>
+<th class="head">Precision</th>
+<th class="head">Recall</th>
+<th class="head">F_beta</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">&quot;micro&quot;</span></tt></td>
+<td><img class="math" src="../_images/math/3989f0a8300a610a2f0a509814f0d478a1eeb940.png" alt="P(y, \hat{y})"/></td>
+<td><img class="math" src="../_images/math/2924b8bffcc0332736f6950cc852aa66a800314e.png" alt="R(y, \hat{y})"/></td>
+<td><img class="math" src="../_images/math/bee251e82c04a28be8010b6331651ca21935f5e9.png" alt="F_\beta(y, \hat{y})"/></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">&quot;samples&quot;</span></tt></td>
+<td><img class="math" src="../_images/math/d20c7b12cc860c2a3c9ef48cfb367e4fd373a34e.png" alt="\frac{1}{\left|S\right|} \sum_{s \in S} P(y_s, \hat{y}_s)"/></td>
+<td><img class="math" src="../_images/math/4e15e95330c91492a3d3e3c09a2580e620873111.png" alt="\frac{1}{\left|S\right|} \sum_{s \in S} R(y_s, \hat{y}_s)"/></td>
+<td><img class="math" src="../_images/math/bfd930c2126e2a0eb80ffc6914f17af36ebec2d5.png" alt="\frac{1}{\left|S\right|} \sum_{s \in S} F_\beta(y_s, \hat{y}_s)"/></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">&quot;macro&quot;</span></tt></td>
+<td><img class="math" src="../_images/math/15911963bbd996f6f17f277c15d1a30efab0d838.png" alt="\frac{1}{\left|L\right|} \sum_{l \in L} P(y_l, \hat{y}_l)"/></td>
+<td><img class="math" src="../_images/math/68a130c1f88862e222b0ee87a3844d7b876357ff.png" alt="\frac{1}{\left|L\right|} \sum_{l \in L} R(y_l, \hat{y}_l)"/></td>
+<td><img class="math" src="../_images/math/c4dde507f80f4206652f841b3b1c25b0f62a6f7e.png" alt="\frac{1}{\left|L\right|} \sum_{l \in L} F_\beta(y_l, \hat{y}_l)"/></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">&quot;weighted&quot;</span></tt></td>
+<td><img class="math" src="../_images/math/d961ddab87f1964bd6dd41840bbd71767f12eb14.png" alt="\frac{1}{\sum_{l \in L} \left|\hat{y}_l\right|} \sum_{l \in L} \left|\hat{y}_l\right| P(y_l, \hat{y}_l)"/></td>
+<td><img class="math" src="../_images/math/7c51f6db2d752ef240406f02e6d4dbcd3e0b0b7d.png" alt="\frac{1}{\sum_{l \in L} \left|\hat{y}_l\right|} \sum_{l \in L} \left|\hat{y}_l\right| R(y_l, \hat{y}_l)"/></td>
+<td><img class="math" src="../_images/math/d20b93464ab69a6b5c13a0b9e8b3d9b59928674f.png" alt="\frac{1}{\sum_{l \in L} \left|\hat{y}_l\right|} \sum_{l \in L} \left|\hat{y}_l\right| F_\beta(y_l, \hat{y}_l)"/></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">None</span></tt></td>
+<td><img class="math" src="../_images/math/a4020ca24f29c5d8ce0732e805999d9fd7ce0510.png" alt="\langle P(y_l, \hat{y}_l) | l \in L \rangle"/></td>
+<td><img class="math" src="../_images/math/1420ce851d5b03cda6973388c3b5f0e4edc145eb.png" alt="\langle R(y_l, \hat{y}_l) | l \in L \rangle"/></td>
+<td><img class="math" src="../_images/math/8b60a11cc554d94afc8ef17ab01dee43bb4efdd2.png" alt="\langle F_\beta(y_l, \hat{y}_l) | l \in L \rangle"/></td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example where <tt class="docutils literal"><span class="pre">average</span></tt> is set to <tt class="docutils literal"><span class="pre">macro</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;macro&#39;</span><span class="p">)</span>  
+<span class="go">0.22...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;macro&#39;</span><span class="p">)</span>  
+<span class="go">0.33...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;macro&#39;</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  
+<span class="go">0.23...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;macro&#39;</span><span class="p">)</span>  
+<span class="go">0.26...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_fscore_support</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;macro&#39;</span><span class="p">)</span>  
+<span class="go">(0.22..., 0.33..., 0.26..., None)</span>
+</pre></div>
+</div>
+<p>Here is an example where <tt class="docutils literal"><span class="pre">average</span></tt> is set to <tt class="docutils literal"><span class="pre">micro</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;micro&#39;</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">0.33...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;micro&#39;</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">0.33...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;micro&#39;</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">0.33...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;micro&#39;</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">0.33...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_fscore_support</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;micro&#39;</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">(0.33..., 0.33..., 0.33..., None)</span>
+</pre></div>
+</div>
+<p>Here is an example where <tt class="docutils literal"><span class="pre">average</span></tt> is set to <tt class="docutils literal"><span class="pre">weighted</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;weighted&#39;</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">0.22...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;weighted&#39;</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">0.33...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;weighted&#39;</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">0.23...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s">&#39;weighted&#39;</span><span class="p">)</span>  
+<span class="go">0.26...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_fscore_support</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">average</span><span class="o">=</span><span class="s">&#39;weighted&#39;</span><span class="p">)</span>  
+<span class="go">(0.22..., 0.33..., 0.26..., None)</span>
+</pre></div>
+</div>
+<p>Here is an example where <tt class="docutils literal"><span class="pre">average</span></tt> is set to <tt class="docutils literal"><span class="pre">None</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">array([ 0.66...,  0.        ,  0.        ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="go">array([ 1.,  0.,  0.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>  
+<span class="go">array([ 0.8,  0. ,  0. ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">array([ 0.71...,  0.        ,  0.        ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_fscore_support</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">(array([ 0.66...,  0.        ,  0.        ]), array([ 1.,  0.,  0.]), array([ 0.71...,  0.        ,  0.        ]), array([2, 2, 2]...))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="hinge-loss">
+<h3>5.5.1.9. Hinge loss<a class="headerlink" href="#hinge-loss" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.hinge_loss.html#sklearn.metrics.hinge_loss" title="sklearn.metrics.hinge_loss"><tt class="xref py py-func docutils literal"><span class="pre">hinge_loss</span></tt></a> function computes the average
+<a class="reference external" href="http://en.wikipedia.org/wiki/Hinge_loss">hinge loss function</a>. The hinge
+loss is used in maximal margin classification as support vector machines.</p>
+<p>If the labels are encoded with +1 and -1,  <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>: is the true
+value and <img class="math" src="../_images/math/9ee4b825a2e36ae093ed7be5e4851ef453b34914.png" alt="w"/> is the predicted decisions as output by
+<tt class="docutils literal"><span class="pre">decision_function</span></tt>, then the hinge loss is defined as:</p>
+<div class="math">
+<p><img src="../_images/math/3d78d5a42e7f47618c78ea7aaf5273dbe99e2c79.png" alt="L_\text{Hinge}(y, w) = \max\left\{1 - wy, 0\right\} = \left|1 - wy\right|_+"/></p>
+</div><p>Here a small example demonstrating the use of the <a class="reference internal" href="generated/sklearn.metrics.hinge_loss.html#sklearn.metrics.hinge_loss" title="sklearn.metrics.hinge_loss"><tt class="xref py py-func docutils literal"><span class="pre">hinge_loss</span></tt></a> function
+with a svm classifier:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">hinge_loss</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">est</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">LinearSVC</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">est</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">LinearSVC(C=1.0, class_weight=None, dual=True, fit_intercept=True,</span>
+<span class="go">     intercept_scaling=1, loss=&#39;l2&#39;, multi_class=&#39;ovr&#39;, penalty=&#39;l2&#39;,</span>
+<span class="go">     random_state=0, tol=0.0001, verbose=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_decision</span> <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">decision_function</span><span class="p">([[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_decision</span>  
+<span class="go">array([-2.18...,  2.36...,  0.09...])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hinge_loss</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pred_decision</span><span class="p">)</span>  
+<span class="go">0.30...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="matthews-correlation-coefficient">
+<h3>5.5.1.10. Matthews correlation coefficient<a class="headerlink" href="#matthews-correlation-coefficient" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.matthews_corrcoef.html#sklearn.metrics.matthews_corrcoef" title="sklearn.metrics.matthews_corrcoef"><tt class="xref py py-func docutils literal"><span class="pre">matthews_corrcoef</span></tt></a> function computes the Matthew&#8217;s correlation
+coefficient (MCC) for binary classes (quoting the <a class="reference external" href="http://en.wikipedia.org/wiki/Matthews_correlation_coefficient">Wikipedia article on the
+Matthew&#8217;s correlation coefficient</a>):</p>
+<blockquote>
+<div>&#8220;The Matthews correlation coefficient is used in machine learning as a
+measure of the quality of binary (two-class) classifications. It takes
+into account true and false positives and negatives and is generally
+regarded as a balanced measure which can be used even if the classes are
+of very different sizes. The MCC is in essence a correlation coefficient
+value between -1 and +1. A coefficient of +1 represents a perfect
+prediction, 0 an average random prediction and -1 an inverse prediction.
+The statistic is also known as the phi coefficient.&#8221;</div></blockquote>
+<p>If <img class="math" src="../_images/math/df0732ca12b4f1829bee86e76d01f42611672f4d.png" alt="tp"/>, <img class="math" src="../_images/math/a5284cda7fe0072c386af7334aed4e617cc1ba5e.png" alt="tn"/>, <img class="math" src="../_images/math/fa6a998c89a0d1312b0c1b2c181a4b92ce83ed14.png" alt="fp"/> and <img class="math" src="../_images/math/123340c16d2f7c425ae59dc4450a36cce42da57c.png" alt="fn"/> are respectively the
+number of true positives, true negatives, false positives ans false negatives,
+the MCC coefficient is defined as</p>
+<div class="math">
+<p><img src="../_images/math/95793dc59a5d78e8242c3a9201bc3974daffc61a.png" alt="MCC = \frac{tp \times tn - fp \times fn}{\sqrt{(tp + fp)(tp + fn)(tn + fp)(tn + fn)}}."/></p>
+</div><p>Here a small example illustrating the usage of the <a class="reference internal" href="generated/sklearn.metrics.matthews_corrcoef.html#sklearn.metrics.matthews_corrcoef" title="sklearn.metrics.matthews_corrcoef"><tt class="xref py py-func docutils literal"><span class="pre">matthews_corrcoef</span></tt></a>
+function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">matthews_corrcoef</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matthews_corrcoef</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>  
+<span class="go">-0.33...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="receiver-operating-characteristic-roc">
+<span id="roc-metrics"></span><h3>5.5.1.11. Receiver operating characteristic (ROC)<a class="headerlink" href="#receiver-operating-characteristic-roc" title="Permalink to this headline">¶</a></h3>
+<p>The function <a class="reference internal" href="generated/sklearn.metrics.roc_curve.html#sklearn.metrics.roc_curve" title="sklearn.metrics.roc_curve"><tt class="xref py py-func docutils literal"><span class="pre">roc_curve</span></tt></a> computes the <a class="reference external" href="http://en.wikipedia.org/wiki/Receiver_operating_characteristic">receiver operating characteristic
+curve, or ROC curve (quoting
+Wikipedia)</a>:</p>
+<blockquote>
+<div>&#8220;A receiver operating characteristic (ROC), or simply ROC curve, is a
+graphical plot which illustrates the performance of a binary classifier
+system as its discrimination threshold is varied. It is created by plotting
+the fraction of true positives out of the positives (TPR = true positive
+rate) vs. the fraction of false positives out of the negatives (FPR = false
+positive rate), at various threshold settings. TPR is also known as
+sensitivity, and FPR is one minus the specificity or true negative rate.&#8221;</div></blockquote>
+<p>Here a small example of how to use the <a class="reference internal" href="generated/sklearn.metrics.roc_curve.html#sklearn.metrics.roc_curve" title="sklearn.metrics.roc_curve"><tt class="xref py py-func docutils literal"><span class="pre">roc_curve</span></tt></a> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">roc_curve</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span>
+<span class="go">array([ 0. ,  0.5,  0.5,  1. ])</span>
+</pre></div>
+</div>
+<p>The following figure shows an example of such ROC curve.</p>
+<a class="reference external image-reference" href="../auto_examples/plot_roc.html"><img alt="../_images/plot_roc_11.png" class="align-center" src="../_images/plot_roc_11.png" style="width: 600.0px; height: 450.0px;" /></a>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/plot_roc.html#example-plot-roc-py"><em>Receiver operating characteristic (ROC)</em></a>
+for an example of receiver operating characteristic (ROC) metric to
+evaluate the quality of the output of a classifier.</li>
+<li>See <a class="reference internal" href="../auto_examples/plot_roc_crossval.html#example-plot-roc-crossval-py"><em>Receiver operating characteristic (ROC) with cross validation</em></a>
+for an example of receiver operating characteristic (ROC) metric to
+evaluate the quality of the output of a classifier using cross-validation.</li>
+<li>See <a class="reference internal" href="../auto_examples/applications/plot_species_distribution_modeling.html#example-applications-plot-species-distribution-modeling-py"><em>Species distribution modeling</em></a>
+for an example of receiver operating characteristic (ROC) metric to
+model species distribution.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="zero-one-loss">
+<span id="id5"></span><h3>5.5.1.12. Zero one loss<a class="headerlink" href="#zero-one-loss" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.zero_one_loss.html#sklearn.metrics.zero_one_loss" title="sklearn.metrics.zero_one_loss"><tt class="xref py py-func docutils literal"><span class="pre">zero_one_loss</span></tt></a> function computes the sum or the average of the 0-1
+classification loss (<img class="math" src="../_images/math/b8666bbc214ffef7a5f79d4fc524f55f273cdc3a.png" alt="L_{0-1}"/>) over <img class="math" src="../_images/math/f64845215a9beeab0c363110bf2b7a6efa21bd61.png" alt="n_{\text{samples}}"/>. By
+defaults, the function normalizes over the sample. To get the sum of the
+<img class="math" src="../_images/math/b8666bbc214ffef7a5f79d4fc524f55f273cdc3a.png" alt="L_{0-1}"/>, set <tt class="docutils literal"><span class="pre">normalize</span></tt>  to <tt class="docutils literal"><span class="pre">False</span></tt>.</p>
+<p>In multilabel classification, the <a class="reference internal" href="generated/sklearn.metrics.zero_one_loss.html#sklearn.metrics.zero_one_loss" title="sklearn.metrics.zero_one_loss"><tt class="xref py py-func docutils literal"><span class="pre">zero_one_loss</span></tt></a> function corresponds
+to the subset zero-one loss: the subset of labels must be correctly predict.</p>
+<p>If <img class="math" src="../_images/math/893679832eefebfdd6b79dbd91c6219a96de76a0.png" alt="\hat{y}_i"/> is the predicted value of
+the <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>-th sample and <img class="math" src="../_images/math/6e6ceb79ebc4bf613298e0144eae25dd73de9be3.png" alt="y_i"/> is the corresponding true value,
+then the 0-1 loss <img class="math" src="../_images/math/b8666bbc214ffef7a5f79d4fc524f55f273cdc3a.png" alt="L_{0-1}"/> is defined as:</p>
+<div class="math">
+<p><img src="../_images/math/416c1de5a9e5212b8e8d4fb0f88ff229689e4ec9.png" alt="L_{0-1}(y_i, \hat{y}_i) = 1(\hat{y}_i \not= y_i)"/></p>
+</div><p>where <img class="math" src="../_images/math/0d4b4c28168e2d4ef79fb483891c05e772e1aa2b.png" alt="1(x)"/> is the <a class="reference external" href="http://en.wikipedia.org/wiki/Indicator_function">indicator function</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">zero_one_loss</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zero_one_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zero_one_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>In the multilabel case with binary indicator format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zero_one_loss</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
+<p>and with a list of labels format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zero_one_loss</span><span class="p">([(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)],</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">()])</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">Example:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/plot_rfe_with_cross_validation.html#example-plot-rfe-with-cross-validation-py"><em>Recursive feature elimination with cross-validation</em></a>
+for an example of the zero one loss usage to perform recursive feature
+elimination with cross-validation.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="regression-metrics">
+<span id="id7"></span><h2>5.5.2. Regression metrics<a class="headerlink" href="#regression-metrics" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="classes.html#module-sklearn.metrics" title="sklearn.metrics"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.metrics</span></tt></a> implements several losses, scores and utility
+functions to measure regression performance. Some of those have been enhanced
+to handle the multioutput case: <a class="reference internal" href="generated/sklearn.metrics.mean_absolute_error.html#sklearn.metrics.mean_absolute_error" title="sklearn.metrics.mean_absolute_error"><tt class="xref py py-func docutils literal"><span class="pre">mean_absolute_error</span></tt></a>,
+<a class="reference internal" href="generated/sklearn.metrics.mean_absolute_error.html#sklearn.metrics.mean_absolute_error" title="sklearn.metrics.mean_absolute_error"><tt class="xref py py-func docutils literal"><span class="pre">mean_absolute_error</span></tt></a> and <a class="reference internal" href="generated/sklearn.metrics.r2_score.html#sklearn.metrics.r2_score" title="sklearn.metrics.r2_score"><tt class="xref py py-func docutils literal"><span class="pre">r2_score</span></tt></a>.</p>
+<div class="section" id="explained-variance-score">
+<h3>5.5.2.1. Explained variance score<a class="headerlink" href="#explained-variance-score" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.explained_variance_score.html#sklearn.metrics.explained_variance_score" title="sklearn.metrics.explained_variance_score"><tt class="xref py py-func docutils literal"><span class="pre">explained_variance_score</span></tt></a> computes the <a class="reference external" href="http://en.wikipedia.org/wiki/Explained_variation">explained variance
+regression score</a>.</p>
+<p>If <img class="math" src="../_images/math/ab480a17c2d0cff51b14f3bd5eed54e1b7e142dd.png" alt="\hat{y}"/> is the estimated target output
+and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> is the corresponding (correct) target output, then the explained
+variance is  estimated  as follow:</p>
+<div class="math">
+<p><img src="../_images/math/025507cf27584290db5ba58e7171cb684caac656.png" alt="\texttt{explained\_{}variance}(y, \hat{y}) = 1 - \frac{Var\{ y - \hat{y}\}}{Var\{y\}}"/></p>
+</div><p>The best possible score is 1.0, lower values are worse.</p>
+<p>Here a small example of usage of the <a class="reference internal" href="generated/sklearn.metrics.explained_variance_score.html#sklearn.metrics.explained_variance_score" title="sklearn.metrics.explained_variance_score"><tt class="xref py py-func docutils literal"><span class="pre">explained_variance_score</span></tt></a>
+function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">explained_variance_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">explained_variance_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>  
+<span class="go">0.957...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mean-absolute-error">
+<h3>5.5.2.2. Mean absolute error<a class="headerlink" href="#mean-absolute-error" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.mean_absolute_error.html#sklearn.metrics.mean_absolute_error" title="sklearn.metrics.mean_absolute_error"><tt class="xref py py-func docutils literal"><span class="pre">mean_absolute_error</span></tt></a> function computes the <a class="reference external" href="http://en.wikipedia.org/wiki/Mean_absolute_error">mean absolute
+error</a>, which is a risk
+function corresponding to the expected value of the absolute error loss or
+<img class="math" src="../_images/math/d89a5fe07fe3854a174b684785a2d0eb36f2b232.png" alt="l1"/>-norm loss.</p>
+<p>If <img class="math" src="../_images/math/893679832eefebfdd6b79dbd91c6219a96de76a0.png" alt="\hat{y}_i"/> is the predicted value of the <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>-th sample
+and <img class="math" src="../_images/math/6e6ceb79ebc4bf613298e0144eae25dd73de9be3.png" alt="y_i"/> is the corresponding true value, then the mean absolute error
+(MAE) estimated over <img class="math" src="../_images/math/f64845215a9beeab0c363110bf2b7a6efa21bd61.png" alt="n_{\text{samples}}"/> is defined as</p>
+<div class="math">
+<p><img src="../_images/math/64900c0802889e3e10222bf96e9f90c9434a1d4b.png" alt="\text{MAE}(y, \hat{y}) = \frac{1}{n_{\text{samples}}} \sum_{i=0}^{n_{\text{samples}}-1} \left| y_i - \hat{y}_i \right|."/></p>
+</div><p>Here a small example of usage of the <a class="reference internal" href="generated/sklearn.metrics.mean_absolute_error.html#sklearn.metrics.mean_absolute_error" title="sklearn.metrics.mean_absolute_error"><tt class="xref py py-func docutils literal"><span class="pre">mean_absolute_error</span></tt></a> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.75</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mean-squared-error">
+<h3>5.5.2.3. Mean squared error<a class="headerlink" href="#mean-squared-error" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.mean_squared_error.html#sklearn.metrics.mean_squared_error" title="sklearn.metrics.mean_squared_error"><tt class="xref py py-func docutils literal"><span class="pre">mean_squared_error</span></tt></a> function computes the <a class="reference external" href="http://en.wikipedia.org/wiki/Mean_squared_error">mean square
+error</a>, which is a risk
+function corresponding to the expected value of the squared error loss or
+quadratic loss.</p>
+<p>If <img class="math" src="../_images/math/893679832eefebfdd6b79dbd91c6219a96de76a0.png" alt="\hat{y}_i"/> is the predicted value of the <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>-th sample
+and <img class="math" src="../_images/math/6e6ceb79ebc4bf613298e0144eae25dd73de9be3.png" alt="y_i"/> is the corresponding true value, then the mean squared error
+(MSE) estimated over <img class="math" src="../_images/math/f64845215a9beeab0c363110bf2b7a6efa21bd61.png" alt="n_{\text{samples}}"/> is defined as</p>
+<div class="math">
+<p><img src="../_images/math/75e48507ed68f576f6bea4de66f5829d2f4a6ca3.png" alt="\text{MSE}(y, \hat{y}) = \frac{1}{n_\text{samples}} \sum_{i=0}^{n_\text{samples} - 1} (y_i - \hat{y}_i)^2."/></p>
+</div><p>Here a small example of usage of the <a class="reference internal" href="generated/sklearn.metrics.mean_squared_error.html#sklearn.metrics.mean_squared_error" title="sklearn.metrics.mean_squared_error"><tt class="xref py py-func docutils literal"><span class="pre">mean_squared_error</span></tt></a>
+function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="go">0.375</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>  
+<span class="go">0.7083...</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/ensemble/plot_gradient_boosting_regression.html#example-ensemble-plot-gradient-boosting-regression-py"><em>Gradient Boosting regression</em></a>
+for an example of mean squared error usage to
+evaluate gradient boosting regression.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="r2-score-the-coefficient-of-determination">
+<h3>5.5.2.4. R² score, the coefficient of determination<a class="headerlink" href="#r2-score-the-coefficient-of-determination" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="generated/sklearn.metrics.r2_score.html#sklearn.metrics.r2_score" title="sklearn.metrics.r2_score"><tt class="xref py py-func docutils literal"><span class="pre">r2_score</span></tt></a> function computes R², the <a class="reference external" href="http://en.wikipedia.org/wiki/Coefficient_of_determination">coefficient of
+determination</a>.
+It provides a measure of how well future samples are likely to
+be predicted by the model.</p>
+<p>If <img class="math" src="../_images/math/893679832eefebfdd6b79dbd91c6219a96de76a0.png" alt="\hat{y}_i"/> is the predicted value of the <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/>-th sample
+and <img class="math" src="../_images/math/6e6ceb79ebc4bf613298e0144eae25dd73de9be3.png" alt="y_i"/> is the corresponding true value, then the score R² estimated
+over <img class="math" src="../_images/math/f64845215a9beeab0c363110bf2b7a6efa21bd61.png" alt="n_{\text{samples}}"/> is defined as</p>
+<div class="math">
+<p><img src="../_images/math/9458701295e9786df02b4c3c1fc9409248079adf.png" alt="R^2(y, \hat{y}) = 1 - \frac{\sum_{i=0}^{n_{\text{samples}} - 1} (y_i - \hat{y}_i)^2}{\sum_{i=0}^{n_\text{samples} - 1} (y_i - \bar{y})^2}"/></p>
+</div><p>where <img class="math" src="../_images/math/a093466925ecdb781feef92df34ae4f468db03bb.png" alt="\bar{y} =  \frac{1}{n_{\text{samples}}} \sum_{i=0}^{n_{\text{samples}} - 1} y_i"/>.</p>
+<p>Here a small example of usage of the <a class="reference internal" href="generated/sklearn.metrics.r2_score.html#sklearn.metrics.r2_score" title="sklearn.metrics.r2_score"><tt class="xref py py-func docutils literal"><span class="pre">r2_score</span></tt></a> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">r2_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>  
+<span class="go">0.948...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>  
+<span class="go">0.938...</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">Example:</p>
+<ul class="simple">
+<li>See <a class="reference internal" href="../auto_examples/linear_model/plot_lasso_and_elasticnet.html#example-linear-model-plot-lasso-and-elasticnet-py"><em>Lasso and Elastic Net for Sparse Signals</em></a>
+for an example of R² score usage to
+evaluate Lasso and Elastic Net on sparse signals.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="clustering-metrics">
+<h2>5.5.3. Clustering metrics<a class="headerlink" href="#clustering-metrics" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="classes.html#module-sklearn.metrics" title="sklearn.metrics"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.metrics</span></tt></a> implements several losses, scores and utility
+function for more information see the <a class="reference internal" href="clustering.html#clustering-evaluation"><em>Clustering performance evaluation</em></a> section.</p>
+</div>
+<div class="section" id="scoring-objects-defining-your-scoring-rules">
+<span id="score-func-objects"></span><h2>5.5.4. <cite>Scoring</cite> objects: defining your scoring rules<a class="headerlink" href="#scoring-objects-defining-your-scoring-rules" title="Permalink to this headline">¶</a></h2>
+<p>While the above functions provide a simple interface for most use-cases, they
+can not directly be used for model selection and evaluation using
+<a class="reference internal" href="generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV" title="sklearn.grid_search.GridSearchCV"><tt class="xref py py-class docutils literal"><span class="pre">grid_search.GridSearchCV</span></tt></a> and
+<a class="reference internal" href="generated/sklearn.cross_validation.cross_val_score.html#sklearn.cross_validation.cross_val_score" title="sklearn.cross_validation.cross_val_score"><tt class="xref py py-func docutils literal"><span class="pre">cross_validation.cross_val_score</span></tt></a>, as scoring functions have different
+signatures and might require additional parameters.</p>
+<p>Instead, <a class="reference internal" href="generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV" title="sklearn.grid_search.GridSearchCV"><tt class="xref py py-class docutils literal"><span class="pre">grid_search.GridSearchCV</span></tt></a> and
+<a class="reference internal" href="generated/sklearn.cross_validation.cross_val_score.html#sklearn.cross_validation.cross_val_score" title="sklearn.cross_validation.cross_val_score"><tt class="xref py py-func docutils literal"><span class="pre">cross_validation.cross_val_score</span></tt></a> both take callables that implement
+estimator dependent functions. That allows for very flexible evaluation of
+models, for example taking complexity of the model into account.</p>
+<p>For scoring functions that take no additional parameters (which are most of
+them), you can simply provide a string as the <tt class="docutils literal"><span class="pre">scoring</span></tt> parameter. Possible
+values are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Scoring</th>
+<th class="head">Function</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>Classification</strong></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>&#8216;accuracy&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.accuracy_score.html#sklearn.metrics.accuracy_score" title="sklearn.metrics.accuracy_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.accuracy_score</span></tt></a></td>
+</tr>
+<tr class="row-even"><td>&#8216;average_precision&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.average_precision_score.html#sklearn.metrics.average_precision_score" title="sklearn.metrics.average_precision_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.average_precision_score</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>&#8216;f1&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.f1_score.html#sklearn.metrics.f1_score" title="sklearn.metrics.f1_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.f1_score</span></tt></a></td>
+</tr>
+<tr class="row-even"><td>&#8216;precision&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score" title="sklearn.metrics.precision_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.precision_score</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>&#8216;recall&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score" title="sklearn.metrics.recall_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.recall_score</span></tt></a></td>
+</tr>
+<tr class="row-even"><td>&#8216;roc_auc&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.auc_score.html#sklearn.metrics.auc_score" title="sklearn.metrics.auc_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.auc_score</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><strong>Clustering</strong></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&#8216;ari&#8217;`</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.adjusted_rand_score.html#sklearn.metrics.adjusted_rand_score" title="sklearn.metrics.adjusted_rand_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.adjusted_rand_score</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><strong>Regression</strong></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>&#8216;mse&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.mean_squared_error.html#sklearn.metrics.mean_squared_error" title="sklearn.metrics.mean_squared_error"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.mean_squared_error</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>&#8216;r2&#8217;</td>
+<td><a class="reference internal" href="generated/sklearn.metrics.r2_score.html#sklearn.metrics.r2_score" title="sklearn.metrics.r2_score"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.r2_score</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>The corresponding scorer objects are stored in the dictionary
+<tt class="docutils literal"><span class="pre">sklearn.metrics.SCORERS</span></tt>.</p>
+<div class="section" id="creating-scoring-objects-from-score-functions">
+<h3>5.5.4.1. Creating scoring objects from score functions<a class="headerlink" href="#creating-scoring-objects-from-score-functions" title="Permalink to this headline">¶</a></h3>
+<p>If you want to use a scoring function that takes additional parameters, such as
+<a class="reference internal" href="generated/sklearn.metrics.fbeta_score.html#sklearn.metrics.fbeta_score" title="sklearn.metrics.fbeta_score"><tt class="xref py py-func docutils literal"><span class="pre">fbeta_score</span></tt></a>, you need to generate an appropriate scoring object.  The
+simplest way to generate a callable object for scoring is by using
+<tt class="xref py py-class docutils literal"><span class="pre">Scorer</span></tt>.
+<tt class="xref py py-class docutils literal"><span class="pre">Scorer</span></tt> converts score functions as above into callables that can be
+used for model evaluation.</p>
+<p>One typical use case is to wrap an existing scoring function from the library
+with non default value for its parameters such as the beta parameter for the
+<a class="reference internal" href="generated/sklearn.metrics.fbeta_score.html#sklearn.metrics.fbeta_score" title="sklearn.metrics.fbeta_score"><tt class="xref py py-func docutils literal"><span class="pre">fbeta_score</span></tt></a> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">fbeta_score</span><span class="p">,</span> <span class="n">Scorer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ftwo_scorer</span> <span class="o">=</span> <span class="n">Scorer</span><span class="p">(</span><span class="n">fbeta_score</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.grid_search</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">LinearSVC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">LinearSVC</span><span class="p">(),</span> <span class="n">param_grid</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span> <span class="n">scoring</span><span class="o">=</span><span class="n">ftwo_scorer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The second use case is to help build a completely new and custom scorer object
+from a simple python function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">my_custom_loss_func</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ground_truth</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">diff</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_custom_scorer</span> <span class="o">=</span> <span class="n">Scorer</span><span class="p">(</span><span class="n">my_custom_loss_func</span><span class="p">,</span> <span class="n">greater_is_better</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">LinearSVC</span><span class="p">(),</span> <span class="n">param_grid</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span> <span class="n">scoring</span><span class="o">=</span><span class="n">my_custom_scorer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><tt class="xref py py-class docutils literal"><span class="pre">Scorer</span></tt> takes as parameters the function you want to use, whether it is
+a score (<tt class="docutils literal"><span class="pre">greater_is_better=True</span></tt>) or a loss (<tt class="docutils literal"><span class="pre">greater_is_better=False</span></tt>),
+whether the function you provided takes predictions as input
+(<tt class="docutils literal"><span class="pre">needs_threshold=False</span></tt>) or needs confidence scores
+(<tt class="docutils literal"><span class="pre">needs_threshold=True</span></tt>) and any additional parameters, such as <tt class="docutils literal"><span class="pre">beta</span></tt> in
+the previous example.</p>
+</div>
+<div class="section" id="implementing-your-own-scoring-object">
+<h3>5.5.4.2. Implementing your own scoring object<a class="headerlink" href="#implementing-your-own-scoring-object" title="Permalink to this headline">¶</a></h3>
+<p>You can generate even more flexible model scores by constructing your own
+scoring object from scratch, without using the <tt class="xref py py-class docutils literal"><span class="pre">Scorer</span></tt> helper class.
+The requirements that a callable can be used for model selection are as
+follows:</p>
+<ul class="simple">
+<li>It can be called with parameters <tt class="docutils literal"><span class="pre">(estimator,</span> <span class="pre">X,</span> <span class="pre">y)</span></tt>, where <tt class="docutils literal"><span class="pre">estimator</span></tt>
+it the model that should be evaluated, <tt class="docutils literal"><span class="pre">X</span></tt> is validation data and <tt class="docutils literal"><span class="pre">y</span></tt> is
+the ground truth target for <tt class="docutils literal"><span class="pre">X</span></tt> (in the supervised case) or <tt class="docutils literal"><span class="pre">None</span></tt> in the
+unsupervised case.</li>
+<li>The call returns a number indicating the quality of estimator.</li>
+<li>The callable has a boolean attribute <tt class="docutils literal"><span class="pre">greater_is_better</span></tt> which indicates whether
+high or low values correspond to a better estimator.</li>
+</ul>
+<p>Objects that meet those conditions as said to implement the sklearn Scorer
+protocol.</p>
+</div>
+</div>
+<div class="section" id="dummy-estimators">
+<span id="id9"></span><h2>5.5.5. Dummy estimators<a class="headerlink" href="#dummy-estimators" title="Permalink to this headline">¶</a></h2>
+<p>When doing supervised learning, a simple sanity check consists in comparing
+one&#8217;s estimator against simple rules of thumb. <a class="reference internal" href="generated/sklearn.dummy.DummyClassifier.html#sklearn.dummy.DummyClassifier" title="sklearn.dummy.DummyClassifier"><tt class="xref py py-class docutils literal"><span class="pre">DummyClassifier</span></tt></a>
+implements three such simple strategies for classification:</p>
+<ul class="simple">
+<li><cite>stratified</cite> generates randomly predictions by respecting the training
+set&#8217;s class distribution,</li>
+<li><cite>most_frequent</cite> always predicts the most frequent label in the training set,</li>
+<li><cite>uniform</cite> generates predictions uniformly at random.</li>
+</ul>
+<p>Note that with all these strategies, the <cite>predict</cite> method completely ignores
+the input data!</p>
+<p>To illustrate <a class="reference internal" href="generated/sklearn.dummy.DummyClassifier.html#sklearn.dummy.DummyClassifier" title="sklearn.dummy.DummyClassifier"><tt class="xref py py-class docutils literal"><span class="pre">DummyClassifier</span></tt></a>, first let&#8217;s create an imbalanced
+dataset:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, let&#8217;s compare the accuracy of <cite>SVC</cite> and <cite>most_frequent</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.dummy</span> <span class="kn">import</span> <span class="n">DummyClassifier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> 
+<span class="go">0.63...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span> <span class="o">=</span> <span class="n">DummyClassifier</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s">&#39;most_frequent&#39;</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="go">DummyClassifier(random_state=0, strategy=&#39;most_frequent&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>  
+<span class="go">0.57...</span>
+</pre></div>
+</div>
+<p>We see that <cite>SVC</cite> doesn&#8217;t do much better than a dummy classifier. Now, let&#8217;s
+change the kernel:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>  
+<span class="go">0.97...</span>
+</pre></div>
+</div>
+<p>We see that the accuracy was boosted to almost 100%. For a better estimate
+of the accuracy, it is recommended to use a cross validation strategy, if it
+is not too CPU costly. For more information see the <a class="reference internal" href="cross_validation.html#cross-validation"><em>Cross-validation: evaluating estimator performance</em></a>
+section. Moreover if you want to optimize over the parameter space, it is
+highly recommended to use an appropriate methodology see the <a class="reference internal" href="grid_search.html#grid-search"><em>Grid Search: Searching for estimator parameters</em></a>
+section.</p>
+<p>More generally, when the accuracy of a classifier is too close to random
+classification, it probably means that something went wrong: features are not
+helpful, a hyper parameter is not correctly tuned, the classifier is suffering
+from class imbalance, etc...</p>
+<p><a class="reference internal" href="generated/sklearn.dummy.DummyRegressor.html#sklearn.dummy.DummyRegressor" title="sklearn.dummy.DummyRegressor"><tt class="xref py py-class docutils literal"><span class="pre">DummyRegressor</span></tt></a> implements a simple rule of thumb for regression:
+always predict the mean of the training targets.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../_sources/modules/model_evaluation.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="pipeline.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../data_transforms.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

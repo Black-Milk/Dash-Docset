@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.integrate.ode &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Integration and ODEs (scipy.integrate)" href="../integrate.html" />
+    <link rel="next" title="scipy.integrate.ode.integrate" href="scipy.integrate.ode.integrate.html" />
+    <link rel="prev" title="scipy.integrate.odeint" href="scipy.integrate.odeint.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.ode.integrate.html" title="scipy.integrate.ode.integrate"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.odeint.html" title="scipy.integrate.odeint"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../integrate.html" accesskey="U">Integration and ODEs (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.integrate</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-integrate-ode">
+<h1>scipy.integrate.ode<a class="headerlink" href="#scipy-integrate-ode" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.integrate.ode">
+<em class="property">class </em><tt class="descclassname">scipy.integrate.</tt><tt class="descname">ode</tt><big>(</big><em>f</em>, <em>jac=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/integrate/_ode.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.integrate.ode" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic interface class to numeric integrators.</p>
+<p>Solve an equation system <img class="math" src="../_images/math/1a699aff83cf339bbd8a7745962a6e80651e46a6.png" alt="y'(t) = f(t,y)" style="vertical-align: -4px"/> with (optional) <tt class="docutils literal"><span class="pre">jac</span> <span class="pre">=</span> <span class="pre">df/dy</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>f</strong> : callable <tt class="docutils literal"><span class="pre">f(t,</span> <span class="pre">y,</span> <span class="pre">*f_args)</span></tt></p>
+<blockquote>
+<div><p>Rhs of the equation. t is a scalar, <tt class="docutils literal"><span class="pre">y.shape</span> <span class="pre">==</span> <span class="pre">(n,)</span></tt>.
+<tt class="docutils literal"><span class="pre">f_args</span></tt> is set by calling <tt class="docutils literal"><span class="pre">set_f_params(*args)</span></tt>.
+<em class="xref py py-obj">f</em> should return a scalar, array or list (not a tuple).</p>
+</div></blockquote>
+<p><strong>jac</strong> : callable <tt class="docutils literal"><span class="pre">jac(t,</span> <span class="pre">y,</span> <span class="pre">*jac_args)</span></tt></p>
+<blockquote class="last">
+<div><p>Jacobian of the rhs, <tt class="docutils literal"><span class="pre">jac[i,j]</span> <span class="pre">=</span> <span class="pre">d</span> <span class="pre">f[i]</span> <span class="pre">/</span> <span class="pre">d</span> <span class="pre">y[j]</span></tt>.
+<tt class="docutils literal"><span class="pre">jac_args</span></tt> is set by calling <tt class="docutils literal"><span class="pre">set_f_params(*args)</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.integrate.odeint.html#scipy.integrate.odeint" title="scipy.integrate.odeint"><tt class="xref py py-obj docutils literal"><span class="pre">odeint</span></tt></a></dt>
+<dd>an integrator with a simpler interface based on lsoda from ODEPACK</dd>
+<dt><a class="reference internal" href="scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a></dt>
+<dd>for finding the area under a curve</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>Available integrators are listed below. They can be selected using
+the <a class="reference internal" href="scipy.integrate.ode.set_integrator.html#scipy.integrate.ode.set_integrator" title="scipy.integrate.ode.set_integrator"><tt class="xref py py-obj docutils literal"><span class="pre">set_integrator</span></tt></a> method.</p>
+<p>&#8220;vode&#8221;</p>
+<blockquote>
+<div><p>Real-valued Variable-coefficient Ordinary Differential Equation
+solver, with fixed-leading-coefficient implementation. It provides
+implicit Adams method (for non-stiff problems) and a method based on
+backward differentiation formulas (BDF) (for stiff problems).</p>
+<p>Source: <a class="reference external" href="http://www.netlib.org/ode/vode.f">http://www.netlib.org/ode/vode.f</a></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This integrator is not re-entrant. You cannot have two <a class="reference internal" href="#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a>
+instances using the &#8220;vode&#8221; integrator at the same time.</p>
+</div>
+<p>This integrator accepts the following parameters in <a class="reference internal" href="scipy.integrate.ode.set_integrator.html#scipy.integrate.ode.set_integrator" title="scipy.integrate.ode.set_integrator"><tt class="xref py py-obj docutils literal"><span class="pre">set_integrator</span></tt></a>
+method of the <a class="reference internal" href="#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a> class:</p>
+<ul class="simple">
+<li>atol : float or sequence
+absolute tolerance for solution</li>
+<li>rtol : float or sequence
+relative tolerance for solution</li>
+<li>lband : None or int</li>
+<li>rband : None or int
+Jacobian band width, jac[i,j] != 0 for i-lband &lt;= j &lt;= i+rband.
+Setting these requires your jac routine to return the jacobian
+in packed format, jac_packed[i-j+lband, j] = jac[i,j].</li>
+<li>method: &#8216;adams&#8217; or &#8216;bdf&#8217;
+Which solver to use, Adams (non-stiff) or BDF (stiff)</li>
+<li>with_jacobian : bool
+Whether to use the jacobian</li>
+<li>nsteps : int
+Maximum number of (internally defined) steps allowed during one
+call to the solver.</li>
+<li>first_step : float</li>
+<li>min_step : float</li>
+<li>max_step : float
+Limits for the step sizes used by the integrator.</li>
+<li>order : int
+Maximum order used by the integrator,
+order &lt;= 12 for Adams, &lt;= 5 for BDF.</li>
+</ul>
+</div></blockquote>
+<p>&#8220;zvode&#8221;</p>
+<blockquote>
+<div><p>Complex-valued Variable-coefficient Ordinary Differential Equation
+solver, with fixed-leading-coefficient implementation.  It provides
+implicit Adams method (for non-stiff problems) and a method based on
+backward differentiation formulas (BDF) (for stiff problems).</p>
+<p>Source: <a class="reference external" href="http://www.netlib.org/ode/zvode.f">http://www.netlib.org/ode/zvode.f</a></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This integrator is not re-entrant. You cannot have two <a class="reference internal" href="#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a>
+instances using the &#8220;zvode&#8221; integrator at the same time.</p>
+</div>
+<p>This integrator accepts the same parameters in <a class="reference internal" href="scipy.integrate.ode.set_integrator.html#scipy.integrate.ode.set_integrator" title="scipy.integrate.ode.set_integrator"><tt class="xref py py-obj docutils literal"><span class="pre">set_integrator</span></tt></a>
+as the &#8220;vode&#8221; solver.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When using ZVODE for a stiff system, it should only be used for
+the case in which the function f is analytic, that is, when each f(i)
+is an analytic function of each y(j).  Analyticity means that the
+partial derivative df(i)/dy(j) is a unique complex number, and this
+fact is critical in the way ZVODE solves the dense or banded linear
+systems that arise in the stiff case.  For a complex stiff ODE system
+in which f is not analytic, ZVODE is likely to have convergence
+failures, and for this problem one should instead use DVODE on the
+equivalent real system (in the real and imaginary parts of y).</p>
+</div>
+</div></blockquote>
+<p>&#8220;lsoda&#8221;</p>
+<blockquote>
+<div><p>Real-valued Variable-coefficient Ordinary Differential Equation
+solver, with fixed-leading-coefficient implementation. It provides
+automatic method switching between implicit Adams method (for non-stiff
+problems) and a method based on backward differentiation formulas (BDF)
+(for stiff problems).</p>
+<p>Source: <a class="reference external" href="http://www.netlib.org/odepack">http://www.netlib.org/odepack</a></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This integrator is not re-entrant. You cannot have two <a class="reference internal" href="#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a>
+instances using the &#8220;lsoda&#8221; integrator at the same time.</p>
+</div>
+<p>This integrator accepts the following parameters in <a class="reference internal" href="scipy.integrate.ode.set_integrator.html#scipy.integrate.ode.set_integrator" title="scipy.integrate.ode.set_integrator"><tt class="xref py py-obj docutils literal"><span class="pre">set_integrator</span></tt></a>
+method of the <a class="reference internal" href="#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a> class:</p>
+<ul class="simple">
+<li>atol : float or sequence
+absolute tolerance for solution</li>
+<li>rtol : float or sequence
+relative tolerance for solution</li>
+<li>lband : None or int</li>
+<li>rband : None or int
+Jacobian band width, jac[i,j] != 0 for i-lband &lt;= j &lt;= i+rband.
+Setting these requires your jac routine to return the jacobian
+in packed format, jac_packed[i-j+lband, j] = jac[i,j].</li>
+<li>with_jacobian : bool
+Whether to use the jacobian</li>
+<li>nsteps : int
+Maximum number of (internally defined) steps allowed during one
+call to the solver.</li>
+<li>first_step : float</li>
+<li>min_step : float</li>
+<li>max_step : float
+Limits for the step sizes used by the integrator.</li>
+<li>max_order_ns : int
+Maximum order used in the nonstiff case (default 12).</li>
+<li>max_order_s : int
+Maximum order used in the stiff case (default 5).</li>
+<li>max_hnil : int
+Maximum number of messages reporting too small step size (t + h = t)
+(default 0)</li>
+<li>ixpr : int
+Whether to generate extra printing at method switches (default False).</li>
+</ul>
+</div></blockquote>
+<p>&#8220;dopri5&#8221;</p>
+<blockquote>
+<div><p>This is an explicit runge-kutta method of order (4)5 due to Dormand &amp;
+Prince (with stepsize control and dense output).</p>
+<p>Authors:</p>
+<blockquote>
+<div>E. Hairer and G. Wanner
+Universite de Geneve, Dept. de Mathematiques
+CH-1211 Geneve 24, Switzerland
+e-mail:  <a class="reference external" href="mailto:ernst&#46;hairer&#37;&#52;&#48;math&#46;unige&#46;ch">ernst<span>&#46;</span>hairer<span>&#64;</span>math<span>&#46;</span>unige<span>&#46;</span>ch</a>, <a class="reference external" href="mailto:gerhard&#46;wanner&#37;&#52;&#48;math&#46;unige&#46;ch">gerhard<span>&#46;</span>wanner<span>&#64;</span>math<span>&#46;</span>unige<span>&#46;</span>ch</a></div></blockquote>
+<p>This code is described in <a class="reference internal" href="#hnw93">[HNW93]</a>.</p>
+<p>This integrator accepts the following parameters in set_integrator()
+method of the ode class:</p>
+<ul class="simple">
+<li>atol : float or sequence
+absolute tolerance for solution</li>
+<li>rtol : float or sequence
+relative tolerance for solution</li>
+<li>nsteps : int
+Maximum number of (internally defined) steps allowed during one
+call to the solver.</li>
+<li>first_step : float</li>
+<li>max_step : float</li>
+<li>safety : float
+Safety factor on new step selection (default 0.9)</li>
+<li>ifactor : float</li>
+<li>dfactor : float
+Maximum factor to increase/decrease step size by in one step</li>
+<li>beta : float
+Beta parameter for stabilised step size control.</li>
+</ul>
+</div></blockquote>
+<p>&#8220;dop853&#8221;</p>
+<blockquote>
+<div><p>This is an explicit runge-kutta method of order 8(5,3) due to Dormand
+&amp; Prince (with stepsize control and dense output).</p>
+<p>Options and references the same as &#8220;dopri5&#8221;.</p>
+</div></blockquote>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="hnw93" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[HNW93]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> E. Hairer, S.P. Norsett and G. Wanner, Solving Ordinary
+Differential Equations i. Nonstiff Problems. 2nd edition.
+Springer Series in Computational Mathematics,
+Springer-Verlag (1993)</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>A problem to integrate and the corresponding jacobian:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">ode</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y0</span><span class="p">,</span> <span class="n">t0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0j</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="mi">0</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">arg1</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="p">[</span><span class="mi">1j</span><span class="o">*</span><span class="n">arg1</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">arg1</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">jac</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">arg1</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="p">[[</span><span class="mi">1j</span><span class="o">*</span><span class="n">arg1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">arg1</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+</pre></div>
+</div>
+<p>The integration:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">ode</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">jac</span><span class="p">)</span><span class="o">.</span><span class="n">set_integrator</span><span class="p">(</span><span class="s">&#39;zvode&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;bdf&#39;</span><span class="p">,</span> <span class="n">with_jacobian</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">set_initial_value</span><span class="p">(</span><span class="n">y0</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span><span class="o">.</span><span class="n">set_f_params</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">set_jac_params</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t1</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="n">r</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">t1</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">r</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">print</span> <span class="n">r</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">y</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>t</td>
+<td>(float) Current time.</td>
+</tr>
+<tr class="row-even"><td>y</td>
+<td>(ndarray) Current variable values.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.integrate.ode.integrate.html#scipy.integrate.ode.integrate" title="scipy.integrate.ode.integrate"><tt class="xref py py-obj docutils literal"><span class="pre">integrate</span></tt></a>(t[,&nbsp;step,&nbsp;relax])</td>
+<td>Find y=y(t), set y as an initial condition, and return y.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.integrate.ode.set_f_params.html#scipy.integrate.ode.set_f_params" title="scipy.integrate.ode.set_f_params"><tt class="xref py py-obj docutils literal"><span class="pre">set_f_params</span></tt></a>(*args)</td>
+<td>Set extra parameters for user-supplied function f.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.integrate.ode.set_initial_value.html#scipy.integrate.ode.set_initial_value" title="scipy.integrate.ode.set_initial_value"><tt class="xref py py-obj docutils literal"><span class="pre">set_initial_value</span></tt></a>(y[,&nbsp;t])</td>
+<td>Set initial conditions y(t) = y.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.integrate.ode.set_integrator.html#scipy.integrate.ode.set_integrator" title="scipy.integrate.ode.set_integrator"><tt class="xref py py-obj docutils literal"><span class="pre">set_integrator</span></tt></a>(name,&nbsp;**integrator_params)</td>
+<td>Set integrator by name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.integrate.ode.set_jac_params.html#scipy.integrate.ode.set_jac_params" title="scipy.integrate.ode.set_jac_params"><tt class="xref py py-obj docutils literal"><span class="pre">set_jac_params</span></tt></a>(*args)</td>
+<td>Set extra parameters for user-supplied function jac.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.integrate.ode.successful.html#scipy.integrate.ode.successful" title="scipy.integrate.ode.successful"><tt class="xref py py-obj docutils literal"><span class="pre">successful</span></tt></a>()</td>
+<td>Check if integration was successful.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.integrate.odeint.html"
+                        title="previous chapter">scipy.integrate.odeint</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.integrate.ode.integrate.html"
+                        title="next chapter">scipy.integrate.ode.integrate</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.ode.integrate.html" title="scipy.integrate.ode.integrate"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.odeint.html" title="scipy.integrate.odeint"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../integrate.html" >Integration and ODEs (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.integrate</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

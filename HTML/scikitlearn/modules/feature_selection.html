@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.11. Feature selection &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../index.html" />
+    <link rel="up" title="3. Supervised learning" href="../supervised_learning.html" />
+    <link rel="next" title="3.12. Semi-Supervised" href="label_propagation.html" />
+    <link rel="prev" title="3.10. Multiclass and multilabel algorithms" href="multiclass.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../install.html">Download</a></li>
+            <li><a href="../support.html">Support</a></li>
+            <li><a href="../user_guide.html">User Guide</a></li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            <li><a href="classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="multiclass.html" title="3.10. Multiclass and multilabel algorithms"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    3.10. Multiclass...
+	    </span>
+	    <span class="hiddenrellink">
+	    3.10. Multiclass and multilabel algorithms
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="label_propagation.html" title="3.12. Semi-Supervised"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    3.12. Semi-Super...
+	    </span>
+	    <span class="hiddenrellink">
+	    3.12. Semi-Supervised
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../supervised_learning.html" title="3. Supervised learning" >
+	Up
+	<br>
+	<span class="smallrellink">
+	3. Supervised le...
+	</span>
+	<span class="hiddenrellink">
+	3. Supervised learning
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">3.11. Feature selection</a><ul>
+<li><a class="reference internal" href="#univariate-feature-selection">3.11.1. Univariate feature selection</a></li>
+<li><a class="reference internal" href="#recursive-feature-elimination">3.11.2. Recursive feature elimination</a></li>
+<li><a class="reference internal" href="#l1-based-feature-selection">3.11.3. L1-based feature selection</a><ul>
+<li><a class="reference internal" href="#selecting-non-zero-coefficients">3.11.3.1. Selecting non-zero coefficients</a></li>
+<li><a class="reference internal" href="#randomized-sparse-models">3.11.3.2. Randomized sparse models</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tree-based-feature-selection">3.11.4. Tree-based feature selection</a></li>
+</ul>
+</li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="feature-selection">
+<span id="id1"></span><h1>3.11. Feature selection<a class="headerlink" href="#feature-selection" title="Permalink to this headline">¶</a></h1>
+<p>The classes in the <a class="reference internal" href="classes.html#module-sklearn.feature_selection" title="sklearn.feature_selection"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.feature_selection</span></tt></a> module can be used
+for feature selection/dimensionality reduction on sample sets, either to
+improve estimators&#8217; accuracy scores or to boost their performance on very
+high-dimensional datasets.</p>
+<div class="section" id="univariate-feature-selection">
+<h2>3.11.1. Univariate feature selection<a class="headerlink" href="#univariate-feature-selection" title="Permalink to this headline">¶</a></h2>
+<p>Univariate feature selection works by selecting the best features based on
+univariate statistical tests. It can seen as a preprocessing step
+to an estimator. Scikit-learn exposes feature selection routines
+as objects that implement the <cite>transform</cite> method:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="generated/sklearn.feature_selection.SelectKBest.html#sklearn.feature_selection.SelectKBest" title="sklearn.feature_selection.SelectKBest"><tt class="xref py py-class docutils literal"><span class="pre">SelectKBest</span></tt></a> removes all but the <cite>k</cite> highest scoring features</li>
+<li><a class="reference internal" href="generated/sklearn.feature_selection.SelectPercentile.html#sklearn.feature_selection.SelectPercentile" title="sklearn.feature_selection.SelectPercentile"><tt class="xref py py-class docutils literal"><span class="pre">SelectPercentile</span></tt></a> removes all but a user-specified highest scoring
+percentile of features</li>
+<li>using common univariate statistical tests for each feature:
+false positive rate <a class="reference internal" href="generated/sklearn.feature_selection.SelectFpr.html#sklearn.feature_selection.SelectFpr" title="sklearn.feature_selection.SelectFpr"><tt class="xref py py-class docutils literal"><span class="pre">SelectFpr</span></tt></a>, false discovery rate
+<a class="reference internal" href="generated/sklearn.feature_selection.SelectFdr.html#sklearn.feature_selection.SelectFdr" title="sklearn.feature_selection.SelectFdr"><tt class="xref py py-class docutils literal"><span class="pre">SelectFdr</span></tt></a>, or family wise error <a class="reference internal" href="generated/sklearn.feature_selection.SelectFwe.html#sklearn.feature_selection.SelectFwe" title="sklearn.feature_selection.SelectFwe"><tt class="xref py py-class docutils literal"><span class="pre">SelectFwe</span></tt></a>.</li>
+</ul>
+</div></blockquote>
+<p>These objects take as input a scoring function that returns
+univariate p-values:</p>
+<blockquote>
+<div><ul class="simple">
+<li>For regression: <a class="reference internal" href="generated/sklearn.feature_selection.f_regression.html#sklearn.feature_selection.f_regression" title="sklearn.feature_selection.f_regression"><tt class="xref py py-func docutils literal"><span class="pre">f_regression</span></tt></a></li>
+<li>For classification: <a class="reference internal" href="generated/sklearn.feature_selection.chi2.html#sklearn.feature_selection.chi2" title="sklearn.feature_selection.chi2"><tt class="xref py py-func docutils literal"><span class="pre">chi2</span></tt></a> or <a class="reference internal" href="generated/sklearn.feature_selection.f_classif.html#sklearn.feature_selection.f_classif" title="sklearn.feature_selection.f_classif"><tt class="xref py py-func docutils literal"><span class="pre">f_classif</span></tt></a></li>
+</ul>
+</div></blockquote>
+<div class="topic">
+<p class="topic-title first">Feature selection with sparse data</p>
+<p>If you use sparse data (i.e. data represented as sparse matrices),
+only <a class="reference internal" href="generated/sklearn.feature_selection.chi2.html#sklearn.feature_selection.chi2" title="sklearn.feature_selection.chi2"><tt class="xref py py-func docutils literal"><span class="pre">chi2</span></tt></a> will deal with the data without making it dense.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Beware not to use a regression scoring function with a classification
+problem, you will get useless results.</p>
+</div>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<p><a class="reference internal" href="../auto_examples/plot_feature_selection.html#example-plot-feature-selection-py"><em>Univariate Feature Selection</em></a></p>
+</div>
+</div>
+<div class="section" id="recursive-feature-elimination">
+<h2>3.11.2. Recursive feature elimination<a class="headerlink" href="#recursive-feature-elimination" title="Permalink to this headline">¶</a></h2>
+<p>Given an external estimator that assigns weights to features (e.g., the
+coefficients of a linear model), recursive feature elimination (<a class="reference internal" href="generated/sklearn.feature_selection.RFE.html#sklearn.feature_selection.RFE" title="sklearn.feature_selection.RFE"><tt class="xref py py-class docutils literal"><span class="pre">RFE</span></tt></a>)
+is to select features by recursively considering smaller and smaller sets of
+features.  First, the estimator is trained on the initial set of features and
+weights are assigned to each one of them. Then, features whose absolute weights
+are the smallest are pruned from the current set features. That procedure is
+recursively repeated on the pruned set until the desired number of features to
+select is eventually reached.</p>
+<p><a class="reference internal" href="generated/sklearn.feature_selection.RFECV.html#sklearn.feature_selection.RFECV" title="sklearn.feature_selection.RFECV"><tt class="xref py py-class docutils literal"><span class="pre">RFECV</span></tt></a> performs RFE in a cross-validation loop to find the optimal
+number of features.</p>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../auto_examples/plot_rfe_digits.html#example-plot-rfe-digits-py"><em>Recursive feature elimination</em></a>: A recursive feature elimination example
+showing the relevance of pixels in a digit classification task.</li>
+<li><a class="reference internal" href="../auto_examples/plot_rfe_with_cross_validation.html#example-plot-rfe-with-cross-validation-py"><em>Recursive feature elimination with cross-validation</em></a>: A recursive feature
+elimination example with automatic tuning of the number of features
+selected with cross-validation.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="l1-based-feature-selection">
+<span id="l1-feature-selection"></span><h2>3.11.3. L1-based feature selection<a class="headerlink" href="#l1-based-feature-selection" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="selecting-non-zero-coefficients">
+<h3>3.11.3.1. Selecting non-zero coefficients<a class="headerlink" href="#selecting-non-zero-coefficients" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="linear_model.html#linear-model"><em>Linear models</em></a> penalized with the L1 norm have
+sparse solutions: many of their estimated coefficients are zero. When the goal
+is to reduce the dimensionality of the data to use with another classifier,
+they expose a <cite>transform</cite> method to select the non-zero coefficient. In
+particular, sparse estimators useful for this purpose are the
+<a class="reference internal" href="generated/sklearn.linear_model.Lasso.html#sklearn.linear_model.Lasso" title="sklearn.linear_model.Lasso"><tt class="xref py py-class docutils literal"><span class="pre">linear_model.Lasso</span></tt></a> for regression, and
+of <a class="reference internal" href="generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" title="sklearn.linear_model.LogisticRegression"><tt class="xref py py-class docutils literal"><span class="pre">linear_model.LogisticRegression</span></tt></a> and <a class="reference internal" href="generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC" title="sklearn.svm.LinearSVC"><tt class="xref py py-class docutils literal"><span class="pre">svm.LinearSVC</span></tt></a>
+for classification:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">LinearSVC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(150, 4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_new</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="s">&quot;l1&quot;</span><span class="p">,</span> <span class="n">dual</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_new</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(150, 3)</span>
+</pre></div>
+</div>
+<p>With SVMs and logistic-regression, the parameter C controls the sparsity:
+the smaller C the fewer features selected. With Lasso, the higher the
+alpha parameter, the fewer features selected.</p>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../auto_examples/document_classification_20newsgroups.html#example-document-classification-20newsgroups-py"><em>Classification of text documents using sparse features</em></a>: Comparison
+of different algorithms for document classification including L1-based
+feature selection.</li>
+</ul>
+</div>
+<div class="topic" id="compressive-sensing">
+<p class="topic-title first"><strong>L1-recovery and compressive sensing</strong></p>
+<p>For a good choice of alpha, the <a class="reference internal" href="linear_model.html#lasso"><em>Lasso</em></a> can fully recover the
+exact set of non-zero variables using only few observations, provided
+certain specific conditions are met. In paraticular, the number of
+samples should be &#8220;sufficiently large&#8221;, or L1 models will perform at
+random, where &#8220;sufficiently large&#8221; depends on the number of non-zero
+coefficients, the logarithm of the number of features, the amount of
+noise, the smallest absolute value of non-zero coefficients, and the
+structure of the design matrix X. In addition, the design matrix must
+display certain specific properties, such as not being too correlated.</p>
+<p>There is no general rule to select an alpha parameter for recovery of
+non-zero coefficients. It can by set by cross-validation
+(<tt class="xref py py-class docutils literal"><span class="pre">LassoCV</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">LassoLarsCV</span></tt>), though this may lead to
+under-penalized models: including a small number of non-relevant
+variables is not detrimental to prediction score. BIC
+(<tt class="xref py py-class docutils literal"><span class="pre">LassoLarsIC</span></tt>) tends, on the opposite, to set high values of
+alpha.</p>
+<p><strong>Reference</strong> Richard G. Baraniuk <cite>Compressive Sensing</cite>, IEEE Signal
+Processing Magazine [120] July 2007
+<a class="reference external" href="http://dsp.rice.edu/files/cs/baraniukCSlecture07.pdf">http://dsp.rice.edu/files/cs/baraniukCSlecture07.pdf</a></p>
+</div>
+</div>
+<div class="section" id="randomized-sparse-models">
+<span id="randomized-l1"></span><h3>3.11.3.2. Randomized sparse models<a class="headerlink" href="#randomized-sparse-models" title="Permalink to this headline">¶</a></h3>
+<p>The limitation of L1-based sparse models is that faced with a group of
+very correlated features, they will select only one. To mitigate this
+problem, it is possible to use randomization techniques, reestimating the
+sparse model many times perturbing the design matrix or sub-sampling data
+and counting how many times a given regressor is selected.</p>
+<p><a class="reference internal" href="generated/sklearn.linear_model.RandomizedLasso.html#sklearn.linear_model.RandomizedLasso" title="sklearn.linear_model.RandomizedLasso"><tt class="xref py py-class docutils literal"><span class="pre">RandomizedLasso</span></tt></a> implements this strategy for regression
+settings, using the Lasso, while <a class="reference internal" href="generated/sklearn.linear_model.RandomizedLogisticRegression.html#sklearn.linear_model.RandomizedLogisticRegression" title="sklearn.linear_model.RandomizedLogisticRegression"><tt class="xref py py-class docutils literal"><span class="pre">RandomizedLogisticRegression</span></tt></a> uses the
+logistic regression and is suitable for classification tasks.  To get a full
+path of stability scores you can use <a class="reference internal" href="generated/sklearn.linear_model.lasso_stability_path.html#sklearn.linear_model.lasso_stability_path" title="sklearn.linear_model.lasso_stability_path"><tt class="xref py py-func docutils literal"><span class="pre">lasso_stability_path</span></tt></a>.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="../auto_examples/linear_model/plot_sparse_recovery.html"><img alt="modules/../auto_examples/linear_model/images/plot_sparse_recovery_2.png" src="modules/../auto_examples/linear_model/images/plot_sparse_recovery_2.png" /></a>
+</div>
+<p>Note that for randomized sparse models to be more powerful than standard
+F statistics at detecting non-zero features, the ground truth model
+should be sparse, in other words, there should be only a small fraction
+of features non zero.</p>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../auto_examples/linear_model/plot_sparse_recovery.html#example-linear-model-plot-sparse-recovery-py"><em>Sparse recovery: feature selection for sparse linear models</em></a>: An example
+comparing different feature selection approaches and discussing in
+which situation each approach is to be favored.</li>
+</ul>
+</div>
+<div class="topic">
+<p class="topic-title first">References:</p>
+<ul class="simple">
+<li>N. Meinshausen, P. Buhlmann, &#8220;Stability selection&#8221;,
+Journal of the Royal Statistical Society, 72 (2010)
+<a class="reference external" href="http://arxiv.org/pdf/0809.2932">http://arxiv.org/pdf/0809.2932</a></li>
+<li>F. Bach, &#8220;Model-Consistent Sparse Estimation through the Bootstrap&#8221;
+<a class="reference external" href="http://hal.inria.fr/hal-00354771/">http://hal.inria.fr/hal-00354771/</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="tree-based-feature-selection">
+<h2>3.11.4. Tree-based feature selection<a class="headerlink" href="#tree-based-feature-selection" title="Permalink to this headline">¶</a></h2>
+<p>Tree-based estimators (see the <a class="reference internal" href="classes.html#module-sklearn.tree" title="sklearn.tree"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.tree</span></tt></a> module and forest
+of trees in the <a class="reference internal" href="classes.html#module-sklearn.ensemble" title="sklearn.ensemble"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.ensemble</span></tt></a> module) can be used to compute
+feature importances, which in turn can be used to discard irrelevant
+features:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">ExtraTreesClassifier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(150, 4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span> <span class="o">=</span> <span class="n">ExtraTreesClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_new</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">feature_importances_</span>  
+<span class="go">array([ 0.12...,  0.07...,  0.38...,  0.41...])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_new</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(150, 2)</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../auto_examples/ensemble/plot_forest_importances.html#example-ensemble-plot-forest-importances-py"><em>Feature importances with forests of trees</em></a>: example on
+synthetic data showing the recovery of the actually meaningful
+features.</li>
+<li><a class="reference internal" href="../auto_examples/ensemble/plot_forest_importances_faces.html#example-ensemble-plot-forest-importances-faces-py"><em>Pixel importances with a parallel forest of trees</em></a>: example
+on face recognition data.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../_sources/modules/feature_selection.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="multiclass.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="label_propagation.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

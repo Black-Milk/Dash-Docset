@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.integrate.simps &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Integration and ODEs (scipy.integrate)" href="../integrate.html" />
+    <link rel="next" title="scipy.integrate.romb" href="scipy.integrate.romb.html" />
+    <link rel="prev" title="scipy.integrate.cumtrapz" href="scipy.integrate.cumtrapz.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.romb.html" title="scipy.integrate.romb"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.cumtrapz.html" title="scipy.integrate.cumtrapz"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../integrate.html" accesskey="U">Integration and ODEs (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.integrate</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-integrate-simps">
+<h1>scipy.integrate.simps<a class="headerlink" href="#scipy-integrate-simps" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.integrate.simps">
+<tt class="descclassname">scipy.integrate.</tt><tt class="descname">simps</tt><big>(</big><em>y</em>, <em>x=None</em>, <em>dx=1</em>, <em>axis=-1</em>, <em>even='avg'</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/integrate/quadrature.py#L283"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.integrate.simps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrate y(x) using samples along the given axis and the composite
+Simpson&#8217;s rule.  If x is None, spacing of dx is assumed.</p>
+<p>If there are an even number of samples, N, then there are an odd
+number of intervals (N-1), but Simpson&#8217;s rule requires an even number
+of intervals.  The parameter &#8216;even&#8217; controls how this is handled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>y</strong> : array_like</p>
+<blockquote>
+<div><p>Array to be integrated.</p>
+</div></blockquote>
+<p><strong>x</strong> : array_like, optional</p>
+<blockquote>
+<div><p>If given, the points at which <em class="xref py py-obj">y</em> is sampled.</p>
+</div></blockquote>
+<p><strong>dx</strong> : int, optional</p>
+<blockquote>
+<div><p>Spacing of integration points along axis of <em class="xref py py-obj">y</em>. Only used when
+<em class="xref py py-obj">x</em> is None. Default is 1.</p>
+</div></blockquote>
+<p><strong>axis</strong> : int, optional</p>
+<blockquote>
+<div><p>Axis along which to integrate. Default is the last axis.</p>
+</div></blockquote>
+<p><strong>even</strong> : {&#8216;avg&#8217;, &#8216;first&#8217;, &#8216;str&#8217;}, optional</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>&#8216;avg&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">Average two results:1) use the first N-2 intervals with</span></dt>
+<dd><p class="first last">a trapezoidal rule on the last interval and 2) use the last
+N-2 intervals with a trapezoidal rule on the first interval.</p>
+</dd>
+<dt>&#8216;first&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">Use Simpson&#8217;s rule for the first N-2 intervals with</span></dt>
+<dd><p class="first last">a trapezoidal rule on the last interval.</p>
+</dd>
+<dt>&#8216;last&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">Use Simpson&#8217;s rule for the last N-2 intervals with a</span></dt>
+<dd><p class="first last">trapezoidal rule on the first interval.</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a></dt>
+<dd>adaptive quadrature using QUADPACK</dd>
+<dt><a class="reference internal" href="scipy.integrate.romberg.html#scipy.integrate.romberg" title="scipy.integrate.romberg"><tt class="xref py py-obj docutils literal"><span class="pre">romberg</span></tt></a></dt>
+<dd>adaptive Romberg quadrature</dd>
+<dt><a class="reference internal" href="scipy.integrate.quadrature.html#scipy.integrate.quadrature" title="scipy.integrate.quadrature"><tt class="xref py py-obj docutils literal"><span class="pre">quadrature</span></tt></a></dt>
+<dd>adaptive Gaussian quadrature</dd>
+<dt><a class="reference internal" href="scipy.integrate.fixed_quad.html#scipy.integrate.fixed_quad" title="scipy.integrate.fixed_quad"><tt class="xref py py-obj docutils literal"><span class="pre">fixed_quad</span></tt></a></dt>
+<dd>fixed-order Gaussian quadrature</dd>
+<dt><a class="reference internal" href="scipy.integrate.dblquad.html#scipy.integrate.dblquad" title="scipy.integrate.dblquad"><tt class="xref py py-obj docutils literal"><span class="pre">dblquad</span></tt></a></dt>
+<dd>double integrals</dd>
+<dt><a class="reference internal" href="scipy.integrate.tplquad.html#scipy.integrate.tplquad" title="scipy.integrate.tplquad"><tt class="xref py py-obj docutils literal"><span class="pre">tplquad</span></tt></a></dt>
+<dd>triple integrals</dd>
+<dt><a class="reference internal" href="scipy.integrate.romb.html#scipy.integrate.romb" title="scipy.integrate.romb"><tt class="xref py py-obj docutils literal"><span class="pre">romb</span></tt></a></dt>
+<dd>integrators for sampled data</dd>
+<dt><a class="reference internal" href="scipy.integrate.cumtrapz.html#scipy.integrate.cumtrapz" title="scipy.integrate.cumtrapz"><tt class="xref py py-obj docutils literal"><span class="pre">cumtrapz</span></tt></a></dt>
+<dd>cumulative integration for sampled data</dd>
+<dt><a class="reference internal" href="scipy.integrate.ode.html#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a></dt>
+<dd>ODE integrators</dd>
+<dt><a class="reference internal" href="scipy.integrate.odeint.html#scipy.integrate.odeint" title="scipy.integrate.odeint"><tt class="xref py py-obj docutils literal"><span class="pre">odeint</span></tt></a></dt>
+<dd>ODE integrators</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>For an odd number of samples that are equally spaced the result is
+exact if the function is a polynomial of order 3 or less.  If
+the samples are not equally spaced, then the result is exact only
+if the function is a polynomial of order 2 or less.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.integrate.cumtrapz.html"
+                        title="previous chapter">scipy.integrate.cumtrapz</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.integrate.romb.html"
+                        title="next chapter">scipy.integrate.romb</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.romb.html" title="scipy.integrate.romb"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.integrate.cumtrapz.html" title="scipy.integrate.cumtrapz"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../integrate.html" >Integration and ODEs (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.integrate</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

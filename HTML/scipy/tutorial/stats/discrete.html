@@ -1,0 +1,448 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discrete Statistical Distributions &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="discrete-statistical-distributions">
+<span id="discrete-random-variables"></span><h1>Discrete Statistical Distributions<a class="headerlink" href="#discrete-statistical-distributions" title="Permalink to this headline">¶</a></h1>
+<p>Discrete random variables take on only a countable number of values.
+The commonly used distributions are included in SciPy and described in
+this document. Each discrete distribution can take one extra integer
+parameter: <img class="math" src="../../_images/math/ab0bb0171685e5101725bf6851aaf364fb719639.png" alt="L." style="vertical-align: 0px"/> The relationship between the general distribution
+<img class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> and the standard distribution <img class="math" src="../../_images/math/2c2a8942bf590ce9c245b4cdf58348f5b2a8f51d.png" alt="p_{0}" style="vertical-align: -4px"/> is</p>
+<div class="math">
+<p><img src="../../_images/math/053d0eb2c714237240033c3ee41a4d0ed2ce60c2.png" alt="\[ p\left(x\right)=p_{0}\left(x-L\right)\]"/></p>
+</div><p>which allows for shifting of the input. When a distribution generator
+is initialized, the discrete distribution can either specify the
+beginning and ending (integer) values <img class="math" src="../../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" style="vertical-align: 0px"/> and <img class="math" src="../../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" style="vertical-align: 0px"/> which must be such that</p>
+<div class="math">
+<p><img src="../../_images/math/10e3ca280d4bd2213cf961e6e67fda52d987a83a.png" alt="\[ p_{0}\left(x\right)=0\quad x&lt;a\textrm{ or }x&gt;b\]"/></p>
+</div><p>in which case, it is assumed that the pdf function is specified on the
+integers <img class="math" src="../../_images/math/6e4e184c67361a32657edfb09bab2572e1640d10.png" alt="a+mk\leq b" style="vertical-align: -3px"/> where <img class="math" src="../../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/> is a non-negative integer ( <img class="math" src="../../_images/math/8d3a006aab7a7d8b738a1b1b7735297e361856d8.png" alt="0,1,2,\ldots" style="vertical-align: -4px"/> ) and <img class="math" src="../../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" style="vertical-align: 0px"/> is a positive integer multiplier. Alternatively, the two lists <img class="math" src="../../_images/math/9d620afedf2590a311e973edf32e72a2b9e14995.png" alt="x_{k}" style="vertical-align: -3px"/> and <img class="math" src="../../_images/math/6d53f04a8a9bb225652573d712ba6868317827e9.png" alt="p\left(x_{k}\right)" style="vertical-align: -4px"/> can be provided directly in which case a dictionary is set up
+internally to evaulate probabilities and generate random variates.</p>
+<div class="section" id="probability-mass-function-pmf">
+<h2>Probability Mass Function (PMF)<a class="headerlink" href="#probability-mass-function-pmf" title="Permalink to this headline">¶</a></h2>
+<p>The probability mass function of a random variable X is defined as the
+probability that the random variable takes on a particular value.</p>
+<div class="math">
+<p><img src="../../_images/math/553785308262819d437a05525c46eb06831444e7.png" alt="\[ p\left(x_{k}\right)=P\left[X=x_{k}\right]\]"/></p>
+</div><p>This is also sometimes called the probability density function,
+although technically</p>
+<div class="math">
+<p><img src="../../_images/math/9c8c55dae36f2da835f91dc73b60869d90367095.png" alt="\[ f\left(x\right)=\sum_{k}p\left(x_{k}\right)\delta\left(x-x_{k}\right)\]"/></p>
+</div><p>is the probability density function for a discrete distribution <a class="footnote-reference" href="#id2" id="id1">[1]</a> .</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>XXX: Unknown layout Plain Layout: Note that we will be using <img class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> to represent the probability mass function and a parameter (a
+XXX: probability). The usage should be obvious from context.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="cumulative-distribution-function-cdf">
+<h2>Cumulative Distribution Function (CDF)<a class="headerlink" href="#cumulative-distribution-function-cdf" title="Permalink to this headline">¶</a></h2>
+<p>The cumulative distribution function is</p>
+<div class="math">
+<p><img src="../../_images/math/9f21c6030b9cfe78c591037c672da190f6386fe3.png" alt="\[ F\left(x\right)=P\left[X\leq x\right]=\sum_{x_{k}\leq x}p\left(x_{k}\right)\]"/></p>
+</div><p>and is also useful to be able to compute. Note that</p>
+<div class="math">
+<p><img src="../../_images/math/f3a1068a264dc5572573faead93466da3cb9ff17.png" alt="\[ F\left(x_{k}\right)-F\left(x_{k-1}\right)=p\left(x_{k}\right)\]"/></p>
+</div></div>
+<div class="section" id="survival-function">
+<h2>Survival Function<a class="headerlink" href="#survival-function" title="Permalink to this headline">¶</a></h2>
+<p>The survival function is just</p>
+<div class="math">
+<p><img src="../../_images/math/ddabab393c853db82fd59a95f93e9353c022049f.png" alt="\[ S\left(x\right)=1-F\left(x\right)=P\left[X&gt;k\right]\]"/></p>
+</div><p>the probability that the random variable is strictly larger than <img class="math" src="../../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/> .</p>
+</div>
+<div class="section" id="percent-point-function-inverse-cdf">
+<span id="discrete-ppf"></span><h2>Percent Point Function (Inverse CDF)<a class="headerlink" href="#percent-point-function-inverse-cdf" title="Permalink to this headline">¶</a></h2>
+<p>The percent point function is the inverse of the cumulative
+distribution function and is</p>
+<div class="math">
+<p><img src="../../_images/math/78b011bf6980d18b73a1875db2267bc50f6d7aec.png" alt="\[ G\left(q\right)=F^{-1}\left(q\right)\]"/></p>
+</div><p>for discrete distributions, this must be modified for cases where
+there is no <img class="math" src="../../_images/math/9d620afedf2590a311e973edf32e72a2b9e14995.png" alt="x_{k}" style="vertical-align: -3px"/> such that <img class="math" src="../../_images/math/48690a1cf239b043519c36a7b823082c3fd6c383.png" alt="F\left(x_{k}\right)=q." style="vertical-align: -4px"/> In these cases we choose <img class="math" src="../../_images/math/a082406277e9842b4dee933bb8324cbdf91cbd8f.png" alt="G\left(q\right)" style="vertical-align: -4px"/> to be the smallest value <img class="math" src="../../_images/math/e9688d8fc9d181b4f5cf1ff3cbad9ed51ff6245b.png" alt="x_{k}=G\left(q\right)" style="vertical-align: -4px"/> for which <img class="math" src="../../_images/math/3100d1745fd2e115a24299405f7e841c55839d73.png" alt="F\left(x_{k}\right)\geq q" style="vertical-align: -4px"/> . If <img class="math" src="../../_images/math/8062318143377fad82aa5171b3efedf615871972.png" alt="q=0" style="vertical-align: -4px"/> then we define <img class="math" src="../../_images/math/7918a29190cc83ebaa1016ae77b5a365023286ab.png" alt="G\left(0\right)=a-1" style="vertical-align: -4px"/> . This definition allows random variates to be defined in the same way
+as with continuous rv&#8217;s using the inverse cdf on a uniform
+distribution to generate random variates.</p>
+</div>
+<div class="section" id="inverse-survival-function">
+<h2>Inverse survival function<a class="headerlink" href="#inverse-survival-function" title="Permalink to this headline">¶</a></h2>
+<p>The inverse survival function is the inverse of the survival function</p>
+<div class="math">
+<p><img src="../../_images/math/fb59d6a2f136a21aba69e23458178a67afc6533a.png" alt="\[ Z\left(\alpha\right)=S^{-1}\left(\alpha\right)=G\left(1-\alpha\right)\]"/></p>
+</div><p>and is thus the smallest non-negative integer <img class="math" src="../../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/> for which <img class="math" src="../../_images/math/84388720c0f5d30d93c01ebcf96bc0d623cbd928.png" alt="F\left(k\right)\geq1-\alpha" style="vertical-align: -4px"/> or the smallest non-negative integer <img class="math" src="../../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/> for which <img class="math" src="../../_images/math/12a1eb03468def012aae20a5efdae7c7afa700c2.png" alt="S\left(k\right)\leq\alpha." style="vertical-align: -4px"/></p>
+</div>
+<div class="section" id="hazard-functions">
+<h2>Hazard functions<a class="headerlink" href="#hazard-functions" title="Permalink to this headline">¶</a></h2>
+<p>If desired, the hazard function and the cumulative hazard function
+could be defined as</p>
+<div class="math">
+<p><img src="../../_images/math/43fde823c8d0eabe34801c18ae60940e6860709e.png" alt="\[ h\left(x_{k}\right)=\frac{p\left(x_{k}\right)}{1-F\left(x_{k}\right)}\]"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="../../_images/math/fcf0e6c9670aaf3369a3948179e99bcf280bbfcd.png" alt="\[ H\left(x\right)=\sum_{x_{k}\leq x}h\left(x_{k}\right)=\sum_{x_{k}\leq x}\frac{F\left(x_{k}\right)-F\left(x_{k-1}\right)}{1-F\left(x_{k}\right)}.\]"/></p>
+</div></div>
+<div class="section" id="moments">
+<h2>Moments<a class="headerlink" href="#moments" title="Permalink to this headline">¶</a></h2>
+<p>Non-central moments are defined using the PDF</p>
+<div class="math">
+<p><img src="../../_images/math/f38c778ac59d2c3a01f1263761f034327041a7ce.png" alt="\[ \mu_{m}^{\prime}=E\left[X^{m}\right]=\sum_{k}x_{k}^{m}p\left(x_{k}\right).\]"/></p>
+</div><p>Central moments are computed similarly <img class="math" src="../../_images/math/0610b20c8fe6052de26c50b1955383175afaa4c8.png" alt="\mu=\mu_{1}^{\prime}" style="vertical-align: -6px"/></p>
+<div class="math">
+<p><img src="../../_images/math/c825227ccbcd7d6eab8f2a5957491cf061b2d4bf.png" alt="\begin{eqnarray*} \mu_{m}=E\left[\left(X-\mu\right)^{m}\right] &amp; = &amp; \sum_{k}\left(x_{k}-\mu\right)^{m}p\left(x_{k}\right)\\  &amp; = &amp; \sum_{k=0}^{m}\left(-1\right)^{m-k}\left(\begin{array}{c} m\\ k\end{array}\right)\mu^{m-k}\mu_{k}^{\prime}\end{eqnarray*}"/></p>
+</div><p>The mean is the first moment</p>
+<div class="math">
+<p><img src="../../_images/math/a43a87d2a94b7a964282fc7471ec21b3baef2ac4.png" alt="\[ \mu=\mu_{1}^{\prime}=E\left[X\right]=\sum_{k}x_{k}p\left(x_{k}\right)\]"/></p>
+</div><p>the variance is the second central moment</p>
+<div class="math">
+<p><img src="../../_images/math/c3da411d195ee947b9325858c494e7831be9e13f.png" alt="\[ \mu_{2}=E\left[\left(X-\mu\right)^{2}\right]=\sum_{x_{k}}x_{k}^{2}p\left(x_{k}\right)-\mu^{2}.\]"/></p>
+</div><p>Skewness is defined as</p>
+<div class="math">
+<p><img src="../../_images/math/b5ccec36e8466d5349b87fe24d39d4ce3d3b6fa6.png" alt="\[ \gamma_{1}=\frac{\mu_{3}}{\mu_{2}^{3/2}}\]"/></p>
+</div><p>while (Fisher) kurtosis is</p>
+<div class="math">
+<p><img src="../../_images/math/346cb35b367ce64d9a77f072b450e58e6060b5fb.png" alt="\[ \gamma_{2}=\frac{\mu_{4}}{\mu_{2}^{2}}-3,\]"/></p>
+</div><p>so that a normal distribution has a kurtosis of zero.</p>
+</div>
+<div class="section" id="moment-generating-function">
+<h2>Moment generating function<a class="headerlink" href="#moment-generating-function" title="Permalink to this headline">¶</a></h2>
+<p>The moment generating funtion is defined as</p>
+<div class="math">
+<p><img src="../../_images/math/b33980dd5d1d250b587d22cdf7af800202783639.png" alt="\[ M_{X}\left(t\right)=E\left[e^{Xt}\right]=\sum_{x_{k}}e^{x_{k}t}p\left(x_{k}\right)\]"/></p>
+</div><p>Moments are found as the derivatives of the moment generating function
+evaluated at <img class="math" src="../../_images/math/604c735470dd0152ca1cff75fe26eadf5cef7f49.png" alt="0." style="vertical-align: 0px"/></p>
+</div>
+<div class="section" id="fitting-data">
+<h2>Fitting data<a class="headerlink" href="#fitting-data" title="Permalink to this headline">¶</a></h2>
+<p>To fit data to a distribution, maximizing the likelihood function is
+common. Alternatively, some distributions have well-known minimum
+variance unbiased estimators. These will be chosen by default, but the
+likelihood function will always be available for minimizing.</p>
+<p>If <img class="math" src="../../_images/math/b04528c9e74b8f12d3b37386c4259dec82389512.png" alt="f_{i}\left(k;\boldsymbol{\theta}\right)" style="vertical-align: -4px"/> is the PDF of a random-variable where <img class="math" src="../../_images/math/53562832a57c975fa59c0c276a8767b092552bed.png" alt="\boldsymbol{\theta}" style="vertical-align: 0px"/> is a vector of parameters ( <em>e.g.</em> <img class="math" src="../../_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L" style="vertical-align: 0px"/> and <img class="math" src="../../_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S" style="vertical-align: 0px"/> ), then for a collection of <img class="math" src="../../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> independent samples from this distribution, the joint distribution the
+random vector <img class="math" src="../../_images/math/9a77df235fabbe280b6196d29ab1f99317b2f1dd.png" alt="\mathbf{k}" style="vertical-align: -1px"/> is</p>
+<div class="math">
+<p><img src="../../_images/math/e0e74c0a1083735b463f72cf41d1c251617b466a.png" alt="\[ f\left(\mathbf{k};\boldsymbol{\theta}\right)=\prod_{i=1}^{N}f_{i}\left(k_{i};\boldsymbol{\theta}\right).\]"/></p>
+</div><p>The maximum likelihood estimate of the parameters <img class="math" src="../../_images/math/53562832a57c975fa59c0c276a8767b092552bed.png" alt="\boldsymbol{\theta}" style="vertical-align: 0px"/> are the parameters which maximize this function with <img class="math" src="../../_images/math/5f61118f2ae912f86e683687c005145b5eb54aec.png" alt="\mathbf{x}" style="vertical-align: -1px"/> fixed and given by the data:</p>
+<div class="math">
+<p><img src="../../_images/math/225431383c9acd1701b54bc837d9056b2024a4c9.png" alt="\begin{eqnarray*} \hat{\boldsymbol{\theta}} &amp; = &amp; \arg\max_{\boldsymbol{\theta}}f\left(\mathbf{k};\boldsymbol{\theta}\right)\\  &amp; = &amp; \arg\min_{\boldsymbol{\theta}}l_{\mathbf{k}}\left(\boldsymbol{\theta}\right).\end{eqnarray*}"/></p>
+</div><p>Where</p>
+<div class="math">
+<p><img src="../../_images/math/dfffd2643bc27e991de1f1a56c45a5f9341be6a9.png" alt="\begin{eqnarray*} l_{\mathbf{k}}\left(\boldsymbol{\theta}\right) &amp; = &amp; -\sum_{i=1}^{N}\log f\left(k_{i};\boldsymbol{\theta}\right)\\  &amp; = &amp; -N\overline{\log f\left(k_{i};\boldsymbol{\theta}\right)}\end{eqnarray*}"/></p>
+</div></div>
+<div class="section" id="standard-notation-for-mean">
+<h2>Standard notation for mean<a class="headerlink" href="#standard-notation-for-mean" title="Permalink to this headline">¶</a></h2>
+<p>We will use</p>
+<div class="math">
+<p><img src="../../_images/math/60e2681c8f04d34cb42d1cee141f81436190dad8.png" alt="\[ \overline{y\left(\mathbf{x}\right)}=\frac{1}{N}\sum_{i=1}^{N}y\left(x_{i}\right)\]"/></p>
+</div><p>where <img class="math" src="../../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> should be clear from context.</p>
+</div>
+<div class="section" id="combinations">
+<h2>Combinations<a class="headerlink" href="#combinations" title="Permalink to this headline">¶</a></h2>
+<p>Note that</p>
+<div class="math">
+<p><img src="../../_images/math/6e25469f7db542e990b98e4ec590ef587b1c788c.png" alt="\[ k!=k\cdot\left(k-1\right)\cdot\left(k-2\right)\cdot\cdots\cdot1=\Gamma\left(k+1\right)\]"/></p>
+</div><p>and has special cases of</p>
+<div class="math">
+<p><img src="../../_images/math/9035744e5953f189acf27c31e264444e14f5881f.png" alt="\begin{eqnarray*} 0! &amp; \equiv &amp; 1\\ k! &amp; \equiv &amp; 0\quad k&lt;0\end{eqnarray*}"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="../../_images/math/c3dbacf2fd369dcccdbbfb2ff81a6c8519604b2c.png" alt="\[ \left(\begin{array}{c} n\\ k\end{array}\right)=\frac{n!}{\left(n-k\right)!k!}.\]"/></p>
+</div><p>If <img class="math" src="../../_images/math/79813fe3de65c5970b8c1b6eecc359c0042447ae.png" alt="n&lt;0" style="vertical-align: 0px"/> or <img class="math" src="../../_images/math/f0b043119262a2beb49176cb4beb5c50ec1915a2.png" alt="k&lt;0" style="vertical-align: 0px"/> or <img class="math" src="../../_images/math/ee5106218fe19fadcc2f2d2251da2ebea0bc8820.png" alt="k&gt;n" style="vertical-align: 0px"/> we define <img class="math" src="../../_images/math/f8b0e3af021b99a2e89c61fa2bc47f024b6dd4a8.png" alt="\left(\begin{array}{c} n\\ k\end{array}\right)=0" style="vertical-align: -18px"/></p>
+<div class="section" id="bernoulli">
+<h3>Bernoulli<a class="headerlink" href="#bernoulli" title="Permalink to this headline">¶</a></h3>
+<p>A Bernoulli random variable of parameter <img class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> takes one of only two values <img class="math" src="../../_images/math/e12632f5d3a2206ddc2a79aa17cdbbdb5f97dbd6.png" alt="X=0" style="vertical-align: 0px"/> or <img class="math" src="../../_images/math/711e806cfc420c11c59f3235cdf566c23e93ccd8.png" alt="X=1" style="vertical-align: -1px"/> . The probability of success ( <img class="math" src="../../_images/math/711e806cfc420c11c59f3235cdf566c23e93ccd8.png" alt="X=1" style="vertical-align: -1px"/> ) is <img class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> , and the probability of failure ( <img class="math" src="../../_images/math/e12632f5d3a2206ddc2a79aa17cdbbdb5f97dbd6.png" alt="X=0" style="vertical-align: 0px"/> ) is <img class="math" src="../../_images/math/390052c24b7a26435aad4e88a12af108e0b2eeb0.png" alt="1-p." style="vertical-align: -4px"/> It can be thought of as a binomial random variable with <img class="math" src="../../_images/math/1d96ecc15129c5631ba4a2c6578e91e3d13e3baf.png" alt="n=1" style="vertical-align: -1px"/> . The PMF is <img class="math" src="../../_images/math/5c9150dc0592a93bd60b669ea3b52541016b9859.png" alt="p\left(k\right)=0" style="vertical-align: -4px"/> for <img class="math" src="../../_images/math/b3bd00c70b9997671b445f23ea64454f4a227c58.png" alt="k\neq0,1" style="vertical-align: -4px"/> and</p>
+<div class="math">
+<p><img src="../../_images/math/372ec7d53501b0930dcd3b58251ec0685123e122.png" alt="\begin{eqnarray*} p\left(k;p\right) &amp; = &amp; \begin{cases} 1-p &amp; k=0\\ p &amp; k=1\end{cases}\\ F\left(x;p\right) &amp; = &amp; \begin{cases} 0 &amp; x&lt;0\\ 1-p &amp; 0\le x&lt;1\\ 1 &amp; 1\leq x\end{cases}\\ G\left(q;p\right) &amp; = &amp; \begin{cases} 0 &amp; 0\leq q&lt;1-p\\ 1 &amp; 1-p\leq q\leq1\end{cases}\\ \mu &amp; = &amp; p\\ \mu_{2} &amp; = &amp; p\left(1-p\right)\\ \gamma_{3} &amp; = &amp; \frac{1-2p}{\sqrt{p\left(1-p\right)}}\\ \gamma_{4} &amp; = &amp; \frac{1-6p\left(1-p\right)}{p\left(1-p\right)}\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/64e210e61ef7b22e2160b86106c09956d6d744c2.png" alt="\[ M\left(t\right)=1-p\left(1-e^{t}\right)\]"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/eaa152e30abc7e5b56ba9f22960df2af7103c4dc.png" alt="\[ \mu_{m}^{\prime}=p\]"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/c537e87ead7548bec393a262b458c5a26896a5bf.png" alt="\[ h\left[X\right]=p\log p+\left(1-p\right)\log\left(1-p\right)\]"/></p>
+</div></div>
+<div class="section" id="binomial">
+<h3>Binomial<a class="headerlink" href="#binomial" title="Permalink to this headline">¶</a></h3>
+<p>A binomial random variable with parameters <img class="math" src="../../_images/math/3f06eff8f07ecaba534b7feaf82281db5ecdc9e3.png" alt="\left(n,p\right)" style="vertical-align: -4px"/> can be described as the sum of <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> independent Bernoulli random variables of parameter <img class="math" src="../../_images/math/71b089ffeb427f1df8b3c40394e583cc3853b5de.png" alt="p;" style="vertical-align: -4px"/></p>
+<div class="math">
+<p><img src="../../_images/math/2758fbc02a46a37f14c2b42d119850f1d9c3be4f.png" alt="\[ Y=\sum_{i=1}^{n}X_{i}.\]"/></p>
+</div><p>Therefore, this random variable counts the number of successes in <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> independent trials of a random experiment where the probability of
+success is <img class="math" src="../../_images/math/9c6f23436a505304b2eb128a45ac703ff856cfd8.png" alt="p." style="vertical-align: -4px"/></p>
+<div class="math">
+<p><img src="../../_images/math/2963f77828be33cee9c92b2a95ed4c698e9768f9.png" alt="\begin{eqnarray*} p\left(k;n,p\right) &amp; = &amp; \left(\begin{array}{c} n\\ k\end{array}\right)p^{k}\left(1-p\right)^{n-k}\,\, k\in\left\{ 0,1,\ldots n\right\} ,\\ F\left(x;n,p\right) &amp; = &amp; \sum_{k\leq x}\left(\begin{array}{c} n\\ k\end{array}\right)p^{k}\left(1-p\right)^{n-k}=I_{1-p}\left(n-\left\lfloor x\right\rfloor ,\left\lfloor x\right\rfloor +1\right)\quad x\geq0\end{eqnarray*}"/></p>
+</div><p>where the incomplete beta integral is</p>
+<div class="math">
+<p><img src="../../_images/math/a13bf66ecf3c96a1b23954bee92be123b59ac0c2.png" alt="\[ I_{x}\left(a,b\right)=\frac{\Gamma\left(a+b\right)}{\Gamma\left(a\right)\Gamma\left(b\right)}\int_{0}^{x}t^{a-1}\left(1-t\right)^{b-1}dt.\]"/></p>
+</div><p>Now</p>
+<div class="math">
+<p><img src="../../_images/math/23979546d57cf55e5d3e15b3f084c1cb82041037.png" alt="\begin{eqnarray*} \mu &amp; = &amp; np\\ \mu_{2} &amp; = &amp; np\left(1-p\right)\\ \gamma_{1} &amp; = &amp; \frac{1-2p}{\sqrt{np\left(1-p\right)}}\\ \gamma_{2} &amp; = &amp; \frac{1-6p\left(1-p\right)}{np\left(1-p\right)}.\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/2b422facd428573b4f89130c0647b0b7914783ca.png" alt="\[ M\left(t\right)=\left[1-p\left(1-e^{t}\right)\right]^{n}\]"/></p>
+</div></div>
+<div class="section" id="boltzmann-truncated-planck">
+<h3>Boltzmann (truncated Planck)<a class="headerlink" href="#boltzmann-truncated-planck" title="Permalink to this headline">¶</a></h3>
+<div class="math">
+<p><img src="../../_images/math/98be7ed3547ec5929f5cdcf735ed2e40210adba6.png" alt="\begin{eqnarray*} p\left(k;N,\lambda\right) &amp; = &amp; \frac{1-e^{-\lambda}}{1-e^{-\lambda N}}\exp\left(-\lambda k\right)\quad k\in\left\{ 0,1,\ldots,N-1\right\} \\ F\left(x;N,\lambda\right) &amp; = &amp; \left\{ \begin{array}{cc} 0 &amp; x&lt;0\\ \frac{1-\exp\left[-\lambda\left(\left\lfloor x\right\rfloor +1\right)\right]}{1-\exp\left(-\lambda N\right)} &amp; 0\leq x\leq N-1\\ 1 &amp; x\geq N-1\end{array}\right.\\ G\left(q,\lambda\right) &amp; = &amp; \left\lceil -\frac{1}{\lambda}\log\left[1-q\left(1-e^{-\lambda N}\right)\right]-1\right\rceil \end{eqnarray*}"/></p>
+</div><p>Define <img class="math" src="../../_images/math/94e3271784842e6ae37d9bfc3e845d12fd956968.png" alt="z=e^{-\lambda}" style="vertical-align: 0px"/></p>
+<div class="math">
+<p><img src="../../_images/math/6c5bf47cd8055dfaa52eb38c1991caeabe0fb830.png" alt="\begin{eqnarray*} \mu &amp; = &amp; \frac{z}{1-z}-\frac{Nz^{N}}{1-z^{N}}\\ \mu_{2} &amp; = &amp; \frac{z}{\left(1-z\right)^{2}}-\frac{N^{2}z^{N}}{\left(1-z^{N}\right)^{2}}\\ \gamma_{1} &amp; = &amp; \frac{z\left(1+z\right)\left(\frac{1-z^{N}}{1-z}\right)^{3}-N^{3}z^{N}\left(1+z^{N}\right)}{\left[z\left(\frac{1-z^{N}}{1-z}\right)^{2}-N^{2}z^{N}\right]^{3/2}}\\ \gamma_{2} &amp; = &amp; \frac{z\left(1+4z+z^{2}\right)\left(\frac{1-z^{N}}{1-z}\right)^{4}-N^{4}z^{N}\left(1+4z^{N}+z^{2N}\right)}{\left[z\left(\frac{1-z^{N}}{1-z}\right)^{2}-N^{2}z^{N}\right]^{2}}\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/47e0b97f00c7a2d348275882a7f1244c43504301.png" alt="\[ M\left(t\right)=\frac{1-e^{N\left(t-\lambda\right)}}{1-e^{t-\lambda}}\frac{1-e^{-\lambda}}{1-e^{-\lambda N}}\]"/></p>
+</div></div>
+<div class="section" id="planck-discrete-exponential">
+<h3>Planck (discrete exponential)<a class="headerlink" href="#planck-discrete-exponential" title="Permalink to this headline">¶</a></h3>
+<p>Named Planck because of its relationship to the black-body problem he
+solved.</p>
+<div class="math">
+<p><img src="../../_images/math/e121ee51147b8a8b0d7ade8f623336d9176cd311.png" alt="\begin{eqnarray*} p\left(k;\lambda\right) &amp; = &amp; \left(1-e^{-\lambda}\right)e^{-\lambda k}\quad k\lambda\geq0\\ F\left(x;\lambda\right) &amp; = &amp; 1-e^{-\lambda\left(\left\lfloor x\right\rfloor +1\right)}\quad x\lambda\geq0\\ G\left(q;\lambda\right) &amp; = &amp; \left\lceil -\frac{1}{\lambda}\log\left[1-q\right]-1\right\rceil .\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/1bfbab8f7e922e5b58100207a6f9c31230a0ad1f.png" alt="\begin{eqnarray*} \mu &amp; = &amp; \frac{1}{e^{\lambda}-1}\\ \mu_{2} &amp; = &amp; \frac{e^{-\lambda}}{\left(1-e^{-\lambda}\right)^{2}}\\ \gamma_{1} &amp; = &amp; 2\cosh\left(\frac{\lambda}{2}\right)\\ \gamma_{2} &amp; = &amp; 4+2\cosh\left(\lambda\right)\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/1881465064a36e5ed18e50fc8dfb59dc6028b42b.png" alt="\[ M\left(t\right)=\frac{1-e^{-\lambda}}{1-e^{t-\lambda}}\]"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/42e79ca06ba63fbe9215167ce85eb56209c12da0.png" alt="\[ h\left[X\right]=\frac{\lambda e^{-\lambda}}{1-e^{-\lambda}}-\log\left(1-e^{-\lambda}\right)\]"/></p>
+</div></div>
+<div class="section" id="poisson">
+<h3>Poisson<a class="headerlink" href="#poisson" title="Permalink to this headline">¶</a></h3>
+<p>The Poisson random variable counts the number of successes in <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> independent Bernoulli trials in the limit as <img class="math" src="../../_images/math/227eba495299b32d0762b6dad3ab9a884734ebc7.png" alt="n\rightarrow\infty" style="vertical-align: -1px"/> and <img class="math" src="../../_images/math/7c2fd27f715970097392a2f38066b6b625107be8.png" alt="p\rightarrow0" style="vertical-align: -4px"/> where the probability of success in each trial is <img class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> and <img class="math" src="../../_images/math/8223091c359d2fd6f9654e2c2c93994dffb9f4cf.png" alt="np=\lambda\geq0" style="vertical-align: -4px"/> is a constant. It can be used to approximate the Binomial random
+variable or in it&#8217;s own right to count the number of events that occur
+in the interval <img class="math" src="../../_images/math/f01fd7606b284644a37301160b37bcf46d45cfa3.png" alt="\left[0,t\right]" style="vertical-align: -5px"/> for a process satisfying certain &#8220;sparsity &#8220;constraints. The functions are</p>
+<div class="math">
+<p><img src="../../_images/math/0d20972616a6da9e74834e9735304c7df37bcd01.png" alt="\begin{eqnarray*} p\left(k;\lambda\right) &amp; = &amp; e^{-\lambda}\frac{\lambda^{k}}{k!}\quad k\geq0,\\ F\left(x;\lambda\right) &amp; = &amp; \sum_{n=0}^{\left\lfloor x\right\rfloor }e^{-\lambda}\frac{\lambda^{n}}{n!}=\frac{1}{\Gamma\left(\left\lfloor x\right\rfloor +1\right)}\int_{\lambda}^{\infty}t^{\left\lfloor x\right\rfloor }e^{-t}dt,\\ \mu &amp; = &amp; \lambda\\ \mu_{2} &amp; = &amp; \lambda\\ \gamma_{1} &amp; = &amp; \frac{1}{\sqrt{\lambda}}\\ \gamma_{2} &amp; = &amp; \frac{1}{\lambda}.\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/f947b30ec15a3f50819ed543f039c1f5719ebc31.png" alt="\[ M\left(t\right)=\exp\left[\lambda\left(e^{t}-1\right)\right].\]"/></p>
+</div></div>
+<div class="section" id="geometric">
+<h3>Geometric<a class="headerlink" href="#geometric" title="Permalink to this headline">¶</a></h3>
+<p>The geometric random variable with parameter <img class="math" src="../../_images/math/505c3be50a879bca84587364f9ef835492a148d1.png" alt="p\in\left(0,1\right)" style="vertical-align: -4px"/> can be defined as the number of trials required to obtain a success
+where the probability of success on each trial is <img class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> . Thus,</p>
+<div class="math">
+<p><img src="../../_images/math/c43229d48cc5ea85e8d2808ba9049553df34278a.png" alt="\begin{eqnarray*} p\left(k;p\right) &amp; = &amp; \left(1-p\right)^{k-1}p\quad k\geq1\\ F\left(x;p\right) &amp; = &amp; 1-\left(1-p\right)^{\left\lfloor x\right\rfloor }\quad x\geq1\\ G\left(q;p\right) &amp; = &amp; \left\lceil \frac{\log\left(1-q\right)}{\log\left(1-p\right)}\right\rceil \\ \mu &amp; = &amp; \frac{1}{p}\\ \mu_{2} &amp; = &amp; \frac{1-p}{p^{2}}\\ \gamma_{1} &amp; = &amp; \frac{2-p}{\sqrt{1-p}}\\ \gamma_{2} &amp; = &amp; \frac{p^{2}-6p+6}{1-p}.\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/61df438f79b01f1b3abb94015825355ccf010ff2.png" alt="\begin{eqnarray*} M\left(t\right) &amp; = &amp; \frac{p}{e^{-t}-\left(1-p\right)}\end{eqnarray*}"/></p>
+</div></div>
+<div class="section" id="negative-binomial">
+<h3>Negative Binomial<a class="headerlink" href="#negative-binomial" title="Permalink to this headline">¶</a></h3>
+<p>The negative binomial random variable with parameters <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> and <img class="math" src="../../_images/math/505c3be50a879bca84587364f9ef835492a148d1.png" alt="p\in\left(0,1\right)" style="vertical-align: -4px"/> can be defined as the number of <em>extra</em> independent trials (beyond <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> ) required to accumulate a total of <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> successes where the probability of a success on each trial is <img class="math" src="../../_images/math/9c6f23436a505304b2eb128a45ac703ff856cfd8.png" alt="p." style="vertical-align: -4px"/> Equivalently, this random variable is the number of failures
+encoutered while accumulating <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> successes during independent trials of an experiment that succeeds
+with probability <img class="math" src="../../_images/math/9c6f23436a505304b2eb128a45ac703ff856cfd8.png" alt="p." style="vertical-align: -4px"/> Thus,</p>
+<div class="math">
+<p><img src="../../_images/math/402ff43fd78a7c7eb799e52fbe1d370e9d676fd9.png" alt="\begin{eqnarray*} p\left(k;n,p\right) &amp; = &amp; \left(\begin{array}{c} k+n-1\\ n-1\end{array}\right)p^{n}\left(1-p\right)^{k}\quad k\geq0\\ F\left(x;n,p\right) &amp; = &amp; \sum_{i=0}^{\left\lfloor x\right\rfloor }\left(\begin{array}{c} i+n-1\\ i\end{array}\right)p^{n}\left(1-p\right)^{i}\quad x\geq0\\  &amp; = &amp; I_{p}\left(n,\left\lfloor x\right\rfloor +1\right)\quad x\geq0\\ \mu &amp; = &amp; n\frac{1-p}{p}\\ \mu_{2} &amp; = &amp; n\frac{1-p}{p^{2}}\\ \gamma_{1} &amp; = &amp; \frac{2-p}{\sqrt{n\left(1-p\right)}}\\ \gamma_{2} &amp; = &amp; \frac{p^{2}+6\left(1-p\right)}{n\left(1-p\right)}.\end{eqnarray*}"/></p>
+</div><p>Recall that <img class="math" src="../../_images/math/e0ede4091062da96f811162bf1e6007e7d794973.png" alt="I_{p}\left(a,b\right)" style="vertical-align: -6px"/> is the incomplete beta integral.</p>
+</div>
+<div class="section" id="hypergeometric">
+<h3>Hypergeometric<a class="headerlink" href="#hypergeometric" title="Permalink to this headline">¶</a></h3>
+<p>The hypergeometric random variable with parameters <img class="math" src="../../_images/math/6969be51915ac1a2dbbd4a6701bfa692d4e61d67.png" alt="\left(M,n,N\right)" style="vertical-align: -4px"/> counts the number of &#8220;good &#8220;objects in a sample of size <img class="math" src="../../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> chosen without replacement from a population of <img class="math" src="../../_images/math/5d1e4485dc90c450e8c76826516c1b2ccb8fce16.png" alt="M" style="vertical-align: 0px"/> objects where <img class="math" src="../../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> is the number of &#8220;good &#8220;objects in the total population.</p>
+<div class="math">
+<p><img src="../../_images/math/f53893ea9e0515ded5f0847ebd1efc6faf55e9b6.png" alt="\begin{eqnarray*} p\left(k;N,n,M\right) &amp; = &amp; \frac{\left(\begin{array}{c} n\\ k\end{array}\right)\left(\begin{array}{c} M-n\\ N-k\end{array}\right)}{\left(\begin{array}{c} M\\ N\end{array}\right)}\quad N-\left(M-n\right)\leq k\leq\min\left(n,N\right)\\ F\left(x;N,n,M\right) &amp; = &amp; \sum_{k=0}^{\left\lfloor x\right\rfloor }\frac{\left(\begin{array}{c} m\\ k\end{array}\right)\left(\begin{array}{c} N-m\\ n-k\end{array}\right)}{\left(\begin{array}{c} N\\ n\end{array}\right)},\\ \mu &amp; = &amp; \frac{nN}{M}\\ \mu_{2} &amp; = &amp; \frac{nN\left(M-n\right)\left(M-N\right)}{M^{2}\left(M-1\right)}\\ \gamma_{1} &amp; = &amp; \frac{\left(M-2n\right)\left(M-2N\right)}{M-2}\sqrt{\frac{M-1}{nN\left(M-m\right)\left(M-n\right)}}\\ \gamma_{2} &amp; = &amp; \frac{g\left(N,n,M\right)}{nN\left(M-n\right)\left(M-3\right)\left(M-2\right)\left(N-M\right)}\end{eqnarray*}"/></p>
+</div><p>where (defining <img class="math" src="../../_images/math/8237adfedabb72345c61a216387fdc1de8e6d002.png" alt="m=M-n" style="vertical-align: 0px"/> )</p>
+<div class="math">
+<p><img src="../../_images/math/c9d6f40538462122d05fea9a9407efaf01c761f0.png" alt="\begin{eqnarray*} g\left(N,n,M\right) &amp; = &amp; m^{3}-m^{5}+3m^{2}n-6m^{3}n+m^{4}n+3mn^{2}\\  &amp;  &amp; -12m^{2}n^{2}+8m^{3}n^{2}+n^{3}-6mn^{3}+8m^{2}n^{3}\\  &amp;  &amp; +mn^{4}-n^{5}-6m^{3}N+6m^{4}N+18m^{2}nN\\  &amp;  &amp; -6m^{3}nN+18mn^{2}N-24m^{2}n^{2}N-6n^{3}N\\  &amp;  &amp; -6mn^{3}N+6n^{4}N+6m^{2}N^{2}-6m^{3}N^{2}-24mnN^{2}\\  &amp;  &amp; +12m^{2}nN^{2}+6n^{2}N^{2}+12mn^{2}N^{2}-6n^{3}N^{2}.\end{eqnarray*}"/></p>
+</div></div>
+<div class="section" id="zipf-zeta">
+<h3>Zipf (Zeta)<a class="headerlink" href="#zipf-zeta" title="Permalink to this headline">¶</a></h3>
+<p>A random variable has the zeta distribution (also called the zipf
+distribution) with parameter <img class="math" src="../../_images/math/10e5c2c9ab2bb89e782a30b00efd156e8c0bae7b.png" alt="\alpha&gt;1" style="vertical-align: -1px"/> if it&#8217;s probability mass function is given by</p>
+<div class="math">
+<p><img src="../../_images/math/d331cc9f1998ff9d91c3cb2f6e40e0c5d4484081.png" alt="\begin{eqnarray*} p\left(k;\alpha\right) &amp; = &amp; \frac{1}{\zeta\left(\alpha\right)k^{\alpha}}\quad k\geq1\end{eqnarray*}"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="../../_images/math/85be0c97af0cbcb56fde029bd9604821e6e4de18.png" alt="\[ \zeta\left(\alpha\right)=\sum_{n=1}^{\infty}\frac{1}{n^{\alpha}}\]"/></p>
+</div><p>is the Riemann zeta function. Other functions of this distribution are</p>
+<div class="math">
+<p><img src="../../_images/math/0ceb5a27d26e2be8e9611890d85ab90f20a99b00.png" alt="\begin{eqnarray*} F\left(x;\alpha\right) &amp; = &amp; \frac{1}{\zeta\left(\alpha\right)}\sum_{k=1}^{\left\lfloor x\right\rfloor }\frac{1}{k^{\alpha}}\\ \mu &amp; = &amp; \frac{\zeta_{1}}{\zeta_{0}}\quad\alpha&gt;2\\ \mu_{2} &amp; = &amp; \frac{\zeta_{2}\zeta_{0}-\zeta_{1}^{2}}{\zeta_{0}^{2}}\quad\alpha&gt;3\\ \gamma_{1} &amp; = &amp; \frac{\zeta_{3}\zeta_{0}^{2}-3\zeta_{0}\zeta_{1}\zeta_{2}+2\zeta_{1}^{3}}{\left[\zeta_{2}\zeta_{0}-\zeta_{1}^{2}\right]^{3/2}}\quad\alpha&gt;4\\ \gamma_{2} &amp; = &amp; \frac{\zeta_{4}\zeta_{0}^{3}-4\zeta_{3}\zeta_{1}\zeta_{0}^{2}+12\zeta_{2}\zeta_{1}^{2}\zeta_{0}-6\zeta_{1}^{4}-3\zeta_{2}^{2}\zeta_{0}^{2}}{\left(\zeta_{2}\zeta_{0}-\zeta_{1}^{2}\right)^{2}}.\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/a3c8ec971cef435a4d3231e8ff26c193b6d154c3.png" alt="\begin{eqnarray*} M\left(t\right) &amp; = &amp; \frac{\textrm{Li}_{\alpha}\left(e^{t}\right)}{\zeta\left(\alpha\right)}\end{eqnarray*}"/></p>
+</div><p>where <img class="math" src="../../_images/math/848be3dec8106fb93e6c92ce35a0b4c78cf7ee0e.png" alt="\zeta_{i}=\zeta\left(\alpha-i\right)" style="vertical-align: -4px"/> and <img class="math" src="../../_images/math/4b482850d5213dc498fbc8fcddf80c6dc9cc42ef.png" alt="\textrm{Li}_{n}\left(z\right)" style="vertical-align: -4px"/> is the <img class="math" src="../../_images/math/2031ce028f76e6eac74e8bd457414fe9e891626a.png" alt="n^{\textrm{th}}" style="vertical-align: 0px"/> polylogarithm function of <img class="math" src="../../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" style="vertical-align: 0px"/> defined as</p>
+<div class="math">
+<p><img src="../../_images/math/228346a20c361fd78cff7e9767617b9a27db8aae.png" alt="\[ \textrm{Li}_{n}\left(z\right)\equiv\sum_{k=1}^{\infty}\frac{z^{k}}{k^{n}}\]"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/c1bae94050ff138a04705e2e3b67b8dc60cacf1a.png" alt="\[ \mu_{n}^{\prime}=\left.M^{\left(n\right)}\left(t\right)\right|_{t=0}=\left.\frac{\textrm{Li}_{\alpha-n}\left(e^{t}\right)}{\zeta\left(a\right)}\right|_{t=0}=\frac{\zeta\left(\alpha-n\right)}{\zeta\left(\alpha\right)}\]"/></p>
+</div></div>
+<div class="section" id="logarithmic-log-series-series">
+<h3>Logarithmic (Log-Series, Series)<a class="headerlink" href="#logarithmic-log-series-series" title="Permalink to this headline">¶</a></h3>
+<p>The logarimthic distribution with parameter <img class="math" src="../../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" style="vertical-align: -4px"/> has a probability mass function with terms proportional to the Taylor
+series expansion of <img class="math" src="../../_images/math/bbd05178231498a5e6278f021d65726d4f7eef7b.png" alt="\log\left(1-p\right)" style="vertical-align: -4px"/></p>
+<div class="math">
+<p><img src="../../_images/math/2117a87d56128e3b229ecb0e10ec3dc12ba866e2.png" alt="\begin{eqnarray*} p\left(k;p\right) &amp; = &amp; -\frac{p^{k}}{k\log\left(1-p\right)}\quad k\geq1\\ F\left(x;p\right) &amp; = &amp; -\frac{1}{\log\left(1-p\right)}\sum_{k=1}^{\left\lfloor x\right\rfloor }\frac{p^{k}}{k}=1+\frac{p^{1+\left\lfloor x\right\rfloor }\Phi\left(p,1,1+\left\lfloor x\right\rfloor \right)}{\log\left(1-p\right)}\end{eqnarray*}"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="../../_images/math/b706279a5e18e00eef82f824e8fda8079e7343e1.png" alt="\[ \Phi\left(z,s,a\right)=\sum_{k=0}^{\infty}\frac{z^{k}}{\left(a+k\right)^{s}}\]"/></p>
+</div><p>is the Lerch Transcendent. Also define <img class="math" src="../../_images/math/f9f504ca5a0cbb99562167baa86edc49848e0c59.png" alt="r=\log\left(1-p\right)" style="vertical-align: -4px"/></p>
+<div class="math">
+<p><img src="../../_images/math/5a090fa6f38b36c8b30f3198cefc882c2e50d7d4.png" alt="\begin{eqnarray*} \mu &amp; = &amp; -\frac{p}{\left(1-p\right)r}\\ \mu_{2} &amp; = &amp; -\frac{p\left[p+r\right]}{\left(1-p\right)^{2}r^{2}}\\ \gamma_{1} &amp; = &amp; -\frac{2p^{2}+3pr+\left(1+p\right)r^{2}}{r\left(p+r\right)\sqrt{-p\left(p+r\right)}}r\\ \gamma_{2} &amp; = &amp; -\frac{6p^{3}+12p^{2}r+p\left(4p+7\right)r^{2}+\left(p^{2}+4p+1\right)r^{3}}{p\left(p+r\right)^{2}}.\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/dbbee36d5c83197298154ad1f80c7c342bcaf6b4.png" alt="\begin{eqnarray*} M\left(t\right) &amp; = &amp; -\frac{1}{\log\left(1-p\right)}\sum_{k=1}^{\infty}\frac{e^{tk}p^{k}}{k}\\  &amp; = &amp; \frac{\log\left(1-pe^{t}\right)}{\log\left(1-p\right)}\end{eqnarray*}"/></p>
+</div><p>Thus,</p>
+<div class="math">
+<p><img src="../../_images/math/39751e8194dd699b4f32df9b8f36749eef96e43b.png" alt="\[ \mu_{n}^{\prime}=\left.M^{\left(n\right)}\left(t\right)\right|_{t=0}=\left.\frac{\textrm{Li}_{1-n}\left(pe^{t}\right)}{\log\left(1-p\right)}\right|_{t=0}=-\frac{\textrm{Li}_{1-n}\left(p\right)}{\log\left(1-p\right)}.\]"/></p>
+</div></div>
+<div class="section" id="discrete-uniform-randint">
+<h3>Discrete Uniform (randint)<a class="headerlink" href="#discrete-uniform-randint" title="Permalink to this headline">¶</a></h3>
+<p>The discrete uniform distribution with parameters <img class="math" src="../../_images/math/e31878983c07e2bc27b39179c96008d810937e1b.png" alt="\left(a,b\right)" style="vertical-align: -4px"/> constructs a random variable that has an equal probability of being
+any one of the integers in the half-open range <img class="math" src="../../_images/math/1feb8d51c080f531b1fa21f4210fc61f9924d577.png" alt="[a,b)." style="vertical-align: -5px"/> If <img class="math" src="../../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" style="vertical-align: 0px"/> is not given it is assumed to be zero and the only parameter is <img class="math" src="../../_images/math/6583a799ce46b06b1cceb493abb45a07c88fd6c4.png" alt="b." style="vertical-align: 0px"/> Therefore,</p>
+<div class="math">
+<p><img src="../../_images/math/7931d6c257b2eb15e1e13551c1e97338ea5aee95.png" alt="\begin{eqnarray*} p\left(k;a,b\right) &amp; = &amp; \frac{1}{b-a}\quad a\leq k&lt;b\\ F\left(x;a,b\right) &amp; = &amp; \frac{\left\lfloor x\right\rfloor -a}{b-a}\quad a\leq x\leq b\\ G\left(q;a,b\right) &amp; = &amp; \left\lceil q\left(b-a\right)+a\right\rceil \\ \mu &amp; = &amp; \frac{b+a-1}{2}\\ \mu_{2} &amp; = &amp; \frac{\left(b-a-1\right)\left(b-a+1\right)}{12}\\ \gamma_{1} &amp; = &amp; 0\\ \gamma_{2} &amp; = &amp; -\frac{6}{5}\frac{\left(b-a\right)^{2}+1}{\left(b-a-1\right)\left(b-a+1\right)}.\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/969a618ba71f223755d03fe36a34506c268e08d2.png" alt="\begin{eqnarray*} M\left(t\right) &amp; = &amp; \frac{1}{b-a}\sum_{k=a}^{b-1}e^{tk}\\  &amp; = &amp; \frac{e^{bt}-e^{at}}{\left(b-a\right)\left(e^{t}-1\right)}\end{eqnarray*}"/></p>
+</div></div>
+<div class="section" id="discrete-laplacian">
+<h3>Discrete Laplacian<a class="headerlink" href="#discrete-laplacian" title="Permalink to this headline">¶</a></h3>
+<p>Defined over all integers for <img class="math" src="../../_images/math/4c28242522f23e896074dc89612847f8317911d7.png" alt="a&gt;0" style="vertical-align: 0px"/></p>
+<div class="math">
+<p><img src="../../_images/math/5a010dd265d8c70e6d80ff9fa85f0438217b0eba.png" alt="\begin{eqnarray*} p\left(k\right) &amp; = &amp; \tanh\left(\frac{a}{2}\right)e^{-a\left|k\right|},\\ F\left(x\right) &amp; = &amp; \left\{ \begin{array}{cc} \frac{e^{a\left(\left\lfloor x\right\rfloor +1\right)}}{e^{a}+1} &amp; \left\lfloor x\right\rfloor &lt;0,\\ 1-\frac{e^{-a\left\lfloor x\right\rfloor }}{e^{a}+1} &amp; \left\lfloor x\right\rfloor \geq0.\end{array}\right.\\ G\left(q\right) &amp; = &amp; \left\{ \begin{array}{cc} \left\lceil \frac{1}{a}\log\left[q\left(e^{a}+1\right)\right]-1\right\rceil  &amp; q&lt;\frac{1}{1+e^{-a}},\\ \left\lceil -\frac{1}{a}\log\left[\left(1-q\right)\left(1+e^{a}\right)\right]\right\rceil  &amp; q\geq\frac{1}{1+e^{-a}}.\end{array}\right.\end{eqnarray*}"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/5a749ada9b13176bab05e87a3be924fd6907bc5a.png" alt="\begin{eqnarray*} M\left(t\right) &amp; = &amp; \tanh\left(\frac{a}{2}\right)\sum_{k=-\infty}^{\infty}e^{tk}e^{-a\left|k\right|}\\  &amp; = &amp; C\left(1+\sum_{k=1}^{\infty}e^{-\left(t+a\right)k}+\sum_{1}^{\infty}e^{\left(t-a\right)k}\right)\\  &amp; = &amp; \tanh\left(\frac{a}{2}\right)\left(1+\frac{e^{-\left(t+a\right)}}{1-e^{-\left(t+a\right)}}+\frac{e^{t-a}}{1-e^{t-a}}\right)\\  &amp; = &amp; \frac{\tanh\left(\frac{a}{2}\right)\sinh a}{\cosh a-\cosh t}.\end{eqnarray*}"/></p>
+</div><p>Thus,</p>
+<div class="math">
+<p><img src="../../_images/math/93247ecaacd168f9d5e2274fb95d6dc67daf26d3.png" alt="\[ \mu_{n}^{\prime}=M^{\left(n\right)}\left(0\right)=\left[1+\left(-1\right)^{n}\right]\textrm{Li}_{-n}\left(e^{-a}\right)\]"/></p>
+</div><p>where <img class="math" src="../../_images/math/4fc83930d01d5184e88e124c198068bc7295e6a6.png" alt="\textrm{Li}_{-n}\left(z\right)" style="vertical-align: -4px"/> is the polylogarithm function of order <img class="math" src="../../_images/math/6ee5df0d5b6736df591c2c12ce45cf2d71bba5e7.png" alt="-n" style="vertical-align: 0px"/> evaluated at <img class="math" src="../../_images/math/1c0a7013ecf089e9a9e98f59b01428e7fee4be86.png" alt="z." style="vertical-align: 0px"/></p>
+<div class="math">
+<p><img src="../../_images/math/1b550b4afd022c5982e56bda26a5c4d194669ee0.png" alt="\[ h\left[X\right]=-\log\left(\tanh\left(\frac{a}{2}\right)\right)+\frac{a}{\sinh a}\]"/></p>
+</div></div>
+<div class="section" id="discrete-gaussian">
+<h3>Discrete Gaussian*<a class="headerlink" href="#discrete-gaussian" title="Permalink to this headline">¶</a></h3>
+<p>Defined for all <img class="math" src="../../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu" style="vertical-align: -4px"/> and <img class="math" src="../../_images/math/e92b0a26229a4346959b0fcf78aa756f44da588b.png" alt="\lambda&gt;0" style="vertical-align: 0px"/> and <img class="math" src="../../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" style="vertical-align: 0px"/></p>
+<div class="math">
+<p><img src="../../_images/math/23f127acffd95fb6b8ecb8263c715b49fa9c442f.png" alt="\[ p\left(k;\mu,\lambda\right)=\frac{1}{Z\left(\lambda\right)}\exp\left[-\lambda\left(k-\mu\right)^{2}\right]\]"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="../../_images/math/f77b4c674d31ed96554435c8e9165eaf32a36467.png" alt="\[ Z\left(\lambda\right)=\sum_{k=-\infty}^{\infty}\exp\left[-\lambda k^{2}\right]\]"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/78a5aa1aa47f926d869e0eaa547bba836a761829.png" alt="\begin{eqnarray*} \mu &amp; = &amp; \mu\\ \mu_{2} &amp; = &amp; -\frac{\partial}{\partial\lambda}\log Z\left(\lambda\right)\\  &amp; = &amp; G\left(\lambda\right)e^{-\lambda}\end{eqnarray*}"/></p>
+</div><p>where <img class="math" src="../../_images/math/2a82aab8fb9bf876d3da988b710eb004a61ed8bc.png" alt="G\left(0\right)\rightarrow\infty" style="vertical-align: -4px"/> and <img class="math" src="../../_images/math/606e1fae63962186d7bfc00b0d9306604560b693.png" alt="G\left(\infty\right)\rightarrow2" style="vertical-align: -4px"/> with a minimum less than 2 near <img class="math" src="../../_images/math/c932ecfb55276fff7c312aa00a4b564c3ec42fc3.png" alt="\lambda=1" style="vertical-align: -1px"/></p>
+<div class="math">
+<p><img src="../../_images/math/47d8408507e846532029b5005f276728483490dd.png" alt="\[ G\left(\lambda\right)=\frac{1}{Z\left(\lambda\right)}\sum_{k=-\infty}^{\infty}k^{2}\exp\left[-\lambda\left(k+1\right)\left(k-1\right)\right]\]"/></p>
+</div></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Discrete Statistical Distributions</a><ul>
+<li><a class="reference internal" href="#probability-mass-function-pmf">Probability Mass Function (PMF)</a></li>
+<li><a class="reference internal" href="#cumulative-distribution-function-cdf">Cumulative Distribution Function (CDF)</a></li>
+<li><a class="reference internal" href="#survival-function">Survival Function</a></li>
+<li><a class="reference internal" href="#percent-point-function-inverse-cdf">Percent Point Function (Inverse CDF)</a></li>
+<li><a class="reference internal" href="#inverse-survival-function">Inverse survival function</a></li>
+<li><a class="reference internal" href="#hazard-functions">Hazard functions</a></li>
+<li><a class="reference internal" href="#moments">Moments</a></li>
+<li><a class="reference internal" href="#moment-generating-function">Moment generating function</a></li>
+<li><a class="reference internal" href="#fitting-data">Fitting data</a></li>
+<li><a class="reference internal" href="#standard-notation-for-mean">Standard notation for mean</a></li>
+<li><a class="reference internal" href="#combinations">Combinations</a><ul>
+<li><a class="reference internal" href="#bernoulli">Bernoulli</a></li>
+<li><a class="reference internal" href="#binomial">Binomial</a></li>
+<li><a class="reference internal" href="#boltzmann-truncated-planck">Boltzmann (truncated Planck)</a></li>
+<li><a class="reference internal" href="#planck-discrete-exponential">Planck (discrete exponential)</a></li>
+<li><a class="reference internal" href="#poisson">Poisson</a></li>
+<li><a class="reference internal" href="#geometric">Geometric</a></li>
+<li><a class="reference internal" href="#negative-binomial">Negative Binomial</a></li>
+<li><a class="reference internal" href="#hypergeometric">Hypergeometric</a></li>
+<li><a class="reference internal" href="#zipf-zeta">Zipf (Zeta)</a></li>
+<li><a class="reference internal" href="#logarithmic-log-series-series">Logarithmic (Log-Series, Series)</a></li>
+<li><a class="reference internal" href="#discrete-uniform-randint">Discrete Uniform (randint)</a></li>
+<li><a class="reference internal" href="#discrete-laplacian">Discrete Laplacian</a></li>
+<li><a class="reference internal" href="#discrete-gaussian">Discrete Gaussian*</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

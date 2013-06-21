@@ -1,0 +1,191 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.interpolate.BarycentricInterpolator &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Interpolation (scipy.interpolate)" href="../interpolate.html" />
+    <link rel="next" title="scipy.interpolate.BarycentricInterpolator.__call__" href="scipy.interpolate.BarycentricInterpolator.__call__.html" />
+    <link rel="prev" title="scipy.interpolate.interp1d.__call__" href="scipy.interpolate.interp1d.__call__.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.interpolate.BarycentricInterpolator.__call__.html" title="scipy.interpolate.BarycentricInterpolator.__call__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.interpolate.interp1d.__call__.html" title="scipy.interpolate.interp1d.__call__"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../interpolate.html" accesskey="U">Interpolation (<tt class="docutils literal docutils literal"><span class="pre">scipy.interpolate</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-interpolate-barycentricinterpolator">
+<h1>scipy.interpolate.BarycentricInterpolator<a class="headerlink" href="#scipy-interpolate-barycentricinterpolator" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.interpolate.BarycentricInterpolator">
+<em class="property">class </em><tt class="descclassname">scipy.interpolate.</tt><tt class="descname">BarycentricInterpolator</tt><big>(</big><em>xi</em>, <em>yi=None</em>, <em>axis=0</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/interpolate/polyint.py#L426"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.interpolate.BarycentricInterpolator" title="Permalink to this definition">¶</a></dt>
+<dd><p>The interpolating polynomial for a set of points</p>
+<p>Constructs a polynomial that passes through a given set of points.
+Allows evaluation of the polynomial, efficient changing of the y
+values to be interpolated, and updating by adding more x values.
+For reasons of numerical stability, this function does not compute
+the coefficients of the polynomial.</p>
+<p>The values yi need to be provided before the function is
+evaluated, but none of the preprocessing depends on them, so rapid
+updates are possible.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>xi</strong> : array-like</p>
+<blockquote>
+<div><p>1-d array of x coordinates of the points the polynomial
+should pass through</p>
+</div></blockquote>
+<p><strong>yi</strong> : array-like</p>
+<blockquote>
+<div><p>The y coordinates of the points the polynomial should pass through.
+If None, the y values will be supplied later via the <em class="xref py py-obj">set_y</em> method.</p>
+</div></blockquote>
+<p><strong>axis</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>Axis in the yi array corresponding to the x-coordinate values.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This class uses a &#8220;barycentric interpolation&#8221; method that treats
+the problem as a special case of rational function interpolation.
+This algorithm is quite stable, numerically, but even in a world of
+exact computation, unless the x coordinates are chosen very
+carefully - Chebyshev zeros (e.g. cos(i*pi/n)) are a good choice -
+polynomial interpolation itself is a very ill-conditioned process
+due to the Runge phenomenon.</p>
+<p>Based on Berrut and Trefethen 2004, &#8220;Barycentric Lagrange Interpolation&#8221;.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.interpolate.BarycentricInterpolator.__call__.html#scipy.interpolate.BarycentricInterpolator.__call__" title="scipy.interpolate.BarycentricInterpolator.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(x)</td>
+<td>Evaluate the interpolating polynomial at the points x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.interpolate.BarycentricInterpolator.add_xi.html#scipy.interpolate.BarycentricInterpolator.add_xi" title="scipy.interpolate.BarycentricInterpolator.add_xi"><tt class="xref py py-obj docutils literal"><span class="pre">add_xi</span></tt></a>(xi[,&nbsp;yi])</td>
+<td>Add more x values to the set to be interpolated</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.interpolate.BarycentricInterpolator.set_yi.html#scipy.interpolate.BarycentricInterpolator.set_yi" title="scipy.interpolate.BarycentricInterpolator.set_yi"><tt class="xref py py-obj docutils literal"><span class="pre">set_yi</span></tt></a>(yi[,&nbsp;axis])</td>
+<td>Update the y values to be interpolated</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.interpolate.interp1d.__call__.html"
+                        title="previous chapter">scipy.interpolate.interp1d.__call__</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.interpolate.BarycentricInterpolator.__call__.html"
+                        title="next chapter">scipy.interpolate.BarycentricInterpolator.__call__</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.interpolate.BarycentricInterpolator.__call__.html" title="scipy.interpolate.BarycentricInterpolator.__call__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.interpolate.interp1d.__call__.html" title="scipy.interpolate.interp1d.__call__"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../interpolate.html" >Interpolation (<tt class="docutils literal docutils literal"><span class="pre">scipy.interpolate</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

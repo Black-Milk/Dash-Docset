@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Demo of affinity propagation clustering algorithm &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../../index.html" />
+    <link rel="up" title="Examples" href="../index.html" />
+    <link rel="next" title="Segmenting the picture of Lena in regions" href="plot_lena_segmentation.html" />
+    <link rel="prev" title="Feature agglomeration" href="plot_digits_agglomeration.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../../install.html">Download</a></li>
+            <li><a href="../../support.html">Support</a></li>
+            <li><a href="../../user_guide.html">User Guide</a></li>
+            <li><a href="../index.html">Examples</a></li>
+            <li><a href="../../modules/classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="plot_digits_agglomeration.html" title="Feature agglomeration"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    Feature agglomer...
+	    </span>
+	    <span class="hiddenrellink">
+	    Feature agglomeration
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="plot_lena_segmentation.html" title="Segmenting the picture of Lena in regions"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    Segmenting the p...
+	    </span>
+	    <span class="hiddenrellink">
+	    Segmenting the picture of Lena in regions
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../index.html" title="Examples" >
+	Up
+	<br>
+	<span class="smallrellink">
+	Examples
+	</span>
+	<span class="hiddenrellink">
+	Examples
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">Demo of affinity propagation clustering algorithm</a></li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="demo-of-affinity-propagation-clustering-algorithm">
+<span id="example-cluster-plot-affinity-propagation-py"></span><h1>Demo of affinity propagation clustering algorithm<a class="headerlink" href="#demo-of-affinity-propagation-clustering-algorithm" title="Permalink to this headline">¶</a></h1>
+<p>Reference:
+Brendan J. Frey and Delbert Dueck, &#8220;Clustering by Passing Messages
+Between Data Points&#8221;, Science Feb. 2007</p>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../../_downloads/plot_affinity_propagation.py"><tt class="xref download docutils literal"><span class="pre">plot_affinity_propagation.py</span></tt></a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <a href="../../modules/generated/sklearn.cluster.AffinityPropagation.html#sklearn.cluster.AffinityPropagation"><span class="n">AffinityPropagation</span></a>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets.samples_generator</span> <span class="kn">import</span> <a href="../../modules/generated/sklearn.datasets.make_blobs.html#sklearn.datasets.make_blobs"><span class="n">make_blobs</span></a>
+
+<span class="c">##############################################################################</span>
+<span class="c"># Generate sample data</span>
+<span class="n">centers</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">labels_true</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.datasets.make_blobs.html#sklearn.datasets.make_blobs"><span class="n">make_blobs</span></a><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="n">centers</span><span class="p">,</span> <span class="n">cluster_std</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                            <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c">##############################################################################</span>
+<span class="c"># Compute Affinity Propagation</span>
+<a href="../../modules/generated/sklearn.cluster.AffinityPropagation.html#sklearn.cluster.AffinityPropagation"><span class="n">af</span></a> <span class="o">=</span> <a href="../../modules/generated/sklearn.cluster.AffinityPropagation.html#sklearn.cluster.AffinityPropagation"><span class="n">AffinityPropagation</span></a><span class="p">(</span><span class="n">preference</span><span class="o">=-</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">cluster_centers_indices</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.cluster.AffinityPropagation.html#sklearn.cluster.AffinityPropagation"><span class="n">af</span></a><span class="o">.</span><span class="n">cluster_centers_indices_</span>
+<span class="n">labels</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.cluster.AffinityPropagation.html#sklearn.cluster.AffinityPropagation"><span class="n">af</span></a><span class="o">.</span><span class="n">labels_</span>
+
+<span class="n">n_clusters_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_centers_indices</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Estimated number of clusters: </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">n_clusters_</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Homogeneity: </span><span class="si">%0.3f</span><span class="s">&quot;</span> <span class="o">%</span> <a href="../../modules/generated/sklearn.metrics.homogeneity_score.html#sklearn.metrics.homogeneity_score"><span class="n">metrics</span><span class="o">.</span><span class="n">homogeneity_score</span></a><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Completeness: </span><span class="si">%0.3f</span><span class="s">&quot;</span> <span class="o">%</span> <a href="../../modules/generated/sklearn.metrics.completeness_score.html#sklearn.metrics.completeness_score"><span class="n">metrics</span><span class="o">.</span><span class="n">completeness_score</span></a><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;V-measure: </span><span class="si">%0.3f</span><span class="s">&quot;</span> <span class="o">%</span> <a href="../../modules/generated/sklearn.metrics.v_measure_score.html#sklearn.metrics.v_measure_score"><span class="n">metrics</span><span class="o">.</span><span class="n">v_measure_score</span></a><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Adjusted Rand Index: </span><span class="si">%0.3f</span><span class="s">&quot;</span>
+      <span class="o">%</span> <a href="../../modules/generated/sklearn.metrics.adjusted_rand_score.html#sklearn.metrics.adjusted_rand_score"><span class="n">metrics</span><span class="o">.</span><span class="n">adjusted_rand_score</span></a><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Adjusted Mutual Information: </span><span class="si">%0.3f</span><span class="s">&quot;</span>
+      <span class="o">%</span> <a href="../../modules/generated/sklearn.metrics.adjusted_mutual_info_score.html#sklearn.metrics.adjusted_mutual_info_score"><span class="n">metrics</span><span class="o">.</span><span class="n">adjusted_mutual_info_score</span></a><span class="p">(</span><span class="n">labels_true</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Silhouette Coefficient: </span><span class="si">%0.3f</span><span class="s">&quot;</span>
+      <span class="o">%</span> <a href="../../modules/generated/sklearn.metrics.silhouette_score.html#sklearn.metrics.silhouette_score"><span class="n">metrics</span><span class="o">.</span><span class="n">silhouette_score</span></a><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s">&#39;sqeuclidean&#39;</span><span class="p">))</span>
+
+<span class="c">##############################################################################</span>
+<span class="c"># Plot result</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">cycle</span>
+
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.close"><span class="n">pl</span><span class="o">.</span><span class="n">close</span></a><span class="p">(</span><span class="s">&#39;all&#39;</span><span class="p">)</span>
+<a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure"><span class="n">pl</span><span class="o">.</span><span class="n">figure</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.clf"><span class="n">pl</span><span class="o">.</span><span class="n">clf</span></a><span class="p">()</span>
+
+<span class="n">colors</span> <span class="o">=</span> <span class="n">cycle</span><span class="p">(</span><span class="s">&#39;bgrcmykbgrcmykbgrcmykbgrcmyk&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_clusters_</span><span class="p">),</span> <span class="n">colors</span><span class="p">):</span>
+    <span class="n">class_members</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="n">k</span>
+    <span class="n">cluster_center</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">cluster_centers_indices</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span>
+    <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot"><span class="n">pl</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">class_members</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">class_members</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">col</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot"><span class="n">pl</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">cluster_center</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cluster_center</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+            <span class="n">markeredgecolor</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">[</span><span class="n">class_members</span><span class="p">]:</span>
+        <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot"><span class="n">pl</span><span class="o">.</span><span class="n">plot</span></a><span class="p">([</span><span class="n">cluster_center</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">cluster_center</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">col</span><span class="p">)</span>
+
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.title"><span class="n">pl</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="s">&#39;Estimated number of clusters: </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">n_clusters_</span><span class="p">)</span>
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.show"><span class="n">pl</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../../_sources/auto_examples/cluster/plot_affinity_propagation.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="plot_digits_agglomeration.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="plot_lena_segmentation.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

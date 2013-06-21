@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.cluster.vq.whiten &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="K-means clustering and vector quantization (scipy.cluster.vq)" href="../cluster.vq.html" />
+    <link rel="next" title="scipy.cluster.vq.vq" href="scipy.cluster.vq.vq.html" />
+    <link rel="prev" title="scipy.cluster.vq.kmeans2" href="scipy.cluster.vq.kmeans2.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.vq.vq.html" title="scipy.cluster.vq.vq"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.vq.kmeans2.html" title="scipy.cluster.vq.kmeans2"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../cluster.html" >Clustering package (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster</span></tt>)</a> &raquo;</li>
+          <li><a href="../cluster.vq.html" accesskey="U">K-means clustering and vector quantization (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster.vq</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-cluster-vq-whiten">
+<h1>scipy.cluster.vq.whiten<a class="headerlink" href="#scipy-cluster-vq-whiten" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.cluster.vq.whiten">
+<tt class="descclassname">scipy.cluster.vq.</tt><tt class="descname">whiten</tt><big>(</big><em>obs</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/cluster/vq.py#L92"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.cluster.vq.whiten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize a group of observations on a per feature basis.</p>
+<p>Before running k-means, it is beneficial to rescale each feature
+dimension of the observation set with whitening. Each feature is
+divided by its standard deviation across all observations to give
+it unit variance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>obs</strong> : ndarray</p>
+<blockquote>
+<div><p>Each row of the array is an observation.  The
+columns are the features seen during each observation.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c">#         f0    f1    f2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span> <span class="o">=</span> <span class="p">[[</span>  <span class="mf">1.</span><span class="p">,</span>   <span class="mf">1.</span><span class="p">,</span>   <span class="mf">1.</span><span class="p">],</span>  <span class="c">#o0</span>
+<span class="gp">... </span>       <span class="p">[</span>  <span class="mf">2.</span><span class="p">,</span>   <span class="mf">2.</span><span class="p">,</span>   <span class="mf">2.</span><span class="p">],</span>  <span class="c">#o1</span>
+<span class="gp">... </span>       <span class="p">[</span>  <span class="mf">3.</span><span class="p">,</span>   <span class="mf">3.</span><span class="p">,</span>   <span class="mf">3.</span><span class="p">],</span>  <span class="c">#o2</span>
+<span class="gp">... </span>       <span class="p">[</span>  <span class="mf">4.</span><span class="p">,</span>   <span class="mf">4.</span><span class="p">,</span>   <span class="mf">4.</span><span class="p">]])</span> <span class="c">#o3</span>
+</pre></div>
+</div>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>result</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Contains the values in <em class="xref py py-obj">obs</em> scaled by the standard deviation
+of each column.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.cluster.vq</span> <span class="kn">import</span> <span class="n">whiten</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.9</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whiten</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+<span class="go">array([[ 4.17944278,  2.69811351,  7.21248917],</span>
+<span class="go">       [ 3.29956009,  2.93273208,  9.33380951],</span>
+<span class="go">       [ 1.75976538,  0.7038557 ,  7.21248917]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.cluster.vq.kmeans2.html"
+                        title="previous chapter">scipy.cluster.vq.kmeans2</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.cluster.vq.vq.html"
+                        title="next chapter">scipy.cluster.vq.vq</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.vq.vq.html" title="scipy.cluster.vq.vq"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.cluster.vq.kmeans2.html" title="scipy.cluster.vq.kmeans2"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../cluster.html" >Clustering package (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster</span></tt>)</a> &raquo;</li>
+          <li><a href="../cluster.vq.html" >K-means clustering and vector quantization (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.cluster.vq</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.stats.binned_statistic &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Statistical functions (scipy.stats)" href="../stats.html" />
+    <link rel="next" title="scipy.stats.binned_statistic_2d" href="scipy.stats.binned_statistic_2d.html" />
+    <link rel="prev" title="scipy.stats.relfreq" href="scipy.stats.relfreq.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.stats.binned_statistic_2d.html" title="scipy.stats.binned_statistic_2d"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.stats.relfreq.html" title="scipy.stats.relfreq"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../stats.html" accesskey="U">Statistical functions (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.stats</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-stats-binned-statistic">
+<h1>scipy.stats.binned_statistic<a class="headerlink" href="#scipy-stats-binned-statistic" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.stats.binned_statistic">
+<tt class="descclassname">scipy.stats.</tt><tt class="descname">binned_statistic</tt><big>(</big><em>x</em>, <em>values</em>, <em>statistic='mean'</em>, <em>bins=10</em>, <em>range=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/stats/_binned_statistic.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.stats.binned_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a binned statistic for a set of data.</p>
+<p>This is a generalization of a histogram function.  A histogram divides
+the space into bins, and returns the count of the number of points in
+each bin.  This function allows the computation of the sum, mean, median,
+or other statistic of the values within each bin.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.11.0.</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>x</strong> : array_like</p>
+<blockquote>
+<div><p>A sequence of values to be binned.</p>
+</div></blockquote>
+<p><strong>values</strong> : array_like</p>
+<blockquote>
+<div><p>The values on which the statistic will be computed.  This must be
+the same shape as <em class="xref py py-obj">x</em>.</p>
+</div></blockquote>
+<p><strong>statistic</strong> : string or callable, optional</p>
+<blockquote>
+<div><p>The statistic to compute (default is &#8216;mean&#8217;).
+The following statistics are available:</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8216;mean&#8217; : compute the mean of values for points within each bin.
+Empty bins will be represented by NaN.</li>
+<li>&#8216;median&#8217; : compute the median of values for points within each
+bin. Empty bins will be represented by NaN.</li>
+<li>&#8216;count&#8217; : compute the count of points within each bin.  This is
+identical to an unweighted histogram.  <em class="xref py py-obj">values</em> array is not
+referenced.</li>
+<li>&#8216;sum&#8217; : compute the sum of values for points within each bin.
+This is identical to a weighted histogram.</li>
+<li>function : a user-defined function which takes a 1D array of
+values, and outputs a single numerical statistic. This function
+will be called on the values in each bin.  Empty bins will be
+represented by function([]), or NaN if this returns an error.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p><strong>bins</strong> : int or sequence of scalars, optional</p>
+<blockquote>
+<div><p>If <em class="xref py py-obj">bins</em> is an int, it defines the number of equal-width
+bins in the given range (10, by default). If <em class="xref py py-obj">bins</em> is a sequence,
+it defines the bin edges, including the rightmost edge, allowing
+for non-uniform bin widths.</p>
+</div></blockquote>
+<p><strong>range</strong> : (float, float), optional</p>
+<blockquote>
+<div><p>The lower and upper range of the bins.  If not provided, range
+is simply <tt class="docutils literal"><span class="pre">(x.min(),</span> <span class="pre">x.max())</span></tt>.  Values outside the range are
+ignored.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>statistic</strong> : array</p>
+<blockquote>
+<div><p>The values of the selected statistic in each bin.</p>
+</div></blockquote>
+<p><strong>bin_edges</strong> : array of dtype float</p>
+<blockquote>
+<div><p>Return the bin edges <tt class="docutils literal"><span class="pre">(length(statistic)+1)</span></tt>.</p>
+</div></blockquote>
+<p><strong>binnumber</strong> : 1-D ndarray of ints</p>
+<blockquote class="last">
+<div><p>This assigns to each observation an integer that represents the bin
+in which this observation falls. Array has the same length as values.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.histogram.html#numpy.histogram" title="(in NumPy v1.7)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.histogram</span></tt></a>, <a class="reference internal" href="scipy.stats.binned_statistic_2d.html#scipy.stats.binned_statistic_2d" title="scipy.stats.binned_statistic_2d"><tt class="xref py py-obj docutils literal"><span class="pre">binned_statistic_2d</span></tt></a>, <a class="reference internal" href="scipy.stats.binned_statistic_dd.html#scipy.stats.binned_statistic_dd" title="scipy.stats.binned_statistic_dd"><tt class="xref py py-obj docutils literal"><span class="pre">binned_statistic_dd</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>All but the last (righthand-most) bin is half-open.  In other words, if
+<em class="xref py py-obj">bins</em> is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>then the first bin is <tt class="docutils literal"><span class="pre">[1,</span> <span class="pre">2)</span></tt> (including 1, but excluding 2) and the
+second <tt class="docutils literal"><span class="pre">[2,</span> <span class="pre">3)</span></tt>.  The last bin, however, is <tt class="docutils literal"><span class="pre">[3,</span> <span class="pre">4]</span></tt>, which <em>includes</em>
+4.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">binned_statistic</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">statistic</span><span class="o">=</span><span class="s">&#39;mean&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">bins</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">(array([ 1.,  2.,  4.]), array([ 1.,  2.,  3.,  4.]), array([1, 2, 1, 2, 3]))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">binned_statistic</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">statistic</span><span class="o">=</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">(array([ 1.,  2.,  4.]), array([ 1.,  2.,  3.,  4.]), array([1, 2, 1, 2, 3]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.stats.relfreq.html"
+                        title="previous chapter">scipy.stats.relfreq</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.stats.binned_statistic_2d.html"
+                        title="next chapter">scipy.stats.binned_statistic_2d</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.stats.binned_statistic_2d.html" title="scipy.stats.binned_statistic_2d"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.stats.relfreq.html" title="scipy.stats.relfreq"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../stats.html" >Statistical functions (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.stats</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

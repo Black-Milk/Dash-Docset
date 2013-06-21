@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.optimize.fmin_slsqp &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Optimization and root finding (scipy.optimize)" href="../optimize.html" />
+    <link rel="next" title="scipy.optimize.nnls" href="scipy.optimize.nnls.html" />
+    <link rel="prev" title="scipy.optimize.fmin_cobyla" href="scipy.optimize.fmin_cobyla.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.nnls.html" title="scipy.optimize.nnls"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.fmin_cobyla.html" title="scipy.optimize.fmin_cobyla"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../optimize.html" accesskey="U">Optimization and root finding (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.optimize</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-optimize-fmin-slsqp">
+<h1>scipy.optimize.fmin_slsqp<a class="headerlink" href="#scipy-optimize-fmin-slsqp" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.optimize.fmin_slsqp">
+<tt class="descclassname">scipy.optimize.</tt><tt class="descname">fmin_slsqp</tt><big>(</big><em>func</em>, <em>x0</em>, <em>eqcons=</em><span class="optional">[</span><span class="optional">]</span>, <em>f_eqcons=None</em>, <em>ieqcons=</em><span class="optional">[</span><span class="optional">]</span>, <em>f_ieqcons=None</em>, <em>bounds=</em><span class="optional">[</span><span class="optional">]</span>, <em>fprime=None</em>, <em>fprime_eqcons=None</em>, <em>fprime_ieqcons=None</em>, <em>args=()</em>, <em>iter=100</em>, <em>acc=1e-06</em>, <em>iprint=1</em>, <em>disp=None</em>, <em>full_output=0</em>, <em>epsilon=1.4901161193847656e-08</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/optimize/slsqp.py#L66"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.optimize.fmin_slsqp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimize a function using Sequential Least SQuares Programming</p>
+<p>Python interface function for the SLSQP Optimization subroutine
+originally implemented by Dieter Kraft.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>func</strong> : callable f(x,*args)</p>
+<blockquote>
+<div><p>Objective function.</p>
+</div></blockquote>
+<p><strong>x0</strong> : 1-D ndarray of float</p>
+<blockquote>
+<div><p>Initial guess for the independent variable(s).</p>
+</div></blockquote>
+<p><strong>eqcons</strong> : list</p>
+<blockquote>
+<div><p>A list of functions of length n such that
+eqcons[j](x,*args) == 0.0 in a successfully optimized
+problem.</p>
+</div></blockquote>
+<p><strong>f_eqcons</strong> : callable f(x,*args)</p>
+<blockquote>
+<div><p>Returns a 1-D array in which each element must equal 0.0 in a
+successfully optimized problem.  If f_eqcons is specified,
+eqcons is ignored.</p>
+</div></blockquote>
+<p><strong>ieqcons</strong> : list</p>
+<blockquote>
+<div><p>A list of functions of length n such that
+ieqcons[j](x,*args) &gt;= 0.0 in a successfully optimized
+problem.</p>
+</div></blockquote>
+<p><strong>f_ieqcons</strong> : callable f(x,*args)</p>
+<blockquote>
+<div><p>Returns a 1-D ndarray in which each element must be greater or
+equal to 0.0 in a successfully optimized problem.  If
+f_ieqcons is specified, ieqcons is ignored.</p>
+</div></blockquote>
+<p><strong>bounds</strong> : list</p>
+<blockquote>
+<div><p>A list of tuples specifying the lower and upper bound
+for each independent variable [(xl0, xu0),(xl1, xu1),...]</p>
+</div></blockquote>
+<p><strong>fprime</strong> : callable <em class="xref py py-obj">f(x,*args)</em></p>
+<blockquote>
+<div><p>A function that evaluates the partial derivatives of func.</p>
+</div></blockquote>
+<p><strong>fprime_eqcons</strong> : callable <em class="xref py py-obj">f(x,*args)</em></p>
+<blockquote>
+<div><p>A function of the form <em class="xref py py-obj">f(x, *args)</em> that returns the m by n
+array of equality constraint normals.  If not provided,
+the normals will be approximated. The array returned by
+fprime_eqcons should be sized as ( len(eqcons), len(x0) ).</p>
+</div></blockquote>
+<p><strong>fprime_ieqcons</strong> : callable <em class="xref py py-obj">f(x,*args)</em></p>
+<blockquote>
+<div><p>A function of the form <em class="xref py py-obj">f(x, *args)</em> that returns the m by n
+array of inequality constraint normals.  If not provided,
+the normals will be approximated. The array returned by
+fprime_ieqcons should be sized as ( len(ieqcons), len(x0) ).</p>
+</div></blockquote>
+<p><strong>args</strong> : sequence</p>
+<blockquote>
+<div><p>Additional arguments passed to func and fprime.</p>
+</div></blockquote>
+<p><strong>iter</strong> : int</p>
+<blockquote>
+<div><p>The maximum number of iterations.</p>
+</div></blockquote>
+<p><strong>acc</strong> : float</p>
+<blockquote>
+<div><p>Requested accuracy.</p>
+</div></blockquote>
+<p><strong>iprint</strong> : int</p>
+<blockquote>
+<div><p>The verbosity of fmin_slsqp :</p>
+<ul class="simple">
+<li>iprint &lt;= 0 : Silent operation</li>
+<li>iprint == 1 : Print summary upon completion (default)</li>
+<li>iprint &gt;= 2 : Print status of each iterate and summary</li>
+</ul>
+</div></blockquote>
+<p><strong>disp</strong> : int</p>
+<blockquote>
+<div><p>Over-rides the iprint interface (preferred).</p>
+</div></blockquote>
+<p><strong>full_output</strong> : bool</p>
+<blockquote>
+<div><p>If False, return only the minimizer of func (default).
+Otherwise, output final objective function and summary
+information.</p>
+</div></blockquote>
+<p><strong>epsilon</strong> : float</p>
+<blockquote>
+<div><p>The step size for finite-difference derivative estimates.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : ndarray of float</p>
+<blockquote>
+<div><p>The final minimizer of func.</p>
+</div></blockquote>
+<p><strong>fx</strong> : ndarray of float, if full_output is true</p>
+<blockquote>
+<div><p>The final value of the objective function.</p>
+</div></blockquote>
+<p><strong>its</strong> : int, if full_output is true</p>
+<blockquote>
+<div><p>The number of iterations.</p>
+</div></blockquote>
+<p><strong>imode</strong> : int, if full_output is true</p>
+<blockquote>
+<div><p>The exit mode from the optimizer (see below).</p>
+</div></blockquote>
+<p><strong>smode</strong> : string, if full_output is true</p>
+<blockquote class="last">
+<div><p>Message describing the exit mode from the optimizer.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.optimize.minimize.html#scipy.optimize.minimize" title="scipy.optimize.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a></dt>
+<dd>Interface to minimization algorithms for multivariate functions. See the &#8216;SLSQP&#8217; <em class="xref py py-obj">method</em> in particular.</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>Exit modes are defined as follows</p>
+<div class="highlight-python"><pre>-1 : Gradient evaluation required (g &amp; a)
+ 0 : Optimization terminated successfully.
+ 1 : Function evaluation required (f &amp; c)
+ 2 : More equality constraints than independent variables
+ 3 : More than 3*n iterations in LSQ subproblem
+ 4 : Inequality constraints incompatible
+ 5 : Singular matrix E in LSQ subproblem
+ 6 : Singular matrix C in LSQ subproblem
+ 7 : Rank-deficient equality constraint subproblem HFTI
+ 8 : Positive directional derivative for linesearch
+ 9 : Iteration limit exceeded</pre>
+</div>
+<p class="rubric">Examples</p>
+<p>Examples are given <a class="reference internal" href="../tutorial/optimize.html#tutorial-sqlsp"><em>in the tutorial</em></a>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.optimize.fmin_cobyla.html"
+                        title="previous chapter">scipy.optimize.fmin_cobyla</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.optimize.nnls.html"
+                        title="next chapter">scipy.optimize.nnls</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.nnls.html" title="scipy.optimize.nnls"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.fmin_cobyla.html" title="scipy.optimize.fmin_cobyla"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../optimize.html" >Optimization and root finding (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.optimize</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

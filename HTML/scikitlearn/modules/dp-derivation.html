@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.1.3.2.1. Variational Gaussian Mixture Models &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../index.html" />
+    <link rel="up" title="4.1. Gaussian mixture models" href="mixture.html" />
+    <link rel="next" title="4.2. Manifold learning" href="manifold.html" />
+    <link rel="prev" title="4.1. Gaussian mixture models" href="mixture.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../install.html">Download</a></li>
+            <li><a href="../support.html">Support</a></li>
+            <li><a href="../user_guide.html">User Guide</a></li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            <li><a href="classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="mixture.html" title="4.1. Gaussian mixture models"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    4.1. Gaussian mi...
+	    </span>
+	    <span class="hiddenrellink">
+	    4.1. Gaussian mixture models
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="manifold.html" title="4.2. Manifold learning"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    4.2. Manifold le...
+	    </span>
+	    <span class="hiddenrellink">
+	    4.2. Manifold learning
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="mixture.html" title="4.1. Gaussian mixture models" >
+	Up
+	<br>
+	<span class="smallrellink">
+	4.1. Gaussian mi...
+	</span>
+	<span class="hiddenrellink">
+	4.1. Gaussian mixture models
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">4.1.3.2.1. Variational Gaussian Mixture Models</a></li>
+<li><a class="reference internal" href="#update-rules-for-vb-inference">4.1.3.2.2. Update rules for VB inference</a><ul>
+<li><a class="reference internal" href="#the-spherical-model">4.1.3.2.2.1. The spherical model</a><ul>
+<li><a class="reference internal" href="#the-bound">4.1.3.2.2.1.1. The bound</a></li>
+<li><a class="reference internal" href="#the-updates">4.1.3.2.2.1.2. The updates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-diagonal-model">4.1.3.2.2.2. The diagonal model</a><ul>
+<li><a class="reference internal" href="#the-lower-bound">4.1.3.2.2.2.1. The lower bound</a></li>
+<li><a class="reference internal" href="#id1">4.1.3.2.2.2.2. The updates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-tied-model">4.1.3.2.2.3. The tied model</a><ul>
+<li><a class="reference internal" href="#id2">4.1.3.2.2.3.1. The lower bound</a></li>
+<li><a class="reference internal" href="#id3">4.1.3.2.2.3.2. The updates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-full-model">4.1.3.2.2.4. The full model</a><ul>
+<li><a class="reference internal" href="#id4">4.1.3.2.2.4.1. The lower bound</a></li>
+<li><a class="reference internal" href="#id5">4.1.3.2.2.4.2. The updates</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="variational-gaussian-mixture-models">
+<span id="dpgmm-derivation"></span><h1>4.1.3.2.1. Variational Gaussian Mixture Models<a class="headerlink" href="#variational-gaussian-mixture-models" title="Permalink to this headline">¶</a></h1>
+<p>The API is identical to that of the <a class="reference internal" href="generated/sklearn.mixture.GMM.html#sklearn.mixture.GMM" title="sklearn.mixture.GMM"><tt class="xref py py-class docutils literal"><span class="pre">GMM</span></tt></a> class, the main
+difference being that it offers access to precision matrices as well
+as covariance matrices.</p>
+<p>The inference algorithm is the one from the following paper:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.61.4467&amp;rep=rep1&amp;type=pdf">Variational Inference for Dirichlet Process Mixtures</a>
+David Blei, Michael Jordan. Bayesian Analysis, 2006</li>
+</ul>
+</div></blockquote>
+<p>While this paper presents the parts of the inference algorithm that
+are concerned with the structure of the dirichlet process, it does not
+go into detail in the mixture modeling part, which can be just as
+complex, or even more. For this reason we present here a full
+derivation of the inference algorithm and all the update and
+lower-bound equations. If you&#8217;re not interested in learning how to
+derive similar algorithms yourself and you&#8217;re not interested in
+changing/debugging the implementation in the scikit this document is
+not for you.</p>
+<p>The complexity of this implementation is linear in the number of
+mixture components and data points. With regards to the
+dimensionality, it is linear when using <cite>spherical</cite> or <cite>diag</cite> and
+quadratic/cubic when using <cite>tied</cite> or <cite>full</cite>. For <cite>spherical</cite> or <cite>diag</cite>
+it is O(n_states * n_points * dimension) and for <cite>tied</cite> or <cite>full</cite> it
+is O(n_states * n_points * dimension^2 + n_states * dimension^3) (it
+is necessary to invert the covariance/precision matrices and compute
+its determinant, hence the cubic term).</p>
+<p>This implementation is expected to scale at least as well as EM for
+the mixture of Gaussians.</p>
+</div>
+<div class="section" id="update-rules-for-vb-inference">
+<h1>4.1.3.2.2. Update rules for VB inference<a class="headerlink" href="#update-rules-for-vb-inference" title="Permalink to this headline">¶</a></h1>
+<p>Here the full mathematical derivation of the Variational Bayes update
+rules for Gaussian Mixture Models is given. The main parameters of the
+model, defined for any class <img class="math" src="../_images/math/83f8d53b243d8196d2c9cab4fccdb82c7b8a97b7.png" alt="k \in [1..K]"/> are the class
+proportion <img class="math" src="../_images/math/b91ac9c58c0e22ff0b88f239dbda5d97e8329e81.png" alt="\phi_k"/>, the mean parameters <img class="math" src="../_images/math/27a0f74066fd925ffe2f5576a6ade18557abf47c.png" alt="\mu_k"/>, the
+covariance parameters <img class="math" src="../_images/math/12331cbadd3755f44112100a1900d5d891e9bdce.png" alt="\Sigma_k"/>, which is characterized by
+variational Wishart density, <img class="math" src="../_images/math/9df1d1349b7a8298368bf42cfb585c64e0f4d217.png" alt="Wishart(a_k, \mathbf{B_k})"/>, where
+<img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> is the degrees of freedom, and <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B"/> is the
+scale matrix. Depending on the covariance parameterization,
+<img class="math" src="../_images/math/5754b618a3ce62e98fdb1766832459e0bcdd030a.png" alt="B_k"/> can be a positive scalar, a positive vector or a Symmetric
+Positive Definite matrix.</p>
+<div class="section" id="the-spherical-model">
+<h2>4.1.3.2.2.1. The spherical model<a class="headerlink" href="#the-spherical-model" title="Permalink to this headline">¶</a></h2>
+<p>The model then is</p>
+<div class="math">
+<p><img src="../_images/math/1e9e89da8fc37781c465eaf6996361ed96adcaf8.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(1, \alpha_1) \\
+\mu_k   &amp;\sim&amp; Normal(0,  \mathbf{I}) \\
+\sigma_k &amp;\sim&amp; Gamma(1, 1) \\
+z_{i}     &amp;\sim&amp; SBP(\phi) \\
+X_t &amp;\sim&amp; Normal(\mu_{z_i}, \frac{1}{\sigma_{z_i}} \mathbf{I})
+\end{array}"/></p>
+</div><p>The variational distribution we&#8217;ll use is</p>
+<div class="math">
+<p><img src="../_images/math/b717a5aad4ed7afa8e012139fb3ada413d90ba70.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(\gamma_{k,1}, \gamma_{k,2}) \\
+\mu_k   &amp;\sim&amp; Normal(\nu_{\mu_k},  \mathbf{I}) \\
+\sigma_k &amp;\sim&amp; Gamma(a_{k}, b_{k}) \\
+z_{i}     &amp;\sim&amp; Discrete(\nu_{z_i}) \\
+\end{array}"/></p>
+</div><div class="section" id="the-bound">
+<h3>4.1.3.2.2.1.1. The bound<a class="headerlink" href="#the-bound" title="Permalink to this headline">¶</a></h3>
+<p>The variational bound is</p>
+<div class="math">
+<p><img src="../_images/math/31c014e87dccbbe328aa6fe0ba7348100ab6f792.png" alt="\begin{array}{rcl}
+\log P(X) &amp;\ge&amp;
+\sum_k (E_q[\log P(\phi_k)] - E_q[\log Q(\phi_k)]) \\
+&amp;&amp;
++\sum_k \left( E_q[\log P(\mu_k)] - E_q[\log Q(\mu_k)] \right) \\
+&amp;&amp;
++\sum_k \left( E_q[\log P(\sigma_k)] - E_q[\log Q(\sigma_k)] \right) \\
+&amp;&amp;
++\sum_i \left( E_q[\log P(z_i)] - E_q[\log Q(z_i)] \right) \\
+&amp;&amp;
++\sum_i E_q[\log P(X_t)]
+\end{array}"/></p>
+</div><p><strong>The bound for</strong> <img class="math" src="../_images/math/b91ac9c58c0e22ff0b88f239dbda5d97e8329e81.png" alt="\phi_k"/></p>
+<div class="math">
+<p><img src="../_images/math/e8e771c1eb210d851a8f4b0826866a5f2c92828a.png" alt="\begin{array}{rcl}
+E_q[\log Beta(1,\alpha)] - E[\log Beta(\gamma_{k,1},\gamma_{k,2})]
+&amp;=&amp;
+\log \Gamma(1+\alpha) - \log \Gamma(\alpha) \\ &amp;&amp;
++(\alpha-1)(\Psi(\gamma_{k,2})-\Psi(\gamma_{k,1}+\gamma_{k,2})) \\ &amp;&amp;
+- \log \Gamma(\gamma_{k,1}+\gamma_{k,2}) + \log \Gamma(\gamma_{k,1}) +
+\log \Gamma(\gamma_{k,2}) \\ &amp;&amp;
+-
+(\gamma_{k,1}-1)(\Psi(\gamma_{k,1})-\Psi(\gamma_{k,1}+\gamma_{k,2}))
+\\ &amp;&amp;
+-
+(\gamma_{k,2}-1)(\Psi(\gamma_{k,2})-\Psi(\gamma_{k,1}+\gamma_{k,2}))
+\end{array}"/></p>
+</div><p><strong>The bound for</strong> <img class="math" src="../_images/math/27a0f74066fd925ffe2f5576a6ade18557abf47c.png" alt="\mu_k"/></p>
+<div class="math">
+<p><img src="../_images/math/22d4fe3874e5dcb9757dad7ce85f4a4ac574c2e1.png" alt="\begin{array}{rcl}
+&amp;&amp; E_q[\log P(\mu_k)] - E_q[\log Q(\mu_k)] \\
+&amp;=&amp;
+\int\!d\mu_f q(\mu_f) \log P(\mu_f)
+- \int\!d\mu_f q(\mu_f) \log Q(\mu_f)  \\
+&amp;=&amp;
+- \frac{D}{2}\log 2\pi - \frac{1}{2} ||\nu_{\mu_k}||^2 - \frac{D}{2}
++ \frac{D}{2} \log 2\pi e
+\end{array}"/></p>
+</div><p><strong>The bound for</strong> <img class="math" src="../_images/math/86df44d705c06a8b803b6d09f87bb903541e6028.png" alt="\sigma_k"/></p>
+<p>Here I&#8217;ll use the inverse scale parametrization of the gamma
+distribution.</p>
+<div class="math">
+<p><img src="../_images/math/32bbfa5c35c7a2195ea3f645fd9595d6f7404cf0.png" alt="\begin{array}{rcl}
+&amp;&amp; E_q[\log P(\sigma_k)] - E_q [\log Q(\sigma_k)] \\ &amp;=&amp;
+\log \Gamma (a_k) - (a_k-1)\Psi(a_k) -\log b_k + a_k - \frac{a_k}{b_k}
+\end{array}"/></p>
+</div><p><strong>The bound for z</strong></p>
+<div class="math">
+<p><img src="../_images/math/dc51a3ae860bb8c75f81e0d1dbf586c60bbb0953.png" alt="\begin{array}{rcl}
+&amp;&amp; E_q[\log P(z)] - E_q[\log Q(z)] \\
+&amp;=&amp;
+\sum_{k} \left(
+     \left(\sum_{j=k+1}^K  \nu_{z_{i,j}}\right)(\Psi(\gamma{k,1})-\Psi(\gamma{k,1}+\gamma_{k,2}))
+ +  \nu_{z_{i,k}}(\Psi(\gamma_{k,1})-\Psi(\gamma_{k,1}+\gamma_{k,2}))
+ - \log \nu_{z_{i,k}} \right)
+\end{array}"/></p>
+</div><p><strong>The bound for</strong> <img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/></p>
+<p>Recall that there is no need for a <img class="math" src="../_images/math/fc7c2703dfde4c265d3687d9e1f1c760ad06622d.png" alt="Q(X)"/> so this bound is just</p>
+<div class="math">
+<p><img src="../_images/math/3e02e6ed81421a0adb3274fa42084e1cbdf6a58c.png" alt="\begin{array}{rcl}
+E_q[\log P(X_i)] &amp;=&amp; \sum_k \nu_{z_k} \left( - \frac{D}{2}\log 2\pi
++\frac{D}{2} (\Psi(a_k) - \log(b_k))
+-\frac{a_k}{2b_k} (||X_i - \nu_{\mu_k}||^2+D) - \log 2 \pi e  \right)
+\end{array}"/></p>
+</div><p>For simplicity I&#8217;ll later call the term inside the parenthesis <img class="math" src="../_images/math/e93ec10dd1c219d67f6597679fb1637e2a226a7f.png" alt="E_q[\log P(X_i|z_i=k)]"/></p>
+</div>
+<div class="section" id="the-updates">
+<h3>4.1.3.2.2.1.2. The updates<a class="headerlink" href="#the-updates" title="Permalink to this headline">¶</a></h3>
+<p><strong>Updating</strong> <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/></p>
+<div class="math">
+<p><img src="../_images/math/d0867351ca3d4f207d9c0fa06bf7238fb87915b5.png" alt="\begin{array}{rcl}
+\gamma_{k,1} &amp;=&amp; 1+\sum_i \nu_{z_{i,k}} \\
+\gamma_{k,2} &amp;=&amp; \alpha + \sum_i \sum_{j &gt; k} \nu_{z_{i,j}}.
+\end{array}"/></p>
+</div><p><strong>Updating</strong> <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu"/></p>
+<p>The updates for mu essentially are just weighted expectations of
+<img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> regularized by the prior. We can see this by taking the
+gradient of the bound w.r.t. <img class="math" src="../_images/math/d24270d7d152194e88f512fc128abd16bbb07b1c.png" alt="\nu_{\mu}"/> and setting it to zero. The
+gradient is</p>
+<div class="math">
+<p><img src="../_images/math/1c8ff7536c7c3b836ace357582c79a2851e90886.png" alt="\nabla L = -\nu_{\mu_k} + \sum_i \frac{\nu_{z_{i,k}}b_k}{a_k}(X_i + -\nu_{\mu})"/></p>
+</div><p>so the update is</p>
+<div class="math">
+<p><img src="../_images/math/7a7b3c3f3643b3a32a902cdfc8fd0d531c6751cb.png" alt="\nu_{\mu_k} = \frac{\sum_i \frac{\nu_{z_{i,k}}b_k}{a_k}X_i}{1+\sum_i \frac{\nu_{z_{i,k}}b_k}{a_k}}"/></p>
+</div><p><strong>Updating</strong> <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> <strong>and</strong> <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/></p>
+<p>For some odd reason it doesn&#8217;t really work when you derive the updates
+for a and b using the gradients of the lower bound (terms involving the
+<img class="math" src="../_images/math/db2d658bbbea9ab63ecadb79df99212a327bf177.png" alt="\Psi'"/> function show up and <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> is hard to isolate).
+However, we can use the other formula,</p>
+<div class="math">
+<p><img src="../_images/math/7a44ed54b3cb03beed08d64883cf03ca1c36890c.png" alt="\log Q(\sigma_k) = E_{v \ne \sigma_k}[\log P] + const"/></p>
+</div><p>All the terms not involving <img class="math" src="../_images/math/86df44d705c06a8b803b6d09f87bb903541e6028.png" alt="\sigma_k"/> get folded over into the
+constant and we get two terms: the prior and the probability of
+<img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/>. This gives us</p>
+<div class="math">
+<p><img src="../_images/math/09312004d6e68dc302498ccd63e5615ce18fd49f.png" alt="\log Q(\sigma_k) = -\sigma_k  + \frac{D}{2} \sum_i \nu_{z_{i,k}}\log \sigma_k  - \frac{\sigma_k}{2}\sum_i \nu_{z_{i,k}} (||X_i-\mu_k||^2 + D)"/></p>
+</div><p>This is the log of a gamma distribution, with <img class="math" src="../_images/math/8bd1e7e18de2d697cb770fa04910fd8b614fa982.png" alt="a_k = 1+\frac{D}{2}\sum_i \nu_{z_{i,k}}"/> and</p>
+<div class="math">
+<p><img src="../_images/math/8fd2320399881a9e2578993ef6f7a2a13d458b22.png" alt="b_k = 1 + \frac{1}{2}\sum_i \nu_{z_{i,k}} (||X_i-\mu_k||^2 + D)."/></p>
+</div><p>You can verify this by normalizing the previous term.</p>
+<p><strong>Updating</strong> <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/></p>
+<div class="math">
+<p><img src="../_images/math/85a9ad0ef0bdf36ec4eb256c02e05ced86524670.png" alt="\log \nu_{z_{i,k}} \propto \Psi(\gamma_{k,1}) -
+\Psi(\gamma_{k,1} + \gamma_{k,2}) + E_Q[\log P(X_i|z_i=k)] +
+\sum_{j &lt; k} \left (\Psi(\gamma_{j,2}) -
+\Psi(\gamma_{j,1}+\gamma_{j,2})\right)."/></p>
+</div></div>
+</div>
+<div class="section" id="the-diagonal-model">
+<h2>4.1.3.2.2.2. The diagonal model<a class="headerlink" href="#the-diagonal-model" title="Permalink to this headline">¶</a></h2>
+<p>The model then is</p>
+<div class="math">
+<p><img src="../_images/math/4c89f2f5ee815d4fa23ca94e30e3aacadbfcaaed.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(1, \alpha_1) \\
+\mu_k   &amp;\sim&amp; Normal(0,  \mathbf{I}) \\
+\sigma_{k,d} &amp;\sim&amp; Gamma(1, 1) \\
+z_{i}     &amp;\sim&amp; SBP(\phi) \\
+X_t &amp;\sim&amp; Normal(\mu_{z_i}, \bm{\sigma_{z_i}}^{-1})
+\end{array}"/></p>
+</div><p>Tha variational distribution we&#8217;ll use is</p>
+<div class="math">
+<p><img src="../_images/math/9846a2ba9e2619aa1373b210655d92f53f4e25e3.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(\gamma_{k,1}, \gamma_{k,2}) \\
+\mu_k   &amp;\sim&amp; Normal(\nu_{\mu_k},  \mathbf{I}) \\
+\sigma_{k,d} &amp;\sim&amp; Gamma(a_{k,d}, b_{k,d}) \\
+z_{i}     &amp;\sim&amp; Discrete(\nu_{z_i}) \\
+\end{array}"/></p>
+</div><div class="section" id="the-lower-bound">
+<h3>4.1.3.2.2.2.1. The lower bound<a class="headerlink" href="#the-lower-bound" title="Permalink to this headline">¶</a></h3>
+<p>The changes in this lower bound from the previous model are in the
+distributions of <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma"/> (as there are a lot more <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma"/> s
+now) and <img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/>.</p>
+<p>The bound for <img class="math" src="../_images/math/de6b344f507b3c5a1a4161252997460c08457ce1.png" alt="\sigma_{k,d}"/> is the same bound for <img class="math" src="../_images/math/86df44d705c06a8b803b6d09f87bb903541e6028.png" alt="\sigma_k"/> and can
+be safelly omitted.</p>
+<p><strong>The bound for</strong> <img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/> :</p>
+<p>The main difference here is that the precision matrix <img class="math" src="../_images/math/7471b1396fad741ec7484d411165df3c00f7cd5f.png" alt="\bm{\sigma_k}"/>
+scales the norm, so we have an extra term after computing the
+expectation of <img class="math" src="../_images/math/b7708cbf13059104beb68347a6501d892b186a00.png" alt="\mu_k^T\bm{\sigma_k}\mu_k"/>, which is
+<img class="math" src="../_images/math/b13e6807fc9f9b973c59a1735ddf4177ec9048d0.png" alt="\nu_{\mu_k}^T\bm{\sigma_k}\nu_{\mu_k} + \sum_d \sigma_{k,d}"/>. We then
+have</p>
+<div class="math">
+<p><img src="../_images/math/b1d0640eda071e12a8122852760423832f2f2d56.png" alt="\begin{array}{rcl}
+E_q[\log P(X_i)] &amp;=&amp; \sum_k \nu_{z_k} \Big( - \frac{D}{2}\log 2\pi
++\frac{1}{2}\sum_d (\Psi(a_{k,d}) - \log(b_{k,d})) \\
+&amp;&amp;
+-\frac{1}{2}((X_i - \nu_{\mu_k})^T\bm{\frac{a_k}{b_k}}(X_i - \nu_{\mu_k})+ \sum_d \sigma_{k,d})- \log 2 \pi e  \Big)
+\end{array}"/></p>
+</div></div>
+<div class="section" id="id1">
+<h3>4.1.3.2.2.2.2. The updates<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>The updates only chance for <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu"/> (to weight them with the new
+<img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma"/>), <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> (but the change is all folded into the
+<img class="math" src="../_images/math/fd84cfe6be87f50bf8cb8bbab071e1041d52b6dd.png" alt="E_q[P(X_i|z_i=k)]"/> term), and the <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> variables themselves.</p>
+<p><strong>The update for</strong> <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu"/></p>
+<div class="math">
+<p><img src="../_images/math/a214adf8cf555d337cbaa76c0ee22d1ad5ba1244.png" alt="\nu_{\mu_k} = \left(\mathbf{I}+\sum_i \frac{\nu_{z_{i,k}}\mathbf{b_k}}{\mathbf{a_k}}\right)^{-1}\left(\sum_i \frac{\nu_{z_{i,k}}b_k}{a_k}X_i\right)"/></p>
+</div><p><strong>The updates for a and b</strong></p>
+<p>Here we&#8217;ll do something very similar to the spheric model. The main
+difference is that now each <img class="math" src="../_images/math/de6b344f507b3c5a1a4161252997460c08457ce1.png" alt="\sigma_{k,d}"/> controls only one dimension
+of the bound:</p>
+<div class="math">
+<p><img src="../_images/math/d893c3a7bf8d86cd7d4ffc4ab53436f6bca0df8f.png" alt="\log Q(\sigma_{k,d}) = -\sigma_{k,d} + \sum_i \nu_{z_{i,k}}\frac{1}{2}\log \sigma_{k,d}
+- \frac{\sigma_{k,d}}{2}\sum_i \nu_{z_{i,k}} ((X_{i,d}-\mu_{k,d})^2 + 1)"/></p>
+</div><p>Hence</p>
+<div class="math">
+<p><img src="../_images/math/30c60625dd3987457ba9dc9735eb959393a3157c.png" alt="a_{k,d} = 1 + \frac{1}{2} \sum_i \nu_{z_{i,k}}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/42e0da4a5e4d924d5f6693c15418157aa3fbf86f.png" alt="b_{k,d} = 1 + \frac{1}{2} \sum_i \nu_{z_{i,k}}((X_{i,d}-\mu_{k,d})^2 + 1)"/></p>
+</div></div>
+</div>
+<div class="section" id="the-tied-model">
+<h2>4.1.3.2.2.3. The tied model<a class="headerlink" href="#the-tied-model" title="Permalink to this headline">¶</a></h2>
+<p>The model then is</p>
+<div class="math">
+<p><img src="../_images/math/f85b20e09841db6324dcf04f37b019206520d62a.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(1, \alpha_1) \\
+\mu_k   &amp;\sim&amp; Normal(0,  \mathbf{I}) \\
+\Sigma &amp;\sim&amp; Wishart(D, \mathbf{I}) \\
+z_{i}     &amp;\sim&amp; SBP(\phi) \\
+X_t &amp;\sim&amp; Normal(\mu_{z_i},  \Sigma^{-1})
+\end{array}"/></p>
+</div><p>Tha variational distribution we&#8217;ll use is</p>
+<div class="math">
+<p><img src="../_images/math/1d0d6a1c0bc29563de734ae0f9738de3dc37b2eb.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(\gamma_{k,1}, \gamma_{k,2}) \\
+\mu_k   &amp;\sim&amp; Normal(\nu_{\mu_k},  \mathbf{I}) \\
+\Sigma &amp;\sim&amp; Wishart(a, \mathbf{B}) \\
+z_{i}     &amp;\sim&amp; Discrete(\nu_{z_i}) \\
+\end{array}"/></p>
+</div><div class="section" id="id2">
+<h3>4.1.3.2.2.3.1. The lower bound<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>There are two changes in the lower-bound: for <img class="math" src="../_images/math/c8f77e3035db5fe9a4975967750ac1a6454bda8c.png" alt="\Sigma"/> and for <img class="math" src="../_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X"/>.</p>
+<p><strong>The bound for</strong> <img class="math" src="../_images/math/c8f77e3035db5fe9a4975967750ac1a6454bda8c.png" alt="\Sigma"/></p>
+<div class="math">
+<p><img src="../_images/math/f5320b7e007c511871f04f6e406530b4713a5e09.png" alt="\begin{array}{rcl}
+\frac{D^2}{2}\log 2  + \sum_d \log \Gamma(\frac{D+1-d}{2}) \\
+- \frac{aD}{2}\log 2 + \frac{a}{2} \log |\mathbf{B}| + \sum_d \log \Gamma(\frac{a+1-d}{2}) \\
++ \frac{a-D}{2}\left(\sum_d \Psi\left(\frac{a+1-d}{2}\right)
++ D \log 2 + \log |\mathbf{B}|\right) \\
++ \frac{1}{2} a \mathbf{tr}[\mathbf{B}-\mathbf{I}]
+\end{array}"/></p>
+</div><p><strong>The bound for X</strong></p>
+<div class="math">
+<p><img src="../_images/math/16f51ca19dba4d462f3eb1805d74a769cd54e224.png" alt="\begin{array}{rcl}
+E_q[\log P(X_i)] &amp;=&amp; \sum_k \nu_{z_k} \Big( - \frac{D}{2}\log 2\pi
++\frac{1}{2}\left(\sum_d \Psi\left(\frac{a+1-d}{2}\right)
++ D \log 2 + \log |\mathbf{B}|\right) \\
+&amp;&amp;
+-\frac{1}{2}((X_i - \nu_{\mu_k})a\mathbf{B}(X_i - \nu_{\mu_k})+ a\mathbf{tr}(\mathbf{B}))- \log 2 \pi e  \Big)
+\end{array}"/></p>
+</div></div>
+<div class="section" id="id3">
+<h3>4.1.3.2.2.3.2. The updates<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>As in the last setting, what changes are the trivial update for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>,
+the update for <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu"/> and the update for <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and <img class="math" src="../_images/math/684089822af19d4ccbfae10139f057dbdad68d9f.png" alt="\mathbf{B}"/>.</p>
+<p><strong>The update for</strong> <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu"/></p>
+<div class="math">
+<p><img src="../_images/math/7b72a42370928c69f872fef9af570835873140de.png" alt="\nu_{\mu_k} = \left(\mathbf{I}+ a\mathbf{B}\sum_i \nu_{z_{i,k}}\right)^{-1}
+\left(a\mathbf{B}\sum_i \nu_{z_{i,k}} X_i\right)"/></p>
+</div><p><strong>The update for</strong> <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> <strong>and</strong> <img class="math" src="../_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B"/></p>
+<p>As this distribution is far too complicated I&#8217;m not even going to try
+going at it the gradient way.</p>
+<div class="math">
+<p><img src="../_images/math/c5aa5673cb44d939959c0785602e0421c289bc3c.png" alt="\log Q(\Sigma) = +\frac{1}{2}\log |\Sigma| - \frac{1}{2} \mathbf{tr}[\Sigma]
++ \sum_i \sum_k \nu_{z_{i,k}} \left( +\frac{1}{2}\log |\Sigma| - \frac{1}{2}((X_i-\nu_{\mu_k})^T\Sigma(X_i-\nu_{\mu_k})+\mathbf{tr}[\Sigma]) \right)"/></p>
+</div><p>which non-trivially (seeing that the quadratic form with <img class="math" src="../_images/math/c8f77e3035db5fe9a4975967750ac1a6454bda8c.png" alt="\Sigma"/> in
+the middle can be expressed as the trace of something) reduces to</p>
+<div class="math">
+<p><img src="../_images/math/cfac94bab81009003c113eaa0793bcc95273f330.png" alt="\log Q(\Sigma) = +\frac{1}{2}\log |\Sigma| - \frac{1}{2} \mathbf{tr}[\Sigma]
++ \sum_i \sum_k \nu_{z_{i,k}} \left( +\frac{1}{2}\log |\Sigma| - \frac{1}{2}(\mathbf{tr}[(X_i-\nu_{\mu_k})(X_i-\nu_{\mu_k})^T\Sigma]+\mathbf{tr}[I \Sigma]) \right)"/></p>
+</div><p>hence this (with a bit of squinting) looks like a wishart with parameters</p>
+<div class="math">
+<p><img src="../_images/math/078e4034cd05c9b4ef4a469296ae6051afd9571f.png" alt="a = 2 + D + T"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="../_images/math/0a47fc97d6525a4634b1da022835e3ef8366fcad.png" alt="\mathbf{B} = \left(\mathbf{I} + \sum_i \sum_k \nu_{z_{i,k}}(X_i-\nu_{\mu_k})(X_i-\nu_{\mu_k})^T\right)^{-1}"/></p>
+</div></div>
+</div>
+<div class="section" id="the-full-model">
+<h2>4.1.3.2.2.4. The full model<a class="headerlink" href="#the-full-model" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>The model then is</div></blockquote>
+<div class="math">
+<p><img src="../_images/math/ef52eb1d0819f8ad153e710714896fb888ee3a8b.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(1, \alpha_1) \\
+\mu_k   &amp;\sim&amp; Normal(0,  \mathbf{I}) \\
+\Sigma_k &amp;\sim&amp; Wishart(D, \mathbf{I}) \\
+z_{i}     &amp;\sim&amp; SBP(\phi) \\
+X_t &amp;\sim&amp; Normal(\mu_{z_i},  \Sigma_{z,i}^{-1})
+\end{array}"/></p>
+</div><p>The variational distribution we&#8217;ll use is</p>
+<div class="math">
+<p><img src="../_images/math/506e1d1f1ecadbcd806d06430b3faa2b79036d10.png" alt="\begin{array}{rcl}
+\phi_k   &amp;\sim&amp; Beta(\gamma_{k,1}, \gamma_{k,2}) \\
+\mu_k   &amp;\sim&amp; Normal(\nu_{\mu_k},  \mathbf{I}) \\
+\Sigma_k &amp;\sim&amp; Wishart(a_k, \mathbf{B_k}) \\
+z_{i}     &amp;\sim&amp; Discrete(\nu_{z_i}) \\
+\end{array}"/></p>
+</div><div class="section" id="id4">
+<h3>4.1.3.2.2.4.1. The lower bound<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>All that changes in this lower bound in comparison to the previous one
+is that there are K priors on different <img class="math" src="../_images/math/c8f77e3035db5fe9a4975967750ac1a6454bda8c.png" alt="\Sigma"/> precision matrices
+and there are the correct indices on the bound for X.</p>
+</div>
+<div class="section" id="id5">
+<h3>4.1.3.2.2.4.2. The updates<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>All that changes in the updates is that the update for mu uses only
+the proper sigma and the updates for a and B don&#8217;t have a sum over K, so</p>
+<div class="math">
+<p><img src="../_images/math/76cdd77816414652307ce1caec62a9f82f0330bd.png" alt="\nu_{\mu_k} = \left(\mathbf{I}+ a_k\mathbf{B_k}\sum_i \nu_{z_{i,k}}\right)^{-1}
+\left(a_k\mathbf{B_k}\sum_i \nu_{z_{i,k}} X_i\right)"/></p>
+</div><div class="math">
+<p><img src="../_images/math/3370b40e2ac132db82ebd9de31b67816c1b0ec6b.png" alt="a_k = 2 + D + \sum_i \nu_{z_{i,k}}"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="../_images/math/a1e5daea77a84263d20d7a7fc7ee062d68a88599.png" alt="\mathbf{B} = \left(\left(\sum_i\nu_{z_{i,k}}+1\right)\mathbf{I} + \sum_i  \nu_{z_{i,k}}(X_i-\nu_{\mu_k})(X_i-\nu_{\mu_k})^T\right)^{-1}"/></p>
+</div></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../_sources/modules/dp-derivation.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="mixture.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="manifold.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

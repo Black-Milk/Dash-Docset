@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.2. A tutorial on statistical-learning for scientific data processing &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../../index.html" />
+    <link rel="up" title="2. Tutorials: From the bottom up with scikit-learn" href="../index.html" />
+    <link rel="next" title="2.2.1. Statistical learning: the setting and the estimator object in the scikit-learn" href="settings.html" />
+    <link rel="prev" title="2.1. An introduction to machine learning with scikit-learn" href="../basic/tutorial.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../../install.html">Download</a></li>
+            <li><a href="../../support.html">Support</a></li>
+            <li><a href="../../user_guide.html">User Guide</a></li>
+            <li><a href="../../auto_examples/index.html">Examples</a></li>
+            <li><a href="../../modules/classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="../basic/tutorial.html" title="2.1. An introduction to machine learning with scikit-learn"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    2.1. An introduc...
+	    </span>
+	    <span class="hiddenrellink">
+	    2.1. An introduction to machine learning with scikit-learn
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="settings.html" title="2.2.1. Statistical learning: the setting and the estimator object in the scikit-learn"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    2.2.1. Statistic...
+	    </span>
+	    <span class="hiddenrellink">
+	    2.2.1. Statistical learning: the setting and the estimator object in the scikit-learn
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../index.html" title="2. Tutorials: From the bottom up with scikit-learn" >
+	Up
+	<br>
+	<span class="smallrellink">
+	2. Tutorials: Fr...
+	</span>
+	<span class="hiddenrellink">
+	2. Tutorials: From the bottom up with scikit-learn
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">2.2. A tutorial on statistical-learning for scientific data processing</a><ul>
+</ul>
+</li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="a-tutorial-on-statistical-learning-for-scientific-data-processing">
+<span id="stat-learn-tut-index"></span><h1>2.2. A tutorial on statistical-learning for scientific data processing<a class="headerlink" href="#a-tutorial-on-statistical-learning-for-scientific-data-processing" title="Permalink to this headline">¶</a></h1>
+<div class="topic">
+<p class="topic-title first">Statistical learning</p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Machine_learning">Machine learning</a> is
+a technique with a growing importance, as the
+size of the datasets experimental sciences are facing is rapidly
+growing. Problems it tackles range from building a prediction function
+linking different observations, to classifying observations, or
+learning the structure in an unlabeled dataset.</p>
+<p>This tutorial will explore <cite>statistical learning</cite>, that is the use of
+machine learning techniques with the goal of <a class="reference external" href="http://en.wikipedia.org/wiki/Statistical_inference">statistical inference</a>:
+drawing conclusions on the data at hand.</p>
+<p><tt class="docutils literal"><span class="pre">sklearn</span></tt> is a Python module integrating classic machine
+learning algorithms in the tightly-knit world of scientific Python
+packages (<a class="reference external" href="http://www.scipy.org">numpy</a>, <a class="reference external" href="http://www.scipy.org">scipy</a>, <a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a>).</p>
+</div>
+<style type="text/css">
+  div.bodywrapper blockquote {
+      margin: 0 ;
+  }
+
+  div.toctree-wrapper ul {
+      margin-top: 0 ;
+      margin-bottom: 0 ;
+      padding-left: 10px ;
+  }
+
+  li.toctree-l1 {
+      padding: 0 0 0.5em 0 ;
+      list-style-type: none;
+      font-size: 150% ;
+      font-weight: bold;
+      }
+
+  li.toctree-l1 ul {
+      padding-left: 40px ;
+  }
+
+  li.toctree-l2 {
+      font-size: 70% ;
+      list-style-type: square;
+      font-weight: normal;
+      }
+
+  li.toctree-l3 {
+      font-size: 85% ;
+      list-style-type: circle;
+      font-weight: normal;
+      }
+
+</style><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>In scikit-learn release 0.9, the import path has changed from
+<cite>scikits.learn</cite> to <cite>sklearn</cite>. To import with cross-version
+compatibility, use:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">something</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">scikits.learn</span> <span class="kn">import</span> <span class="n">something</span>
+</pre></div>
+</div>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">2.2.1. Statistical learning: the setting and the estimator object in the scikit-learn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#datasets">2.2.1.1. Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#estimators-objects">2.2.1.2. Estimators objects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="supervised_learning.html">2.2.2. Supervised learning: predicting an output variable from high-dimensional observations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="supervised_learning.html#nearest-neighbor-and-the-curse-of-dimensionality">2.2.2.1. Nearest neighbor and the curse of dimensionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="supervised_learning.html#linear-model-from-regression-to-sparsity">2.2.2.2. Linear model: from regression to sparsity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="supervised_learning.html#support-vector-machines-svms">2.2.2.3. Support vector machines (SVMs)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_selection.html">2.2.3. Model selection: choosing estimators and their parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_selection.html#score-and-cross-validated-scores">2.2.3.1. Score, and cross-validated scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_selection.html#cross-validation-generators">2.2.3.2. Cross-validation generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_selection.html#grid-search-and-cross-validated-estimators">2.2.3.3. Grid-search and cross-validated estimators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="unsupervised_learning.html">2.2.4. Unsupervised learning: seeking representations of the data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unsupervised_learning.html#clustering-grouping-observations-together">2.2.4.1. Clustering: grouping observations together</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unsupervised_learning.html#decompositions-from-a-signal-to-components-and-loadings">2.2.4.2. Decompositions: from a signal to components and loadings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="putting_together.html">2.2.5. Putting it all together</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="putting_together.html#pipelining">2.2.5.1. Pipelining</a></li>
+<li class="toctree-l2"><a class="reference internal" href="putting_together.html#face-recognition-with-eigenfaces">2.2.5.2. Face recognition with eigenfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="putting_together.html#open-problem-stock-market-structure">2.2.5.3. Open problem: Stock Market Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="finding_help.html">2.2.6. Finding help</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="finding_help.html#the-project-mailing-list">2.2.6.1. The project mailing list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finding_help.html#q-a-communities-with-machine-learning-practitioners">2.2.6.2. Q&amp;A communities with Machine Learning practitioners</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../../_sources/tutorial/statistical_inference/index.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="../basic/tutorial.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="settings.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

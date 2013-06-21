@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Species distribution modeling &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../../index.html" />
+    <link rel="up" title="Examples" href="../index.html" />
+    <link rel="next" title="Visualizing the stock market structure" href="plot_stock_market.html" />
+    <link rel="prev" title="Faces recognition example using eigenfaces and SVMs" href="face_recognition.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../../install.html">Download</a></li>
+            <li><a href="../../support.html">Support</a></li>
+            <li><a href="../../user_guide.html">User Guide</a></li>
+            <li><a href="../index.html">Examples</a></li>
+            <li><a href="../../modules/classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="face_recognition.html" title="Faces recognition example using eigenfaces and SVMs"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    Faces recognitio...
+	    </span>
+	    <span class="hiddenrellink">
+	    Faces recognition example using eigenfaces and SVMs
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="plot_stock_market.html" title="Visualizing the stock market structure"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    Visualizing the ...
+	    </span>
+	    <span class="hiddenrellink">
+	    Visualizing the stock market structure
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../index.html" title="Examples" >
+	Up
+	<br>
+	<span class="smallrellink">
+	Examples
+	</span>
+	<span class="hiddenrellink">
+	Examples
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">Species distribution modeling</a><ul>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="species-distribution-modeling">
+<span id="example-applications-plot-species-distribution-modeling-py"></span><h1>Species distribution modeling<a class="headerlink" href="#species-distribution-modeling" title="Permalink to this headline">¶</a></h1>
+<p>Modeling species&#8217; geographic distributions is an important
+problem in conservation biology. In this example we
+model the geographic distribution of two south american
+mammals given past observations and 14 environmental
+variables. Since we have only positive examples (there are
+no unsuccessful observations), we cast this problem as a
+density estimation problem and use the <cite>OneClassSVM</cite> provided
+by the package <cite>sklearn.svm</cite> as our modeling tool.
+The dataset is provided by Phillips et. al. (2006).
+If available, the example uses
+<a class="reference external" href="http://matplotlib.sourceforge.net/basemap/doc/html/">basemap</a>
+to plot the coast lines and national boundaries of South America.</p>
+<p>The two species are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://www.iucnredlist.org/apps/redlist/details/3038/0">&#8220;Bradypus variegatus&#8221;</a> ,
+the Brown-throated Sloth.</li>
+<li><a class="reference external" href="http://www.iucnredlist.org/apps/redlist/details/13408/0">&#8220;Microryzomys minutus&#8221;</a> ,
+also known as the Forest Small Rice Rat, a rodent that lives in Peru,
+Colombia, Ecuador, Peru, and Venezuela.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://www.cs.princeton.edu/~schapire/papers/ecolmod.pdf">&#8220;Maximum entropy modeling of species geographic distributions&#8221;</a>
+S. J. Phillips, R. P. Anderson, R. E. Schapire - Ecological Modelling,
+190:231-259, 2006.</li>
+</ul>
+</div></blockquote>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../../_downloads/plot_species_distribution_modeling.py"><tt class="xref download docutils literal"><span class="pre">plot_species_distribution_modeling.py</span></tt></a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Authors: Peter Prettenhofer &lt;peter.prettenhofer@gmail.com&gt;</span>
+<span class="c">#          Jake Vanderplas &lt;vanderplas@astro.washington.edu&gt;</span>
+<span class="c">#</span>
+<span class="c"># License: BSD 3 clause</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.datasets.base</span> <span class="kn">import</span> <span class="n">Bunch</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">fetch_species_distributions</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets.species_distributions</span> <span class="kn">import</span> <span class="n">construct_grids</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span><span class="p">,</span> <span class="n">metrics</span>
+
+<span class="c"># if basemap is available, we&#39;ll use it.</span>
+<span class="c"># otherwise, we&#39;ll improvise later...</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+    <span class="n">basemap</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">basemap</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">create_species_bunch</span><span class="p">(</span><span class="n">species_name</span><span class="p">,</span>
+                         <span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span>
+                         <span class="n">coverages</span><span class="p">,</span> <span class="n">xgrid</span><span class="p">,</span> <span class="n">ygrid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    create a bunch with information about a particular organism</span>
+
+<span class="sd">    This will use the test/train record arrays to extract the</span>
+<span class="sd">    data specific to the given species name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bunch</span> <span class="o">=</span> <span class="n">Bunch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">species_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]))</span>
+
+    <span class="n">points</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">test</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="n">train</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">pts</span> <span class="ow">in</span> <span class="n">points</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c"># choose points associated with the desired species</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="n">pts</span><span class="p">[</span><span class="s">&#39;species&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">species_name</span><span class="p">]</span>
+        <span class="n">bunch</span><span class="p">[</span><span class="s">&#39;pts_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">pts</span>
+
+        <span class="c"># determine coverage values for each of the training &amp; testing points</span>
+        <span class="n">ix</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.searchsorted.html#numpy.searchsorted"><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span></a><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">pts</span><span class="p">[</span><span class="s">&#39;dd long&#39;</span><span class="p">])</span>
+        <span class="n">iy</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.searchsorted.html#numpy.searchsorted"><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span></a><span class="p">(</span><span class="n">ygrid</span><span class="p">,</span> <span class="n">pts</span><span class="p">[</span><span class="s">&#39;dd lat&#39;</span><span class="p">])</span>
+        <span class="n">bunch</span><span class="p">[</span><span class="s">&#39;cov_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">coverages</span><span class="p">[:,</span> <span class="o">-</span><span class="n">iy</span><span class="p">,</span> <span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">return</span> <span class="n">bunch</span>
+
+
+<span class="k">def</span> <span class="nf">plot_species_distribution</span><span class="p">(</span><span class="n">species</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;bradypus_variegatus_0&quot;</span><span class="p">,</span>
+                                       <span class="s">&quot;microryzomys_minutus_0&quot;</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the species distribution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">species</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Note: when more than two species are provided,&quot;</span>
+              <span class="s">&quot; only the first two will be used&quot;</span><span class="p">)</span>
+
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+
+    <span class="c"># Load the compressed data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">fetch_species_distributions</span><span class="p">()</span>
+
+    <span class="c"># Set up the data grid</span>
+    <span class="n">xgrid</span><span class="p">,</span> <span class="n">ygrid</span> <span class="o">=</span> <span class="n">construct_grids</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c"># The grid in x,y coordinates</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.meshgrid.html#numpy.meshgrid"><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span></a><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">ygrid</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c"># create a bunch for each species</span>
+    <span class="n">BV_bunch</span> <span class="o">=</span> <span class="n">create_species_bunch</span><span class="p">(</span><span class="n">species</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="n">data</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">test</span><span class="p">,</span>
+                                    <span class="n">data</span><span class="o">.</span><span class="n">coverages</span><span class="p">,</span> <span class="n">xgrid</span><span class="p">,</span> <span class="n">ygrid</span><span class="p">)</span>
+    <span class="n">MM_bunch</span> <span class="o">=</span> <span class="n">create_species_bunch</span><span class="p">(</span><span class="n">species</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                    <span class="n">data</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">test</span><span class="p">,</span>
+                                    <span class="n">data</span><span class="o">.</span><span class="n">coverages</span><span class="p">,</span> <span class="n">xgrid</span><span class="p">,</span> <span class="n">ygrid</span><span class="p">)</span>
+
+    <span class="c"># background points (grid coordinates) for evaluation</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+    <span class="n">background_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">Ny</span><span class="p">,</span>
+                                                <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">),</span>
+                              <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">Nx</span><span class="p">,</span>
+                                                <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)]</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c"># We&#39;ll make use of the fact that coverages[6] has measurements at all</span>
+    <span class="c"># land points.  This will help us decide between land and water.</span>
+    <span class="n">land_reference</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">coverages</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+
+    <span class="c"># Fit, predict, and plot for each species.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">species</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">BV_bunch</span><span class="p">,</span> <span class="n">MM_bunch</span><span class="p">]):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;_&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Modeling distribution of species &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">species</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c"># Standardize features</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">cov_train</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">cov_train</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">train_cover_std</span> <span class="o">=</span> <span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">cov_train</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span>
+
+        <span class="c"># Fit OneClassSVM</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot; - fit OneClassSVM ... &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">clf</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.svm.OneClassSVM.html#sklearn.svm.OneClassSVM"><span class="n">svm</span><span class="o">.</span><span class="n">OneClassSVM</span></a><span class="p">(</span><span class="n">nu</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s">&quot;rbf&quot;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_cover_std</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;done.&quot;</span><span class="p">)</span>
+
+        <span class="c"># Plot map of South America</span>
+        <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.subplot"><span class="n">pl</span><span class="o">.</span><span class="n">subplot</span></a><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">basemap</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot; - plot coastlines using basemap&quot;</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;cyl&#39;</span><span class="p">,</span> <span class="n">llcrnrlat</span><span class="o">=</span><span class="n">Y</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                        <span class="n">urcrnrlat</span><span class="o">=</span><span class="n">Y</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">llcrnrlon</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                        <span class="n">urcrnrlon</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">resolution</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">)</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">drawcountries</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot; - plot coastlines from coverage&quot;</span><span class="p">)</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">land_reference</span><span class="p">,</span>
+                       <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">9999</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="s">&quot;k&quot;</span><span class="p">,</span>
+                       <span class="n">linestyles</span><span class="o">=</span><span class="s">&quot;solid&quot;</span><span class="p">)</span>
+            <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.xticks"><span class="n">pl</span><span class="o">.</span><span class="n">xticks</span></a><span class="p">([])</span>
+            <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.yticks"><span class="n">pl</span><span class="o">.</span><span class="n">yticks</span></a><span class="p">([])</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot; - predict species distribution&quot;</span><span class="p">)</span>
+
+        <span class="c"># Predict species distribution using the training data</span>
+        <span class="n">Z</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.ones.html#numpy.ones"><span class="n">np</span><span class="o">.</span><span class="n">ones</span></a><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">Ny</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">Nx</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="c"># We&#39;ll predict only for the land points.</span>
+        <span class="n">idx</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.where.html#numpy.where"><span class="n">np</span><span class="o">.</span><span class="n">where</span></a><span class="p">(</span><span class="n">land_reference</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">coverages_land</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">coverages</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">decision_function</span><span class="p">((</span><span class="n">coverages_land</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">std</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">Z</span> <span class="o">*=</span> <span class="n">pred</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">Z</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">pred</span>
+
+        <span class="n">levels</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.linspace.html#numpy.linspace"><span class="n">np</span><span class="o">.</span><span class="n">linspace</span></a><span class="p">(</span><span class="n">Z</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">Z</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">25</span><span class="p">)</span>
+        <span class="n">Z</span><span class="p">[</span><span class="n">land_reference</span> <span class="o">==</span> <span class="o">-</span><span class="mi">9999</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+
+        <span class="c"># plot contours of the prediction</span>
+        <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.contourf"><span class="n">pl</span><span class="o">.</span><span class="n">contourf</span></a><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Reds</span><span class="p">)</span>
+        <a href="http://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar"><span class="n">pl</span><span class="o">.</span><span class="n">colorbar</span></a><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%.2f</span><span class="s">&#39;</span><span class="p">)</span>
+
+        <span class="c"># scatter training/testing points</span>
+        <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.scatter"><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span></a><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">pts_train</span><span class="p">[</span><span class="s">&#39;dd long&#39;</span><span class="p">],</span> <span class="n">species</span><span class="o">.</span><span class="n">pts_train</span><span class="p">[</span><span class="s">&#39;dd lat&#39;</span><span class="p">],</span>
+                   <span class="n">s</span><span class="o">=</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s">&#39;black&#39;</span><span class="p">,</span>
+                   <span class="n">marker</span><span class="o">=</span><span class="s">&#39;^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;train&#39;</span><span class="p">)</span>
+        <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.scatter"><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span></a><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">pts_test</span><span class="p">[</span><span class="s">&#39;dd long&#39;</span><span class="p">],</span> <span class="n">species</span><span class="o">.</span><span class="n">pts_test</span><span class="p">[</span><span class="s">&#39;dd lat&#39;</span><span class="p">],</span>
+                   <span class="n">s</span><span class="o">=</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s">&#39;black&#39;</span><span class="p">,</span>
+                   <span class="n">marker</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+        <a href="http://matplotlib.org/api/legend_api.html#matplotlib.legend"><span class="n">pl</span><span class="o">.</span><span class="n">legend</span></a><span class="p">()</span>
+        <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.title"><span class="n">pl</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <a href="http://matplotlib.org/api/axis_api.html#matplotlib.axis"><span class="n">pl</span><span class="o">.</span><span class="n">axis</span></a><span class="p">(</span><span class="s">&#39;equal&#39;</span><span class="p">)</span>
+
+        <span class="c"># Compute AUC w.r.t. background points</span>
+        <span class="n">pred_background</span> <span class="o">=</span> <span class="n">Z</span><span class="p">[</span><span class="n">background_points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">background_points</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">pred_test</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">decision_function</span><span class="p">((</span><span class="n">species</span><span class="o">.</span><span class="n">cov_test</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span>
+                                          <span class="o">/</span> <span class="n">std</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pred_test</span><span class="p">,</span> <span class="n">pred_background</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.ones.html#numpy.ones"><span class="n">np</span><span class="o">.</span><span class="n">ones</span></a><span class="p">(</span><span class="n">pred_test</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.zeros.html#numpy.zeros"><span class="n">np</span><span class="o">.</span><span class="n">zeros</span></a><span class="p">(</span><span class="n">pred_background</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.metrics.roc_curve.html#sklearn.metrics.roc_curve"><span class="n">metrics</span><span class="o">.</span><span class="n">roc_curve</span></a><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">scores</span><span class="p">)</span>
+        <span class="n">roc_auc</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.metrics.auc.html#sklearn.metrics.auc"><span class="n">metrics</span><span class="o">.</span><span class="n">auc</span></a><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
+        <a href="http://matplotlib.org/api/artist_api.html#matplotlib.text"><span class="n">pl</span><span class="o">.</span><span class="n">text</span></a><span class="p">(</span><span class="o">-</span><span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mi">70</span><span class="p">,</span> <span class="s">&quot;AUC: </span><span class="si">%.3f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">roc_auc</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&quot;right&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s"> Area under the ROC curve : </span><span class="si">%f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">roc_auc</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">time elapsed: </span><span class="si">%.2f</span><span class="s">s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
+
+
+<span class="n">plot_species_distribution</span><span class="p">()</span>
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.show"><span class="n">pl</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../../_sources/auto_examples/applications/plot_species_distribution_modeling.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="face_recognition.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="plot_stock_market.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

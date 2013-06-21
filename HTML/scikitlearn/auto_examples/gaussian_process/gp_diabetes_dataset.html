@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Gaussian Processes regression: goodness-of-fit on the ‘diabetes’ dataset &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../../index.html" />
+    <link rel="up" title="Examples" href="../index.html" />
+    <link rel="next" title="Gaussian Processes classification example: exploiting the probabilistic output" href="plot_gp_probabilistic_classification_after_regression.html" />
+    <link rel="prev" title="Cross-validation on diabetes Dataset Exercise" href="../exercises/plot_cv_diabetes.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../../install.html">Download</a></li>
+            <li><a href="../../support.html">Support</a></li>
+            <li><a href="../../user_guide.html">User Guide</a></li>
+            <li><a href="../index.html">Examples</a></li>
+            <li><a href="../../modules/classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="../exercises/plot_cv_diabetes.html" title="Cross-validation on diabetes Dataset Exercise"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    Cross-validation...
+	    </span>
+	    <span class="hiddenrellink">
+	    Cross-validation on diabetes Dataset Exercise
+	    </span>
+	    
+	    </a>
+	</div>
+	    <div class="spacer">
+	    &nbsp;
+	    </div>
+	
+	<div class="rellink">
+	<a href="plot_gp_probabilistic_classification_after_regression.html" title="Gaussian Processes classification example: exploiting the probabilistic output"
+	    accesskey="N">Next
+	    <br>
+	    <span class="smallrellink">
+	    Gaussian Process...
+	    </span>
+	    <span class="hiddenrellink">
+	    Gaussian Processes classification example: exploiting the probabilistic output
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../index.html" title="Examples" >
+	Up
+	<br>
+	<span class="smallrellink">
+	Examples
+	</span>
+	<span class="hiddenrellink">
+	Examples
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">Gaussian Processes regression: goodness-of-fit on the &#8216;diabetes&#8217; dataset</a></li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gaussian-processes-regression-goodness-of-fit-on-the-diabetes-dataset">
+<span id="example-gaussian-process-gp-diabetes-dataset-py"></span><h1>Gaussian Processes regression: goodness-of-fit on the &#8216;diabetes&#8217; dataset<a class="headerlink" href="#gaussian-processes-regression-goodness-of-fit-on-the-diabetes-dataset" title="Permalink to this headline">¶</a></h1>
+<p>This example consists in fitting a Gaussian Process model onto the diabetes
+dataset.</p>
+<p>The correlation parameters are determined by means of maximum likelihood
+estimation (MLE). An anisotropic squared exponential correlation model with a
+constant regression model are assumed. We also used a nugget = 1e-2 in order to
+account for the (strong) noise in the targets.</p>
+<p>We compute then compute a cross-validation estimate of the coefficient of
+determination (R2) without reperforming MLE, using the set of correlation
+parameters found on the whole dataset.</p>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../../_downloads/gp_diabetes_dataset.py"><tt class="xref download docutils literal"><span class="pre">gp_diabetes_dataset.py</span></tt></a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+<span class="c"># Author: Vincent Dubourg &lt;vincent.dubourg@gmail.com&gt;</span>
+<span class="c"># Licence: BSD 3 clause</span>
+
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="kn">from</span> <span class="nn">sklearn.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcess</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">KFold</span>
+
+<span class="c"># Load the dataset from scikit&#39;s data sets</span>
+<span class="n">diabetes</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_diabetes</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">diabetes</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">diabetes</span><span class="o">.</span><span class="n">target</span>
+
+<span class="c"># Instanciate a GP model</span>
+<span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcess</span><span class="p">(</span><span class="n">regr</span><span class="o">=</span><span class="s">&#39;constant&#39;</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="s">&#39;absolute_exponential&#39;</span><span class="p">,</span>
+                     <span class="n">theta0</span><span class="o">=</span><span class="p">[</span><span class="mf">1e-4</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="n">thetaL</span><span class="o">=</span><span class="p">[</span><span class="mf">1e-12</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+                     <span class="n">thetaU</span><span class="o">=</span><span class="p">[</span><span class="mf">1e-2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="n">nugget</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s">&#39;Welch&#39;</span><span class="p">)</span>
+
+<span class="c"># Fit the GP model to the data performing maximum likelihood estimation</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c"># Deactivate maximum likelihood estimation for the cross-validation loop</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">theta0</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">theta</span>  <span class="c"># Given correlation parameter = MLE</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">thetaL</span><span class="p">,</span> <span class="n">gp</span><span class="o">.</span><span class="n">thetaU</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>  <span class="c"># None bounds deactivate MLE</span>
+
+<span class="c"># Perform a cross-validation estimate of the coefficient of determination using</span>
+<span class="c"># the cross_validation module using all CPUs available on the machine</span>
+<span class="n">K</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c"># folds</span>
+<span class="n">R2</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">gp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">KFold</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;The </span><span class="si">%d</span><span class="s">-Folds estimate of the coefficient of determination is R2 = </span><span class="si">%s</span><span class="s">&quot;</span>
+      <span class="o">%</span> <span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">R2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../../_sources/auto_examples/gaussian_process/gp_diabetes_dataset.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="../exercises/plot_cv_diabetes.html">
+        Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="plot_gp_probabilistic_classification_after_regression.html">
+        Next
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

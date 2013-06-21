@@ -1,0 +1,212 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.sparse.linalg.LinearOperator &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Sparse linear algebra (scipy.sparse.linalg)" href="../sparse.linalg.html" />
+    <link rel="next" title="scipy.sparse.linalg.LinearOperator.matmat" href="scipy.sparse.linalg.LinearOperator.matmat.html" />
+    <link rel="prev" title="scipy.sparse.linalg.ArpackError" href="scipy.sparse.linalg.ArpackError.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.LinearOperator.matmat.html" title="scipy.sparse.linalg.LinearOperator.matmat"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.ArpackError.html" title="scipy.sparse.linalg.ArpackError"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../sparse.linalg.html" accesskey="U">Sparse linear algebra (<tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.sparse.linalg</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-sparse-linalg-linearoperator">
+<h1>scipy.sparse.linalg.LinearOperator<a class="headerlink" href="#scipy-sparse-linalg-linearoperator" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.sparse.linalg.LinearOperator">
+<em class="property">class </em><tt class="descclassname">scipy.sparse.linalg.</tt><tt class="descname">LinearOperator</tt><big>(</big><em>shape</em>, <em>matvec</em>, <em>rmatvec=None</em>, <em>matmat=None</em>, <em>dtype=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/sparse/linalg/interface.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.sparse.linalg.LinearOperator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Common interface for performing matrix vector products</p>
+<p>Many iterative methods (e.g. cg, gmres) do not need to know the
+individual entries of a matrix to solve a linear system A*x=b.
+Such solvers only require the computation of matrix vector
+products, A*v where v is a dense vector.  This class serves as
+an abstract interface between iterative solvers and matrix-like
+objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>shape</strong> : tuple</p>
+<blockquote>
+<div><p>Matrix dimensions (M,N)</p>
+</div></blockquote>
+<p><strong>matvec</strong> : callable f(v)</p>
+<blockquote>
+<div><p>Returns returns A * v.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>rmatvec</strong> : callable f(v)</p>
+<blockquote>
+<div><p>Returns A^H * v, where A^H is the conjugate transpose of A.</p>
+</div></blockquote>
+<p><strong>matmat</strong> : callable f(V)</p>
+<blockquote>
+<div><p>Returns A * V, where V is a dense matrix with dimensions (N,K).</p>
+</div></blockquote>
+<p><strong>dtype</strong> : dtype</p>
+<blockquote class="last">
+<div><p>Data type of the matrix.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.sparse.linalg.aslinearoperator.html#scipy.sparse.linalg.aslinearoperator" title="scipy.sparse.linalg.aslinearoperator"><tt class="xref py py-obj docutils literal"><span class="pre">aslinearoperator</span></tt></a></dt>
+<dd>Construct LinearOperators</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>The user-defined matvec() function must properly handle the case
+where v has shape (N,) as well as the (N,1) case.  The shape of
+the return type is handled internally by LinearOperator.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">LinearOperator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">mv</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">array</span><span class="p">([</span> <span class="mi">2</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">LinearOperator</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">matvec</span><span class="o">=</span><span class="n">mv</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">&lt;2x2 LinearOperator with unspecified dtype&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">matvec</span><span class="p">(</span> <span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+<span class="go">array([ 2.,  3.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">*</span> <span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([ 2.,  3.])</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.linalg.LinearOperator.matmat.html#scipy.sparse.linalg.LinearOperator.matmat" title="scipy.sparse.linalg.LinearOperator.matmat"><tt class="xref py py-obj docutils literal"><span class="pre">matmat</span></tt></a>(X)</td>
+<td>Matrix-matrix multiplication</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.linalg.LinearOperator.matvec.html#scipy.sparse.linalg.LinearOperator.matvec" title="scipy.sparse.linalg.LinearOperator.matvec"><tt class="xref py py-obj docutils literal"><span class="pre">matvec</span></tt></a>(x)</td>
+<td>Matrix-vector multiplication</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.sparse.linalg.ArpackError.html"
+                        title="previous chapter">scipy.sparse.linalg.ArpackError</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.sparse.linalg.LinearOperator.matmat.html"
+                        title="next chapter">scipy.sparse.linalg.LinearOperator.matmat</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.LinearOperator.matmat.html" title="scipy.sparse.linalg.LinearOperator.matmat"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.linalg.ArpackError.html" title="scipy.sparse.linalg.ArpackError"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../sparse.linalg.html" >Sparse linear algebra (<tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.sparse.linalg</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

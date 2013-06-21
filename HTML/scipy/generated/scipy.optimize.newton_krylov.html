@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.optimize.newton_krylov &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Optimization and root finding (scipy.optimize)" href="../optimize.html" />
+    <link rel="next" title="scipy.optimize.anderson" href="scipy.optimize.anderson.html" />
+    <link rel="prev" title="scipy.optimize.broyden2" href="scipy.optimize.broyden2.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.anderson.html" title="scipy.optimize.anderson"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.broyden2.html" title="scipy.optimize.broyden2"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../optimize.html" accesskey="U">Optimization and root finding (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.optimize</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-optimize-newton-krylov">
+<h1>scipy.optimize.newton_krylov<a class="headerlink" href="#scipy-optimize-newton-krylov" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.optimize.newton_krylov">
+<tt class="descclassname">scipy.optimize.</tt><tt class="descname">newton_krylov</tt><big>(</big><em>F</em>, <em>xin</em>, <em>iter=None</em>, <em>rdiff=None</em>, <em>method='lgmres'</em>, <em>inner_maxiter=20</em>, <em>inner_M=None</em>, <em>outer_k=10</em>, <em>verbose=False</em>, <em>maxiter=None</em>, <em>f_tol=None</em>, <em>f_rtol=None</em>, <em>x_tol=None</em>, <em>x_rtol=None</em>, <em>tol_norm=None</em>, <em>line_search='armijo'</em>, <em>callback=None</em>, <em>**kw</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/optimize/nonlin.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.optimize.newton_krylov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a root of a function, using Krylov approximation for inverse Jacobian.</p>
+<p>This method is suitable for solving large-scale problems.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>F</strong> : function(x) -&gt; f</p>
+<blockquote>
+<div><p>Function whose root to find; should take and return an array-like
+object.</p>
+</div></blockquote>
+<p><strong>x0</strong> : array_like</p>
+<blockquote>
+<div><p>Initial guess for the solution</p>
+</div></blockquote>
+<p><strong>rdiff</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative step size to use in numerical differentiation.</p>
+</div></blockquote>
+<p><strong>method</strong> : {&#8216;lgmres&#8217;, &#8216;gmres&#8217;, &#8216;bicgstab&#8217;, &#8216;cgs&#8217;, &#8216;minres&#8217;} or function</p>
+<blockquote>
+<div><p>Krylov method to use to approximate the Jacobian.
+Can be a string, or a function implementing the same interface as
+the iterative solvers in <a class="reference internal" href="../sparse.linalg.html#module-scipy.sparse.linalg" title="scipy.sparse.linalg"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg</span></tt></a>.</p>
+<p>The default is <a class="reference internal" href="scipy.sparse.linalg.lgmres.html#scipy.sparse.linalg.lgmres" title="scipy.sparse.linalg.lgmres"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg.lgmres</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>inner_M</strong> : LinearOperator or InverseJacobian</p>
+<blockquote>
+<div><p>Preconditioner for the inner Krylov iteration.
+Note that you can use also inverse Jacobians as (adaptive)
+preconditioners. For example,</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jac</span> <span class="o">=</span> <span class="n">BroydenFirst</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kjac</span> <span class="o">=</span> <span class="n">KrylovJacobian</span><span class="p">(</span><span class="n">inner_M</span><span class="o">=</span><span class="n">jac</span><span class="o">.</span><span class="n">inverse</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>If the preconditioner has a method named &#8216;update&#8217;, it will be called
+as <tt class="docutils literal"><span class="pre">update(x,</span> <span class="pre">f)</span></tt> after each nonlinear step, with <tt class="docutils literal"><span class="pre">x</span></tt> giving
+the current point, and <tt class="docutils literal"><span class="pre">f</span></tt> the current function value.</p>
+</div></blockquote>
+<p><strong>inner_tol, inner_maxiter, ...</strong> :</p>
+<blockquote>
+<div><p>Parameters to pass on to the &#8220;inner&#8221; Krylov solver.
+See <a class="reference internal" href="scipy.sparse.linalg.gmres.html#scipy.sparse.linalg.gmres" title="scipy.sparse.linalg.gmres"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg.gmres</span></tt></a> for details.</p>
+</div></blockquote>
+<p><strong>outer_k</strong> : int, optional</p>
+<blockquote>
+<div><p>Size of the subspace kept across LGMRES nonlinear iterations.
+See <a class="reference internal" href="scipy.sparse.linalg.lgmres.html#scipy.sparse.linalg.lgmres" title="scipy.sparse.linalg.lgmres"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg.lgmres</span></tt></a> for details.</p>
+</div></blockquote>
+<p><strong>iter</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of iterations to make. If omitted (default), make as many
+as required to meet tolerances.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool, optional</p>
+<blockquote>
+<div><p>Print status to stdout on every iteration.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum number of iterations to make. If more are needed to
+meet convergence, <em class="xref py py-obj">NoConvergence</em> is raised.</p>
+</div></blockquote>
+<p><strong>f_tol</strong> : float, optional</p>
+<blockquote>
+<div><p>Absolute tolerance (in max-norm) for the residual.
+If omitted, default is 6e-6.</p>
+</div></blockquote>
+<p><strong>f_rtol</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative tolerance for the residual. If omitted, not used.</p>
+</div></blockquote>
+<p><strong>x_tol</strong> : float, optional</p>
+<blockquote>
+<div><p>Absolute minimum step size, as determined from the Jacobian
+approximation. If the step size is smaller than this, optimization
+is terminated as successful. If omitted, not used.</p>
+</div></blockquote>
+<p><strong>x_rtol</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative minimum step size. If omitted, not used.</p>
+</div></blockquote>
+<p><strong>tol_norm</strong> : function(vector) -&gt; scalar, optional</p>
+<blockquote>
+<div><p>Norm to use in convergence check. Default is the maximum norm.</p>
+</div></blockquote>
+<p><strong>line_search</strong> : {None, &#8216;armijo&#8217; (default), &#8216;wolfe&#8217;}, optional</p>
+<blockquote>
+<div><p>Which type of a line search to use to determine the step size in the
+direction given by the Jacobian approximation. Defaults to &#8216;armijo&#8217;.</p>
+</div></blockquote>
+<p><strong>callback</strong> : function, optional</p>
+<blockquote>
+<div><p>Optional callback function. It is called on every iteration as
+<tt class="docutils literal"><span class="pre">callback(x,</span> <span class="pre">f)</span></tt> where <em class="xref py py-obj">x</em> is the current solution and <em class="xref py py-obj">f</em>
+the corresponding residual.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>sol</strong> : ndarray</p>
+<blockquote>
+<div><p>An array (of similar array type as <em class="xref py py-obj">x0</em>) containing the final solution.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>NoConvergence</strong> :</p>
+<blockquote class="last">
+<div><p>When a solution was not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="scipy.sparse.linalg.gmres.html#scipy.sparse.linalg.gmres" title="scipy.sparse.linalg.gmres"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg.gmres</span></tt></a>, <a class="reference internal" href="scipy.sparse.linalg.lgmres.html#scipy.sparse.linalg.lgmres" title="scipy.sparse.linalg.lgmres"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg.lgmres</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>This function implements a Newton-Krylov solver. The basic idea is
+to compute the inverse of the Jacobian with an iterative Krylov
+method. These methods require only evaluating the Jacobian-vector
+products, which are conveniently approximated by numerical
+differentiation:</p>
+<div class="math">
+<p><img src="../_images/math/e38b3f51c9676d96cbf61c575ed4e92b0ed11f61.png" alt="J v \approx (f(x + \omega*v/|v|) - f(x)) / \omega"/></p>
+</div><p>Due to the use of iterative matrix inverses, these methods can
+deal with large nonlinear problems.</p>
+<p>Scipy&#8217;s <a class="reference internal" href="../sparse.linalg.html#module-scipy.sparse.linalg" title="scipy.sparse.linalg"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg</span></tt></a> module offers a selection of Krylov
+solvers to choose from. The default here is <em class="xref py py-obj">lgmres</em>, which is a
+variant of restarted GMRES iteration that reuses some of the
+information obtained in the previous Newton steps to invert
+Jacobians in subsequent steps.</p>
+<p>For a review on Newton-Krylov methods, see for example <a class="reference internal" href="../tutorial/optimize.html#kk">[KK]</a>,
+and for the LGMRES sparse inverse method, see <a class="reference internal" href="scipy.sparse.linalg.lgmres.html#bjm">[BJM]</a>.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="kk" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[KK]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> D.A. Knoll and D.E. Keyes, J. Comp. Phys. 193, 357 (2003).</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="bjm" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[BJM]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> A.H. Baker and E.R. Jessup and T. Manteuffel,
+SIAM J. Matrix Anal. Appl. 26, 962 (2005).</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.optimize.broyden2.html"
+                        title="previous chapter">scipy.optimize.broyden2</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.optimize.anderson.html"
+                        title="next chapter">scipy.optimize.anderson</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.anderson.html" title="scipy.optimize.anderson"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.optimize.broyden2.html" title="scipy.optimize.broyden2"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../optimize.html" >Optimization and root finding (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.optimize</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

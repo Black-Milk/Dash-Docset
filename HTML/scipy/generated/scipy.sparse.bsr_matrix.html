@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.sparse.bsr_matrix &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Sparse matrices (scipy.sparse)" href="../sparse.html" />
+    <link rel="next" title="scipy.sparse.bsr_matrix.has_sorted_indices" href="scipy.sparse.bsr_matrix.has_sorted_indices.html" />
+    <link rel="prev" title="scipy.sparse.SparseWarning" href="scipy.sparse.SparseWarning.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.bsr_matrix.has_sorted_indices.html" title="scipy.sparse.bsr_matrix.has_sorted_indices"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.SparseWarning.html" title="scipy.sparse.SparseWarning"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../sparse.html" accesskey="U">Sparse matrices (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.sparse</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-sparse-bsr-matrix">
+<h1>scipy.sparse.bsr_matrix<a class="headerlink" href="#scipy-sparse-bsr-matrix" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.sparse.bsr_matrix">
+<em class="property">class </em><tt class="descclassname">scipy.sparse.</tt><tt class="descname">bsr_matrix</tt><big>(</big><em>arg1</em>, <em>shape=None</em>, <em>dtype=None</em>, <em>copy=False</em>, <em>blocksize=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/sparse/bsr.py#L21"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.sparse.bsr_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block Sparse Row matrix</p>
+<dl class="docutils">
+<dt>This can be instantiated in several ways:</dt>
+<dd><dl class="first last docutils">
+<dt>bsr_matrix(D, [blocksize=(R,C)])</dt>
+<dd>with a dense matrix or rank-2 ndarray D</dd>
+<dt>bsr_matrix(S, [blocksize=(R,C)])</dt>
+<dd>with another sparse matrix S (equivalent to S.tobsr())</dd>
+<dt>bsr_matrix((M, N), [blocksize=(R,C), dtype])</dt>
+<dd>to construct an empty matrix with shape (M, N)
+dtype is optional, defaulting to dtype=&#8217;d&#8217;.</dd>
+<dt>bsr_matrix((data, ij), [blocksize=(R,C), shape=(M, N)])</dt>
+<dd>where <tt class="docutils literal"><span class="pre">data</span></tt> and <tt class="docutils literal"><span class="pre">ij</span></tt> satisfy <tt class="docutils literal"><span class="pre">a[ij[0,</span> <span class="pre">k],</span> <span class="pre">ij[1,</span> <span class="pre">k]]</span> <span class="pre">=</span> <span class="pre">data[k]</span></tt></dd>
+<dt>bsr_matrix((data, indices, indptr), [shape=(M, N)])</dt>
+<dd>is the standard BSR representation where the block column
+indices for row i are stored in <tt class="docutils literal"><span class="pre">indices[indptr[i]:indptr[i+1]]</span></tt>
+and their corresponding block values are stored in
+<tt class="docutils literal"><span class="pre">data[</span> <span class="pre">indptr[i]:</span> <span class="pre">indptr[i+1]</span> <span class="pre">]</span></tt>.  If the shape parameter is not
+supplied, the matrix dimensions are inferred from the index arrays.</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Sparse matrices can be used in arithmetic operations: they support
+addition, subtraction, multiplication, division, and matrix power.</p>
+<p><strong>Summary of BSR format</strong></p>
+<p>The Block Compressed Row (BSR) format is very similar to the Compressed
+Sparse Row (CSR) format.  BSR is appropriate for sparse matrices with dense
+sub matrices like the last example below.  Block matrices often arise in
+vector-valued finite element discretizations.  In such cases, BSR is
+considerably more efficient than CSR and CSC for many sparse arithmetic
+operations.</p>
+<p><strong>Blocksize</strong></p>
+<p>The blocksize (R,C) must evenly divide the shape of the matrix (M,N).
+That is, R and C must satisfy the relationship <tt class="docutils literal"><span class="pre">M</span> <span class="pre">%</span> <span class="pre">R</span> <span class="pre">=</span> <span class="pre">0</span></tt> and
+<tt class="docutils literal"><span class="pre">N</span> <span class="pre">%</span> <span class="pre">C</span> <span class="pre">=</span> <span class="pre">0</span></tt>.</p>
+<p>If no blocksize is specified, a simple heuristic is applied to determine
+an appropriate blocksize.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">bsr_matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bsr_matrix</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+<span class="go">matrix([[0, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0]], dtype=int8)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bsr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">)),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+<span class="go">matrix([[1, 0, 2],</span>
+<span class="go">        [0, 0, 3],</span>
+<span class="go">        [4, 5, 6]])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">indptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bsr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span><span class="n">indices</span><span class="p">,</span><span class="n">indptr</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+<span class="go">matrix([[1, 1, 0, 0, 2, 2],</span>
+<span class="go">        [1, 1, 0, 0, 2, 2],</span>
+<span class="go">        [0, 0, 0, 0, 3, 3],</span>
+<span class="go">        [0, 0, 0, 0, 3, 3],</span>
+<span class="go">        [4, 4, 5, 5, 6, 6],</span>
+<span class="go">        [4, 4, 5, 5, 6, 6]])</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.has_sorted_indices.html#scipy.sparse.bsr_matrix.has_sorted_indices" title="scipy.sparse.bsr_matrix.has_sorted_indices"><tt class="xref py py-obj docutils literal"><span class="pre">has_sorted_indices</span></tt></a></td>
+<td>Determine whether the matrix has sorted indices</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>dtype</td>
+<td>(dtype) Data type of the matrix</td>
+</tr>
+<tr class="row-even"><td>shape</td>
+<td>(2-tuple) Shape of the matrix</td>
+</tr>
+<tr class="row-odd"><td>ndim</td>
+<td>(int) Number of dimensions (this is always 2)</td>
+</tr>
+<tr class="row-even"><td>nnz</td>
+<td>Number of nonzero elements</td>
+</tr>
+<tr class="row-odd"><td>data</td>
+<td>Data array of the matrix</td>
+</tr>
+<tr class="row-even"><td>indices</td>
+<td>BSR format index array</td>
+</tr>
+<tr class="row-odd"><td>indptr</td>
+<td>BSR format index pointer array</td>
+</tr>
+<tr class="row-even"><td>blocksize</td>
+<td>Block size of the matrix</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.arcsin.html#scipy.sparse.bsr_matrix.arcsin" title="scipy.sparse.bsr_matrix.arcsin"><tt class="xref py py-obj docutils literal"><span class="pre">arcsin</span></tt></a>()</td>
+<td>Element-wise arcsin.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.arcsinh.html#scipy.sparse.bsr_matrix.arcsinh" title="scipy.sparse.bsr_matrix.arcsinh"><tt class="xref py py-obj docutils literal"><span class="pre">arcsinh</span></tt></a>()</td>
+<td>Element-wise arcsinh.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.arctan.html#scipy.sparse.bsr_matrix.arctan" title="scipy.sparse.bsr_matrix.arctan"><tt class="xref py py-obj docutils literal"><span class="pre">arctan</span></tt></a>()</td>
+<td>Element-wise arctan.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.arctanh.html#scipy.sparse.bsr_matrix.arctanh" title="scipy.sparse.bsr_matrix.arctanh"><tt class="xref py py-obj docutils literal"><span class="pre">arctanh</span></tt></a>()</td>
+<td>Element-wise arctanh.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.asformat.html#scipy.sparse.bsr_matrix.asformat" title="scipy.sparse.bsr_matrix.asformat"><tt class="xref py py-obj docutils literal"><span class="pre">asformat</span></tt></a>(format)</td>
+<td>Return this matrix in a given sparse format</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.asfptype.html#scipy.sparse.bsr_matrix.asfptype" title="scipy.sparse.bsr_matrix.asfptype"><tt class="xref py py-obj docutils literal"><span class="pre">asfptype</span></tt></a>()</td>
+<td>Upcast matrix to a floating point format (if necessary)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.astype.html#scipy.sparse.bsr_matrix.astype" title="scipy.sparse.bsr_matrix.astype"><tt class="xref py py-obj docutils literal"><span class="pre">astype</span></tt></a>(t)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.ceil.html#scipy.sparse.bsr_matrix.ceil" title="scipy.sparse.bsr_matrix.ceil"><tt class="xref py py-obj docutils literal"><span class="pre">ceil</span></tt></a>()</td>
+<td>Element-wise ceil.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.check_format.html#scipy.sparse.bsr_matrix.check_format" title="scipy.sparse.bsr_matrix.check_format"><tt class="xref py py-obj docutils literal"><span class="pre">check_format</span></tt></a>([full_check])</td>
+<td>check whether the matrix format is valid</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.conj.html#scipy.sparse.bsr_matrix.conj" title="scipy.sparse.bsr_matrix.conj"><tt class="xref py py-obj docutils literal"><span class="pre">conj</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.conjugate.html#scipy.sparse.bsr_matrix.conjugate" title="scipy.sparse.bsr_matrix.conjugate"><tt class="xref py py-obj docutils literal"><span class="pre">conjugate</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.copy.html#scipy.sparse.bsr_matrix.copy" title="scipy.sparse.bsr_matrix.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.deg2rad.html#scipy.sparse.bsr_matrix.deg2rad" title="scipy.sparse.bsr_matrix.deg2rad"><tt class="xref py py-obj docutils literal"><span class="pre">deg2rad</span></tt></a>()</td>
+<td>Element-wise deg2rad.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.diagonal.html#scipy.sparse.bsr_matrix.diagonal" title="scipy.sparse.bsr_matrix.diagonal"><tt class="xref py py-obj docutils literal"><span class="pre">diagonal</span></tt></a>()</td>
+<td>Returns the main diagonal of the matrix</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.dot.html#scipy.sparse.bsr_matrix.dot" title="scipy.sparse.bsr_matrix.dot"><tt class="xref py py-obj docutils literal"><span class="pre">dot</span></tt></a>(other)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.eliminate_zeros.html#scipy.sparse.bsr_matrix.eliminate_zeros" title="scipy.sparse.bsr_matrix.eliminate_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">eliminate_zeros</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.expm1.html#scipy.sparse.bsr_matrix.expm1" title="scipy.sparse.bsr_matrix.expm1"><tt class="xref py py-obj docutils literal"><span class="pre">expm1</span></tt></a>()</td>
+<td>Element-wise expm1.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.floor.html#scipy.sparse.bsr_matrix.floor" title="scipy.sparse.bsr_matrix.floor"><tt class="xref py py-obj docutils literal"><span class="pre">floor</span></tt></a>()</td>
+<td>Element-wise floor.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.getH.html#scipy.sparse.bsr_matrix.getH" title="scipy.sparse.bsr_matrix.getH"><tt class="xref py py-obj docutils literal"><span class="pre">getH</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.get_shape.html#scipy.sparse.bsr_matrix.get_shape" title="scipy.sparse.bsr_matrix.get_shape"><tt class="xref py py-obj docutils literal"><span class="pre">get_shape</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.getcol.html#scipy.sparse.bsr_matrix.getcol" title="scipy.sparse.bsr_matrix.getcol"><tt class="xref py py-obj docutils literal"><span class="pre">getcol</span></tt></a>(j)</td>
+<td>Returns a copy of column j of the matrix, as an (m x 1) sparse</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.getdata.html#scipy.sparse.bsr_matrix.getdata" title="scipy.sparse.bsr_matrix.getdata"><tt class="xref py py-obj docutils literal"><span class="pre">getdata</span></tt></a>(ind)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.getformat.html#scipy.sparse.bsr_matrix.getformat" title="scipy.sparse.bsr_matrix.getformat"><tt class="xref py py-obj docutils literal"><span class="pre">getformat</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.getmaxprint.html#scipy.sparse.bsr_matrix.getmaxprint" title="scipy.sparse.bsr_matrix.getmaxprint"><tt class="xref py py-obj docutils literal"><span class="pre">getmaxprint</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.getnnz.html#scipy.sparse.bsr_matrix.getnnz" title="scipy.sparse.bsr_matrix.getnnz"><tt class="xref py py-obj docutils literal"><span class="pre">getnnz</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.getrow.html#scipy.sparse.bsr_matrix.getrow" title="scipy.sparse.bsr_matrix.getrow"><tt class="xref py py-obj docutils literal"><span class="pre">getrow</span></tt></a>(i)</td>
+<td>Returns a copy of row i of the matrix, as a (1 x n) sparse</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.log1p.html#scipy.sparse.bsr_matrix.log1p" title="scipy.sparse.bsr_matrix.log1p"><tt class="xref py py-obj docutils literal"><span class="pre">log1p</span></tt></a>()</td>
+<td>Element-wise log1p.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.matmat.html#scipy.sparse.bsr_matrix.matmat" title="scipy.sparse.bsr_matrix.matmat"><tt class="xref py py-obj docutils literal"><span class="pre">matmat</span></tt></a>(other)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.matvec.html#scipy.sparse.bsr_matrix.matvec" title="scipy.sparse.bsr_matrix.matvec"><tt class="xref py py-obj docutils literal"><span class="pre">matvec</span></tt></a>(other)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.mean.html#scipy.sparse.bsr_matrix.mean" title="scipy.sparse.bsr_matrix.mean"><tt class="xref py py-obj docutils literal"><span class="pre">mean</span></tt></a>([axis])</td>
+<td>Average the matrix over the given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.multiply.html#scipy.sparse.bsr_matrix.multiply" title="scipy.sparse.bsr_matrix.multiply"><tt class="xref py py-obj docutils literal"><span class="pre">multiply</span></tt></a>(other)</td>
+<td>Point-wise multiplication by another matrix</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.nonzero.html#scipy.sparse.bsr_matrix.nonzero" title="scipy.sparse.bsr_matrix.nonzero"><tt class="xref py py-obj docutils literal"><span class="pre">nonzero</span></tt></a>()</td>
+<td>nonzero indices</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.prune.html#scipy.sparse.bsr_matrix.prune" title="scipy.sparse.bsr_matrix.prune"><tt class="xref py py-obj docutils literal"><span class="pre">prune</span></tt></a>()</td>
+<td>Remove empty space after all non-zero elements.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.rad2deg.html#scipy.sparse.bsr_matrix.rad2deg" title="scipy.sparse.bsr_matrix.rad2deg"><tt class="xref py py-obj docutils literal"><span class="pre">rad2deg</span></tt></a>()</td>
+<td>Element-wise rad2deg.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.reshape.html#scipy.sparse.bsr_matrix.reshape" title="scipy.sparse.bsr_matrix.reshape"><tt class="xref py py-obj docutils literal"><span class="pre">reshape</span></tt></a>(shape)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.rint.html#scipy.sparse.bsr_matrix.rint" title="scipy.sparse.bsr_matrix.rint"><tt class="xref py py-obj docutils literal"><span class="pre">rint</span></tt></a>()</td>
+<td>Element-wise rint.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.set_shape.html#scipy.sparse.bsr_matrix.set_shape" title="scipy.sparse.bsr_matrix.set_shape"><tt class="xref py py-obj docutils literal"><span class="pre">set_shape</span></tt></a>(shape)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.setdiag.html#scipy.sparse.bsr_matrix.setdiag" title="scipy.sparse.bsr_matrix.setdiag"><tt class="xref py py-obj docutils literal"><span class="pre">setdiag</span></tt></a>(values[,&nbsp;k])</td>
+<td>Fills the diagonal elements {a_ii} with the values from the given sequence.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.sign.html#scipy.sparse.bsr_matrix.sign" title="scipy.sparse.bsr_matrix.sign"><tt class="xref py py-obj docutils literal"><span class="pre">sign</span></tt></a>()</td>
+<td>Element-wise sign.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.sin.html#scipy.sparse.bsr_matrix.sin" title="scipy.sparse.bsr_matrix.sin"><tt class="xref py py-obj docutils literal"><span class="pre">sin</span></tt></a>()</td>
+<td>Element-wise sin.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.sinh.html#scipy.sparse.bsr_matrix.sinh" title="scipy.sparse.bsr_matrix.sinh"><tt class="xref py py-obj docutils literal"><span class="pre">sinh</span></tt></a>()</td>
+<td>Element-wise sinh.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.sort_indices.html#scipy.sparse.bsr_matrix.sort_indices" title="scipy.sparse.bsr_matrix.sort_indices"><tt class="xref py py-obj docutils literal"><span class="pre">sort_indices</span></tt></a>()</td>
+<td>Sort the indices of this matrix <em>in place</em></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.sorted_indices.html#scipy.sparse.bsr_matrix.sorted_indices" title="scipy.sparse.bsr_matrix.sorted_indices"><tt class="xref py py-obj docutils literal"><span class="pre">sorted_indices</span></tt></a>()</td>
+<td>Return a copy of this matrix with sorted indices</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.sum.html#scipy.sparse.bsr_matrix.sum" title="scipy.sparse.bsr_matrix.sum"><tt class="xref py py-obj docutils literal"><span class="pre">sum</span></tt></a>([axis])</td>
+<td>Sum the matrix over the given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.sum_duplicates.html#scipy.sparse.bsr_matrix.sum_duplicates" title="scipy.sparse.bsr_matrix.sum_duplicates"><tt class="xref py py-obj docutils literal"><span class="pre">sum_duplicates</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.tan.html#scipy.sparse.bsr_matrix.tan" title="scipy.sparse.bsr_matrix.tan"><tt class="xref py py-obj docutils literal"><span class="pre">tan</span></tt></a>()</td>
+<td>Element-wise tan.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.tanh.html#scipy.sparse.bsr_matrix.tanh" title="scipy.sparse.bsr_matrix.tanh"><tt class="xref py py-obj docutils literal"><span class="pre">tanh</span></tt></a>()</td>
+<td>Element-wise tanh.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.toarray.html#scipy.sparse.bsr_matrix.toarray" title="scipy.sparse.bsr_matrix.toarray"><tt class="xref py py-obj docutils literal"><span class="pre">toarray</span></tt></a>([order,&nbsp;out])</td>
+<td>See the docstring for <tt class="xref py py-obj docutils literal"><span class="pre">spmatrix.toarray</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.tobsr.html#scipy.sparse.bsr_matrix.tobsr" title="scipy.sparse.bsr_matrix.tobsr"><tt class="xref py py-obj docutils literal"><span class="pre">tobsr</span></tt></a>([blocksize,&nbsp;copy])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.tocoo.html#scipy.sparse.bsr_matrix.tocoo" title="scipy.sparse.bsr_matrix.tocoo"><tt class="xref py py-obj docutils literal"><span class="pre">tocoo</span></tt></a>([copy])</td>
+<td>Convert this matrix to COOrdinate format.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.tocsc.html#scipy.sparse.bsr_matrix.tocsc" title="scipy.sparse.bsr_matrix.tocsc"><tt class="xref py py-obj docutils literal"><span class="pre">tocsc</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.tocsr.html#scipy.sparse.bsr_matrix.tocsr" title="scipy.sparse.bsr_matrix.tocsr"><tt class="xref py py-obj docutils literal"><span class="pre">tocsr</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.todense.html#scipy.sparse.bsr_matrix.todense" title="scipy.sparse.bsr_matrix.todense"><tt class="xref py py-obj docutils literal"><span class="pre">todense</span></tt></a>([order,&nbsp;out])</td>
+<td>Return a dense matrix representation of this matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.todia.html#scipy.sparse.bsr_matrix.todia" title="scipy.sparse.bsr_matrix.todia"><tt class="xref py py-obj docutils literal"><span class="pre">todia</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.todok.html#scipy.sparse.bsr_matrix.todok" title="scipy.sparse.bsr_matrix.todok"><tt class="xref py py-obj docutils literal"><span class="pre">todok</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.tolil.html#scipy.sparse.bsr_matrix.tolil" title="scipy.sparse.bsr_matrix.tolil"><tt class="xref py py-obj docutils literal"><span class="pre">tolil</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.transpose.html#scipy.sparse.bsr_matrix.transpose" title="scipy.sparse.bsr_matrix.transpose"><tt class="xref py py-obj docutils literal"><span class="pre">transpose</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.bsr_matrix.trunc.html#scipy.sparse.bsr_matrix.trunc" title="scipy.sparse.bsr_matrix.trunc"><tt class="xref py py-obj docutils literal"><span class="pre">trunc</span></tt></a>()</td>
+<td>Element-wise trunc.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.sparse.SparseWarning.html"
+                        title="previous chapter">scipy.sparse.SparseWarning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.sparse.bsr_matrix.has_sorted_indices.html"
+                        title="next chapter">scipy.sparse.bsr_matrix.has_sorted_indices</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.bsr_matrix.has_sorted_indices.html" title="scipy.sparse.bsr_matrix.has_sorted_indices"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.sparse.SparseWarning.html" title="scipy.sparse.SparseWarning"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../sparse.html" >Sparse matrices (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.sparse</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

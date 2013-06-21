@@ -1,0 +1,635 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Plotting with matplotlib &mdash; pandas 0.11.1.dev-36c1263 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.11.1.dev-36c1263',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pandas 0.11.1.dev-36c1263 documentation" href="index.html" />
+    <link rel="next" title="Trellis plotting interface" href="rplot.html" />
+    <link rel="prev" title="Time Series / Date functionality" href="timeseries.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rplot.html" title="Trellis plotting interface"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="timeseries.html" title="Time Series / Date functionality"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pandas 0.11.1.dev-36c1263 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="content-wrapper">
+    <div class="content">
+        <div class="document">
+            <div class="sphinxsidebar">
+                <h3>Table Of Contents</h3>
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="whatsnew.html">What&#8217;s New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Package overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10min.html">10 Minutes to Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dsintro.html">Intro to Data Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Essential Basic Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indexing.html">Indexing and Selecting Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="computation.html">Computational tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="missing_data.html">Working with missing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="groupby.html">Group By: split-apply-combine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merging.html">Merge, join, and concatenate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshaping.html">Reshaping and Pivot Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Time Series / Date functionality</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Plotting with matplotlib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-plotting-plot">Basic plotting: <tt class="docutils literal"><span class="pre">plot</span></tt></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-on-a-secondary-y-axis">Plotting on a Secondary Y-axis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selective-plotting-on-secondary-y-axis">Selective Plotting on Secondary Y-axis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#suppressing-tick-resolution-adjustment">Suppressing tick resolution adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#targeting-different-subplots">Targeting different subplots</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#other-plotting-features">Other plotting features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bar-plots">Bar plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#histograms">Histograms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#box-plotting">Box-Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scatter-plot-matrix">Scatter plot matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#andrews-curves">Andrews Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parallel-coordinates">Parallel Coordinates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lag-plot">Lag Plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocorrelation-plot">Autocorrelation Plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bootstrap-plot">Bootstrap Plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#radviz">RadViz</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rplot.html">Trellis plotting interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO Tools (Text, CSV, HDF5, ...)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse.html">Sparse data structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gotchas.html">Caveats and Gotchas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r_interface.html">rpy2 / R interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="related.html">Related Python libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_r.html">Comparison with R / R libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+</ul>
+
+                <h3 style="margin-top: 1.5em;">Search</h3>
+
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q" size="18"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+
+                <p>
+
+                <p>
+                    <script type="text/javascript"
+                            src="http://www.ohloh.net/p/482908/widgets/project_partner_badge.js"></script>
+                </p>
+            </div>
+             
+            <div class="documentwrapper">
+                <div class="bodywrapper">
+                    <div class="body">
+                        
+  <div class="section" id="plotting-with-matplotlib">
+<span id="visualization"></span><h1>Plotting with matplotlib<a class="headerlink" href="#plotting-with-matplotlib" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We intend to build more plotting integration with <a class="reference external" href="http://matplotlib.sourceforge.net">matplotlib</a> as time goes on.</p>
+</div>
+<p>We use the standard convention for referencing the matplotlib API:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1859]: </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="section" id="basic-plotting-plot">
+<span id="visualization-basic"></span><h2>Basic plotting: <tt class="docutils literal"><span class="pre">plot</span></tt><a class="headerlink" href="#basic-plotting-plot" title="Permalink to this headline">¶</a></h2>
+<p>See the <a class="reference internal" href="cookbook.html#cookbook-plotting"><em>cookbook</em></a> for some advanced strategies</p>
+<p>The <tt class="docutils literal"><span class="pre">plot</span></tt> method on Series and DataFrame is just a simple wrapper around
+<tt class="docutils literal"><span class="pre">plt.plot</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1860]: </span><span class="n">ts</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">date_range</span><span class="p">(</span><span class="s">&#39;1/1/2000&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="gp">In [1861]: </span><span class="n">ts</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+<span class="gp">In [1862]: </span><span class="n">ts</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x114488d50&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/series_plot_basic.png" src="_images/series_plot_basic.png" style="width: 6in;" />
+<p>If the index consists of dates, it calls <tt class="docutils literal"><span class="pre">gcf().autofmt_xdate()</span></tt> to try to
+format the x-axis nicely as per above. The method takes a number of arguments
+for controlling the look of the plot:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1863]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span> <span class="n">ts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">&#39;k--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;Series&#39;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.legend.Legend at 0x114a2d250&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/series_plot_basic2.png" src="_images/series_plot_basic2.png" style="width: 6in;" />
+<p>On DataFrame, <tt class="docutils literal"><span class="pre">plot</span></tt> is a convenience to plot all of the columns with labels:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1864]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;ABCD&#39;</span><span class="p">))</span>
+
+<span class="gp">In [1865]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+<span class="gp">In [1866]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s">&#39;best&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.legend.Legend at 0x10feacc10&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/frame_plot_basic.png" src="_images/frame_plot_basic.png" style="width: 6in;" />
+<p>You may set the <tt class="docutils literal"><span class="pre">legend</span></tt> argument to <tt class="docutils literal"><span class="pre">False</span></tt> to hide the legend, which is
+shown by default.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1867]: </span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x114483f50&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/frame_plot_basic_noleg.png" src="_images/frame_plot_basic_noleg.png" style="width: 6in;" />
+<p>Some other options are available, like plotting each Series on a different axis:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1868]: </span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">));</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s">&#39;best&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.legend.Legend at 0x11460f910&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/frame_plot_subplots.png" src="_images/frame_plot_subplots.png" style="width: 6in;" />
+<p>You may pass <tt class="docutils literal"><span class="pre">logy</span></tt> to get a log-scale Y axis.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1869]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
+<span class="gp">In [1869]: </span><span class="n">ts</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">date_range</span><span class="p">(</span><span class="s">&#39;1/1/2000&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="gp">In [1870]: </span><span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())</span>
+
+<span class="gp">In [1871]: </span><span class="n">ts</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">logy</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11460f510&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/series_plot_logy.png" src="_images/series_plot_logy.png" style="width: 6in;" />
+<p>You can plot one column versus another using the <cite>x</cite> and <cite>y</cite> keywords in
+<cite>DataFrame.plot</cite>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1872]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x114e8c410&gt;</span>
+
+<span class="gp">In [1873]: </span><span class="n">df3</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+<span class="gp">In [1874]: </span><span class="n">df3</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)))</span>
+
+<span class="gp">In [1875]: </span><span class="n">df3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&#39;B&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x1066c6dd0&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/df_plot_xy.png" src="_images/df_plot_xy.png" style="width: 6in;" />
+<div class="section" id="plotting-on-a-secondary-y-axis">
+<h3>Plotting on a Secondary Y-axis<a class="headerlink" href="#plotting-on-a-secondary-y-axis" title="Permalink to this headline">¶</a></h3>
+<p>To plot data on a secondary y-axis, use the <tt class="docutils literal"><span class="pre">secondary_y</span></tt> keyword:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1876]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x114f2ad90&gt;</span>
+
+<span class="gp">In [1877]: </span><span class="n">df</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x114f29a50&gt;</span>
+
+<span class="gp">In [1878]: </span><span class="n">df</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">secondary_y</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x114f23210&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/series_plot_secondary_y.png" src="_images/series_plot_secondary_y.png" style="width: 6in;" />
+</div>
+<div class="section" id="selective-plotting-on-secondary-y-axis">
+<h3>Selective Plotting on Secondary Y-axis<a class="headerlink" href="#selective-plotting-on-secondary-y-axis" title="Permalink to this headline">¶</a></h3>
+<p>To plot some columns in a DataFrame, give the column names to the <tt class="docutils literal"><span class="pre">secondary_y</span></tt>
+keyword:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1879]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x11405b4d0&gt;</span>
+
+<span class="gp">In [1880]: </span><span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">secondary_y</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1881]: </span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;CD scale&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.text.Text at 0x115350490&gt;</span>
+
+<span class="gp">In [1882]: </span><span class="n">ax</span><span class="o">.</span><span class="n">right_ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;AB scale&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.text.Text at 0x115355990&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/frame_plot_secondary_y.png" src="_images/frame_plot_secondary_y.png" style="width: 6in;" />
+<p>Note that the columns plotted on the secondary y-axis is automatically marked
+with &#8220;(right)&#8221; in the legend. To turn off the automatic marking, use the
+<tt class="docutils literal"><span class="pre">mark_right=False</span></tt> keyword:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1883]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x114fe72d0&gt;</span>
+
+<span class="gp">In [1884]: </span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">secondary_y</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">mark_right</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11500dd90&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/frame_plot_secondary_y_no_right.png" src="_images/frame_plot_secondary_y_no_right.png" style="width: 6in;" />
+</div>
+<div class="section" id="suppressing-tick-resolution-adjustment">
+<h3>Suppressing tick resolution adjustment<a class="headerlink" href="#suppressing-tick-resolution-adjustment" title="Permalink to this headline">¶</a></h3>
+<p>Pandas includes automatically tick resolution adjustment for regular frequency
+time-series data. For limited cases where pandas cannot infer the frequency
+information (e.g., in an externally created <tt class="docutils literal"><span class="pre">twinx</span></tt>), you can choose to
+suppress this behavior for alignment purposes.</p>
+<p>Here is the default behavior, notice how the x-axis tick labelling is performed:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1885]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x114fe7550&gt;</span>
+
+<span class="gp">In [1886]: </span><span class="n">df</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x114f7e610&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/ser_plot_suppress.png" src="_images/ser_plot_suppress.png" style="width: 6in;" />
+<p>Using the <tt class="docutils literal"><span class="pre">x_compat</span></tt> parameter, you can suppress this behavior:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1887]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x114f69150&gt;</span>
+
+<span class="gp">In [1888]: </span><span class="n">df</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_compat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x114fbae90&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/ser_plot_suppress_parm.png" src="_images/ser_plot_suppress_parm.png" style="width: 6in;" />
+<p>If you have more than one plot that needs to be suppressed, the <tt class="docutils literal"><span class="pre">use</span></tt> method
+in <tt class="docutils literal"><span class="pre">pandas.plot_params</span></tt> can be used in a <cite>with statement</cite>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1889]: </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+
+<span class="gp">In [1890]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x114f92950&gt;</span>
+
+<span class="gp">In [1891]: </span><span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">plot_params</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s">&#39;x_compat&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>
+<span class="gp">   ......:</span>     <span class="n">df</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">   ......:</span>     <span class="n">df</span><span class="o">.</span><span class="n">B</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;g&#39;</span><span class="p">)</span>
+<span class="gp">   ......:</span>     <span class="n">df</span><span class="o">.</span><span class="n">C</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;b&#39;</span><span class="p">)</span>
+<span class="gp">   ......:</span> 
+</pre></div>
+</div>
+<img alt="_images/ser_plot_suppress_context.png" src="_images/ser_plot_suppress_context.png" style="width: 6in;" />
+</div>
+<div class="section" id="targeting-different-subplots">
+<h3>Targeting different subplots<a class="headerlink" href="#targeting-different-subplots" title="Permalink to this headline">¶</a></h3>
+<p>You can pass an <tt class="docutils literal"><span class="pre">ax</span></tt> argument to <tt class="docutils literal"><span class="pre">Series.plot</span></tt> to plot on a particular axis:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1892]: </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="gp">In [1893]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.text.Text at 0x1153b3690&gt;</span>
+
+<span class="gp">In [1894]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;B&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.text.Text at 0x1153d1b90&gt;</span>
+
+<span class="gp">In [1895]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.text.Text at 0x1153e8d50&gt;</span>
+
+<span class="gp">In [1896]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;D&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;D&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.text.Text at 0x117aa3550&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/series_plot_multi.png" src="_images/series_plot_multi.png" style="width: 6in;" />
+</div>
+</div>
+<div class="section" id="other-plotting-features">
+<span id="visualization-other"></span><h2>Other plotting features<a class="headerlink" href="#other-plotting-features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="bar-plots">
+<span id="visualization-barplot"></span><h3>Bar plots<a class="headerlink" href="#bar-plots" title="Permalink to this headline">¶</a></h3>
+<p>For labeled, non-time series data, you may wish to produce a bar plot:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1897]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
+<span class="gp">In [1897]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.lines.Line2D at 0x114f37810&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/bar_plot_ex.png" src="_images/bar_plot_ex.png" style="width: 6in;" />
+<p>Calling a DataFrame&#8217;s <tt class="docutils literal"><span class="pre">plot</span></tt> method with <tt class="docutils literal"><span class="pre">kind='bar'</span></tt> produces a multiple
+bar plot:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1898]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1899]: </span><span class="n">df2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<img alt="_images/bar_plot_multi_ex.png" src="_images/bar_plot_multi_ex.png" style="width: 5in;" />
+<p>To produce a stacked bar plot, pass <tt class="docutils literal"><span class="pre">stacked=True</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1899]: </span><span class="n">df2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="n">stacked</span><span class="o">=</span><span class="bp">True</span><span class="p">);</span>
+</pre></div>
+</div>
+<img alt="_images/bar_plot_stacked_ex.png" src="_images/bar_plot_stacked_ex.png" style="width: 5in;" />
+<p>To get horizontal bar plots, pass <tt class="docutils literal"><span class="pre">kind='barh'</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1899]: </span><span class="n">df2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;barh&#39;</span><span class="p">,</span> <span class="n">stacked</span><span class="o">=</span><span class="bp">True</span><span class="p">);</span>
+</pre></div>
+</div>
+<img alt="_images/barh_plot_stacked_ex.png" src="_images/barh_plot_stacked_ex.png" style="width: 5in;" />
+</div>
+<div class="section" id="histograms">
+<h3>Histograms<a class="headerlink" href="#histograms" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1899]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
+<span class="gp">In [1899]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">hist</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x1194b3850&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/hist_plot_ex.png" src="_images/hist_plot_ex.png" style="width: 6in;" />
+<p>For a DataFrame, <tt class="docutils literal"><span class="pre">hist</span></tt> plots the histograms of the columns on multiple
+subplots:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1900]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x1194ec550&gt;</span>
+
+<span class="gp">In [1901]: </span><span class="n">df</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="go">array([[&lt;matplotlib.axes.AxesSubplot object at 0x1194fadd0&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x1196de150&gt;],</span>
+<span class="go">       [&lt;matplotlib.axes.AxesSubplot object at 0x1196c8710&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11998aad0&gt;]], dtype=object)</span>
+</pre></div>
+</div>
+<img alt="_images/frame_hist_ex.png" src="_images/frame_hist_ex.png" style="width: 6in;" />
+<p>New since 0.10.0, the <tt class="docutils literal"><span class="pre">by</span></tt> keyword can be specified to plot grouped histograms:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1902]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="gp">In [1903]: </span><span class="n">data</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+
+<span class="go">array([[&lt;matplotlib.axes.AxesSubplot object at 0x119dd2a50&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11a1c5150&gt;],</span>
+<span class="go">       [&lt;matplotlib.axes.AxesSubplot object at 0x11a1d9f90&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11a1fd5d0&gt;]], dtype=object)</span>
+</pre></div>
+</div>
+<img alt="_images/grouped_hist.png" src="_images/grouped_hist.png" style="width: 6in;" />
+</div>
+<div class="section" id="box-plotting">
+<span id="visualization-box"></span><h3>Box-Plotting<a class="headerlink" href="#box-plotting" title="Permalink to this headline">¶</a></h3>
+<p>DataFrame has a <tt class="docutils literal"><span class="pre">boxplot</span></tt> method which allows you to visualize the
+distribution of values within each column.</p>
+<p>For instance, here is a boxplot representing five trials of 10 observations of
+a uniform random variable on [0,1).</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1904]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="gp">In [1905]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
+<span class="gp">In [1905]: </span><span class="n">bp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">boxplot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/box_plot_ex.png" src="_images/box_plot_ex.png" style="width: 6in;" />
+<p>You can create a stratified boxplot using the <tt class="docutils literal"><span class="pre">by</span></tt> keyword argument to create
+groupings.  For instance,</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1906]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Col1&#39;</span><span class="p">,</span> <span class="s">&#39;Col2&#39;</span><span class="p">]</span> <span class="p">)</span>
+
+<span class="gp">In [1907]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1908]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
+<span class="gp">In [1908]: </span><span class="n">bp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s">&#39;X&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/box_plot_ex2.png" src="_images/box_plot_ex2.png" style="width: 6in;" />
+<p>You can also pass a subset of columns to plot, as well as group by multiple
+columns:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1909]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Col1&#39;</span><span class="p">,</span> <span class="s">&#39;Col2&#39;</span><span class="p">,</span> <span class="s">&#39;Col3&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1910]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1911]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;Y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1912]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
+<span class="gp">In [1912]: </span><span class="n">bp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Col1&#39;</span><span class="p">,</span><span class="s">&#39;Col2&#39;</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">,</span><span class="s">&#39;Y&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="_images/box_plot_ex3.png" src="_images/box_plot_ex3.png" style="width: 6in;" />
+</div>
+<div class="section" id="scatter-plot-matrix">
+<span id="visualization-scatter-matrix"></span><h3>Scatter plot matrix<a class="headerlink" href="#scatter-plot-matrix" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>New in 0.7.3.</em> You can create a scatter plot matrix using the</dt>
+<dd><tt class="docutils literal"><span class="pre">scatter_matrix</span></tt> method in <tt class="docutils literal"><span class="pre">pandas.tools.plotting</span></tt>:</dd>
+</dl>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1913]: </span><span class="kn">from</span> <span class="nn">pandas.tools.plotting</span> <span class="kn">import</span> <span class="n">scatter_matrix</span>
+
+<span class="gp">In [1914]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">])</span>
+
+<span class="gp">In [1915]: </span><span class="n">scatter_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="s">&#39;kde&#39;</span><span class="p">)</span>
+
+<span class="go">array([[&lt;matplotlib.axes.AxesSubplot object at 0x11b307150&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b326590&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b40c1d0&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b42b890&gt;],</span>
+<span class="go">       [&lt;matplotlib.axes.AxesSubplot object at 0x11b44ae90&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b4626d0&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b481cd0&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b4a3310&gt;],</span>
+<span class="go">       [&lt;matplotlib.axes.AxesSubplot object at 0x11b4baad0&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b810110&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b82e5d0&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b842f50&gt;],</span>
+<span class="go">       [&lt;matplotlib.axes.AxesSubplot object at 0x11b867590&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b886990&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b89e410&gt;,</span>
+<span class="go">        &lt;matplotlib.axes.AxesSubplot object at 0x11b8bca10&gt;]], dtype=object)</span>
+</pre></div>
+</div>
+<img alt="_images/scatter_matrix_kde.png" src="_images/scatter_matrix_kde.png" style="width: 6in;" />
+<p id="visualization-kde"><em>New in 0.8.0</em> You can create density plots using the Series/DataFrame.plot and
+setting <cite>kind=&#8217;kde&#8217;</cite>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1916]: </span><span class="n">ser</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="gp">In [1917]: </span><span class="n">ser</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;kde&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11a9ed450&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/kde_plot.png" src="_images/kde_plot.png" style="width: 6in;" />
+</div>
+<div class="section" id="andrews-curves">
+<span id="visualization-andrews-curves"></span><h3>Andrews Curves<a class="headerlink" href="#andrews-curves" title="Permalink to this headline">¶</a></h3>
+<p>Andrews curves allow one to plot multivariate data as a large number
+of curves that are created using the attributes of samples as coefficients
+for Fourier series. By coloring these curves differently for each class
+it is possible to visualize data clustering. Curves belonging to samples
+of the same class will usually be closer together and form larger structures.</p>
+<p><strong>Note</strong>: The &#8220;Iris&#8221; dataset is available <a class="reference external" href="https://raw.github.com/pydata/pandas/master/pandas/tests/data/iris.csv">here</a>.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1918]: </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+
+<span class="gp">In [1919]: </span><span class="kn">from</span> <span class="nn">pandas.tools.plotting</span> <span class="kn">import</span> <span class="n">andrews_curves</span>
+
+<span class="gp">In [1920]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s">&#39;data/iris.data&#39;</span><span class="p">)</span>
+
+<span class="gp">In [1921]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x11b301250&gt;</span>
+
+<span class="gp">In [1922]: </span><span class="n">andrews_curves</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">&#39;Name&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11bceacd0&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/andrews_curves.png" src="_images/andrews_curves.png" style="width: 6in;" />
+</div>
+<div class="section" id="parallel-coordinates">
+<span id="visualization-parallel-coordinates"></span><h3>Parallel Coordinates<a class="headerlink" href="#parallel-coordinates" title="Permalink to this headline">¶</a></h3>
+<p>Parallel coordinates is a plotting technique for plotting multivariate data.
+It allows one to see clusters in data and to estimate other statistics visually.
+Using parallel coordinates points are represented as connected line segments.
+Each vertical line represents one attribute. One set of connected line segments
+represents one data point. Points that tend to cluster will appear closer together.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1923]: </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+
+<span class="gp">In [1924]: </span><span class="kn">from</span> <span class="nn">pandas.tools.plotting</span> <span class="kn">import</span> <span class="n">parallel_coordinates</span>
+
+<span class="gp">In [1925]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s">&#39;data/iris.data&#39;</span><span class="p">)</span>
+
+<span class="gp">In [1926]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x11cf22490&gt;</span>
+
+<span class="gp">In [1927]: </span><span class="n">parallel_coordinates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">&#39;Name&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11cf33b90&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/parallel_coordinates.png" src="_images/parallel_coordinates.png" style="width: 6in;" />
+</div>
+<div class="section" id="lag-plot">
+<h3>Lag Plot<a class="headerlink" href="#lag-plot" title="Permalink to this headline">¶</a></h3>
+<p>Lag plots are used to check if a data set or time series is random. Random
+data should not exhibit any structure in the lag plot. Non-random structure
+implies that the underlying data are not random.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1928]: </span><span class="kn">from</span> <span class="nn">pandas.tools.plotting</span> <span class="kn">import</span> <span class="n">lag_plot</span>
+
+<span class="gp">In [1929]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x11cf4bd50&gt;</span>
+
+<span class="gp">In [1930]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">+</span>
+<span class="gp">   ......:</span>    <span class="mf">0.9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">99</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">99</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1000</span><span class="p">)))</span>
+<span class="gp">   ......:</span> 
+
+<span class="gp">In [1931]: </span><span class="n">lag_plot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11cf903d0&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/lag_plot.png" src="_images/lag_plot.png" style="width: 6in;" />
+</div>
+<div class="section" id="autocorrelation-plot">
+<h3>Autocorrelation Plot<a class="headerlink" href="#autocorrelation-plot" title="Permalink to this headline">¶</a></h3>
+<p>Autocorrelation plots are often used for checking randomness in time series.
+This is done by computing autocorrelations for data values at varying time lags.
+If time series is random, such autocorrelations should be near zero for any and
+all time-lag separations. If time series is non-random then one or more of the
+autocorrelations will be significantly non-zero. The horizontal lines displayed
+in the plot correspond to 95% and 99% confidence bands. The dashed line is 99%
+confidence band.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1932]: </span><span class="kn">from</span> <span class="nn">pandas.tools.plotting</span> <span class="kn">import</span> <span class="n">autocorrelation_plot</span>
+
+<span class="gp">In [1933]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x11dab6f10&gt;</span>
+
+<span class="gp">In [1934]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="mf">0.7</span> <span class="o">*</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">+</span>
+<span class="gp">   ......:</span>    <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">1000</span><span class="p">)))</span>
+<span class="gp">   ......:</span> 
+
+<span class="gp">In [1935]: </span><span class="n">autocorrelation_plot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11dabc450&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/autocorrelation_plot.png" src="_images/autocorrelation_plot.png" style="width: 6in;" />
+</div>
+<div class="section" id="bootstrap-plot">
+<span id="visualization-bootstrap"></span><h3>Bootstrap Plot<a class="headerlink" href="#bootstrap-plot" title="Permalink to this headline">¶</a></h3>
+<p>Bootstrap plots are used to visually assess the uncertainty of a statistic, such
+as mean, median, midrange, etc. A random subset of a specified size is selected
+from a data set, the statistic in question is computed for this subset and the
+process is repeated a specified number of times. Resulting plots and histograms
+are what constitutes the bootstrap plot.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1936]: </span><span class="kn">from</span> <span class="nn">pandas.tools.plotting</span> <span class="kn">import</span> <span class="n">bootstrap_plot</span>
+
+<span class="gp">In [1937]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="gp">In [1938]: </span><span class="n">bootstrap_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x11dae8ad0&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/bootstrap_plot.png" src="_images/bootstrap_plot.png" style="width: 6in;" />
+</div>
+<div class="section" id="radviz">
+<span id="visualization-radviz"></span><h3>RadViz<a class="headerlink" href="#radviz" title="Permalink to this headline">¶</a></h3>
+<p>RadViz is a way of visualizing multi-variate data. It is based on a simple
+spring tension minimization algorithm. Basically you set up a bunch of points in
+a plane. In our case they are equally spaced on a unit circle. Each point
+represents a single attribute. You then pretend that each sample in the data set
+is attached to each of these points by a spring, the stiffness of which is
+proportional to the numerical value of that attribute (they are normalized to
+unit interval). The point in the plane, where our sample settles to (where the
+forces acting on our sample are at an equilibrium) is where a dot representing
+our sample will be drawn. Depending on which class that sample belongs it will
+be colored differently.</p>
+<p><strong>Note</strong>: The &#8220;Iris&#8221; dataset is available <a class="reference external" href="https://raw.github.com/pydata/pandas/master/pandas/tests/data/iris.csv">here</a>.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1939]: </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+
+<span class="gp">In [1940]: </span><span class="kn">from</span> <span class="nn">pandas.tools.plotting</span> <span class="kn">import</span> <span class="n">radviz</span>
+
+<span class="gp">In [1941]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s">&#39;data/iris.data&#39;</span><span class="p">)</span>
+
+<span class="gp">In [1942]: </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;matplotlib.figure.Figure at 0x11dae8b90&gt;</span>
+
+<span class="gp">In [1943]: </span><span class="n">radviz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">&#39;Name&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.axes.AxesSubplot at 0x11e3bb7d0&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/radviz.png" src="_images/radviz.png" style="width: 6in;" />
+</div>
+</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="clearer"></div>
+        </div>
+    </div>
+</div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="rplot.html" title="Trellis plotting interface"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="timeseries.html" title="Time Series / Date functionality"
+             >previous</a> |</li>
+        <li><a href="index.html">pandas 0.11.1.dev-36c1263 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, the pandas development team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

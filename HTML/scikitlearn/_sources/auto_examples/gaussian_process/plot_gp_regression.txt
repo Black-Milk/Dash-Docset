@@ -1,0 +1,36 @@
+
+
+.. _example_gaussian_process_plot_gp_regression.py:
+
+
+=========================================================
+Gaussian Processes regression: basic introductory example
+=========================================================
+
+A simple one-dimensional regression exercise computed in two different ways:
+
+1. A noise-free case with a cubic correlation model
+2. A noisy case with a squared Euclidean correlation model
+
+In both cases, the model parameters are estimated using the maximum
+likelihood principle.
+
+The figures illustrate the interpolating property of the Gaussian Process
+model as well as its probabilistic nature in the form of a pointwise 95%
+confidence interval.
+
+Note that the parameter ``nugget`` is applied as a Tikhonov regularization
+of the assumed covariance between the training points.  In the special case
+of the squared euclidean correlation model, nugget is mathematically equivalent
+to a normalized variance:  That is
+
+.. math::
+   \mathrm{nugget}_i = \left[\frac{\sigma_i}{y_i}\right]^2
+
+
+
+**Python source code:** :download:`plot_gp_regression.py <plot_gp_regression.py>`
+
+.. literalinclude:: plot_gp_regression.py
+    :lines: 30-
+    

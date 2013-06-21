@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>8.11.1. sklearn.grid_search.GridSearchCV &mdash; scikit-learn 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.13.1 documentation" href="../../index.html" />
+    <link rel="up" title="8. Reference" href="../classes.html" />
+    <link rel="prev" title="8.10.10. sklearn.gaussian_process.regression_models.quadratic" href="sklearn.gaussian_process.regression_models.quadratic.html" />
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22606712-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+  </head>
+  <body>
+
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+          </a>
+          </p><div class="navbar">
+          <ul>
+            <li><a href="../../install.html">Download</a></li>
+            <li><a href="../../support.html">Support</a></li>
+            <li><a href="../../user_guide.html">User Guide</a></li>
+            <li><a href="../../auto_examples/index.html">Examples</a></li>
+            <li><a href="../classes.html">Reference</a></li>
+       </ul>
+
+<div class="search_form">
+
+<div id="cse" style="width: 100%;"></div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'en'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.setAutoComplete(true);
+    customSearchControl.draw('cse', options);
+  }, true);
+</script>
+
+</div>
+          </div> <!-- end navbar --></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <div class="sphinxsidebar">
+	<div class="sphinxsidebarwrapper">
+	  <div class="rel">
+	   
+	<!-- rellinks[1:] is an ugly hack to avoid link to module
+	    index  -->
+	<div class="rellink">
+	<a href="sklearn.gaussian_process.regression_models.quadratic.html" title="8.10.10. sklearn.gaussian_process.regression_models.quadratic"
+	    accesskey="P">Previous
+	    <br>
+	    <span class="smallrellink">
+	    8.10.10. sklearn...
+	    </span>
+	    <span class="hiddenrellink">
+	    8.10.10. sklearn.gaussian_process.regression_models.quadratic
+	    </span>
+	    
+	    </a>
+	</div>
+	<!-- Ad a link to the 'up' page -->
+	<div class="spacer">
+	&nbsp;
+	</div>
+	<div class="rellink">
+	<a href="../classes.html" title="8. Reference" >
+	Up
+	<br>
+	<span class="smallrellink">
+	8. Reference
+	</span>
+	<span class="hiddenrellink">
+	8. Reference
+	</span>
+	
+	</a>
+	</div>
+    </div>
+    <p style="text-align: center; background-color: #FFE4E4">This documentation is
+    for scikit-learn <strong>version 0.13.1</strong>
+    &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    
+    <h3><a href="../../about.html#citing-scikit-learn">Citing</a></h3>
+    <p>If you use the software, please consider
+    <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <h3>This page</h3>
+	<ul>
+<li><a class="reference internal" href="#">8.11.1. sklearn.grid_search.GridSearchCV</a></li>
+</ul>
+
+    
+    </div>
+	  </div>
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sklearn-grid-search-gridsearchcv">
+<h1>8.11.1. sklearn.grid_search.GridSearchCV<a class="headerlink" href="#sklearn-grid-search-gridsearchcv" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="sklearn.grid_search.GridSearchCV">
+<em class="property">class </em><tt class="descclassname">sklearn.grid_search.</tt><tt class="descname">GridSearchCV</tt><big>(</big><em>estimator</em>, <em>param_grid</em>, <em>loss_func=None</em>, <em>score_func=None</em>, <em>fit_params=None</em>, <em>n_jobs=1</em>, <em>iid=True</em>, <em>refit=True</em>, <em>cv=None</em>, <em>verbose=0</em>, <em>pre_dispatch='2*n_jobs'</em><big>)</big><a class="headerlink" href="#sklearn.grid_search.GridSearchCV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grid search on the parameters of a classifier</p>
+<p>Important members are fit, predict.</p>
+<p>GridSearchCV implements a &#8220;fit&#8221; method and a &#8220;predict&#8221; method like
+any classifier except that the parameters of the classifier
+used to predict is optimized by cross-validation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>estimator: object type that implements the &#8220;fit&#8221; and &#8220;predict&#8221; methods</strong> :</p>
+<blockquote>
+<div><p>A object of that type is instantiated for each grid point.</p>
+</div></blockquote>
+<p><strong>param_grid: dict or list of dictionaries</strong> :</p>
+<blockquote>
+<div><p>Dictionary with parameters names (string) as keys and lists of
+parameter settings to try as values, or a list of such
+dictionaries, in which case the grids spanned by each dictionary
+in the list are explored.</p>
+</div></blockquote>
+<p><strong>loss_func: callable, optional</strong> :</p>
+<blockquote>
+<div><p>function that takes 2 arguments and compares them in
+order to evaluate the performance of prediciton (small is good)
+if None is passed, the score of the estimator is maximized</p>
+</div></blockquote>
+<p><strong>score_func: callable, optional</strong> :</p>
+<blockquote>
+<div><p>A function that takes 2 arguments and compares them in
+order to evaluate the performance of prediction (high is good).
+If None is passed, the score of the estimator is maximized.</p>
+</div></blockquote>
+<p><strong>fit_params</strong> : dict, optional</p>
+<blockquote>
+<div><p>parameters to pass to the fit method</p>
+</div></blockquote>
+<p><strong>n_jobs: int, optional</strong> :</p>
+<blockquote>
+<div><p>number of jobs to run in parallel (default 1)</p>
+</div></blockquote>
+<p><strong>pre_dispatch: int, or string, optional</strong> :</p>
+<blockquote>
+<div><p>Controls the number of jobs that get dispatched during parallel
+execution. Reducing this number can be useful to avoid an
+explosion of memory consumption when more jobs get dispatched
+than CPUs can process. This parameter can be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>None, in which case all the jobs are immediatly
+created and spawned. Use this for lightweight and
+fast-running jobs, to avoid delays due to on-demand
+spawning of the jobs</li>
+<li>An int, giving the exact number of total jobs that are
+spawned</li>
+<li>A string, giving an expression as a function of n_jobs,
+as in &#8216;2*n_jobs&#8217;</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p><strong>iid: boolean, optional</strong> :</p>
+<blockquote>
+<div><p>If True, the data is assumed to be identically distributed across
+the folds, and the loss minimized is the total loss per sample,
+and not the mean loss across the folds.</p>
+</div></blockquote>
+<p><strong>cv</strong> : integer or crossvalidation generator, optional</p>
+<blockquote>
+<div><p>If an integer is passed, it is the number of fold (default 3).
+Specific crossvalidation objects can be passed, see
+sklearn.cross_validation module for the list of possible objects</p>
+</div></blockquote>
+<p><strong>refit: boolean</strong> :</p>
+<blockquote>
+<div><p>refit the best estimator with the entire dataset.
+If &#8220;False&#8221;, it is impossible to make predictions using
+this GridSearch instance after fitting.</p>
+</div></blockquote>
+<p><strong>verbose: integer</strong> :</p>
+<blockquote class="last">
+<div><p>Controls the verbosity: the higher, the more messages.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><tt class="xref py py-class docutils literal"><span class="pre">IterGrid</span></tt></dt>
+<dd>generates all the combinations of a an hyperparameter grid.</dd>
+<dt><a class="reference internal" href="sklearn.cross_validation.train_test_split.html#sklearn.cross_validation.train_test_split" title="sklearn.cross_validation.train_test_split"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.cross_validation.train_test_split</span></tt></a></dt>
+<dd>utility function to split the data into a development set usable for fitting a GridSearchCV instance and an evaluation set for its final evaluation.</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>The parameters selected are those that maximize the score of the left out
+data, unless an explicit score_func is passed in which case it is used
+instead. If a loss function loss_func is passed, it overrides the score
+functions and is minimized.</p>
+<p>If <cite>n_jobs</cite> was set to a value higher than one, the data is copied for each
+point in the grid (and not <cite>n_jobs</cite> times). This is done for efficiency
+reasons if individual jobs take very little time, but may raise errors if
+the dataset is large and not enough memory is available.  A workaround in
+this case is to set <cite>pre_dispatch</cite>. Then, the memory is copied only
+<cite>pre_dispatch</cite> many times. A reasonable value for <cite>pre_dispatch</cite> is 2 *
+<cite>n_jobs</cite>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span><span class="p">,</span> <span class="n">grid_search</span><span class="p">,</span> <span class="n">datasets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;kernel&#39;</span><span class="p">:(</span><span class="s">&#39;linear&#39;</span><span class="p">,</span> <span class="s">&#39;rbf&#39;</span><span class="p">),</span> <span class="s">&#39;C&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">svr</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">GridSearchCV</span><span class="p">(</span><span class="n">svr</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+<span class="gp">... </span>                            
+<span class="go">GridSearchCV(cv=None,</span>
+<span class="go">    estimator=SVC(C=1.0, cache_size=..., coef0=..., degree=...,</span>
+<span class="go">        gamma=..., kernel=&#39;rbf&#39;, max_iter=-1, probability=False,</span>
+<span class="go">        shrinking=True, tol=...),</span>
+<span class="go">    fit_params={}, iid=True, loss_func=None, n_jobs=1,</span>
+<span class="go">        param_grid=...,</span>
+<span class="go">        ...)</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="19%" />
+<col width="64%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>grid_scores_</cite></td>
+<td>dict of any to float</td>
+<td>Contains scores for all parameter combinations in param_grid.</td>
+</tr>
+<tr class="row-even"><td><cite>best_estimator_</cite></td>
+<td>estimator</td>
+<td>Estimator that was choosen by grid search, i.e. estimator
+which gave highest score (or smallest loss if specified)
+on the left out data.</td>
+</tr>
+<tr class="row-odd"><td><cite>best_score_</cite></td>
+<td>float</td>
+<td>score of best_estimator on the left out data.</td>
+</tr>
+<tr class="row-even"><td><cite>best_params_</cite></td>
+<td>dict</td>
+<td>Parameter setting that gave the best results on the hold out data.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.grid_search.GridSearchCV.fit" title="sklearn.grid_search.GridSearchCV.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
+<td>Run fit with all sets of parameters</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.grid_search.GridSearchCV.get_params" title="sklearn.grid_search.GridSearchCV.get_params"><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt></a>([deep])</td>
+<td>Get parameters for the estimator</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">score</span></tt>(X[,&nbsp;y])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.grid_search.GridSearchCV.set_params" title="sklearn.grid_search.GridSearchCV.set_params"><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt></a>(**params)</td>
+<td>Set the parameters of the estimator.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sklearn.grid_search.GridSearchCV.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>estimator</em>, <em>param_grid</em>, <em>loss_func=None</em>, <em>score_func=None</em>, <em>fit_params=None</em>, <em>n_jobs=1</em>, <em>iid=True</em>, <em>refit=True</em>, <em>cv=None</em>, <em>verbose=0</em>, <em>pre_dispatch='2*n_jobs'</em><big>)</big><a class="headerlink" href="#sklearn.grid_search.GridSearchCV.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sklearn.grid_search.GridSearchCV.fit">
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sklearn.grid_search.GridSearchCV.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run fit with all sets of parameters</p>
+<p>Returns the best classifier</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X: array, [n_samples, n_features]</strong> :</p>
+<blockquote>
+<div><p>Training vector, where n_samples in the number of samples and
+n_features is the number of features.</p>
+</div></blockquote>
+<p><strong>y: array-like, shape = [n_samples], optional</strong> :</p>
+<blockquote class="last">
+<div><p>Target vector relative to X for classification;
+None for unsupervised learning.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sklearn.grid_search.GridSearchCV.get_params">
+<tt class="descname">get_params</tt><big>(</big><em>deep=True</em><big>)</big><a class="headerlink" href="#sklearn.grid_search.GridSearchCV.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for the estimator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>deep: boolean, optional</strong> :</p>
+<blockquote class="last">
+<div><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sklearn.grid_search.GridSearchCV.set_params">
+<tt class="descname">set_params</tt><big>(</big><em>**params</em><big>)</big><a class="headerlink" href="#sklearn.grid_search.GridSearchCV.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of the estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The former have parameters of the form
+<tt class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></tt> so that it&#8217;s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><strong>self</strong> :</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010–2013, scikit-learn developers (BSD License).
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3. Design by <a href="http://desgrana.es">Desgrana</a>.
+    <span style="padding-left: 5ex;">
+    <a href="../../_sources/modules/generated/sklearn.grid_search.GridSearchCV.txt"
+	    rel="nofollow">Show this page source</a>
+    </span>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="sklearn.gaussian_process.regression_models.quadratic.html">
+        Previous
+      </a>
+    </div>
+    
+     </div>
+     <script type="text/javascript">
+       $("div.buttonNext, div.buttonPrevious").hover(
+           function () {
+               $(this).css('background-color', '#FF9C34');
+           },
+           function () {
+               $(this).css('background-color', '#A7D6E2');
+           }
+       );
+       var bodywrapper = $('.bodywrapper');
+   	var sidebarbutton = $('#sidebarbutton');
+        sidebarbutton.css({
+	    'height': '900px'
+       });
+     </script>
+  </body>
+</html>

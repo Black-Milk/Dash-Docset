@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.fftpack.rfft &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Discrete Fourier transforms (scipy.fftpack)" href="../fftpack.html" />
+    <link rel="next" title="scipy.fftpack.irfft" href="scipy.fftpack.irfft.html" />
+    <link rel="prev" title="scipy.fftpack.ifftn" href="scipy.fftpack.ifftn.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.fftpack.irfft.html" title="scipy.fftpack.irfft"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.fftpack.ifftn.html" title="scipy.fftpack.ifftn"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../fftpack.html" accesskey="U">Discrete Fourier transforms (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.fftpack</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-fftpack-rfft">
+<h1>scipy.fftpack.rfft<a class="headerlink" href="#scipy-fftpack-rfft" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.fftpack.rfft">
+<tt class="descclassname">scipy.fftpack.</tt><tt class="descname">rfft</tt><big>(</big><em>x</em>, <em>n=None</em>, <em>axis=-1</em>, <em>overwrite_x=0</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/fftpack/basic.py#L291"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.fftpack.rfft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discrete Fourier transform of a real sequence.</p>
+<p>The returned real arrays contains:</p>
+<div class="highlight-python"><pre>[y(0),Re(y(1)),Im(y(1)),...,Re(y(n/2))]              if n is even
+[y(0),Re(y(1)),Im(y(1)),...,Re(y(n/2)),Im(y(n/2))]   if n is odd</pre>
+</div>
+<p>where</p>
+<div class="highlight-python"><pre>y(j) = sum[k=0..n-1] x[k] * exp(-sqrt(-1)*j*k*2*pi/n)
+j = 0..n-1</pre>
+</div>
+<p>Note that <tt class="docutils literal"><span class="pre">y(-j)</span> <span class="pre">==</span> <span class="pre">y(n-j).conjugate()</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>x</strong> : array_like, real-valued</p>
+<blockquote>
+<div><p>The data to transform.</p>
+</div></blockquote>
+<p><strong>n</strong> : int, optional</p>
+<blockquote>
+<div><p>Defines the length of the Fourier transform.  If <em class="xref py py-obj">n</em> is not specified
+(the default) then <tt class="docutils literal"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">x.shape[axis]</span></tt>.  If <tt class="docutils literal"><span class="pre">n</span> <span class="pre">&lt;</span> <span class="pre">x.shape[axis]</span></tt>,
+<em class="xref py py-obj">x</em> is truncated, if <tt class="docutils literal"><span class="pre">n</span> <span class="pre">&gt;</span> <span class="pre">x.shape[axis]</span></tt>, <em class="xref py py-obj">x</em> is zero-padded.</p>
+</div></blockquote>
+<p><strong>axis</strong> : int, optional</p>
+<blockquote>
+<div><p>The axis along which the transform is applied.  The default is the
+last axis.</p>
+</div></blockquote>
+<p><strong>overwrite_x</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If set to true, the contents of <em class="xref py py-obj">x</em> can be overwritten. Default is
+False.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="scipy.fftpack.fft.html#scipy.fftpack.fft" title="scipy.fftpack.fft"><tt class="xref py py-obj docutils literal"><span class="pre">fft</span></tt></a>, <a class="reference internal" href="scipy.fftpack.irfft.html#scipy.fftpack.irfft" title="scipy.fftpack.irfft"><tt class="xref py py-obj docutils literal"><span class="pre">irfft</span></tt></a>, <tt class="xref py py-obj docutils literal"><span class="pre">scipy.fftpack.basic</span></tt></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Within numerical accuracy, <tt class="docutils literal"><span class="pre">y</span> <span class="pre">==</span> <span class="pre">rfft(irfft(y))</span></tt>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.fftpack.ifftn.html"
+                        title="previous chapter">scipy.fftpack.ifftn</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.fftpack.irfft.html"
+                        title="next chapter">scipy.fftpack.irfft</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.fftpack.irfft.html" title="scipy.fftpack.irfft"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.fftpack.ifftn.html" title="scipy.fftpack.ifftn"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../fftpack.html" >Discrete Fourier transforms (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.fftpack</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

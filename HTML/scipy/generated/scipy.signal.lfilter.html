@@ -1,0 +1,207 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.signal.lfilter &mdash; SciPy v0.12 Reference Guide (DRAFT)</title>
+    
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.12.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.12 Reference Guide (DRAFT)" href="../index.html" />
+    <link rel="up" title="Signal processing (scipy.signal)" href="../signal.html" />
+    <link rel="next" title="scipy.signal.lfiltic" href="scipy.signal.lfiltic.html" />
+    <link rel="prev" title="scipy.signal.symiirorder2" href="scipy.signal.symiirorder2.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.lfiltic.html" title="scipy.signal.lfiltic"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.symiirorder2.html" title="scipy.signal.symiirorder2"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../signal.html" accesskey="U">Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="scipy-signal-lfilter">
+<h1>scipy.signal.lfilter<a class="headerlink" href="#scipy-signal-lfilter" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.signal.lfilter">
+<tt class="descclassname">scipy.signal.</tt><tt class="descname">lfilter</tt><big>(</big><em>b</em>, <em>a</em>, <em>x</em>, <em>axis=-1</em>, <em>zi=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.12.0/scipy/signal/signaltools.py#L598"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.signal.lfilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter data along one-dimension with an IIR or FIR filter.</p>
+<p>Filter a data sequence, <em class="xref py py-obj">x</em>, using a digital filter.  This works for many
+fundamental data types (including Object type).  The filter is a direct
+form II transposed implementation of the standard difference equation
+(see Notes).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>b</strong> : array_like</p>
+<blockquote>
+<div><p>The numerator coefficient vector in a 1-D sequence.</p>
+</div></blockquote>
+<p><strong>a</strong> : array_like</p>
+<blockquote>
+<div><p>The denominator coefficient vector in a 1-D sequence.  If <tt class="docutils literal"><span class="pre">a[0]</span></tt>
+is not 1, then both <em class="xref py py-obj">a</em> and <em class="xref py py-obj">b</em> are normalized by <tt class="docutils literal"><span class="pre">a[0]</span></tt>.</p>
+</div></blockquote>
+<p><strong>x</strong> : array_like</p>
+<blockquote>
+<div><p>An N-dimensional input array.</p>
+</div></blockquote>
+<p><strong>axis</strong> : int</p>
+<blockquote>
+<div><p>The axis of the input data array along which to apply the
+linear filter. The filter is applied to each subarray along
+this axis.  Default is -1.</p>
+</div></blockquote>
+<p><strong>zi</strong> : array_like, optional</p>
+<blockquote>
+<div><p>Initial conditions for the filter delays.  It is a vector
+(or array of vectors for an N-dimensional input) of length
+<tt class="docutils literal"><span class="pre">max(len(a),len(b))-1</span></tt>.  If <em class="xref py py-obj">zi</em> is None or is not given then
+initial rest is assumed.  See <a class="reference internal" href="scipy.signal.lfiltic.html#scipy.signal.lfiltic" title="scipy.signal.lfiltic"><tt class="xref py py-obj docutils literal"><span class="pre">lfiltic</span></tt></a> for more information.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y</strong> : array</p>
+<blockquote>
+<div><p>The output of the digital filter.</p>
+</div></blockquote>
+<p><strong>zf</strong> : array, optional</p>
+<blockquote class="last">
+<div><p>If <em class="xref py py-obj">zi</em> is None, this is not returned, otherwise, <em class="xref py py-obj">zf</em> holds the
+final filter delay values.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The filter function is implemented as a direct II transposed structure.
+This means that the filter implements:</p>
+<div class="highlight-python"><pre>a[0]*y[n] = b[0]*x[n] + b[1]*x[n-1] + ... + b[nb]*x[n-nb]
+                        - a[1]*y[n-1] - ... - a[na]*y[n-na]</pre>
+</div>
+<p>using the following difference equations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">y</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+<span class="o">...</span>
+<span class="n">z</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+<span class="n">z</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where m is the output sample number and n=max(len(a),len(b)) is the
+model order.</p>
+<p>The rational transfer function describing this filter in the
+z-transform domain is:</p>
+<div class="highlight-python"><pre>                    -1               -nb
+        b[0] + b[1]z  + ... + b[nb] z
+Y(z) = ---------------------------------- X(z)
+                    -1               -na
+        a[0] + a[1]z  + ... + a[na] z</pre>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.signal.symiirorder2.html"
+                        title="previous chapter">scipy.signal.symiirorder2</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.signal.lfiltic.html"
+                        title="next chapter">scipy.signal.lfiltic</a></p>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../np-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.lfiltic.html" title="scipy.signal.lfiltic"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scipy.signal.symiirorder2.html" title="scipy.signal.symiirorder2"
+             >previous</a> |</li>
+        <li><a href="../index.html">SciPy v0.12 Reference Guide (DRAFT)</a> &raquo;</li>
+          <li><a href="../signal.html" >Signal processing (<tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">scipy.signal</span></tt>)</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2009, The Scipy community.
+      Last updated on May 01, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
