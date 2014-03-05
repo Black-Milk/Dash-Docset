@@ -1,6 +1,9 @@
-Dash-Docset
+Dash-Docsets
 ===========
 
-A place for dash docsets. Includes scipy, numpy, pandas, more to come...
+A place for dash docsets. Includes:
 
-Trying to get scikitlearn documentation ported over to a docset.
+1. Numpy (ver 1.8)
+2. Pandas (0.13.1)
+3. Scikit-learn (0.14.1)
+4. Scipy (0.13.0)
