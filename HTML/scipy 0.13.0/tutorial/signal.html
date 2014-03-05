@@ -1,0 +1,606 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Signal Processing (scipy.signal) &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Linear Algebra (scipy.linalg)" href="linalg.html" />
+    <link rel="prev" title="Fourier Transforms (scipy.fftpack)" href="fftpack.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="index.html" accesskey="U">SciPy Tutorial</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="linalg.html" title="Linear Algebra (scipy.linalg)"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="fftpack.html" title="Fourier Transforms (scipy.fftpack)"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Signal Processing (<tt class="docutils literal"><span class="pre">scipy.signal</span></tt>)</a><ul>
+<li><a class="reference internal" href="#b-splines">B-splines</a></li>
+<li><a class="reference internal" href="#filtering">Filtering</a><ul>
+<li><a class="reference internal" href="#convolution-correlation">Convolution/Correlation</a></li>
+<li><a class="reference internal" href="#difference-equation-filtering">Difference-equation filtering</a></li>
+<li><a class="reference internal" href="#other-filters">Other filters</a><ul>
+<li><a class="reference internal" href="#median-filter">Median Filter</a></li>
+<li><a class="reference internal" href="#order-filter">Order Filter</a></li>
+<li><a class="reference internal" href="#wiener-filter">Wiener filter</a></li>
+<li><a class="reference internal" href="#hilbert-filter">Hilbert filter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#least-squares-spectral-analysis">Least-Squares Spectral Analysis</a><ul>
+<li><a class="reference internal" href="#lomb-scargle-periodograms-lombscargle">Lomb-Scargle Periodograms (<tt class="docutils literal"><span class="pre">lombscargle</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="fftpack.html"
+                        title="previous chapter">Fourier Transforms (<tt class="docutils literal"><span class="pre">scipy.fftpack</span></tt>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="linalg.html"
+                        title="next chapter">Linear Algebra (<tt class="docutils literal"><span class="pre">scipy.linalg</span></tt>)</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="signal-processing-scipy-signal">
+<h1>Signal Processing (<a class="reference internal" href="../signal.html#module-scipy.signal" title="scipy.signal"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.signal</span></tt></a>)<a class="headerlink" href="#signal-processing-scipy-signal" title="Permalink to this headline">¶</a></h1>
+<p>The signal processing toolbox currently contains some filtering
+functions, a limited set of filter design tools, and a few B-spline
+interpolation algorithms for one- and two-dimensional data. While the
+B-spline algorithms could technically be placed under the
+interpolation category, they are included here because they only work
+with equally-spaced data and make heavy use of filter-theory and
+transfer-function formalism to provide a fast B-spline transform. To
+understand this section you will need to understand that a signal in
+SciPy is an array of real or complex numbers.</p>
+<div class="section" id="b-splines">
+<h2>B-splines<a class="headerlink" href="#b-splines" title="Permalink to this headline">¶</a></h2>
+<p>A B-spline is an approximation of a continuous function over a finite-
+domain in terms of B-spline coefficients and knot points. If the knot-
+points are equally spaced with spacing <img class="math" src="../_images/math/1eb29f9de3753a59530941141fcb5c7aa3fa2e38.png" alt="\Delta x" style="vertical-align: 0px"/> , then the B-spline
+approximation to a 1-dimensional function is the finite-basis expansion.</p>
+<div class="math">
+<p><img src="../_images/math/72f6427ffd1d252af16680e8de48a10dcd737e0a.png" alt="\[ y\left(x\right)\approx\sum_{j}c_{j}\beta^{o}\left(\frac{x}{\Delta x}-j\right).\]"/></p>
+</div><p>In two dimensions with knot-spacing <img class="math" src="../_images/math/1eb29f9de3753a59530941141fcb5c7aa3fa2e38.png" alt="\Delta x" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/b4a2530bebabe83e148d01b175c4b29a7e1bcbb8.png" alt="\Delta y" style="vertical-align: -3px"/> , the
+function representation is</p>
+<div class="math">
+<p><img src="../_images/math/2f3334fe845a1261f3fb32eebc7fdfd7a691fa66.png" alt="\[ z\left(x,y\right)\approx\sum_{j}\sum_{k}c_{jk}\beta^{o}\left(\frac{x}{\Delta x}-j\right)\beta^{o}\left(\frac{y}{\Delta y}-k\right).\]"/></p>
+</div><p>In these expressions, <img class="math" src="../_images/math/3215119832dfef8fd52a70623262126e7e63254c.png" alt="\beta^{o}\left(\cdot\right)" style="vertical-align: -4px"/> is the space-limited
+B-spline basis function of order, <img class="math" src="../_images/math/3eabe6c97f03e413d1aa3c292e9478f286e64df1.png" alt="o" style="vertical-align: 0px"/> . The requirement of equally-spaced
+knot-points and equally-spaced data points, allows the development of fast
+(inverse-filtering) algorithms for determining the coefficients, <img class="math" src="../_images/math/6c611530143fe582b6279715426eee5e1374d95d.png" alt="c_{j}" style="vertical-align: -4px"/>
+, from sample-values, <img class="math" src="../_images/math/2d64df3d183a5c42dcb96fc66125d6f8027181eb.png" alt="y_{n}" style="vertical-align: -3px"/> . Unlike the general spline interpolation
+algorithms, these algorithms can quickly find the spline coefficients for large
+images.</p>
+<p>The advantage of representing a set of samples via B-spline basis
+functions is that continuous-domain operators (derivatives, re-
+sampling, integral, etc.) which assume that the data samples are drawn
+from an underlying continuous function can be computed with relative
+ease from the spline coefficients. For example, the second-derivative
+of a spline is</p>
+<div class="math">
+<p><img src="../_images/math/308f36cde9db42ef74e80f8a346d5943d4731583.png" alt="\[ y{}^{\prime\prime}\left(x\right)=\frac{1}{\Delta x^{2}}\sum_{j}c_{j}\beta^{o\prime\prime}\left(\frac{x}{\Delta x}-j\right).\]"/></p>
+</div><p>Using the property of B-splines that</p>
+<div class="math">
+<p><img src="../_images/math/4a4eb9a63f1b21aa7018da70e32e029a369e3c31.png" alt="\[ \frac{d^{2}\beta^{o}\left(w\right)}{dw^{2}}=\beta^{o-2}\left(w+1\right)-2\beta^{o-2}\left(w\right)+\beta^{o-2}\left(w-1\right)\]"/></p>
+</div><p>it can be seen that</p>
+<div class="math">
+<p><img src="../_images/math/43a1ce2036c6d0d329fb3f91b97d673c0c1a30eb.png" alt="\[ y^{\prime\prime}\left(x\right)=\frac{1}{\Delta x^{2}}\sum_{j}c_{j}\left[\beta^{o-2}\left(\frac{x}{\Delta x}-j+1\right)-2\beta^{o-2}\left(\frac{x}{\Delta x}-j\right)+\beta^{o-2}\left(\frac{x}{\Delta x}-j-1\right)\right].\]"/></p>
+</div><p>If <img class="math" src="../_images/math/d39cea23ef440c69b1feffc9e8750f7ebfe39618.png" alt="o=3" style="vertical-align: 0px"/> , then at the sample points,</p>
+<div class="math">
+<p><img src="../_images/math/47a2215cd3a85a85098bd3ec08ddb0c9b17737f1.png" alt="\begin{eqnarray*} \Delta x^{2}\left.y^{\prime}\left(x\right)\right|_{x=n\Delta x} &amp; = &amp; \sum_{j}c_{j}\delta_{n-j+1}-2c_{j}\delta_{n-j}+c_{j}\delta_{n-j-1},\\  &amp; = &amp; c_{n+1}-2c_{n}+c_{n-1}.\end{eqnarray*}"/></p>
+</div><p>Thus, the second-derivative signal can be easily calculated from the
+spline fit. if desired, smoothing splines can be found to make the
+second-derivative less sensitive to random-errors.</p>
+<p>The savvy reader will have already noticed that the data samples are
+related to the knot coefficients via a convolution operator, so that
+simple convolution with the sampled B-spline function recovers the
+original data from the spline coefficients. The output of convolutions
+can change depending on how boundaries are handled (this becomes
+increasingly more important as the number of dimensions in the data-
+set increases). The algorithms relating to B-splines in the signal-
+processing sub package assume mirror-symmetric boundary conditions.
+Thus, spline coefficients are computed based on that assumption, and
+data-samples can be recovered exactly from the spline coefficients by
+assuming them to be mirror-symmetric also.</p>
+<p>Currently the package provides functions for determining second- and
+third-order cubic spline coefficients from equally spaced samples in
+one- and two-dimensions (<tt class="xref py py-func docutils literal"><span class="pre">signal.qspline1d</span></tt>,
+<tt class="xref py py-func docutils literal"><span class="pre">signal.qspline2d</span></tt>, <tt class="xref py py-func docutils literal"><span class="pre">signal.cspline1d</span></tt>,
+<tt class="xref py py-func docutils literal"><span class="pre">signal.cspline2d</span></tt>). The package also supplies a function (
+<tt class="xref py py-obj docutils literal"><span class="pre">signal.bspline</span></tt> ) for evaluating the bspline basis function,
+<img class="math" src="../_images/math/e86ffcbe4eb998c6c08b6c6ec80ed3cfa5e07e2e.png" alt="\beta^{o}\left(x\right)" style="vertical-align: -4px"/> for arbitrary order and <img class="math" src="../_images/math/fc3be04db73828946870d3ccc6d122395a4bacf6.png" alt="x." style="vertical-align: 0px"/> For
+large <img class="math" src="../_images/math/3eabe6c97f03e413d1aa3c292e9478f286e64df1.png" alt="o" style="vertical-align: 0px"/> , the B-spline basis function can be approximated well
+by a zero-mean Gaussian function with standard-deviation equal to
+<img class="math" src="../_images/math/72a44a714f99ddf3df83a0d1ea373ca849305996.png" alt="\sigma_{o}=\left(o+1\right)/12" style="vertical-align: -4px"/> :</p>
+<div class="math">
+<p><img src="../_images/math/bb84fab27782181d63d8c8f7ded958948afeb2d0.png" alt="\[ \beta^{o}\left(x\right)\approx\frac{1}{\sqrt{2\pi\sigma_{o}^{2}}}\exp\left(-\frac{x^{2}}{2\sigma_{o}}\right).\]"/></p>
+</div><p>A function to compute this Gaussian for arbitrary <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" style="vertical-align: 0px"/> and
+<img class="math" src="../_images/math/3eabe6c97f03e413d1aa3c292e9478f286e64df1.png" alt="o" style="vertical-align: 0px"/> is also available ( <tt class="xref py py-obj docutils literal"><span class="pre">signal.gauss_spline</span></tt> ). The
+following code and Figure uses spline-filtering to compute an
+edge-image (the second-derivative of a smoothed spline) of Lena&#8217;s face
+which is an array returned by the command <tt class="xref py py-func docutils literal"><span class="pre">lena</span></tt>. The command
+<tt class="xref py py-obj docutils literal"><span class="pre">signal.sepfir2d</span></tt> was used to apply a separable two-dimensional
+FIR filter with mirror- symmetric boundary conditions to the spline
+coefficients. This function is ideally suited for reconstructing
+samples from spline coefficients and is faster than
+<tt class="xref py py-obj docutils literal"><span class="pre">signal.convolve2d</span></tt> which convolves arbitrary two-dimensional
+filters and allows for choosing mirror-symmetric boundary conditions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">misc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">lena</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">float32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">derfilt</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span><span class="n">float32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ck</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">cspline2d</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="mf">8.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deriv</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">sepfir2d</span><span class="p">(</span><span class="n">ck</span><span class="p">,</span> <span class="n">derfilt</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> \
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">signal</span><span class="o">.</span><span class="n">sepfir2d</span><span class="p">(</span><span class="n">ck</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">derfilt</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively we could have done:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">laplacian</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">deriv2</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">convolve2d</span><span class="p">(</span><span class="n">ck</span><span class="p">,</span><span class="n">laplacian</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;same&#39;</span><span class="p">,</span><span class="n">boundary</span><span class="o">=</span><span class="s">&#39;symm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">gray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Original image&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/signal-1.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/signal-1_00_00.png" src="../_images/signal-1_00_00.png" />
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">deriv</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">gray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Output of spline edge filter&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="../_images/signal-1_01_00.png" src="../_images/signal-1_01_00.png" />
+</div>
+</div>
+<div class="section" id="filtering">
+<h2>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
+<p>Filtering is a generic name for any system that modifies an input
+signal in some way. In SciPy a signal can be thought of as a Numpy
+array. There are different kinds of filters for different kinds of
+operations. There are two broad kinds of filtering operations: linear
+and non-linear. Linear filters can always be reduced to multiplication
+of the flattened Numpy array by an appropriate matrix resulting in
+another flattened Numpy array. Of course, this is not usually the best
+way to compute the filter as the matrices and vectors involved may be
+huge. For example filtering a <img class="math" src="../_images/math/a90f615bb269e3695596001b17ffb9234114166c.png" alt="512 \times 512" style="vertical-align: -1px"/> image with this
+method would require multiplication of a <img class="math" src="../_images/math/6dbafcf057107c296928cb8e48c9cfb60e47f5d1.png" alt="512^2 \times 512^2" style="vertical-align: -1px"/>
+matrix with a <img class="math" src="../_images/math/9e66ad0b33ad3073a83ccf6bcaff0fac53fe776b.png" alt="512^2" style="vertical-align: -1px"/> vector. Just trying to store the
+<img class="math" src="../_images/math/6dbafcf057107c296928cb8e48c9cfb60e47f5d1.png" alt="512^2 \times 512^2" style="vertical-align: -1px"/> matrix using a standard Numpy array would
+require <img class="math" src="../_images/math/15033c9b4a0f8f80c460caedc608160733187a97.png" alt="68,719,476,736" style="vertical-align: -3px"/> elements. At 4 bytes per element this
+would require <img class="math" src="../_images/math/2a8cc6d35f3d10d2eb9176d79065e36a57a2b397.png" alt="256\textrm{GB}" style="vertical-align: 0px"/> of memory. In most applications
+most of the elements of this matrix are zero and a different method
+for computing the output of the filter is employed.</p>
+<div class="section" id="convolution-correlation">
+<h3>Convolution/Correlation<a class="headerlink" href="#convolution-correlation" title="Permalink to this headline">¶</a></h3>
+<p>Many linear filters also have the property of shift-invariance. This
+means that the filtering operation is the same at different locations
+in the signal and it implies that the filtering matrix can be
+constructed from knowledge of one row (or column) of the matrix alone.
+In this case, the matrix multiplication can be accomplished using
+Fourier transforms.</p>
+<p>Let <img class="math" src="../_images/math/7a54a7c9d1c3adeb22199aa50a53aaed8f21c3e8.png" alt="x\left[n\right]" style="vertical-align: -4px"/> define a one-dimensional signal indexed by the
+integer <img class="math" src="../_images/math/bd923e41635af40a1abe58f230732f2280b0723a.png" alt="n." style="vertical-align: 0px"/> Full convolution of two one-dimensional signals can be
+expressed as</p>
+<div class="math">
+<p><img src="../_images/math/3983945b1984e9abdea8e3ae407f25bf1fa74978.png" alt="\[ y\left[n\right]=\sum_{k=-\infty}^{\infty}x\left[k\right]h\left[n-k\right].\]"/></p>
+</div><p>This equation can only be implemented directly if we limit the
+sequences to finite support sequences that can be stored in a
+computer, choose <img class="math" src="../_images/math/02349576cee613512cdf301a365f06c0760acab5.png" alt="n=0" style="vertical-align: 0px"/> to be the starting point of both
+sequences, let <img class="math" src="../_images/math/370a8ce6987cd7748ec7f25fb35e94582eaec2a0.png" alt="K+1" style="vertical-align: -1px"/> be that value for which
+<img class="math" src="../_images/math/3647fe62a0b979c8d541d0dc7fb93b27e76ae9ad.png" alt="y\left[n\right]=0" style="vertical-align: -4px"/> for all <img class="math" src="../_images/math/1536f1191bb24465ec545870f05bc68874fdc927.png" alt="n&gt;K+1" style="vertical-align: -1px"/> and <img class="math" src="../_images/math/afe144e5517842d0ce8986c6fada40267e99bd6d.png" alt="M+1" style="vertical-align: -1px"/> be
+that value for which <img class="math" src="../_images/math/963d869ccb2c301bf4c6c0d31ac2b99c8d0e4a72.png" alt="x\left[n\right]=0" style="vertical-align: -4px"/> for all <img class="math" src="../_images/math/b42d03938645c5fe3d5a1be572540995fb0fdc39.png" alt="n&gt;M+1" style="vertical-align: -1px"/> ,
+then the discrete convolution expression is</p>
+<div class="math">
+<p><img src="../_images/math/066721b94cf6ea5067af06b5a7b158dc11cdc08d.png" alt="\[ y\left[n\right]=\sum_{k=\max\left(n-M,0\right)}^{\min\left(n,K\right)}x\left[k\right]h\left[n-k\right].\]"/></p>
+</div><p>For convenience assume <img class="math" src="../_images/math/d4461a75753ace177e2340d24bd9f65bd1983602.png" alt="K\geq M." style="vertical-align: -2px"/> Then, more explicitly the output of
+this operation is</p>
+<div class="math">
+<p><img src="../_images/math/6fe58cba92c006e7899b26eb7dd594b79b7a62d9.png" alt="\begin{eqnarray*} y\left[0\right] &amp; = &amp; x\left[0\right]h\left[0\right]\\ y\left[1\right] &amp; = &amp; x\left[0\right]h\left[1\right]+x\left[1\right]h\left[0\right]\\ y\left[2\right] &amp; = &amp; x\left[0\right]h\left[2\right]+x\left[1\right]h\left[1\right]+x\left[2\right]h\left[0\right]\\ \vdots &amp; \vdots &amp; \vdots\\ y\left[M\right] &amp; = &amp; x\left[0\right]h\left[M\right]+x\left[1\right]h\left[M-1\right]+\cdots+x\left[M\right]h\left[0\right]\\ y\left[M+1\right] &amp; = &amp; x\left[1\right]h\left[M\right]+x\left[2\right]h\left[M-1\right]+\cdots+x\left[M+1\right]h\left[0\right]\\ \vdots &amp; \vdots &amp; \vdots\\ y\left[K\right] &amp; = &amp; x\left[K-M\right]h\left[M\right]+\cdots+x\left[K\right]h\left[0\right]\\ y\left[K+1\right] &amp; = &amp; x\left[K+1-M\right]h\left[M\right]+\cdots+x\left[K\right]h\left[1\right]\\ \vdots &amp; \vdots &amp; \vdots\\ y\left[K+M-1\right] &amp; = &amp; x\left[K-1\right]h\left[M\right]+x\left[K\right]h\left[M-1\right]\\ y\left[K+M\right] &amp; = &amp; x\left[K\right]h\left[M\right].\end{eqnarray*}"/></p>
+</div><p>Thus, the full discrete convolution of two finite sequences of lengths
+<img class="math" src="../_images/math/370a8ce6987cd7748ec7f25fb35e94582eaec2a0.png" alt="K+1" style="vertical-align: -1px"/> and <img class="math" src="../_images/math/afe144e5517842d0ce8986c6fada40267e99bd6d.png" alt="M+1" style="vertical-align: -1px"/> respectively results in a finite sequence of length
+<img class="math" src="../_images/math/42a63e44ac3142905c9dc158f250b97e62934d4d.png" alt="K+M+1=\left(K+1\right)+\left(M+1\right)-1." style="vertical-align: -4px"/></p>
+<p>One dimensional convolution is implemented in SciPy with the function
+<tt class="docutils literal"><span class="pre">signal.convolve</span></tt> . This function takes as inputs the signals
+<img class="math" src="../_images/math/6d0382f3585219947b495ac2262a81b7b0c40db2.png" alt="x," style="vertical-align: -3px"/> <img class="math" src="../_images/math/8189a5b5a0917b8c93350827be4038af1839139d.png" alt="h" style="vertical-align: 0px"/> , and an optional flag and returns the signal
+<img class="math" src="../_images/math/56e228943301b048f242377b3b24717037d5996f.png" alt="y." style="vertical-align: -3px"/> The optional flag allows for specification of which part of
+the output signal to return. The default value of &#8216;full&#8217; returns the
+entire signal. If the flag has a value of &#8216;same&#8217; then only the middle
+<img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/> values are returned starting at <img class="math" src="../_images/math/868c62954a46d056df5db07d13ebbcdcbb4e3799.png" alt="y\left[\left\lfloor
+\frac{M-1}{2}\right\rfloor \right]" style="vertical-align: -6px"/> so that the output has the same
+length as the largest input. If the flag has a value of &#8216;valid&#8217; then
+only the middle <img class="math" src="../_images/math/ce0e4c4415f6711d672c217235aef51bd0fd77f5.png" alt="K-M+1=\left(K+1\right)-\left(M+1\right)+1" style="vertical-align: -4px"/>
+output values are returned where <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" style="vertical-align: 0px"/> depends on all of the
+values of the smallest input from <img class="math" src="../_images/math/b745acac744f4de62b0672541590ac5e7187e6af.png" alt="h\left[0\right]" style="vertical-align: -4px"/> to
+<img class="math" src="../_images/math/ef5c8ab9537368f5a0d8eb718c4a6c5b285b8d65.png" alt="h\left[M\right]." style="vertical-align: -4px"/> In other words only the values
+<img class="math" src="../_images/math/6355f12ed4c8290d438a4d55d7905a69d900eba6.png" alt="y\left[M\right]" style="vertical-align: -4px"/> to <img class="math" src="../_images/math/e90cce44b1fd12ef749e98380080302c8bc83d2a.png" alt="y\left[K\right]" style="vertical-align: -4px"/> inclusive are
+returned.</p>
+<p>This same function <tt class="docutils literal"><span class="pre">signal.convolve</span></tt> can actually take <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/>
+-dimensional arrays as inputs and will return the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/>
+-dimensional convolution of the two arrays. The same input flags are
+available for that case as well.</p>
+<p>Correlation is very similar to convolution except for the minus sign
+becomes a plus sign. Thus</p>
+<div class="math">
+<p><img src="../_images/math/1c35c466421fa5230cbc3e308c3680d46fbf0015.png" alt="\[ w\left[n\right]=\sum_{k=-\infty}^{\infty}y\left[k\right]x\left[n+k\right]\]"/></p>
+</div><p>is the (cross) correlation of the signals <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" style="vertical-align: -3px"/> and <img class="math" src="../_images/math/fc3be04db73828946870d3ccc6d122395a4bacf6.png" alt="x." style="vertical-align: 0px"/> For
+finite-length signals with <img class="math" src="../_images/math/3647fe62a0b979c8d541d0dc7fb93b27e76ae9ad.png" alt="y\left[n\right]=0" style="vertical-align: -4px"/> outside of the range
+<img class="math" src="../_images/math/39088e750f5f05ddfcf7ba6f14cac3cd6a20f277.png" alt="\left[0,K\right]" style="vertical-align: -4px"/> and <img class="math" src="../_images/math/963d869ccb2c301bf4c6c0d31ac2b99c8d0e4a72.png" alt="x\left[n\right]=0" style="vertical-align: -4px"/> outside of the range
+<img class="math" src="../_images/math/d9f860be08db36284e9794517b69d0f8acaedd25.png" alt="\left[0,M\right]," style="vertical-align: -4px"/> the summation can simplify to</p>
+<div class="math">
+<p><img src="../_images/math/59652e6c1fc1470282728b83750bb245b511b77b.png" alt="\[ w\left[n\right]=\sum_{k=\max\left(0,-n\right)}^{\min\left(K,M-n\right)}y\left[k\right]x\left[n+k\right].\]"/></p>
+</div><p>Assuming again that <img class="math" src="../_images/math/4f977c13c86e55b52f8f63b7aba85cd1cd191354.png" alt="K\geq M" style="vertical-align: -2px"/> this is</p>
+<div class="math">
+<p><img src="../_images/math/6ce5f2d19a556c0a429cf5f242963542d31a2e61.png" alt="\begin{eqnarray*} w\left[-K\right] &amp; = &amp; y\left[K\right]x\left[0\right]\\ w\left[-K+1\right] &amp; = &amp; y\left[K-1\right]x\left[0\right]+y\left[K\right]x\left[1\right]\\ \vdots &amp; \vdots &amp; \vdots\\ w\left[M-K\right] &amp; = &amp; y\left[K-M\right]x\left[0\right]+y\left[K-M+1\right]x\left[1\right]+\cdots+y\left[K\right]x\left[M\right]\\ w\left[M-K+1\right] &amp; = &amp; y\left[K-M-1\right]x\left[0\right]+\cdots+y\left[K-1\right]x\left[M\right]\\ \vdots &amp; \vdots &amp; \vdots\\ w\left[-1\right] &amp; = &amp; y\left[1\right]x\left[0\right]+y\left[2\right]x\left[1\right]+\cdots+y\left[M+1\right]x\left[M\right]\\ w\left[0\right] &amp; = &amp; y\left[0\right]x\left[0\right]+y\left[1\right]x\left[1\right]+\cdots+y\left[M\right]x\left[M\right]\\ w\left[1\right] &amp; = &amp; y\left[0\right]x\left[1\right]+y\left[1\right]x\left[2\right]+\cdots+y\left[M-1\right]x\left[M\right]\\ w\left[2\right] &amp; = &amp; y\left[0\right]x\left[2\right]+y\left[1\right]x\left[3\right]+\cdots+y\left[M-2\right]x\left[M\right]\\ \vdots &amp; \vdots &amp; \vdots\\ w\left[M-1\right] &amp; = &amp; y\left[0\right]x\left[M-1\right]+y\left[1\right]x\left[M\right]\\ w\left[M\right] &amp; = &amp; y\left[0\right]x\left[M\right].\end{eqnarray*}"/></p>
+</div><p>The SciPy function <tt class="docutils literal"><span class="pre">signal.correlate</span></tt> implements this
+operation. Equivalent flags are available for this operation to return
+the full <img class="math" src="../_images/math/c1d486c40dc9b77108ef4caef98215d85d66dd42.png" alt="K+M+1" style="vertical-align: -1px"/> length sequence (&#8216;full&#8217;) or a sequence with the
+same size as the largest sequence starting at
+<img class="math" src="../_images/math/61f32de921da939b4a1421ddcb79132aa5d25fe3.png" alt="w\left[-K+\left\lfloor \frac{M-1}{2}\right\rfloor \right]" style="vertical-align: -6px"/>
+(&#8216;same&#8217;) or a sequence where the values depend on all the values of
+the smallest sequence (&#8216;valid&#8217;). This final option returns the
+<img class="math" src="../_images/math/fb6b17c32711ccf9de68d1e1d7509fa4cd46068d.png" alt="K-M+1" style="vertical-align: -1px"/> values <img class="math" src="../_images/math/95c870f88b4ccd819a51eb06aec1a148b4fd9640.png" alt="w\left[M-K\right]" style="vertical-align: -4px"/> to
+<img class="math" src="../_images/math/c59d75e227ea2f43ef26508669db8c2f2f209f6c.png" alt="w\left[0\right]" style="vertical-align: -4px"/> inclusive.</p>
+<p>The function <tt class="xref py py-obj docutils literal"><span class="pre">signal.correlate</span></tt> can also take arbitrary <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/>
+-dimensional arrays as input and return the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/> -dimensional
+convolution of the two arrays on output.</p>
+<p>When <img class="math" src="../_images/math/6c5aea768168c6250413cb5ce780a3cdda546753.png" alt="N=2," style="vertical-align: -3px"/> <tt class="xref py py-obj docutils literal"><span class="pre">signal.correlate</span></tt> and/or
+<tt class="xref py py-obj docutils literal"><span class="pre">signal.convolve</span></tt> can be used to construct arbitrary image
+filters to perform actions such as blurring, enhancing, and
+edge-detection for an image.</p>
+<p>Convolution is mainly used for filtering when one of the signals is
+much smaller than the other ( <img class="math" src="../_images/math/4c4cd188373401b1ad9c823177120939223fc2ef.png" alt="K\gg M" style="vertical-align: -2px"/> ), otherwise linear
+filtering is more easily accomplished in the frequency domain (see
+Fourier Transforms).</p>
+</div>
+<div class="section" id="difference-equation-filtering">
+<h3>Difference-equation filtering<a class="headerlink" href="#difference-equation-filtering" title="Permalink to this headline">¶</a></h3>
+<p>A general class of linear one-dimensional filters (that includes
+convolution filters) are filters described by the difference equation</p>
+<div class="math">
+<p><img src="../_images/math/f17977ceb351f59b1be35c3ce49a259bdcc5b0c2.png" alt="\[ \sum_{k=0}^{N}a_{k}y\left[n-k\right]=\sum_{k=0}^{M}b_{k}x\left[n-k\right]\]"/></p>
+</div><p>where <img class="math" src="../_images/math/7a54a7c9d1c3adeb22199aa50a53aaed8f21c3e8.png" alt="x\left[n\right]" style="vertical-align: -4px"/> is the input sequence and
+<img class="math" src="../_images/math/c548a4b709772977ca62636c4ddc37d30a83c742.png" alt="y\left[n\right]" style="vertical-align: -4px"/> is the output sequence. If we assume initial
+rest so that <img class="math" src="../_images/math/3647fe62a0b979c8d541d0dc7fb93b27e76ae9ad.png" alt="y\left[n\right]=0" style="vertical-align: -4px"/> for <img class="math" src="../_images/math/79813fe3de65c5970b8c1b6eecc359c0042447ae.png" alt="n&lt;0" style="vertical-align: 0px"/> , then this
+kind of filter can be implemented using convolution.  However, the
+convolution filter sequence <img class="math" src="../_images/math/1dbbcdabd0912ad30c0a5001c4d06e389c1e19f9.png" alt="h\left[n\right]" style="vertical-align: -4px"/> could be infinite
+if <img class="math" src="../_images/math/35c168e8797f4c08b24bd055e59ca324c48a3313.png" alt="a_{k}\neq0" style="vertical-align: -4px"/> for <img class="math" src="../_images/math/ff2aa9f06706d0ec4a5f92c49f70912a0f585394.png" alt="k\geq1." style="vertical-align: -2px"/> In addition, this general
+class of linear filter allows initial conditions to be placed on
+<img class="math" src="../_images/math/c548a4b709772977ca62636c4ddc37d30a83c742.png" alt="y\left[n\right]" style="vertical-align: -4px"/> for <img class="math" src="../_images/math/79813fe3de65c5970b8c1b6eecc359c0042447ae.png" alt="n&lt;0" style="vertical-align: 0px"/> resulting in a filter that
+cannot be expressed using convolution.</p>
+<p>The difference equation filter can be thought of as finding
+<img class="math" src="../_images/math/c548a4b709772977ca62636c4ddc37d30a83c742.png" alt="y\left[n\right]" style="vertical-align: -4px"/> recursively in terms of it&#8217;s previous values</p>
+<div class="math">
+<p><img src="../_images/math/a0522c6a15fc8f22c791aeb35b1bd68d51b21026.png" alt="\[ a_{0}y\left[n\right]=-a_{1}y\left[n-1\right]-\cdots-a_{N}y\left[n-N\right]+\cdots+b_{0}x\left[n\right]+\cdots+b_{M}x\left[n-M\right].\]"/></p>
+</div><p>Often <img class="math" src="../_images/math/98ea98fbcfb7a58e42fe0b239cde7e9335e5c272.png" alt="a_{0}=1" style="vertical-align: -2px"/> is chosen for normalization. The implementation
+in SciPy of this general difference equation filter is a little more
+complicated then would be implied by the previous equation. It is
+implemented so that only one signal needs to be delayed. The actual
+implementation equations are (assuming <img class="math" src="../_images/math/98ea98fbcfb7a58e42fe0b239cde7e9335e5c272.png" alt="a_{0}=1" style="vertical-align: -2px"/> ).</p>
+<div class="math">
+<p><img src="../_images/math/062cff3bca754552673fdb66da28377d2bbd3d8c.png" alt="\begin{eqnarray*} y\left[n\right] &amp; = &amp; b_{0}x\left[n\right]+z_{0}\left[n-1\right]\\ z_{0}\left[n\right] &amp; = &amp; b_{1}x\left[n\right]+z_{1}\left[n-1\right]-a_{1}y\left[n\right]\\ z_{1}\left[n\right] &amp; = &amp; b_{2}x\left[n\right]+z_{2}\left[n-1\right]-a_{2}y\left[n\right]\\ \vdots &amp; \vdots &amp; \vdots\\ z_{K-2}\left[n\right] &amp; = &amp; b_{K-1}x\left[n\right]+z_{K-1}\left[n-1\right]-a_{K-1}y\left[n\right]\\ z_{K-1}\left[n\right] &amp; = &amp; b_{K}x\left[n\right]-a_{K}y\left[n\right],\end{eqnarray*}"/></p>
+</div><p>where <img class="math" src="../_images/math/e1a425d60662c5380951f9795fbc7e57d11a664d.png" alt="K=\max\left(N,M\right)." style="vertical-align: -4px"/> Note that <img class="math" src="../_images/math/8a8e62f4318325b7063fc7316223f5509ae8aa6a.png" alt="b_{K}=0" style="vertical-align: -2px"/> if
+<img class="math" src="../_images/math/ee7e4025e69bfa5626d39360dd9627d4552be696.png" alt="K&gt;M" style="vertical-align: 0px"/> and <img class="math" src="../_images/math/a74df73690db1d89a571f7839b30abed7d4191a3.png" alt="a_{K}=0" style="vertical-align: -2px"/> if <img class="math" src="../_images/math/a71f7ed40bd43878770f01b0bbdbc712137a710f.png" alt="K&gt;N." style="vertical-align: 0px"/> In this way, the
+output at time <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/> depends only on the input at time <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" style="vertical-align: 0px"/>
+and the value of <img class="math" src="../_images/math/bde52de6af2e23d5c5c091813dfc5e88ace777df.png" alt="z_{0}" style="vertical-align: -2px"/> at the previous time. This can always
+be calculated as long as the <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" style="vertical-align: 0px"/> values
+<img class="math" src="../_images/math/2a4b8eba8228f57bf3ec50a69e5b970a44125dab.png" alt="z_{0}\left[n-1\right]\ldots z_{K-1}\left[n-1\right]" style="vertical-align: -4px"/> are
+computed and stored at each time step.</p>
+<p>The difference-equation filter is called using the command
+<tt class="xref py py-obj docutils literal"><span class="pre">signal.lfilter</span></tt> in SciPy. This command takes as inputs the
+vector <img class="math" src="../_images/math/5b1d6265e67657b5886ce257671d45ff9c0282eb.png" alt="b," style="vertical-align: -3px"/> the vector, <img class="math" src="../_images/math/7c8acfd7d5ee559262593701b8dbd02e43ad96e3.png" alt="a," style="vertical-align: -3px"/> a signal <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" style="vertical-align: 0px"/> and
+returns the vector <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" style="vertical-align: -3px"/> (the same length as <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" style="vertical-align: 0px"/> ) computed
+using the equation given above. If <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" style="vertical-align: 0px"/> is <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" style="vertical-align: 0px"/>
+-dimensional, then the filter is computed along the axis provided. If,
+desired, initial conditions providing the values of
+<img class="math" src="../_images/math/13fa4765d1120308d98781a0c6d278e5895d3d25.png" alt="z_{0}\left[-1\right]" style="vertical-align: -4px"/> to <img class="math" src="../_images/math/1568136cd65710bb52a9b44bf3b9dc0661c2f4a6.png" alt="z_{K-1}\left[-1\right]" style="vertical-align: -4px"/> can be
+provided or else it will be assumed that they are all zero. If initial
+conditions are provided, then the final conditions on the intermediate
+variables are also returned. These could be used, for example, to
+restart the calculation in the same state.</p>
+<p>Sometimes it is more convenient to express the initial conditions in
+terms of the signals <img class="math" src="../_images/math/7a54a7c9d1c3adeb22199aa50a53aaed8f21c3e8.png" alt="x\left[n\right]" style="vertical-align: -4px"/> and
+<img class="math" src="../_images/math/61a0760882b9f688928491ea6ef7a7fbe2a5818a.png" alt="y\left[n\right]." style="vertical-align: -4px"/> In other words, perhaps you have the values
+of <img class="math" src="../_images/math/e64b0f2e4c4fe7d20c557ab80665e7aee740196d.png" alt="x\left[-M\right]" style="vertical-align: -4px"/> to <img class="math" src="../_images/math/d22f39bde126fcedae209972af2a6e0fd95e886b.png" alt="x\left[-1\right]" style="vertical-align: -4px"/> and the values
+of <img class="math" src="../_images/math/6536f83b0a5d0a31bbdd63153f942e9cb3e23d81.png" alt="y\left[-N\right]" style="vertical-align: -4px"/> to <img class="math" src="../_images/math/1e3f1bb1d7e52040ce2ad7c86a800b9aece0ff15.png" alt="y\left[-1\right]" style="vertical-align: -4px"/> and would like
+to determine what values of <img class="math" src="../_images/math/2e8083d91bba270fc7423dfa44f37a0fdcf53386.png" alt="z_{m}\left[-1\right]" style="vertical-align: -4px"/> should be
+delivered as initial conditions to the difference-equation filter. It
+is not difficult to show that for <img class="math" src="../_images/math/f166ebe1ea28cdf0aa16553fcae5c060f0264c54.png" alt="0\leq m&lt;K," style="vertical-align: -3px"/></p>
+<div class="math">
+<p><img src="../_images/math/45c54ff2b4dadedf8b6b952453528407cc1a5ee3.png" alt="\[ z_{m}\left[n\right]=\sum_{p=0}^{K-m-1}\left(b_{m+p+1}x\left[n-p\right]-a_{m+p+1}y\left[n-p\right]\right).\]"/></p>
+</div><p>Using this formula we can find the intial condition vector
+<img class="math" src="../_images/math/13fa4765d1120308d98781a0c6d278e5895d3d25.png" alt="z_{0}\left[-1\right]" style="vertical-align: -4px"/> to <img class="math" src="../_images/math/1568136cd65710bb52a9b44bf3b9dc0661c2f4a6.png" alt="z_{K-1}\left[-1\right]" style="vertical-align: -4px"/> given initial
+conditions on <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" style="vertical-align: -3px"/> (and <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" style="vertical-align: 0px"/> ). The command <tt class="xref py py-obj docutils literal"><span class="pre">signal.lfiltic</span></tt>
+performs this function.</p>
+</div>
+<div class="section" id="other-filters">
+<h3>Other filters<a class="headerlink" href="#other-filters" title="Permalink to this headline">¶</a></h3>
+<p>The signal processing package provides many more filters as well.</p>
+<div class="section" id="median-filter">
+<h4>Median Filter<a class="headerlink" href="#median-filter" title="Permalink to this headline">¶</a></h4>
+<p>A median filter is commonly applied when noise is markedly non-Gaussian
+or when it is desired to preserve edges. The median filter
+works by sorting all of the array pixel values in a rectangular region
+surrounding the point of interest. The sample median of this list of
+neighborhood pixel values is used as the value for the output array.
+The sample median is the middle array value in a sorted list of
+neighborhood values. If there are an even number of elements in the
+neighborhood, then the average of the middle two values is used as the
+median. A general purpose median filter that works on N-dimensional
+arrays is <tt class="xref py py-obj docutils literal"><span class="pre">signal.medfilt</span></tt> . A specialized version that works
+only for two-dimensional arrays is available as
+<tt class="xref py py-obj docutils literal"><span class="pre">signal.medfilt2d</span></tt> .</p>
+</div>
+<div class="section" id="order-filter">
+<h4>Order Filter<a class="headerlink" href="#order-filter" title="Permalink to this headline">¶</a></h4>
+<p>A median filter is a specific example of a more general class of
+filters called order filters. To compute the output at a particular
+pixel, all order filters use the array values in a region surrounding
+that pixel. These array values are sorted and then one of them is
+selected as the output value. For the median filter, the sample median
+of the list of array values is used as the output. A general order
+filter allows the user to select which of the sorted values will be
+used as the output. So, for example one could choose to pick the
+maximum in the list or the minimum. The order filter takes an
+additional argument besides the input array and the region mask that
+specifies which of the elements in the sorted list of neighbor array
+values should be used as the output. The command to perform an order
+filter is <tt class="xref py py-obj docutils literal"><span class="pre">signal.order_filter</span></tt> .</p>
+</div>
+<div class="section" id="wiener-filter">
+<h4>Wiener filter<a class="headerlink" href="#wiener-filter" title="Permalink to this headline">¶</a></h4>
+<p>The Wiener filter is a simple deblurring filter for denoising images.
+This is not the Wiener filter commonly described in image
+reconstruction problems but instead it is a simple, local-mean filter.
+Let <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" style="vertical-align: 0px"/> be the input signal, then the output is</p>
+<div class="math">
+<p><img src="../_images/math/afb8c72cc93e5b7d8b9be98a50206b529f707f20.png" alt="\[ y=\left\{ \begin{array}{cc} \frac{\sigma^{2}}{\sigma_{x}^{2}}m_{x}+\left(1-\frac{\sigma^{2}}{\sigma_{x}^{2}}\right)x &amp; \sigma_{x}^{2}\geq\sigma^{2},\\ m_{x} &amp; \sigma_{x}^{2}&lt;\sigma^{2},\end{array}\right.\]"/></p>
+</div><p>where <img class="math" src="../_images/math/3e34dfa5f0deb0cf40b9a1e259cf20472b8076ed.png" alt="m_{x}" style="vertical-align: -2px"/> is the local estimate of the mean and
+<img class="math" src="../_images/math/a244024681336892641ec22a1fddc8d927654cec.png" alt="\sigma_{x}^{2}" style="vertical-align: -4px"/> is the local estimate of the variance. The
+window for these estimates is an optional input parameter (default is
+<img class="math" src="../_images/math/77d7104f34af16053b63ce7cfa87265d915c6105.png" alt="3\times3" style="vertical-align: 0px"/> ). The parameter <img class="math" src="../_images/math/d07a4e27926a45b92210e9ebb9e47a2432dae3af.png" alt="\sigma^{2}" style="vertical-align: 0px"/> is a threshold
+noise parameter. If <img class="math" src="../_images/math/fa35d9fc104207e09a712110ac81612c5b279a6c.png" alt="\sigma" style="vertical-align: 0px"/> is not given then it is estimated
+as the average of the local variances.</p>
+</div>
+<div class="section" id="hilbert-filter">
+<h4>Hilbert filter<a class="headerlink" href="#hilbert-filter" title="Permalink to this headline">¶</a></h4>
+<p>The Hilbert transform constructs the complex-valued analytic signal
+from a real signal. For example if <img class="math" src="../_images/math/329b214edcd78ed0807d598c1f43caab01d98fe4.png" alt="x=\cos\omega n" style="vertical-align: 0px"/> then
+<img class="math" src="../_images/math/b3544374fb94d03f78d71fdd669f6f175f359055.png" alt="y=\textrm{hilbert}\left(x\right)" style="vertical-align: -4px"/> would return (except near the
+edges) <img class="math" src="../_images/math/9cec39cd4ef2d50144346e370decaf534e51519e.png" alt="y=\exp\left(j\omega n\right)." style="vertical-align: -4px"/> In the frequency domain,
+the hilbert transform performs</p>
+<div class="math">
+<p><img src="../_images/math/03a1bc7a1c56cccb67daa0fcbefbf19cf183f20f.png" alt="\[ Y=X\cdot H\]"/></p>
+</div><p>where <img class="math" src="../_images/math/b1902d279ba37d60bdce4e0e987b7cd19d48974e.png" alt="H" style="vertical-align: 0px"/> is 2 for positive frequencies, <img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0" style="vertical-align: 0px"/> for negative
+frequencies and <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" style="vertical-align: -1px"/> for zero-frequencies.</p>
+</div>
+</div>
+</div>
+<div class="section" id="least-squares-spectral-analysis">
+<h2>Least-Squares Spectral Analysis<a class="headerlink" href="#least-squares-spectral-analysis" title="Permalink to this headline">¶</a></h2>
+<p>Least-squares spectral analysis (LSSA) is a method of estimating a frequency
+spectrum, based on a least squares fit of sinusoids to data samples, similar to
+Fourier analysis. Fourier analysis, the most used spectral method in science,
+generally boosts long-periodic noise in long gapped records; LSSA mitigates
+such problems.</p>
+<div class="section" id="lomb-scargle-periodograms-lombscargle">
+<h3>Lomb-Scargle Periodograms (<a class="reference internal" href="../generated/scipy.signal.lombscargle.html#scipy.signal.lombscargle" title="scipy.signal.lombscargle"><tt class="xref py py-func docutils literal"><span class="pre">lombscargle</span></tt></a>)<a class="headerlink" href="#lomb-scargle-periodograms-lombscargle" title="Permalink to this headline">¶</a></h3>
+<p>The Lomb-Scargle method performs spectral analysis on unevenly sampled data and
+is known to be a powerful way to find, and test the significance of, weak
+periodic signals.</p>
+<p>For a time series comprising <img class="math" src="../_images/math/1bf5abfd5e0740c147ca10fb0d9c6e365cd436f7.png" alt="N_{t}" style="vertical-align: -2px"/> measurements
+<img class="math" src="../_images/math/800102892e4cf6db770d0290eb1e25a6380c429d.png" alt="X_{j}\equiv X(t_{j})" style="vertical-align: -4px"/> sampled at times <img class="math" src="../_images/math/c53fab4ddaf5acf9557abaa1ab3b49f9f76d821a.png" alt="t_{j}" style="vertical-align: -4px"/> where
+<img class="math" src="../_images/math/46c43d82fa0b3dd82100e549ffb0fcc64d05d81c.png" alt="(j = 1, \ldots, N_{t})" style="vertical-align: -4px"/>, assumed to have been scaled and shifted
+such that its mean is zero and its variance is unity, the normalized
+Lomb-Scargle periodogram at frequency <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" style="vertical-align: -3px"/> is</p>
+<div class="math">
+<p><img src="../_images/math/e2f12448e0256da0a81704f415ebc4cb249d9f91.png" alt="P_{n}(f) \frac{1}{2}\left\{\frac{\left[\sum_{j}^{N_{t}}X_{j}\cos\omega(t_{j}-\tau)\right]^{2}}{\sum_{j}^{N_{t}}\cos^{2}\omega(t_{j}-\tau)}+\frac{\left[\sum_{j}^{N_{t}}X_{j}\sin\omega(t_{j}-\tau)\right]^{2}}{\sum_{j}^{N_{t}}\sin^{2}\omega(t_{j}-\tau)}\right\}."/></p>
+</div><p>Here, <img class="math" src="../_images/math/f0df731a33e2ba2cfd388988f4eade9f26218e44.png" alt="\omega \equiv 2\pi f" style="vertical-align: -3px"/> is the angular frequency.
+The frequency dependent time offset <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" style="vertical-align: 0px"/> is given by</p>
+<div class="math">
+<p><img src="../_images/math/a5d1b073e96df16d12bf2e492c6ff4fdea9c6caf.png" alt="\tan 2\omega\tau = \frac{\sum_{j}^{N_{t}}\sin 2\omega t_{j}}{\sum_{j}^{N_{t}}\cos 2\omega t_{j}}."/></p>
+</div><p>The <a class="reference internal" href="../generated/scipy.signal.lombscargle.html#scipy.signal.lombscargle" title="scipy.signal.lombscargle"><tt class="xref py py-func docutils literal"><span class="pre">lombscargle</span></tt></a> function
+calculates the periodogram using a slightly
+modified algorithm due to Townsend <a class="footnote-reference" href="#id4" id="id1">[3]</a> which allows the
+periodogram to be calculated using only a single pass through
+the input arrays for each frequency.</p>
+<p>The equation is refactored as:</p>
+<div class="math">
+<p><img src="../_images/math/332bc1dc0147fbda5c3e741838a1cf5fb0dc1860.png" alt="P_{n}(f) = \frac{1}{2}\left[\frac{(c_{\tau}XC + s_{\tau}XS)^{2}}{c_{\tau}^{2}CC + 2c_{\tau}s_{\tau}CS + s_{\tau}^{2}SS} + \frac{(c_{\tau}XS - s_{\tau}XC)^{2}}{c_{\tau}^{2}SS - 2c_{\tau}s_{\tau}CS + s_{\tau}^{2}CC}\right]"/></p>
+</div><p>and</p>
+<div class="math">
+<p><img src="../_images/math/dd2260047e222b1f347004454a9d280bf193a103.png" alt="\tan 2\omega\tau = \frac{2CS}{CC-SS}."/></p>
+</div><p>Here,</p>
+<div class="math">
+<p><img src="../_images/math/57a808b4556e01b3de4d3661b1fb5f21fd4a8fa8.png" alt="c_{\tau} = \cos\omega\tau,\qquad s_{\tau} = \sin\omega\tau"/></p>
+</div><p>while the sums are</p>
+<div class="math">
+<p><img src="../_images/math/75b45b8ae588e192418f3a117b821f7e9446e4ea.png" alt="XC &amp;= \sum_{j}^{N_{t}} X_{j}\cos\omega t_{j}\\
+XS &amp;= \sum_{j}^{N_{t}} X_{j}\sin\omega t_{j}\\
+CC &amp;= \sum_{j}^{N_{t}} \cos^{2}\omega t_{j}\\
+SS &amp;= \sum_{j}^{N_{t}} \sin^{2}\omega t_{j}\\
+CS &amp;= \sum_{j}^{N_{t}} \cos\omega t_{j}\sin\omega t_{j}."/></p>
+</div><p>This requires <img class="math" src="../_images/math/50aea2541e564ffb2e0ab140a5d7a58118cfb450.png" alt="N_{f}(2N_{t}+3)" style="vertical-align: -4px"/> trigonometric function
+evaluations giving a factor of <img class="math" src="../_images/math/9c015c7ead02dbff4404da55c6be22b3297b7dc9.png" alt="\sim 2" style="vertical-align: 0px"/> speed increase over the
+straightforward implementation.</p>
+<p class="rubric">References</p>
+<p>Some further reading and related software:</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>N.R. Lomb &#8220;Least-squares frequency analysis of unequally spaced
+data&#8221;, Astrophysics and Space Science, vol 39, pp. 447-462, 1976</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td>J.D. Scargle &#8220;Studies in astronomical time series analysis. II -
+Statistical aspects of spectral analysis of unevenly spaced data&#8221;,
+The Astrophysical Journal, vol 263, pp. 835-853, 1982</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[3]</a></td><td>R.H.D. Townsend, &#8220;Fast calculation of the Lomb-Scargle
+periodogram using graphics processing units.&#8221;, The Astrophysical
+Journal Supplement Series, vol 191, pp. 247-253, 2010</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

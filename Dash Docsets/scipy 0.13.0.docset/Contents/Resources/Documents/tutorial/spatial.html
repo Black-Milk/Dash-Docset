@@ -1,0 +1,434 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spatial data structures and algorithms (scipy.spatial) &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Statistics (scipy.stats)" href="stats.html" />
+    <link rel="prev" title="Compressed Sparse Graph Routines scipy.sparse.csgraph" href="csgraph.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="index.html" accesskey="U">SciPy Tutorial</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="stats.html" title="Statistics (scipy.stats)"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="csgraph.html" title="Compressed Sparse Graph Routines scipy.sparse.csgraph"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Spatial data structures and algorithms (<tt class="docutils literal"><span class="pre">scipy.spatial</span></tt>)</a><ul>
+<li><a class="reference internal" href="#delaunay-triangulations">Delaunay triangulations</a><ul>
+<li><a class="reference internal" href="#coplanar-points">Coplanar points</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#convex-hulls">Convex hulls</a></li>
+<li><a class="reference internal" href="#voronoi-diagrams">Voronoi diagrams</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="csgraph.html"
+                        title="previous chapter">Compressed Sparse Graph Routines <tt class="docutils literal"><span class="pre">scipy.sparse.csgraph</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="stats.html"
+                        title="next chapter">Statistics (<tt class="docutils literal"><span class="pre">scipy.stats</span></tt>)</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="spatial-data-structures-and-algorithms-scipy-spatial">
+<span id="qhulltutorial"></span><h1>Spatial data structures and algorithms (<a class="reference internal" href="../spatial.html#module-scipy.spatial" title="scipy.spatial"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial</span></tt></a>)<a class="headerlink" href="#spatial-data-structures-and-algorithms-scipy-spatial" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="../spatial.html#module-scipy.spatial" title="scipy.spatial"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial</span></tt></a> can compute triangulations, Voronoi diagrams, and
+convex hulls of a set of points, by leveraging the <a class="reference external" href="http://qhull.org/">Qhull</a> library.</p>
+<p>Moreover, it contains <a class="reference internal" href="../generated/scipy.spatial.KDTree.html#scipy.spatial.KDTree" title="scipy.spatial.KDTree"><tt class="xref py py-obj docutils literal"><span class="pre">KDTree</span></tt></a> implementations for nearest-neighbor point
+queries, and utilities for distance computations in various metrics.</p>
+<div class="section" id="delaunay-triangulations">
+<h2>Delaunay triangulations<a class="headerlink" href="#delaunay-triangulations" title="Permalink to this headline">¶</a></h2>
+<p>The Delaunay triangulation is a subdivision of a set of points into a
+non-overlapping set of triangles, such that no point is inside the
+circumcircle of any triangle. In practice, such triangulations tend to
+avoid triangles with small angles.</p>
+<p>Delaunay triangulation can be computed using <a class="reference internal" href="../spatial.html#module-scipy.spatial" title="scipy.spatial"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial</span></tt></a> as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">Delaunay</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tri</span> <span class="o">=</span> <span class="n">Delaunay</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can visualize it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">triplot</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And add some further decorations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;right&#39;</span><span class="p">)</span> <span class="c"># label the points</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">p</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;#</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">)</span> <span class="c"># label triangles</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/spatial-1.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/spatial-1.png" src="../_images/spatial-1.png" />
+</div>
+<p>The structure of the triangulation is encoded in the following way:
+the <tt class="docutils literal"><span class="pre">simplices</span></tt> attribute contains the indices of the points in the
+<tt class="docutils literal"><span class="pre">points</span></tt> array that make up the triangle. For instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span>
+<span class="go">array([3, 1, 0], dtype=int32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">[</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">[</span><span class="n">i</span><span class="p">,:]]</span>
+<span class="go">array([[ 1. ,  1. ],</span>
+<span class="go">       [ 0. ,  1.1],</span>
+<span class="go">       [ 0. ,  0. ]])</span>
+</pre></div>
+</div>
+<p>Moreover, neighboring triangles can also be found out:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tri</span><span class="o">.</span><span class="n">neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="go">array([-1,  0, -1], dtype=int32)</span>
+</pre></div>
+</div>
+<p>What this tells us is that this triangle has triangle #0 as a neighbor,
+but no other neighbors. Moreover, it tells us that neighbor 0 is
+opposite the vertex 1 of the triangle:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">[</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="go">array([ 0. ,  1.1])</span>
+</pre></div>
+</div>
+<p>Indeed, from the figure we see that this is the case.</p>
+<p>Qhull can also perform tesselations to simplices also for
+higher-dimensional point sets (for instance, subdivision into
+tetrahedra in 3-D).</p>
+<div class="section" id="coplanar-points">
+<h3>Coplanar points<a class="headerlink" href="#coplanar-points" title="Permalink to this headline">¶</a></h3>
+<p>It is important to note that not <em>all</em> points necessarily appear as
+vertices of the triangulation, due to numerical precision issues in
+forming the triangulation.  Consider the above with a duplicated
+point:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tri</span> <span class="o">=</span> <span class="n">Delaunay</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="go">array([0, 1, 2, 3], dtype=int32)</span>
+</pre></div>
+</div>
+<p>Observe that point #4, which is a duplicate, does not occur as a
+vertex of the triangulation. That this happened is recorded:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tri</span><span class="o">.</span><span class="n">coplanar</span>
+<span class="go">array([[4, 0, 3]], dtype=int32)</span>
+</pre></div>
+</div>
+<p>This means that point 4 resides near triangle 0 and vertex 3, but is
+not included in the triangulation.</p>
+<p>Note that such degeneracies can occur not only because of duplicated
+points, but also for more complicated geometrical reasons, even in
+point sets that at first sight seem well-behaved.</p>
+<p>However, Qhull has the &#8220;QJ&#8221; option, which instructs it to perturb the
+input data randomly until degeneracies are resolved:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tri</span> <span class="o">=</span> <span class="n">Delaunay</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">qhull_options</span><span class="o">=</span><span class="s">&quot;QJ Pp&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">[</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">]</span>
+<span class="go">array([[[1, 1],</span>
+<span class="go">        [1, 0],</span>
+<span class="go">        [0, 0]],</span>
+<span class="go">       [[1, 1],</span>
+<span class="go">        [1, 1],</span>
+<span class="go">        [1, 0]],</span>
+<span class="go">       [[0, 1],</span>
+<span class="go">        [1, 1],</span>
+<span class="go">        [0, 0]],</span>
+<span class="go">       [[0, 1],</span>
+<span class="go">        [1, 1],</span>
+<span class="go">        [1, 1]]])</span>
+</pre></div>
+</div>
+<p>Two new triangles appeared. However, we see that they are degenerate
+and have zero area.</p>
+</div>
+</div>
+<div class="section" id="convex-hulls">
+<h2>Convex hulls<a class="headerlink" href="#convex-hulls" title="Permalink to this headline">¶</a></h2>
+<p>Convex hull is the smallest convex object containing all points in a
+given point set.</p>
+<p>These can be computed via the Qhull wrappers in <a class="reference internal" href="../spatial.html#module-scipy.spatial" title="scipy.spatial"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial</span></tt></a> as
+follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">ConvexHull</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>   <span class="c"># 30 random points in 2-D</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hull</span> <span class="o">=</span> <span class="n">ConvexHull</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The convex hull is represented as a set of N-1 dimensional simplices,
+which in 2-D means line segments. The storage scheme is exactly the
+same as for the simplices in the Delaunay triangulation discussed
+above.</p>
+<p>We can illustrate the above result:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">simplex</span> <span class="ow">in</span> <span class="n">hull</span><span class="o">.</span><span class="n">simplices</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">simplex</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="n">simplex</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;k-&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/spatial-2.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/spatial-2.png" src="../_images/spatial-2.png" />
+</div>
+<p>The same can be achieved with <a class="reference internal" href="../generated/scipy.spatial.convex_hull_plot_2d.html#scipy.spatial.convex_hull_plot_2d" title="scipy.spatial.convex_hull_plot_2d"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial.convex_hull_plot_2d</span></tt></a>.</p>
+</div>
+<div class="section" id="voronoi-diagrams">
+<h2>Voronoi diagrams<a class="headerlink" href="#voronoi-diagrams" title="Permalink to this headline">¶</a></h2>
+<p>A Voronoi diagram is a subdivision of the space into the nearest
+neighborhoods of a given set of points.</p>
+<p>There are two ways to approach this object using <a class="reference internal" href="../spatial.html#module-scipy.spatial" title="scipy.spatial"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial</span></tt></a>.
+First, one can use the <a class="reference internal" href="../generated/scipy.spatial.KDTree.html#scipy.spatial.KDTree" title="scipy.spatial.KDTree"><tt class="xref py py-obj docutils literal"><span class="pre">KDTree</span></tt></a> to answer the question &#8220;which of the
+points is closest to this one&#8221;, and define the regions that way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">KDTree</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="gp">... </span>                   <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+<span class="go">(0.14142135623730953, 0)</span>
+</pre></div>
+</div>
+<p>So the point <tt class="docutils literal"><span class="pre">(0.1,</span> <span class="pre">0.1)</span></tt> belongs to region <tt class="docutils literal"><span class="pre">0</span></tt>. In color:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">33</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">pcolor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">xy</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;ko&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../tutorial/spatial-3.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/spatial-3_00_00.png" src="../_images/spatial-3_00_00.png" />
+</div>
+<p>This does not, however, give the Voronoi diagram as a geometrical
+object.</p>
+<p>The representation in terms of lines and points can be again
+obtained via the Qhull wrappers in <a class="reference internal" href="../spatial.html#module-scipy.spatial" title="scipy.spatial"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">Voronoi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vor</span> <span class="o">=</span> <span class="n">Voronoi</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vor</span><span class="o">.</span><span class="n">vertices</span>
+<span class="go">array([[ 0.5,  0.5],</span>
+<span class="go">       [ 1.5,  0.5],</span>
+<span class="go">       [ 0.5,  1.5],</span>
+<span class="go">       [ 1.5,  1.5]])</span>
+</pre></div>
+</div>
+<p>The Voronoi vertices denote the set of points forming the polygonal
+edges of the Voronoi regions. In this case, there are 9 different
+regions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vor</span><span class="o">.</span><span class="n">regions</span>
+<span class="go">[[-1, 0], [-1, 1], [1, -1, 0], [3, -1, 2], [-1, 3], [-1, 2], [3, 1, 0, 2], [2, -1, 0], [3, -1, 1]]</span>
+</pre></div>
+</div>
+<p>Negative value <tt class="docutils literal"><span class="pre">-1</span></tt> again indicates a point at infinity. Indeed,
+only one of the regions, <tt class="docutils literal"><span class="pre">[3,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">2]</span></tt>, is bounded. Note here that
+due to similar numerical precision issues as in Delaunay triangulation
+above, there may be fewer Voronoi regions than input points.</p>
+<p>The ridges (lines in 2-D) separating the regions are described as a
+similar collection of simplices as the convex hull pieces:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vor</span><span class="o">.</span><span class="n">ridge_vertices</span>
+<span class="go">[[-1, 0], [-1, 0], [-1, 1], [-1, 1], [0, 1], [-1, 3], [-1, 2], [2, 3], [-1, 3], [-1, 2], [0, 2], [1, 3]]</span>
+</pre></div>
+</div>
+<p>These numbers indicate indices of the Voronoi vertices making up the
+line segments. <tt class="docutils literal"><span class="pre">-1</span></tt> is again a point at infinity &#8212; only four of
+the 12 lines is a bounded line segment while the others extend to
+infinity.</p>
+<p>The Voronoi ridges are perpendicular to lines drawn between the
+input points. Which two points each ridge corresponds to is also
+recorded:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vor</span><span class="o">.</span><span class="n">ridge_points</span>
+<span class="go">array([[0, 3],</span>
+<span class="go">       [0, 1],</span>
+<span class="go">       [6, 3],</span>
+<span class="go">       [6, 7],</span>
+<span class="go">       [3, 4],</span>
+<span class="go">       [5, 8],</span>
+<span class="go">       [5, 2],</span>
+<span class="go">       [5, 4],</span>
+<span class="go">       [8, 7],</span>
+<span class="go">       [2, 1],</span>
+<span class="go">       [4, 1],</span>
+<span class="go">       [4, 7]], dtype=int32)</span>
+</pre></div>
+</div>
+<p>This information, taken together, is enough to construct the full
+diagram.</p>
+<p>We can plot it as follows. First the points and the Voronoi vertices:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;o&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vor</span><span class="o">.</span><span class="n">vertices</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">vor</span><span class="o">.</span><span class="n">vertices</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Plotting the finite line segments goes as for the convex hull,
+but now we have to guard for the infinite edges:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">simplex</span> <span class="ow">in</span> <span class="n">vor</span><span class="o">.</span><span class="n">ridge_vertices</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">simplex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">simplex</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">simplex</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vor</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">simplex</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">vor</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">simplex</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;k-&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The ridges extending to infinity require a bit more care:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">center</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">pointidx</span><span class="p">,</span> <span class="n">simplex</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vor</span><span class="o">.</span><span class="n">ridge_points</span><span class="p">,</span> <span class="n">vor</span><span class="o">.</span><span class="n">ridge_vertices</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">simplex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">simplex</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">simplex</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">i</span> <span class="o">=</span> <span class="n">simplex</span><span class="p">[</span><span class="n">simplex</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c"># finite end Voronoi vertex</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">t</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">pointidx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="n">pointidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="c"># tangent</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">t</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span> <span class="c"># normal</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">midpoint</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">pointidx</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">far_point</span> <span class="o">=</span> <span class="n">vor</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">midpoint</span> <span class="o">-</span> <span class="n">center</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">vor</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">far_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+<span class="gp">... </span>                 <span class="p">[</span><span class="n">vor</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">far_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s">&#39;k--&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="../_images/spatial-3_01_00.png" src="../_images/spatial-3_01_00.png" />
+</div>
+<p>This plot can also be created using <a class="reference internal" href="../generated/scipy.spatial.voronoi_plot_2d.html#scipy.spatial.voronoi_plot_2d" title="scipy.spatial.voronoi_plot_2d"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.spatial.voronoi_plot_2d</span></tt></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

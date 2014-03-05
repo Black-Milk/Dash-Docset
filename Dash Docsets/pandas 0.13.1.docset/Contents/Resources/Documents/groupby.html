@@ -1,0 +1,1306 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Group By: split-apply-combine &mdash; pandas 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pandas 0.13.1 documentation" href="index.html" />
+    <link rel="next" title="Merge, join, and concatenate" href="merging.html" />
+    <link rel="prev" title="Working with missing data" href="missing_data.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="merging.html" title="Merge, join, and concatenate"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="missing_data.html" title="Working with missing data"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="content-wrapper">
+    <div class="content">
+        <div class="document">
+            <div class="sphinxsidebar">
+                <h3>Table Of Contents</h3>
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="whatsnew.html">What&#8217;s New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Package overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10min.html">10 Minutes to Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dsintro.html">Intro to Data Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Essential Basic Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indexing.html">Indexing and Selecting Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="computation.html">Computational tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="missing_data.html">Working with missing data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Group By: split-apply-combine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#splitting-an-object-into-groups">Splitting an object into groups</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#groupby-object-attributes">GroupBy object attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#groupby-with-multiindex">GroupBy with MultiIndex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dataframe-column-selection-in-groupby">DataFrame column selection in GroupBy</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#iterating-through-groups">Iterating through groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aggregation">Aggregation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#applying-multiple-functions-at-once">Applying multiple functions at once</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#applying-different-functions-to-dataframe-columns">Applying different functions to DataFrame columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cython-optimized-aggregation-functions">Cython-optimized aggregation functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#transformation">Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtration">Filtration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dispatching-to-instance-methods">Dispatching to instance methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flexible-apply">Flexible <tt class="docutils literal"><span class="pre">apply</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-useful-features">Other useful features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#automatic-exclusion-of-nuisance-columns">Automatic exclusion of &#8220;nuisance&#8221; columns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#na-group-handling">NA group handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#grouping-with-ordered-factors">Grouping with ordered factors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enumerate-group-items">Enumerate group items</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="merging.html">Merge, join, and concatenate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshaping.html">Reshaping and Pivot Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Time Series / Date functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Plotting with matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rplot.html">Trellis plotting interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO Tools (Text, CSV, HDF5, ...)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remote_data.html">Remote Data Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enhancingperf.html">Enhancing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse.html">Sparse data structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gotchas.html">Caveats and Gotchas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r_interface.html">rpy2 / R interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecosystem.html">Pandas Ecosystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_r.html">Comparison with R / R libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_sql.html">Comparison with SQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+</ul>
+
+                <h3 style="margin-top: 1.5em;">Search</h3>
+
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q" size="18"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+
+                <p>
+
+                <p>
+                    <script type="text/javascript"
+                            src="http://www.ohloh.net/p/482908/widgets/project_partner_badge.js"></script>
+                </p>
+            </div>
+             
+            <div class="documentwrapper">
+                <div class="bodywrapper">
+                    <div class="body">
+                        
+  <div class="section" id="group-by-split-apply-combine">
+<span id="groupby"></span><h1>Group By: split-apply-combine<a class="headerlink" href="#group-by-split-apply-combine" title="Permalink to this headline">¶</a></h1>
+<p>By &#8220;group by&#8221; we are referring to a process involving one or more of the following
+steps</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Splitting</strong> the data into groups based on some criteria</li>
+<li><strong>Applying</strong> a function to each group independently</li>
+<li><strong>Combining</strong> the results into a data structure</li>
+</ul>
+</div></blockquote>
+<p>Of these, the split step is the most straightforward. In fact, in many
+situations you may wish to split the data set into groups and do something with
+those groups yourself. In the apply step, we might wish to one of the
+following:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>Aggregation</strong>: computing a summary statistic (or statistics) about each
+group. Some examples:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Compute group sums or means</li>
+<li>Compute group sizes / counts</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>Transformation</strong>: perform some group-specific computations and return a
+like-indexed. Some examples:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Standardizing data (zscore) within group</li>
+<li>Filling NAs within groups with a value derived from each group</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>Filtration</strong>: discard some groups, according to a group-wise computation
+that evaluates True or False. Some examples:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Discarding data that belongs to groups with only a few members</li>
+<li>Filtering out data based on the group sum or mean</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Some combination of the above: GroupBy will examine the results of the apply
+step and try to return a sensibly combined result if it doesn&#8217;t fit into
+either of the above two categories</p>
+</li>
+</ul>
+</div></blockquote>
+<p>Since the set of object instance method on pandas data structures are generally
+rich and expressive, we often simply want to invoke, say, a DataFrame function
+on each group. The name GroupBy should be quite familiar to those who have used
+a SQL-based tool (or <tt class="docutils literal"><span class="pre">itertools</span></tt>), in which you can write code like:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">Column1</span><span class="p">,</span> <span class="n">Column2</span><span class="p">,</span> <span class="n">mean</span><span class="p">(</span><span class="n">Column3</span><span class="p">),</span> <span class="k">sum</span><span class="p">(</span><span class="n">Column4</span><span class="p">)</span>
+<span class="k">FROM</span> <span class="n">SomeTable</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">Column1</span><span class="p">,</span> <span class="n">Column2</span>
+</pre></div>
+</div>
+<p>We aim to make operations like this natural and easy to express using
+pandas. We&#8217;ll address each area of GroupBy functionality then provide some
+non-trivial examples / use cases.</p>
+<p>See the <a class="reference internal" href="cookbook.html#cookbook-grouping"><em>cookbook</em></a> for some advanced strategies</p>
+<div class="section" id="splitting-an-object-into-groups">
+<span id="groupby-split"></span><h2>Splitting an object into groups<a class="headerlink" href="#splitting-an-object-into-groups" title="Permalink to this headline">¶</a></h2>
+<p>pandas objects can be split on any of their axes. The abstract definition of
+grouping is to provide a mapping of labels to group names. To create a GroupBy
+object (more on what the GroupBy object is later), you do the following:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="go">&gt;&gt;&gt; grouped = obj.groupby(key)</span>
+<span class="go">&gt;&gt;&gt; grouped = obj.groupby(key, axis=1)</span>
+<span class="go">&gt;&gt;&gt; grouped = obj.groupby([key1, key2])</span>
+</pre></div>
+</div>
+<p>The mapping can be specified many different ways:</p>
+<blockquote>
+<div><ul class="simple">
+<li>A Python function, to be called on each of the axis labels</li>
+<li>A list or NumPy array of the same length as the selected axis</li>
+<li>A dict or Series, providing a <tt class="docutils literal"><span class="pre">label</span> <span class="pre">-&gt;</span> <span class="pre">group</span> <span class="pre">name</span></tt> mapping</li>
+<li>For DataFrame objects, a string indicating a column to be used to group. Of
+course <tt class="docutils literal"><span class="pre">df.groupby('A')</span></tt> is just syntactic sugar for
+<tt class="docutils literal"><span class="pre">df.groupby(df['A'])</span></tt>, but it makes life simpler</li>
+<li>A list of any of the above things</li>
+</ul>
+</div></blockquote>
+<p>Collectively we refer to the grouping objects as the <strong>keys</strong>. For example,
+consider the following DataFrame:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;A&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span>
+<span class="gp">   ...:</span>                        <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">],</span>
+<span class="gp">   ...:</span>                 <span class="s">&#39;B&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">,</span>
+<span class="gp">   ...:</span>                        <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">],</span>
+<span class="gp">   ...:</span>                 <span class="s">&#39;C&#39;</span> <span class="p">:</span> <span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="s">&#39;D&#39;</span> <span class="p">:</span> <span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">)})</span>
+<span class="gp">   ...:</span> 
+
+<span class="gp">In [2]: </span><span class="n">df</span>
+<span class="gr">Out[2]: </span>
+<span class="go">     A      B         C         D</span>
+<span class="go">0  foo    one  0.469112 -0.861849</span>
+<span class="go">1  bar    one -0.282863 -2.104569</span>
+<span class="go">2  foo    two -1.509059 -0.494929</span>
+<span class="go">3  bar  three -1.135632  1.071804</span>
+<span class="go">4  foo    two  1.212112  0.721555</span>
+<span class="go">5  bar    two -0.173215 -0.706771</span>
+<span class="go">6  foo    one  0.119209 -1.039575</span>
+<span class="go">7  foo  three -1.044236  0.271860</span>
+
+<span class="go">[8 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>We could naturally group by either the <tt class="docutils literal"><span class="pre">A</span></tt> or <tt class="docutils literal"><span class="pre">B</span></tt> columns or both:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [3]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span>
+
+<span class="gp">In [4]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>These will split the DataFrame on its index (rows). We could also split by the
+columns:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [5]: </span><span class="k">def</span> <span class="nf">get_letter_type</span><span class="p">(</span><span class="n">letter</span><span class="p">):</span>
+<span class="gp">   ...:</span>     <span class="k">if</span> <span class="n">letter</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="s">&#39;aeiou&#39;</span><span class="p">:</span>
+<span class="gp">   ...:</span>         <span class="k">return</span> <span class="s">&#39;vowel&#39;</span>
+<span class="gp">   ...:</span>     <span class="k">else</span><span class="p">:</span>
+<span class="gp">   ...:</span>         <span class="k">return</span> <span class="s">&#39;consonant&#39;</span>
+<span class="gp">   ...:</span> 
+
+<span class="gp">In [6]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">get_letter_type</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Starting with 0.8, pandas Index objects now supports duplicate values. If a
+non-unique index is used as the group key in a groupby operation, all values
+for the same index value will be considered to be in one group and thus the
+output of aggregation functions will only contain unique index values:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [7]: </span><span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="gp">In [8]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="n">lst</span><span class="p">)</span>
+
+<span class="gp">In [9]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [10]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<span class="gr">Out[10]: </span>
+<span class="go">1    1</span>
+<span class="go">2    2</span>
+<span class="go">3    3</span>
+<span class="go">dtype: int64</span>
+
+<span class="gp">In [11]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+<span class="gr">Out[11]: </span>
+<span class="go">1    10</span>
+<span class="go">2    20</span>
+<span class="go">3    30</span>
+<span class="go">dtype: int64</span>
+
+<span class="gp">In [12]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[12]: </span>
+<span class="go">1    11</span>
+<span class="go">2    22</span>
+<span class="go">3    33</span>
+<span class="go">dtype: int64</span>
+</pre></div>
+</div>
+<p>Note that <strong>no splitting occurs</strong> until it&#8217;s needed. Creating the GroupBy object
+only verifies that you&#8217;ve passed a valid mapping.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Many kinds of complicated data manipulations can be expressed in terms of
+GroupBy operations (though can&#8217;t be guaranteed to be the most
+efficient). You can get quite creative with the label mapping functions.</p>
+</div>
+<div class="section" id="groupby-object-attributes">
+<span id="groupby-attributes"></span><h3>GroupBy object attributes<a class="headerlink" href="#groupby-object-attributes" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">groups</span></tt> attribute is a dict whose keys are the computed unique groups
+and corresponding values being the axis labels belonging to each group. In the
+above example we have:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [13]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
+<span class="gr">Out[13]: </span><span class="p">{</span><span class="s">&#39;bar&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="s">&#39;foo&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]}</span>
+
+<span class="gp">In [14]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">get_letter_type</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
+<span class="gr">Out[14]: </span><span class="p">{</span><span class="s">&#39;consonant&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;D&#39;</span><span class="p">],</span> <span class="s">&#39;vowel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>Calling the standard Python <tt class="docutils literal"><span class="pre">len</span></tt> function on the GroupBy object just returns
+the length of the <tt class="docutils literal"><span class="pre">groups</span></tt> dict, so it is largely just a convenience:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [15]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="gp">In [16]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">groups</span>
+<span class="gr">Out[16]: </span>
+<span class="go">{(&#39;bar&#39;, &#39;one&#39;): [1],</span>
+<span class="go"> (&#39;bar&#39;, &#39;three&#39;): [3],</span>
+<span class="go"> (&#39;bar&#39;, &#39;two&#39;): [5],</span>
+<span class="go"> (&#39;foo&#39;, &#39;one&#39;): [0, 6],</span>
+<span class="go"> (&#39;foo&#39;, &#39;three&#39;): [7],</span>
+<span class="go"> (&#39;foo&#39;, &#39;two&#39;): [2, 4]}</span>
+
+<span class="gp">In [17]: </span><span class="nb">len</span><span class="p">(</span><span class="n">grouped</span><span class="p">)</span>
+<span class="gr">Out[17]: </span><span class="mi">6</span>
+</pre></div>
+</div>
+<p>By default the group keys are sorted during the groupby operation. You may
+however pass <tt class="docutils literal"><span class="pre">sort=False</span></tt> for potential speedups:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [18]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;X&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;A&#39;</span><span class="p">],</span> <span class="s">&#39;Y&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]})</span>
+
+<span class="gp">In [19]: </span><span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;X&#39;</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[19]: </span>
+<span class="go">   Y</span>
+<span class="go">X   </span>
+<span class="go">A  7</span>
+<span class="go">B  3</span>
+
+<span class="go">[2 rows x 1 columns]</span>
+
+<span class="gp">In [20]: </span><span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;X&#39;</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[20]: </span>
+<span class="go">   Y</span>
+<span class="go">X   </span>
+<span class="go">B  3</span>
+<span class="go">A  7</span>
+
+<span class="go">[2 rows x 1 columns]</span>
+</pre></div>
+</div>
+<p id="groupby-tabcompletion"><tt class="docutils literal"><span class="pre">GroupBy</span></tt> will tab complete column names (and other attributes)</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [21]: </span><span class="n">df</span>
+<span class="gr">Out[21]: </span>
+<span class="go">            gender     height      weight</span>
+<span class="go">2000-01-01    male  42.849980  157.500553</span>
+<span class="go">2000-01-02    male  49.607315  177.340407</span>
+<span class="go">2000-01-03    male  56.293531  171.524640</span>
+<span class="go">2000-01-04  female  48.421077  144.251986</span>
+<span class="go">2000-01-05    male  46.556882  152.526206</span>
+<span class="go">2000-01-06  female  68.448851  168.272968</span>
+<span class="go">2000-01-07    male  70.757698  136.431469</span>
+<span class="go">2000-01-08  female  58.909500  176.499753</span>
+<span class="go">2000-01-09  female  76.435631  174.094104</span>
+<span class="go">2000-01-10    male  45.306120  177.540920</span>
+
+<span class="go">[10 rows x 3 columns]</span>
+
+<span class="gp">In [22]: </span><span class="n">gb</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;gender&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [23]: </span><span class="n">gb</span><span class="o">.&lt;</span><span class="n">TAB</span><span class="o">&gt;</span>
+<span class="go">gb.agg        gb.boxplot    gb.cummin     gb.describe   gb.filter     gb.get_group  gb.height     gb.last       gb.median     gb.ngroups    gb.plot       gb.rank       gb.std        gb.transform</span>
+<span class="go">gb.aggregate  gb.count      gb.cumprod    gb.dtype      gb.first      gb.groups     gb.hist       gb.max        gb.min        gb.nth        gb.prod       gb.resample   gb.sum        gb.var</span>
+<span class="go">gb.apply      gb.cummax     gb.cumsum     gb.fillna     gb.gender     gb.head       gb.indices    gb.mean       gb.name       gb.ohlc       gb.quantile   gb.size       gb.tail       gb.weight</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="groupby-with-multiindex">
+<span id="groupby-multiindex"></span><h3>GroupBy with MultiIndex<a class="headerlink" href="#groupby-with-multiindex" title="Permalink to this headline">¶</a></h3>
+<p>With <a class="reference internal" href="indexing.html#indexing-hierarchical"><em>hierarchically-indexed data</em></a>, it&#8217;s quite
+natural to group by one of the levels of the hierarchy.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [24]: </span><span class="n">s</span>
+<span class="gr">Out[24]: </span>
+<span class="go">first  second</span>
+<span class="go">bar    one      -0.575247</span>
+<span class="go">       two       0.254161</span>
+<span class="go">baz    one      -1.143704</span>
+<span class="go">       two       0.215897</span>
+<span class="go">foo    one       1.193555</span>
+<span class="go">       two      -0.077118</span>
+<span class="go">qux    one      -0.408530</span>
+<span class="go">       two      -0.862495</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [25]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">In [26]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[26]: </span>
+<span class="go">first</span>
+<span class="go">bar     -0.321085</span>
+<span class="go">baz     -0.927807</span>
+<span class="go">foo      1.116437</span>
+<span class="go">qux     -1.271025</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>If the MultiIndex has names specified, these can be passed instead of the level
+number:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [27]: </span><span class="n">s</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s">&#39;second&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[27]: </span>
+<span class="go">second</span>
+<span class="go">one      -0.933926</span>
+<span class="go">two      -0.469555</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>The aggregation functions such as <tt class="docutils literal"><span class="pre">sum</span></tt> will take the level parameter
+directly. Additionally, the resulting index will be named according to the
+chosen level:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [28]: </span><span class="n">s</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s">&#39;second&#39;</span><span class="p">)</span>
+<span class="gr">Out[28]: </span>
+<span class="go">second</span>
+<span class="go">one      -0.933926</span>
+<span class="go">two      -0.469555</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>Also as of v0.6, grouping with multiple levels is supported.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [29]: </span><span class="n">s</span>
+<span class="gr">Out[29]: </span>
+<span class="go">first  second  third</span>
+<span class="go">bar    doo     one      1.346061</span>
+<span class="go">               two      1.511763</span>
+<span class="go">baz    bee     one      1.627081</span>
+<span class="go">               two     -0.990582</span>
+<span class="go">foo    bop     one     -0.441652</span>
+<span class="go">               two      1.211526</span>
+<span class="go">qux    bop     one      0.268520</span>
+<span class="go">               two      0.024580</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [30]: </span><span class="n">s</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;first&#39;</span><span class="p">,</span><span class="s">&#39;second&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[30]: </span>
+<span class="go">first  second</span>
+<span class="go">bar    doo       2.857824</span>
+<span class="go">baz    bee       0.636499</span>
+<span class="go">foo    bop       0.769873</span>
+<span class="go">qux    bop       0.293100</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>More on the <tt class="docutils literal"><span class="pre">sum</span></tt> function and aggregation later.</p>
+</div>
+<div class="section" id="dataframe-column-selection-in-groupby">
+<h3>DataFrame column selection in GroupBy<a class="headerlink" href="#dataframe-column-selection-in-groupby" title="Permalink to this headline">¶</a></h3>
+<p>Once you have created the GroupBy object from a DataFrame, for example, you
+might want to do something different for each of the columns. Thus, using
+<tt class="docutils literal"><span class="pre">[]</span></tt> similar to getting a column from a DataFrame, you can do:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [31]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">])</span>
+
+<span class="gp">In [32]: </span><span class="n">grouped_C</span> <span class="o">=</span> <span class="n">grouped</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">]</span>
+
+<span class="gp">In [33]: </span><span class="n">grouped_D</span> <span class="o">=</span> <span class="n">grouped</span><span class="p">[</span><span class="s">&#39;D&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This is mainly syntactic sugar for the alternative and much more verbose:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [34]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">])</span>
+<span class="gr">Out[34]: </span><span class="o">&lt;</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">groupby</span><span class="o">.</span><span class="n">SeriesGroupBy</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x5dcea90</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Additionally this method avoids recomputing the internal grouping information
+derived from the passed key.</p>
+</div>
+</div>
+<div class="section" id="iterating-through-groups">
+<span id="groupby-iterating"></span><h2>Iterating through groups<a class="headerlink" href="#iterating-through-groups" title="Permalink to this headline">¶</a></h2>
+<p>With the GroupBy object in hand, iterating through the grouped data is very
+natural and functions similarly to <tt class="docutils literal"><span class="pre">itertools.groupby</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [35]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span>
+
+<span class="gp">In [36]: </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">grouped</span><span class="p">:</span>
+<span class="gp">   ....:</span>        <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="gp">   ....:</span>        <span class="k">print</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+<span class="gp">   ....:</span> 
+<span class="go">bar</span>
+<span class="go">     A      B         C         D</span>
+<span class="go">1  bar    one -0.042379 -0.089329</span>
+<span class="go">3  bar  three -0.009920 -0.945867</span>
+<span class="go">5  bar    two  0.495767  1.956030</span>
+
+<span class="go">[3 rows x 4 columns]</span>
+<span class="go">foo</span>
+<span class="go">     A      B         C         D</span>
+<span class="go">0  foo    one -0.919854 -1.131345</span>
+<span class="go">2  foo    two  1.247642  0.337863</span>
+<span class="go">4  foo    two  0.290213 -0.932132</span>
+<span class="go">6  foo    one  0.362949  0.017587</span>
+<span class="go">7  foo  three  1.548106 -0.016692</span>
+
+<span class="go">[5 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>In the case of grouping by multiple keys, the group name will be a tuple:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [37]: </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">]):</span>
+<span class="gp">   ....:</span>        <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="gp">   ....:</span>        <span class="k">print</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+<span class="gp">   ....:</span> 
+<span class="go">(&#39;bar&#39;, &#39;one&#39;)</span>
+<span class="go">     A    B         C         D</span>
+<span class="go">1  bar  one -0.042379 -0.089329</span>
+
+<span class="go">[1 rows x 4 columns]</span>
+<span class="go">(&#39;bar&#39;, &#39;three&#39;)</span>
+<span class="go">     A      B        C         D</span>
+<span class="go">3  bar  three -0.00992 -0.945867</span>
+
+<span class="go">[1 rows x 4 columns]</span>
+<span class="go">(&#39;bar&#39;, &#39;two&#39;)</span>
+<span class="go">     A    B         C        D</span>
+<span class="go">5  bar  two  0.495767  1.95603</span>
+
+<span class="go">[1 rows x 4 columns]</span>
+<span class="go">(&#39;foo&#39;, &#39;one&#39;)</span>
+<span class="go">     A    B         C         D</span>
+<span class="go">0  foo  one -0.919854 -1.131345</span>
+<span class="go">6  foo  one  0.362949  0.017587</span>
+
+<span class="go">[2 rows x 4 columns]</span>
+<span class="go">(&#39;foo&#39;, &#39;three&#39;)</span>
+<span class="go">     A      B         C         D</span>
+<span class="go">7  foo  three  1.548106 -0.016692</span>
+
+<span class="go">[1 rows x 4 columns]</span>
+<span class="go">(&#39;foo&#39;, &#39;two&#39;)</span>
+<span class="go">     A    B         C         D</span>
+<span class="go">2  foo  two  1.247642  0.337863</span>
+<span class="go">4  foo  two  0.290213 -0.932132</span>
+
+<span class="go">[2 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>It&#8217;s standard Python-fu but remember you can unpack the tuple in the for loop
+statement if you wish: <tt class="docutils literal"><span class="pre">for</span> <span class="pre">(k1,</span> <span class="pre">k2),</span> <span class="pre">group</span> <span class="pre">in</span> <span class="pre">grouped:</span></tt>.</p>
+</div>
+<div class="section" id="aggregation">
+<span id="groupby-aggregate"></span><h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
+<p>Once the GroupBy object has been created, several methods are available to
+perform a computation on the grouped data. An obvious one is aggregation via
+the <tt class="docutils literal"><span class="pre">aggregate</span></tt> or equivalently <tt class="docutils literal"><span class="pre">agg</span></tt> method:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [38]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span>
+
+<span class="gp">In [39]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span>
+<span class="gr">Out[39]: </span>
+<span class="go">            C         D</span>
+<span class="go">A                      </span>
+<span class="go">bar  0.443469  0.920834</span>
+<span class="go">foo  2.529056 -1.724719</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+
+<span class="gp">In [40]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="gp">In [41]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span>
+<span class="gr">Out[41]: </span>
+<span class="go">                  C         D</span>
+<span class="go">A   B                        </span>
+<span class="go">bar one   -0.042379 -0.089329</span>
+<span class="go">    three -0.009920 -0.945867</span>
+<span class="go">    two    0.495767  1.956030</span>
+<span class="go">foo one   -0.556905 -1.113758</span>
+<span class="go">    three  1.548106 -0.016692</span>
+<span class="go">    two    1.537855 -0.594269</span>
+
+<span class="go">[6 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>As you can see, the result of the aggregation will have the group names as the
+new index along the grouped axis. In the case of multiple keys, the result is a
+<a class="reference internal" href="indexing.html#indexing-hierarchical"><em>MultiIndex</em></a> by default, though this can be
+changed by using the <tt class="docutils literal"><span class="pre">as_index</span></tt> option:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [42]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="gp">In [43]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span>
+<span class="gr">Out[43]: </span>
+<span class="go">     A      B         C         D</span>
+<span class="go">0  bar    one -0.042379 -0.089329</span>
+<span class="go">1  bar  three -0.009920 -0.945867</span>
+<span class="go">2  bar    two  0.495767  1.956030</span>
+<span class="go">3  foo    one -0.556905 -1.113758</span>
+<span class="go">4  foo  three  1.548106 -0.016692</span>
+<span class="go">5  foo    two  1.537855 -0.594269</span>
+
+<span class="go">[6 rows x 4 columns]</span>
+
+<span class="gp">In [44]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[44]: </span>
+<span class="go">     A         C         D</span>
+<span class="go">0  bar  0.443469  0.920834</span>
+<span class="go">1  foo  2.529056 -1.724719</span>
+
+<span class="go">[2 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>Note that you could use the <tt class="docutils literal"><span class="pre">reset_index</span></tt> DataFrame function to achieve the
+same result as the column names are stored in the resulting <tt class="docutils literal"><span class="pre">MultiIndex</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [45]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="gr">Out[45]: </span>
+<span class="go">     A      B         C         D</span>
+<span class="go">0  bar    one -0.042379 -0.089329</span>
+<span class="go">1  bar  three -0.009920 -0.945867</span>
+<span class="go">2  bar    two  0.495767  1.956030</span>
+<span class="go">3  foo    one -0.556905 -1.113758</span>
+<span class="go">4  foo  three  1.548106 -0.016692</span>
+<span class="go">5  foo    two  1.537855 -0.594269</span>
+
+<span class="go">[6 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>Another simple aggregation example is to compute the size of each group.
+This is included in GroupBy as the <tt class="docutils literal"><span class="pre">size</span></tt> method. It returns a Series whose
+index are the group names and whose values are the sizes of each group.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [46]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+<span class="gr">Out[46]: </span>
+<span class="go">A    B    </span>
+<span class="go">bar  one      1</span>
+<span class="go">     three    1</span>
+<span class="go">     two      1</span>
+<span class="go">foo  one      2</span>
+<span class="go">     three    1</span>
+<span class="go">     two      2</span>
+<span class="go">dtype: int64</span>
+</pre></div>
+</div>
+<div class="section" id="applying-multiple-functions-at-once">
+<span id="groupby-aggregate-multifunc"></span><h3>Applying multiple functions at once<a class="headerlink" href="#applying-multiple-functions-at-once" title="Permalink to this headline">¶</a></h3>
+<p>With grouped Series you can also pass a list or dict of functions to do
+aggregation with, outputting a DataFrame:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [47]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span>
+
+<span class="gp">In [48]: </span><span class="n">grouped</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">])</span>
+<span class="gr">Out[48]: </span>
+<span class="go">          sum      mean       std</span>
+<span class="go">A                                </span>
+<span class="go">bar  0.443469  0.147823  0.301765</span>
+<span class="go">foo  2.529056  0.505811  0.966450</span>
+
+<span class="go">[2 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>If a dict is passed, the keys will be used to name the columns. Otherwise the
+function&#8217;s name (stored in the function object) will be used.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [49]: </span><span class="n">grouped</span><span class="p">[</span><span class="s">&#39;D&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s">&#39;result1&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span>
+<span class="gp">   ....:</span>                   <span class="s">&#39;result2&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">})</span>
+<span class="gp">   ....:</span> 
+<span class="gr">Out[49]: </span>
+<span class="go">      result2   result1</span>
+<span class="go">A                      </span>
+<span class="go">bar  0.306945  0.920834</span>
+<span class="go">foo -0.344944 -1.724719</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>On a grouped DataFrame, you can pass a list of functions to apply to each
+column, which produces an aggregated result with a hierarchical index:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [50]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">])</span>
+<span class="gr">Out[50]: </span>
+<span class="go">            C                             D                    </span>
+<span class="go">          sum      mean       std       sum      mean       std</span>
+<span class="go">A                                                              </span>
+<span class="go">bar  0.443469  0.147823  0.301765  0.920834  0.306945  1.490982</span>
+<span class="go">foo  2.529056  0.505811  0.966450 -1.724719 -0.344944  0.645875</span>
+
+<span class="go">[2 rows x 6 columns]</span>
+</pre></div>
+</div>
+<p>Passing a dict of functions has different behavior by default, see the next
+section.</p>
+</div>
+<div class="section" id="applying-different-functions-to-dataframe-columns">
+<h3>Applying different functions to DataFrame columns<a class="headerlink" href="#applying-different-functions-to-dataframe-columns" title="Permalink to this headline">¶</a></h3>
+<p>By passing a dict to <tt class="docutils literal"><span class="pre">aggregate</span></tt> you can apply a different aggregation to the
+columns of a DataFrame:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [51]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s">&#39;C&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span>
+<span class="gp">   ....:</span>              <span class="s">&#39;D&#39;</span> <span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)})</span>
+<span class="gp">   ....:</span> 
+<span class="gr">Out[51]: </span>
+<span class="go">            C         D</span>
+<span class="go">A                      </span>
+<span class="go">bar  0.443469  1.490982</span>
+<span class="go">foo  2.529056  0.645875</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>The function names can also be strings. In order for a string to be valid it
+must be either implemented on GroupBy or available via <a class="reference internal" href="#groupby-dispatch"><em>dispatching</em></a>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [52]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s">&#39;C&#39;</span> <span class="p">:</span> <span class="s">&#39;sum&#39;</span><span class="p">,</span> <span class="s">&#39;D&#39;</span> <span class="p">:</span> <span class="s">&#39;std&#39;</span><span class="p">})</span>
+<span class="gr">Out[52]: </span>
+<span class="go">            C         D</span>
+<span class="go">A                      </span>
+<span class="go">bar  0.443469  1.490982</span>
+<span class="go">foo  2.529056  0.645875</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cython-optimized-aggregation-functions">
+<span id="groupby-aggregate-cython"></span><h3>Cython-optimized aggregation functions<a class="headerlink" href="#cython-optimized-aggregation-functions" title="Permalink to this headline">¶</a></h3>
+<p>Some common aggregations, currently only <tt class="docutils literal"><span class="pre">sum</span></tt>, <tt class="docutils literal"><span class="pre">mean</span></tt>, and <tt class="docutils literal"><span class="pre">std</span></tt>, have
+optimized Cython implementations:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [53]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gr">Out[53]: </span>
+<span class="go">            C         D</span>
+<span class="go">A                      </span>
+<span class="go">bar  0.443469  0.920834</span>
+<span class="go">foo  2.529056 -1.724719</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+
+<span class="gp">In [54]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gr">Out[54]: </span>
+<span class="go">                  C         D</span>
+<span class="go">A   B                        </span>
+<span class="go">bar one   -0.042379 -0.089329</span>
+<span class="go">    three -0.009920 -0.945867</span>
+<span class="go">    two    0.495767  1.956030</span>
+<span class="go">foo one   -0.278452 -0.556879</span>
+<span class="go">    three  1.548106 -0.016692</span>
+<span class="go">    two    0.768928 -0.297134</span>
+
+<span class="go">[6 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>Of course <tt class="docutils literal"><span class="pre">sum</span></tt> and <tt class="docutils literal"><span class="pre">mean</span></tt> are implemented on pandas objects, so the above
+code would work even without the special versions via dispatching (see below).</p>
+</div>
+</div>
+<div class="section" id="transformation">
+<span id="groupby-transform"></span><h2>Transformation<a class="headerlink" href="#transformation" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">transform</span></tt> method returns an object that is indexed the same (same size)
+as the one being grouped. Thus, the passed transform function should return a
+result that is the same size as the group chunk. For example, suppose we wished
+to standardize the data within each group:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [55]: </span><span class="n">index</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="s">&#39;10/1/1999&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">1100</span><span class="p">)</span>
+
+<span class="gp">In [56]: </span><span class="n">ts</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1100</span><span class="p">),</span> <span class="n">index</span><span class="p">)</span>
+
+<span class="gp">In [57]: </span><span class="n">ts</span> <span class="o">=</span> <span class="n">rolling_mean</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="gp">In [58]: </span><span class="n">ts</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="gr">Out[58]: </span>
+<span class="go">2000-01-08    0.779333</span>
+<span class="go">2000-01-09    0.778852</span>
+<span class="go">2000-01-10    0.786476</span>
+<span class="go">2000-01-11    0.782797</span>
+<span class="go">2000-01-12    0.798110</span>
+<span class="go">Freq: D, dtype: float64</span>
+
+<span class="gp">In [59]: </span><span class="n">ts</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span class="gr">Out[59]: </span>
+<span class="go">2002-09-30    0.660294</span>
+<span class="go">2002-10-01    0.631095</span>
+<span class="go">2002-10-02    0.673601</span>
+<span class="go">2002-10-03    0.709213</span>
+<span class="go">2002-10-04    0.719369</span>
+<span class="go">Freq: D, dtype: float64</span>
+
+<span class="gp">In [60]: </span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">year</span>
+
+<span class="gp">In [61]: </span><span class="n">zscore</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+
+<span class="gp">In [62]: </span><span class="n">transformed</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">zscore</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We would expect the result to now have mean 0 and standard deviation 1 within
+each group, which we can easily check:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="c"># Original Data</span>
+<span class="gp">In [63]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="gp">In [64]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gr">Out[64]: </span>
+<span class="go">2000    0.442441</span>
+<span class="go">2001    0.526246</span>
+<span class="go">2002    0.459365</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [65]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="gr">Out[65]: </span>
+<span class="go">2000    0.131752</span>
+<span class="go">2001    0.210945</span>
+<span class="go">2002    0.128753</span>
+<span class="go">dtype: float64</span>
+
+<span class="c"># Transformed Data</span>
+<span class="gp">In [66]: </span><span class="n">grouped_trans</span> <span class="o">=</span> <span class="n">transformed</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="gp">In [67]: </span><span class="n">grouped_trans</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gr">Out[67]: </span>
+<span class="go">2000    1.146560e-15</span>
+<span class="go">2001    1.504428e-15</span>
+<span class="go">2002    1.675355e-15</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [68]: </span><span class="n">grouped_trans</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="gr">Out[68]: </span>
+<span class="go">2000    1</span>
+<span class="go">2001    1</span>
+<span class="go">2002    1</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>We can also visually compare the original and transformed data sets.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [69]: </span><span class="n">compare</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;Original&#39;</span><span class="p">:</span> <span class="n">ts</span><span class="p">,</span> <span class="s">&#39;Transformed&#39;</span><span class="p">:</span> <span class="n">transformed</span><span class="p">})</span>
+
+<span class="gp">In [70]: </span><span class="n">compare</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="gr">Out[70]: </span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">AxesSubplot</span> <span class="n">at</span> <span class="mh">0x7c23950</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/groupby_transform_plot.png" src="_images/groupby_transform_plot.png" />
+<p>Another common data transform is to replace missing data with the group mean.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [71]: </span><span class="n">data_df</span>
+<span class="gr">Out[71]: </span>
+<span class="go">           A         B         C</span>
+<span class="go">0   1.539708 -1.166480  0.533026</span>
+<span class="go">1   1.302092 -0.505754       NaN</span>
+<span class="go">2  -0.371983  1.104803 -0.651520</span>
+<span class="go">3  -1.309622  1.118697 -1.161657</span>
+<span class="go">4  -1.924296  0.396437  0.812436</span>
+<span class="go">5   0.815643  0.367816 -0.469478</span>
+<span class="go">6  -0.030651  1.376106 -0.645129</span>
+<span class="go">7   0.798630 -1.729858  0.392067</span>
+<span class="go">8  -0.347401 -0.429063  1.792958</span>
+<span class="go">9  -0.431059  1.605289 -3.302946</span>
+<span class="go">10  0.434332 -1.302198  0.756527</span>
+<span class="go">11 -0.349926       NaN  0.304228</span>
+<span class="go">12       NaN -0.024779       NaN</span>
+<span class="go">13  1.026076 -0.151723 -1.136601</span>
+<span class="go">14  0.611215 -0.897508  0.022300</span>
+<span class="go">         ...       ...       ...</span>
+
+<span class="go">[1000 rows x 3 columns]</span>
+
+<span class="gp">In [72]: </span><span class="n">countries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s">&#39;US&#39;</span><span class="p">,</span> <span class="s">&#39;UK&#39;</span><span class="p">,</span> <span class="s">&#39;GR&#39;</span><span class="p">,</span> <span class="s">&#39;JP&#39;</span><span class="p">])</span>
+
+<span class="gp">In [73]: </span><span class="n">key</span> <span class="o">=</span> <span class="n">countries</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)]</span>
+
+<span class="gp">In [74]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="c"># Non-NA count in each group</span>
+<span class="gp">In [75]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="gr">Out[75]: </span>
+<span class="go">      A    B    C</span>
+<span class="go">GR  209  217  189</span>
+<span class="go">JP  240  255  217</span>
+<span class="go">UK  216  231  193</span>
+<span class="go">US  239  250  217</span>
+
+<span class="go">[4 rows x 3 columns]</span>
+
+<span class="gp">In [76]: </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="gp">In [77]: </span><span class="n">transformed</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can verify that the group means have not changed in the transformed data
+and that the transformed data contains no NAs.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [78]: </span><span class="n">grouped_trans</span> <span class="o">=</span> <span class="n">transformed</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="gp">In [79]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="c"># original group means</span>
+<span class="gr">Out[79]: </span>
+<span class="go">           A         B         C</span>
+<span class="go">GR -0.098371 -0.015420  0.068053</span>
+<span class="go">JP  0.069025  0.023100 -0.077324</span>
+<span class="go">UK  0.034069 -0.052580 -0.116525</span>
+<span class="go">US  0.058664 -0.020399  0.028603</span>
+
+<span class="go">[4 rows x 3 columns]</span>
+
+<span class="gp">In [80]: </span><span class="n">grouped_trans</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="c"># transformation did not change group means</span>
+<span class="gr">Out[80]: </span>
+<span class="go">           A         B         C</span>
+<span class="go">GR -0.098371 -0.015420  0.068053</span>
+<span class="go">JP  0.069025  0.023100 -0.077324</span>
+<span class="go">UK  0.034069 -0.052580 -0.116525</span>
+<span class="go">US  0.058664 -0.020399  0.028603</span>
+
+<span class="go">[4 rows x 3 columns]</span>
+
+<span class="gp">In [81]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="c"># original has some missing data points</span>
+<span class="gr">Out[81]: </span>
+<span class="go">      A    B    C</span>
+<span class="go">GR  209  217  189</span>
+<span class="go">JP  240  255  217</span>
+<span class="go">UK  216  231  193</span>
+<span class="go">US  239  250  217</span>
+
+<span class="go">[4 rows x 3 columns]</span>
+
+<span class="gp">In [82]: </span><span class="n">grouped_trans</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="c"># counts after transformation</span>
+<span class="gr">Out[82]: </span>
+<span class="go">      A    B    C</span>
+<span class="go">GR  228  228  228</span>
+<span class="go">JP  267  267  267</span>
+<span class="go">UK  247  247  247</span>
+<span class="go">US  258  258  258</span>
+
+<span class="go">[4 rows x 3 columns]</span>
+
+<span class="gp">In [83]: </span><span class="n">grouped_trans</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="c"># Verify non-NA count equals group size</span>
+<span class="gr">Out[83]: </span>
+<span class="go">GR    228</span>
+<span class="go">JP    267</span>
+<span class="go">UK    247</span>
+<span class="go">US    258</span>
+<span class="go">dtype: int64</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filtration">
+<span id="groupby-filter"></span><h2>Filtration<a class="headerlink" href="#filtration" title="Permalink to this headline">¶</a></h2>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.12.</span></p>
+<p>The <tt class="docutils literal"><span class="pre">filter</span></tt> method returns a subset of the original object. Suppose we
+want to take only elements that belong to groups with a group sum greater
+than 2.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [84]: </span><span class="n">sf</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="gp">In [85]: </span><span class="n">sf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gr">Out[85]: </span>
+<span class="go">3    3</span>
+<span class="go">4    3</span>
+<span class="go">5    3</span>
+<span class="go">dtype: int64</span>
+</pre></div>
+</div>
+<p>The argument of <tt class="docutils literal"><span class="pre">filter</span></tt> must be a function that, applied to the group as a
+whole, returns <tt class="docutils literal"><span class="pre">True</span></tt> or <tt class="docutils literal"><span class="pre">False</span></tt>.</p>
+<p>Another useful operation is filtering out elements that belong to groups
+with only a couple members.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [86]: </span><span class="n">dff</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;A&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="s">&#39;B&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="s">&#39;aabbbbcc&#39;</span><span class="p">)})</span>
+
+<span class="gp">In [87]: </span><span class="n">dff</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;B&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gr">Out[87]: </span>
+<span class="go">   A  B</span>
+<span class="go">2  2  b</span>
+<span class="go">3  3  b</span>
+<span class="go">4  4  b</span>
+<span class="go">5  5  b</span>
+
+<span class="go">[4 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>Alternatively, instead of dropping the offending groups, we can return a
+like-indexed objects where the groups that do not pass the filter are filled
+with NaNs.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [88]: </span><span class="n">dff</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;B&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dropna</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gr">Out[88]: </span>
+<span class="go">    A    B</span>
+<span class="go">0 NaN  NaN</span>
+<span class="go">1 NaN  NaN</span>
+<span class="go">2   2    b</span>
+<span class="go">3   3    b</span>
+<span class="go">4   4    b</span>
+<span class="go">5   5    b</span>
+<span class="go">6 NaN  NaN</span>
+<span class="go">7 NaN  NaN</span>
+
+<span class="go">[8 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>For dataframes with multiple columns, filters should explicitly specify a column as the filter criterion.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [89]: </span><span class="n">dff</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="gp">In [90]: </span><span class="n">dff</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;B&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gr">Out[90]: </span>
+<span class="go">   A  B  C</span>
+<span class="go">2  2  b  2</span>
+<span class="go">3  3  b  3</span>
+<span class="go">4  4  b  4</span>
+<span class="go">5  5  b  5</span>
+
+<span class="go">[4 rows x 3 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dispatching-to-instance-methods">
+<span id="groupby-dispatch"></span><h2>Dispatching to instance methods<a class="headerlink" href="#dispatching-to-instance-methods" title="Permalink to this headline">¶</a></h2>
+<p>When doing an aggregation or transformation, you might just want to call an
+instance method on each data group. This is pretty easy to do by passing lambda
+functions:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [91]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span>
+
+<span class="gp">In [92]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
+<span class="gr">Out[92]: </span>
+<span class="go">      B         C         D</span>
+<span class="go">A                          </span>
+<span class="go">bar NaN  0.301765  1.490982</span>
+<span class="go">foo NaN  0.966450  0.645875</span>
+
+<span class="go">[2 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>But, it&#8217;s rather verbose and can be untidy if you need to pass additional
+arguments. Using a bit of metaprogramming cleverness, GroupBy now has the
+ability to &#8220;dispatch&#8221; method calls to the groups:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [93]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="gr">Out[93]: </span>
+<span class="go">            C         D</span>
+<span class="go">A                      </span>
+<span class="go">bar  0.301765  1.490982</span>
+<span class="go">foo  0.966450  0.645875</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>What is actually happening here is that a function wrapper is being
+generated. When invoked, it takes any passed arguments and invokes the function
+with any arguments on each group (in the above example, the <tt class="docutils literal"><span class="pre">std</span></tt>
+function). The results are then combined together much in the style of <tt class="docutils literal"><span class="pre">agg</span></tt>
+and <tt class="docutils literal"><span class="pre">transform</span></tt> (it actually uses <tt class="docutils literal"><span class="pre">apply</span></tt> to infer the gluing, documented
+next). This enables some operations to be carried out rather succinctly:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [94]: </span><span class="n">tsdf</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+<span class="gp">   ....:</span>                  <span class="n">index</span><span class="o">=</span><span class="n">date_range</span><span class="p">(</span><span class="s">&#39;1/1/2000&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">1000</span><span class="p">),</span>
+<span class="gp">   ....:</span>                  <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">])</span>
+<span class="gp">   ....:</span> 
+
+<span class="gp">In [95]: </span><span class="n">tsdf</span><span class="o">.</span><span class="n">ix</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="gp">In [96]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">tsdf</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+
+<span class="gp">In [97]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;pad&#39;</span><span class="p">)</span>
+<span class="gr">Out[97]: </span>
+<span class="go">                   A         B         C</span>
+<span class="go">2000-01-01       NaN       NaN       NaN</span>
+<span class="go">2000-01-02 -0.353501 -0.080957 -0.876864</span>
+<span class="go">2000-01-03 -0.353501 -0.080957 -0.876864</span>
+<span class="go">2000-01-04  0.050976  0.044273 -0.559849</span>
+<span class="go">2000-01-05  0.050976  0.044273 -0.559849</span>
+<span class="go">2000-01-06  0.030091  0.186460 -0.680149</span>
+<span class="go">2000-01-07  0.030091  0.186460 -0.680149</span>
+<span class="go">2000-01-08 -0.882655  0.661310  1.317217</span>
+<span class="go">2000-01-09 -0.882655  0.661310  1.317217</span>
+<span class="go">2000-01-10  0.008021  0.572938  0.309048</span>
+<span class="go">2000-01-11  0.008021  0.572938  0.309048</span>
+<span class="go">2000-01-12 -0.818637 -2.130013 -1.346086</span>
+<span class="go">2000-01-13 -0.818637 -2.130013 -1.346086</span>
+<span class="go">2000-01-14  0.315112 -1.667438 -0.363184</span>
+<span class="go">2000-01-15  0.315112 -1.667438 -0.363184</span>
+<span class="go">                 ...       ...       ...</span>
+
+<span class="go">[1000 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>In this example, we chopped the collection of time series into yearly chunks
+then independently called <a class="reference internal" href="missing_data.html#missing-data-fillna"><em>fillna</em></a> on the
+groups.</p>
+</div>
+<div class="section" id="flexible-apply">
+<span id="groupby-apply"></span><h2>Flexible <tt class="docutils literal"><span class="pre">apply</span></tt><a class="headerlink" href="#flexible-apply" title="Permalink to this headline">¶</a></h2>
+<p>Some operations on the grouped data might not fit into either the aggregate or
+transform categories. Or, you may simply want GroupBy to infer how to combine
+the results. For these, use the <tt class="docutils literal"><span class="pre">apply</span></tt> function, which can be substituted
+for both <tt class="docutils literal"><span class="pre">aggregate</span></tt> and <tt class="docutils literal"><span class="pre">transform</span></tt> in many standard use cases. However,
+<tt class="docutils literal"><span class="pre">apply</span></tt> can handle some exceptional use cases, for example:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [98]: </span><span class="n">df</span>
+<span class="gr">Out[98]: </span>
+<span class="go">     A      B         C         D</span>
+<span class="go">0  foo    one -0.919854 -1.131345</span>
+<span class="go">1  bar    one -0.042379 -0.089329</span>
+<span class="go">2  foo    two  1.247642  0.337863</span>
+<span class="go">3  bar  three -0.009920 -0.945867</span>
+<span class="go">4  foo    two  0.290213 -0.932132</span>
+<span class="go">5  bar    two  0.495767  1.956030</span>
+<span class="go">6  foo    one  0.362949  0.017587</span>
+<span class="go">7  foo  three  1.548106 -0.016692</span>
+
+<span class="go">[8 rows x 4 columns]</span>
+
+<span class="gp">In [99]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span>
+
+<span class="c"># could also just call .describe()</span>
+<span class="gp">In [100]: </span><span class="n">grouped</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+<span class="gr">Out[100]: </span>
+<span class="go">A         </span>
+<span class="go">bar  count    3.000000</span>
+<span class="go">     mean     0.147823</span>
+<span class="go">     std      0.301765</span>
+<span class="go">     min     -0.042379</span>
+<span class="go">     25%     -0.026149</span>
+<span class="go">...</span>
+<span class="go">foo  std    0.966450</span>
+<span class="go">     min   -0.919854</span>
+<span class="go">     25%    0.290213</span>
+<span class="go">     50%    0.362949</span>
+<span class="go">     75%    1.247642</span>
+<span class="go">     max    1.548106</span>
+<span class="go">Length: 16, dtype: float64</span>
+</pre></div>
+</div>
+<p>The dimension of the returned result can also change:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [101]: </span><span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)[</span><span class="s">&#39;C&#39;</span><span class="p">]</span>
+
+<span class="gp">In [102]: </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+<span class="gp">   .....:</span>     <span class="k">return</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;original&#39;</span> <span class="p">:</span> <span class="n">group</span><span class="p">,</span>
+<span class="gp">   .....:</span>                       <span class="s">&#39;demeaned&#39;</span> <span class="p">:</span> <span class="n">group</span> <span class="o">-</span> <span class="n">group</span><span class="o">.</span><span class="n">mean</span><span class="p">()})</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [103]: </span><span class="n">grouped</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gr">Out[103]: </span>
+<span class="go">   demeaned  original</span>
+<span class="go">0 -1.425665 -0.919854</span>
+<span class="go">1 -0.190202 -0.042379</span>
+<span class="go">2  0.741831  1.247642</span>
+<span class="go">3 -0.157743 -0.009920</span>
+<span class="go">4 -0.215598  0.290213</span>
+<span class="go">5  0.347944  0.495767</span>
+<span class="go">6 -0.142862  0.362949</span>
+<span class="go">7  1.042295  1.548106</span>
+
+<span class="go">[8 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">apply</span></tt> on a Series can operate on a returned value from the applied function, that is itself a series, and possibly upcast the result to a DataFrame</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [104]: </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">   .....:</span>   <span class="k">return</span> <span class="n">Series</span><span class="p">([</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;x^s&#39;</span><span class="p">])</span>
+<span class="gp">   .....:</span> 
+
+<span class="gp">In [105]: </span><span class="n">s</span>
+<span class="gr">Out[105]: </span>
+<span class="go">first  second  third</span>
+<span class="go">bar    doo     one      1.346061</span>
+<span class="go">               two      1.511763</span>
+<span class="go">baz    bee     one      1.627081</span>
+<span class="go">               two     -0.990582</span>
+<span class="go">foo    bop     one     -0.441652</span>
+<span class="go">               two      1.211526</span>
+<span class="go">qux    bop     one      0.268520</span>
+<span class="go">               two      0.024580</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [106]: </span><span class="n">s</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gr">Out[106]: </span>
+<span class="go">                           x       x^s</span>
+<span class="go">first second third                    </span>
+<span class="go">bar   doo    one    1.346061  1.811881</span>
+<span class="go">             two    1.511763  2.285426</span>
+<span class="go">baz   bee    one    1.627081  2.647393</span>
+<span class="go">             two   -0.990582  0.981252</span>
+<span class="go">foo   bop    one   -0.441652  0.195057</span>
+<span class="go">             two    1.211526  1.467795</span>
+<span class="go">qux   bop    one    0.268520  0.072103</span>
+<span class="go">             two    0.024580  0.000604</span>
+
+<span class="go">[8 rows x 2 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="other-useful-features">
+<h2>Other useful features<a class="headerlink" href="#other-useful-features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="automatic-exclusion-of-nuisance-columns">
+<h3>Automatic exclusion of &#8220;nuisance&#8221; columns<a class="headerlink" href="#automatic-exclusion-of-nuisance-columns" title="Permalink to this headline">¶</a></h3>
+<p>Again consider the example DataFrame we&#8217;ve been looking at:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [107]: </span><span class="n">df</span>
+<span class="gr">Out[107]: </span>
+<span class="go">     A      B         C         D</span>
+<span class="go">0  foo    one -0.919854 -1.131345</span>
+<span class="go">1  bar    one -0.042379 -0.089329</span>
+<span class="go">2  foo    two  1.247642  0.337863</span>
+<span class="go">3  bar  three -0.009920 -0.945867</span>
+<span class="go">4  foo    two  0.290213 -0.932132</span>
+<span class="go">5  bar    two  0.495767  1.956030</span>
+<span class="go">6  foo    one  0.362949  0.017587</span>
+<span class="go">7  foo  three  1.548106 -0.016692</span>
+
+<span class="go">[8 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>Supposed we wished to compute the standard deviation grouped by the <tt class="docutils literal"><span class="pre">A</span></tt>
+column. There is a slight problem, namely that we don&#8217;t care about the data in
+column <tt class="docutils literal"><span class="pre">B</span></tt>. We refer to this as a &#8220;nuisance&#8221; column. If the passed
+aggregation function can&#8217;t be applied to some columns, the troublesome columns
+will be (silently) dropped. Thus, this does not pose any problems:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [108]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="gr">Out[108]: </span>
+<span class="go">            C         D</span>
+<span class="go">A                      </span>
+<span class="go">bar  0.301765  1.490982</span>
+<span class="go">foo  0.966450  0.645875</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="na-group-handling">
+<h3>NA group handling<a class="headerlink" href="#na-group-handling" title="Permalink to this headline">¶</a></h3>
+<p>If there are any NaN values in the grouping key, these will be automatically
+excluded. So there will never be an &#8220;NA group&#8221;. This was not the case in older
+versions of pandas, but users were generally discarding the NA group anyway
+(and supporting it was an implementation headache).</p>
+</div>
+<div class="section" id="grouping-with-ordered-factors">
+<h3>Grouping with ordered factors<a class="headerlink" href="#grouping-with-ordered-factors" title="Permalink to this headline">¶</a></h3>
+<p>Categorical variables represented as instance of pandas&#8217;s <tt class="docutils literal"><span class="pre">Categorical</span></tt> class
+can be used as group keys. If so, the order of the levels will be preserved:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [109]: </span><span class="n">data</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+
+<span class="gp">In [110]: </span><span class="n">factor</span> <span class="o">=</span> <span class="n">qcut</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">25</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="o">.</span><span class="mi">75</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+
+<span class="gp">In [111]: </span><span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gr">Out[111]: </span>
+<span class="go">[-2.617, -0.684]    -1.331461</span>
+<span class="go">(-0.684, -0.0232]   -0.272816</span>
+<span class="go">(-0.0232, 0.541]     0.263607</span>
+<span class="go">(0.541, 2.369]       1.166038</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enumerate-group-items">
+<h3>Enumerate group items<a class="headerlink" href="#enumerate-group-items" title="Permalink to this headline">¶</a></h3>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.13.0.</span></p>
+<p>To see the order in which each row appears within its group, use the
+<tt class="docutils literal"><span class="pre">cumcount</span></tt> method:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [112]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;aaabba&#39;</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">])</span>
+
+<span class="gp">In [113]: </span><span class="n">df</span>
+<span class="gr">Out[113]: </span>
+<span class="go">   A</span>
+<span class="go">0  a</span>
+<span class="go">1  a</span>
+<span class="go">2  a</span>
+<span class="go">3  b</span>
+<span class="go">4  b</span>
+<span class="go">5  a</span>
+
+<span class="go">[6 rows x 1 columns]</span>
+
+<span class="gp">In [114]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cumcount</span><span class="p">()</span>
+<span class="gr">Out[114]: </span>
+<span class="go">0    0</span>
+<span class="go">1    1</span>
+<span class="go">2    2</span>
+<span class="go">3    0</span>
+<span class="go">4    1</span>
+<span class="go">5    3</span>
+<span class="go">dtype: int64</span>
+
+<span class="gp">In [115]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cumcount</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>  <span class="c"># kwarg only</span>
+<span class="gr">Out[115]: </span>
+<span class="go">0    3</span>
+<span class="go">1    2</span>
+<span class="go">2    1</span>
+<span class="go">3    1</span>
+<span class="go">4    0</span>
+<span class="go">5    0</span>
+<span class="go">dtype: int64</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="clearer"></div>
+        </div>
+    </div>
+</div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="merging.html" title="Merge, join, and concatenate"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="missing_data.html" title="Working with missing data"
+             >previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2014, the pandas development team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

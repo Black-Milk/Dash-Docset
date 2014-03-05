@@ -1,0 +1,432 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>1.7. Naive Bayes &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="../_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="../index.html" />
+    <link rel="up" title="1. Supervised learning" href="../supervised_learning.html" />
+    <link rel="next" title="1.8. Decision Trees" href="tree.html" />
+    <link rel="prev" title="1.6. Cross decomposition" href="cross_decomposition.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/modules/naive_bayes.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../../stable/index.html">Home</a></li>
+                <li><a href="../../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="../documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="../tutorial/index.html">Tutorials</a></li>
+			<li><a href="../user_guide.html">User guide</a></li>
+			<li><a href="classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="../documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="../_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="cross_decomposition.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        1.6. Cross decom...
+        </span>
+            <span class="hiddenrellink">
+            1.6. Cross decomposition
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="tree.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        1.8. Decision Tr...
+        </span>
+            <span class="hiddenrellink">
+            1.8. Decision Trees
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="../supervised_learning.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        1. Supervised le...
+        </span>
+            <span class="hiddenrellink">
+            1. Supervised learning
+            </span>
+            
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">1.7. Naive Bayes</a><ul>
+<li><a class="reference internal" href="#gaussian-naive-bayes">1.7.1. Gaussian Naive Bayes</a></li>
+<li><a class="reference internal" href="#multinomial-naive-bayes">1.7.2. Multinomial Naive Bayes</a></li>
+<li><a class="reference internal" href="#bernoulli-naive-bayes">1.7.3. Bernoulli Naive Bayes</a></li>
+<li><a class="reference internal" href="#out-of-core-naive-bayes-model-fitting">1.7.4. Out-of-core naive Bayes model fitting</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="naive-bayes">
+<span id="id1"></span><h1>1.7. Naive Bayes<a class="headerlink" href="#naive-bayes" title="Permalink to this headline">¶</a></h1>
+<p>Naive Bayes methods are a set of supervised learning algorithms
+based on applying Bayes&#8217; theorem with the &#8220;naive&#8221; assumption of independence
+between every pair of features. Given a class variable <img class="math" src="../_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/> and a
+dependent feature vector <img class="math" src="../_images/math/b31b1ea8e4fe3f618dedfb0e2d8c69a3df7a391d.png" alt="x_1"/> through <img class="math" src="../_images/math/a8211bc2dab4ab052a0ebe1ef9065fadcdedee1c.png" alt="x_n"/>,
+Bayes&#8217; theorem states the following relationship:</p>
+<div class="math">
+<p><img src="../_images/math/42e4f1acceccb3e96c3dfd90baa3af862d076de1.png" alt="P(y \mid x_1, \dots, x_n) = \frac{P(y) P(x_1, \dots x_n \mid y)}
+                                 {P(x_1, \dots, x_n)}"/></p>
+</div><p>Using the naive independence assumption that</p>
+<div class="math">
+<p><img src="../_images/math/c3781294d5c6e5d98a8962119c79f072d498d31f.png" alt="P(x_i | y, x_1, \dots, x_{i-1}, x_{i+1}, \dots, x_n) = P(x_i | y),"/></p>
+</div><p>for all <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/>, this relationship is simplified to</p>
+<div class="math">
+<p><img src="../_images/math/45bc8d8261a9d85f886a998420ac78d02c660aa4.png" alt="P(y \mid x_1, \dots, x_n) = \frac{P(y) \prod_{i=1}^{n} P(x_i \mid y)}
+                                 {P(x_1, \dots, x_n)}"/></p>
+</div><p>Since <img class="math" src="../_images/math/c03af9de0e9abcf81b8a4a530020c46f4db8174b.png" alt="P(x_1, \dots, x_n)"/> is constant given the input,
+we can use the following classification rule:</p>
+<div class="math">
+<p><img src="../_images/math/1ec6f3fe56afecec546113525110fb384766829e.png" alt="P(y \mid x_1, \dots, x_n) \propto P(y) \prod_{i=1}^{n} P(x_i \mid y)
+
+\Downarrow
+
+\hat{y} = \arg\max_y P(y) \prod_{i=1}^{n} P(x_i \mid y),"/></p>
+</div><p>and we can use Maximum A Posteriori (MAP) estimation to estimate
+<img class="math" src="../_images/math/6d48612122b8ba03b4f704429e4e7488197f328f.png" alt="P(y)"/> and <img class="math" src="../_images/math/dd27ab59b712f5f48b6cd30c93b6a39511643b62.png" alt="P(x_i \mid y)"/>;
+the former is then the relative frequency of class <img class="math" src="../_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/>
+in the training set.</p>
+<p>The different naive Bayes classifiers differ mainly by the assumptions they
+make regarding the distribution of <img class="math" src="../_images/math/dd27ab59b712f5f48b6cd30c93b6a39511643b62.png" alt="P(x_i \mid y)"/>.</p>
+<p>In spite of their apparently over-simplified assumptions, naive Bayes
+classifiers have worked quite well in many real-world situations, famously
+document classification and spam filtering. They require a small amount
+of training data to estimate the necessary parameters. (For theoretical
+reasons why naive Bayes works well, and on which types of data it does, see
+the references below.)</p>
+<p>Naive Bayes learners and classifiers can be extremely fast compared to more
+sophisticated methods.
+The decoupling of the class conditional feature distributions means that each
+distribution can be independently estimated as a one dimensional distribution.
+This in turn helps to alleviate problems stemming from the curse of
+dimensionality.</p>
+<p>On the flip side, although naive Bayes is known as a decent classifier,
+it is known to be a bad estimator, so the probability outputs from
+<tt class="docutils literal"><span class="pre">predict_proba</span></tt> are not to be taken too seriously.</p>
+<div class="topic">
+<p class="topic-title first">References:</p>
+<ul class="simple">
+<li>H. Zhang (2004). <a class="reference external" href="http://www.cs.unb.ca/profs/hzhang/publications/FLAIRS04ZhangH.pdf">The optimality of Naive Bayes.</a>
+Proc. FLAIRS.</li>
+</ul>
+</div>
+<div class="section" id="gaussian-naive-bayes">
+<h2>1.7.1. Gaussian Naive Bayes<a class="headerlink" href="#gaussian-naive-bayes" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="generated/sklearn.naive_bayes.GaussianNB.html#sklearn.naive_bayes.GaussianNB" title="sklearn.naive_bayes.GaussianNB"><tt class="xref py py-class docutils literal"><span class="pre">GaussianNB</span></tt></a> implements the Gaussian Naive Bayes algorithm for
+classification. The likelihood of the features is assumed to be Gaussian:</p>
+<div class="math">
+<p><img src="../_images/math/196f9e31dfd9403804db63b03de06cc584586a8c.png" alt="P(x_i \mid y) &amp;= \frac{1}{\sqrt{2\pi\sigma^2_y}} \exp\left(-\frac{(x_i - \mu_y)^2}{2\sigma^2_y}\right)"/></p>
+</div><p>The parameters <img class="math" src="../_images/math/eafb759b3682cc78f395f0f31b2d1c453c61b662.png" alt="\sigma_y"/> and <img class="math" src="../_images/math/e85e9172fdbaf56c03dced3ea4be9eb4787d0514.png" alt="\mu_y"/>
+are estimated using maximum likelihood.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">GaussianNB</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gnb</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">gnb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="s">&quot;Number of mislabeled points out of a total </span><span class="si">%d</span><span class="s"> points : </span><span class="si">%d</span><span class="s">&quot;</span>
+<span class="gp">... </span>      <span class="o">%</span> <span class="p">(</span><span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],(</span><span class="n">iris</span><span class="o">.</span><span class="n">target</span> <span class="o">!=</span> <span class="n">y_pred</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="go">Number of mislabeled points out of a total 150 points : 6</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multinomial-naive-bayes">
+<span id="id2"></span><h2>1.7.2. Multinomial Naive Bayes<a class="headerlink" href="#multinomial-naive-bayes" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="generated/sklearn.naive_bayes.MultinomialNB.html#sklearn.naive_bayes.MultinomialNB" title="sklearn.naive_bayes.MultinomialNB"><tt class="xref py py-class docutils literal"><span class="pre">MultinomialNB</span></tt></a> implements the naive Bayes algorithm for multinomially
+distributed data, and is one of the two classic naive Bayes variants used in
+text classification (where the data are typically represented as word vector
+counts, although tf-idf vectors are also known to work well in practice).
+The distribution is parametrized by vectors
+<img class="math" src="../_images/math/6eedd22a03d5c334159634dbc99dff67fe4e0d4a.png" alt="\theta_y = (\theta_{y1},\ldots,\theta_{yn})"/>
+for each class <img class="math" src="../_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/>, where <img class="math" src="../_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> is the number of features
+(in text classification, the size of the vocabulary)
+and <img class="math" src="../_images/math/da203f970e5bbff0c0652f37b320fba12937ca36.png" alt="\theta_{yi}"/> is the probability <img class="math" src="../_images/math/dd27ab59b712f5f48b6cd30c93b6a39511643b62.png" alt="P(x_i \mid y)"/>
+of feature <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> appearing in a sample belonging to class <img class="math" src="../_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/>.</p>
+<p>The parameters <img class="math" src="../_images/math/8264a126c36284f782d9bc3a1b2f761cda0c2ea8.png" alt="\theta_y"/> is estimated by a smoothed
+version of maximum likelihood, i.e. relative frequency counting:</p>
+<div class="math">
+<p><img src="../_images/math/bb1961efcad95a40ed49cc64a9b9ca681e06720a.png" alt="\hat{\theta}_{yi} = \frac{ N_{yi} + \alpha}{N_y + \alpha n}"/></p>
+</div><p>where <img class="math" src="../_images/math/d95f1d719cb6b6e373cb6fc65fdcf66ca50ec589.png" alt="N_{yi} = \sum_{x \in T} x_i"/> is
+the number of times feature <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> appears in a sample of class <img class="math" src="../_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/>
+in the training set <img class="math" src="../_images/math/6d42c88506b8da39a2a23653aecbfb7c29728063.png" alt="T"/>,
+and <img class="math" src="../_images/math/39d979d28ea13da6cd6fe64c3a8ee5005e5cabce.png" alt="N_{y} = \sum_{i=1}^{|T|} N_{yi}"/> is the total count of
+all features for class <img class="math" src="../_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/>.</p>
+<p>The smoothing priors <img class="math" src="../_images/math/268201c9ebe3275932cf0c0287de32f65d316a99.png" alt="\alpha \ge 0"/> accounts for
+features not present in the learning samples and prevents zero probabilities
+in further computations.
+Setting <img class="math" src="../_images/math/7eab7af9a483d7c6e4e628ba496fb65c5c56faac.png" alt="\alpha = 1"/> is called Laplace smoothing,
+while <img class="math" src="../_images/math/f053df68f37ffa28944fe80c99adea2c99593e38.png" alt="\alpha &lt; 1"/> is called Lidstone smoothing.</p>
+</div>
+<div class="section" id="bernoulli-naive-bayes">
+<span id="id3"></span><h2>1.7.3. Bernoulli Naive Bayes<a class="headerlink" href="#bernoulli-naive-bayes" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="generated/sklearn.naive_bayes.BernoulliNB.html#sklearn.naive_bayes.BernoulliNB" title="sklearn.naive_bayes.BernoulliNB"><tt class="xref py py-class docutils literal"><span class="pre">BernoulliNB</span></tt></a> implements the naive Bayes training and classification
+algorithms for data that is distributed according to multivariate Bernoulli
+distributions; i.e., there may be multiple features but each one is assumed
+to be a binary-valued (Bernoulli, boolean) variable.
+Therefore, this class requires samples to be represented as binary-valued
+feature vectors; if handed any other kind of data, a <tt class="docutils literal"><span class="pre">BernoulliNB</span></tt> instance
+may binarize its input (depending on the <tt class="docutils literal"><span class="pre">binarize</span></tt> parameter).</p>
+<p>The decision rule for Bernoulli naive Bayes is based on</p>
+<div class="math">
+<p><img src="../_images/math/1f41dea8d6bdb5d736a645ff2c6179fd733c0a27.png" alt="P(x_i \mid y) = P(i \mid y) x_i + (1 - P(i \mid y)) (1 - x_i)"/></p>
+</div><p>which differs from multinomial NB&#8217;s rule
+in that it explicitly penalizes the non-occurrence of a feature <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/>
+that is an indicator for class <img class="math" src="../_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/>,
+where the multinomial variant would simply ignore a non-occurring feature.</p>
+<p>In the case of text classification, word occurrence vectors (rather than word
+count vectors) may be used to train and use this classifier. <tt class="docutils literal"><span class="pre">BernoulliNB</span></tt>
+might perform better on some datasets, especially those with shorter documents.
+It is advisable to evaluate both models, if time permits.</p>
+<div class="topic">
+<p class="topic-title first">References:</p>
+<ul class="simple">
+<li>C.D. Manning, P. Raghavan and H. Schütze (2008). Introduction to
+Information Retrieval. Cambridge University Press, pp. 234-265.</li>
+<li>A. McCallum and K. Nigam (1998).
+<a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.46.1529">A comparison of event models for Naive Bayes text classification.</a>
+Proc. AAAI/ICML-98 Workshop on Learning for Text Categorization, pp. 41-48.</li>
+<li>V. Metsis, I. Androutsopoulos and G. Paliouras (2006).
+<a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.61.5542">Spam filtering with Naive Bayes &#8211; Which Naive Bayes?</a>
+3rd Conf. on Email and Anti-Spam (CEAS).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="out-of-core-naive-bayes-model-fitting">
+<h2>1.7.4. Out-of-core naive Bayes model fitting<a class="headerlink" href="#out-of-core-naive-bayes-model-fitting" title="Permalink to this headline">¶</a></h2>
+<p>Discrete naive Bayes models can be used to tackle large scale text
+classification problems for which the full training set might not fit in
+memory. To handle this case both <a class="reference internal" href="generated/sklearn.naive_bayes.MultinomialNB.html#sklearn.naive_bayes.MultinomialNB" title="sklearn.naive_bayes.MultinomialNB"><tt class="xref py py-class docutils literal"><span class="pre">MultinomialNB</span></tt></a> and
+<a class="reference internal" href="generated/sklearn.naive_bayes.BernoulliNB.html#sklearn.naive_bayes.BernoulliNB" title="sklearn.naive_bayes.BernoulliNB"><tt class="xref py py-class docutils literal"><span class="pre">BernoulliNB</span></tt></a> expose a <tt class="docutils literal"><span class="pre">partial_fit</span></tt> method that can be used
+incrementally as done with other classifiers as demonstrated in
+<a class="reference internal" href="../auto_examples/applications/plot_out_of_core_classification.html#example-applications-plot-out-of-core-classification-py"><em>Out-of-core classification of text documents</em></a>.</p>
+<p>Contrary to the <tt class="docutils literal"><span class="pre">fit</span></tt> method, the first call to <tt class="docutils literal"><span class="pre">partial_fit</span></tt> needs to be
+passed the list of all the expected class labels.</p>
+<p>For an overview of available strategies in scikit-learn, see also the
+<a class="reference internal" href="scaling_strategies.html#scaling-strategies"><em>out-of-core learning</em></a> documentation.</p>
+<p>note:</p>
+<div class="highlight-python"><div class="highlight"><pre>The ``partial_fit`` method call of naive Bayes models introduces some
+computational overhead. It is recommended to use data chunk sizes that are as
+large as possible, that is as the available RAM allows.
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../_sources/modules/naive_bayes.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="cross_decomposition.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="tree.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="../np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

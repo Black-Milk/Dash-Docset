@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Cookbook &mdash; pandas 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pandas 0.13.1 documentation" href="index.html" />
+    <link rel="next" title="Intro to Data Structures" href="dsintro.html" />
+    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dsintro.html" title="Intro to Data Structures"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorials.html" title="Tutorials"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="content-wrapper">
+    <div class="content">
+        <div class="document">
+            <div class="sphinxsidebar">
+                <h3>Table Of Contents</h3>
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="whatsnew.html">What&#8217;s New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Package overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10min.html">10 Minutes to Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Cookbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#idioms">Idioms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selection">Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiindexing">MultiIndexing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#arithmetic">Arithmetic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#slicing">Slicing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sorting">Sorting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#levels">Levels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panelnd">panelnd</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#missing-data">Missing Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#replace">Replace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#grouping">Grouping</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#expanding-data">Expanding Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#splitting">Splitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pivot">Pivot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#apply">Apply</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#timeseries">Timeseries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#resampling">Resampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#merge">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting">Plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-in-out">Data In/Out</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#csv">CSV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sql">SQL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#excel">Excel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hdfstore">HDFStore</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#computation">Computation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aliasing-axis-names">Aliasing Axis Names</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dsintro.html">Intro to Data Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Essential Basic Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indexing.html">Indexing and Selecting Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="computation.html">Computational tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="missing_data.html">Working with missing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="groupby.html">Group By: split-apply-combine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merging.html">Merge, join, and concatenate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshaping.html">Reshaping and Pivot Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Time Series / Date functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Plotting with matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rplot.html">Trellis plotting interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO Tools (Text, CSV, HDF5, ...)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remote_data.html">Remote Data Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enhancingperf.html">Enhancing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse.html">Sparse data structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gotchas.html">Caveats and Gotchas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r_interface.html">rpy2 / R interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecosystem.html">Pandas Ecosystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_r.html">Comparison with R / R libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_sql.html">Comparison with SQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+</ul>
+
+                <h3 style="margin-top: 1.5em;">Search</h3>
+
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q" size="18"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+
+                <p>
+
+                <p>
+                    <script type="text/javascript"
+                            src="http://www.ohloh.net/p/482908/widgets/project_partner_badge.js"></script>
+                </p>
+            </div>
+             
+            <div class="documentwrapper">
+                <div class="bodywrapper">
+                    <div class="body">
+                        
+  <div class="section" id="cookbook">
+<span id="id1"></span><h1>Cookbook<a class="headerlink" href="#cookbook" title="Permalink to this headline">¶</a></h1>
+<p>This is a repository for <em>short and sweet</em> examples and links for useful pandas recipes.
+We encourage users to add to this documentation.</p>
+<p>This is a great <em>First Pull Request</em> (to add interesting links and/or put short code inline
+for existing links)</p>
+<div class="section" id="idioms">
+<h2>Idioms<a class="headerlink" href="#idioms" title="Permalink to this headline">¶</a></h2>
+<p id="cookbook-idioms">These are some neat pandas <tt class="docutils literal"><span class="pre">idioms</span></tt></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17128302/python-pandas-idiom-for-if-then-else">How to do if-then-else?</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/19913659/pandas-conditional-creation-of-a-series-dataframe-column">How to do if-then-else #2</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14957116/how-to-split-a-dataframe-according-to-a-boolean-criterion">How to split a frame with a boolean criterion?</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15315452/selecting-with-complex-criteria-from-pandas-dataframe">How to select from a frame with complex criteria?</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17758023/return-rows-in-a-dataframe-closest-to-a-user-defined-number">Select rows closest to a user-defined number</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/21058254/pandas-boolean-operation-in-a-python-list/21058331">How to reduce a sequence (e.g. of Series) using a binary operator</a></p>
+</div>
+<div class="section" id="selection">
+<span id="cookbook-selection"></span><h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="indexing.html#indexing"><em>indexing</em></a> docs.</p>
+<p>Indexing using both row labels and conditionals, see
+<a class="reference external" href="http://stackoverflow.com/questions/14725068/pandas-using-row-labels-in-boolean-indexing">here</a></p>
+<p>Use loc for label-oriented slicing and iloc positional slicing, see
+<a class="reference external" href="https://github.com/pydata/pandas/issues/2904">here</a></p>
+<p>Extend a panel frame by transposing, adding a new dimension, and transposing back to the original dimensions, see
+<a class="reference external" href="http://stackoverflow.com/questions/15364050/extending-a-pandas-panel-frame-along-the-minor-axis">here</a></p>
+<p>Mask a panel by using <tt class="docutils literal"><span class="pre">np.where</span></tt> and then reconstructing the panel with the new masked values
+<a class="reference external" href="http://stackoverflow.com/questions/14650341/boolean-mask-in-pandas-panel">here</a></p>
+<p>Using <tt class="docutils literal"><span class="pre">~</span></tt> to take the complement of a boolean array, see
+<a class="reference external" href="http://stackoverflow.com/questions/14986510/picking-out-elements-based-on-complement-of-indices-in-python-pandas">here</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16575868/efficiently-creating-additional-columns-in-a-pandas-dataframe-using-map">Efficiently creating columns using applymap</a></p>
+</div>
+<div class="section" id="multiindexing">
+<span id="cookbook-multi-index"></span><h2>MultiIndexing<a class="headerlink" href="#multiindexing" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="indexing.html#indexing-hierarchical"><em>multindexing</em></a> docs.</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14916358/reshaping-dataframes-in-pandas-based-on-column-labels">Creating a multi-index from a labeled frame</a></p>
+<div class="section" id="arithmetic">
+<h3>Arithmetic<a class="headerlink" href="#arithmetic" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/19501510/divide-entire-pandas-multiindex-dataframe-by-dataframe-variable/19502176#19502176">Performing arithmetic with a multi-index that needs broadcasting</a></p>
+</div>
+<div class="section" id="slicing">
+<h3>Slicing<a class="headerlink" href="#slicing" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/12590131/how-to-slice-multindex-columns-in-pandas-dataframes">Slicing a multi-index with xs</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14964493/multiindex-based-indexing-in-pandas">Slicing a multi-index with xs #2</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/19319432/pandas-selecting-a-lower-level-in-a-dataframe-to-do-a-ffill">Setting portions of a multi-index with xs</a></p>
+</div>
+<div class="section" id="sorting">
+<h3>Sorting<a class="headerlink" href="#sorting" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14733871/mutli-index-sorting-in-pandas">Multi-index sorting</a></p>
+<p><a class="reference external" href="https://github.com/pydata/pandas/issues/2995">Partial Selection, the need for sortedness</a></p>
+</div>
+<div class="section" id="levels">
+<h3>Levels<a class="headerlink" href="#levels" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14744068/prepend-a-level-to-a-pandas-multiindex">Prepending a level to a multiindex</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14507794/python-pandas-how-to-flatten-a-hierarchical-index-in-columns">Flatten Hierarchical columns</a></p>
+</div>
+<div class="section" id="panelnd">
+<h3>panelnd<a class="headerlink" href="#panelnd" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="dsintro.html#dsintro-panelnd"><em>panelnd</em></a> docs.</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/18748598/why-my-panelnd-factory-throwing-a-keyerror">Construct a 5D panelnd</a></p>
+</div>
+</div>
+<div class="section" id="missing-data">
+<span id="cookbook-missing-data"></span><h2>Missing Data<a class="headerlink" href="#missing-data" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="missing_data.html#missing-data"><em>missing data</em></a> docs.</p>
+<p>Fill forward a reversed timeseries</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s">&#39;2013-08-01&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s">&#39;B&#39;</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">))</span>
+
+<span class="gp">In [2]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="gp">In [3]: </span><span class="n">df</span>
+<span class="gr">Out[3]: </span>
+<span class="go">                   A</span>
+<span class="go">2013-08-01  0.469112</span>
+<span class="go">2013-08-02 -0.282863</span>
+<span class="go">2013-08-05 -1.509059</span>
+<span class="go">2013-08-06       NaN</span>
+<span class="go">2013-08-07  1.212112</span>
+<span class="go">2013-08-08 -0.173215</span>
+
+<span class="go">[6 rows x 1 columns]</span>
+
+<span class="gp">In [4]: </span><span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span>
+<span class="gr">Out[4]: </span>
+<span class="go">                   A</span>
+<span class="go">2013-08-08 -0.173215</span>
+<span class="go">2013-08-07  1.212112</span>
+<span class="go">2013-08-06  1.212112</span>
+<span class="go">2013-08-05 -1.509059</span>
+<span class="go">2013-08-02 -0.282863</span>
+<span class="go">2013-08-01  0.469112</span>
+
+<span class="go">[6 rows x 1 columns]</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://stackoverflow.com/questions/18196811/cumsum-reset-at-nan">cumsum reset at NaN values</a></p>
+<div class="section" id="replace">
+<h3>Replace<a class="headerlink" href="#replace" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16818871/extracting-value-and-creating-new-column-out-of-it">Using replace with backrefs</a></p>
+</div>
+</div>
+<div class="section" id="grouping">
+<span id="cookbook-grouping"></span><h2>Grouping<a class="headerlink" href="#grouping" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="groupby.html#groupby"><em>grouping</em></a> docs.</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15322632/python-pandas-df-groupy-agg-column-reference-in-agg">Basic grouping with apply</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14734533/how-to-access-pandas-groupby-dataframe-by-key">Using get_group</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15262134/apply-different-functions-to-different-items-in-group-object-python-pandas">Apply to different items in a group</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14542145/reductions-down-a-column-in-pandas">Expanding Apply</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14760757/replacing-values-with-groupby-means">Replacing values with groupby means</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14941366/pandas-sort-by-group-aggregate-and-column">Sort by group with aggregation</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14897100/create-multiple-columns-in-pandas-aggregation-function">Create multiple aggregated columns</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17709270/i-want-to-create-a-column-of-value-counts-in-my-pandas-dataframe">Create a value counts column and reassign back to the DataFrame</a></p>
+<div class="section" id="expanding-data">
+<h3>Expanding Data<a class="headerlink" href="#expanding-data" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15489011/python-time-series-alignment-and-to-date-functions">Alignment and to-date</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14300768/pandas-rolling-computation-with-window-based-on-values-instead-of-counts">Rolling Computation window based on values instead of counts</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15771472/pandas-rolling-mean-by-time-interval">Rolling Mean by Time Interval</a></p>
+</div>
+<div class="section" id="splitting">
+<h3>Splitting<a class="headerlink" href="#splitting" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/13353233/best-way-to-split-a-dataframe-given-an-edge/15449992#15449992">Splitting a frame</a></p>
+</div>
+<div class="section" id="pivot">
+<span id="cookbook-pivot"></span><h3>Pivot<a class="headerlink" href="#pivot" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="reshaping.html#reshaping-pivot"><em>Pivot</em></a> docs.</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15570099/pandas-pivot-tables-row-subtotals/15574875#15574875">Partial sums and subtotals</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15589354/frequency-tables-in-pandas-like-plyr-in-r">Frequency table like plyr in R</a></p>
+</div>
+<div class="section" id="apply">
+<h3>Apply<a class="headerlink" href="#apply" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17349981/converting-pandas-dataframe-with-categorical-values-into-binary-values">Turning embedded lists into a multi-index frame</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/19121854/using-rolling-apply-on-a-dataframe-object">Rolling apply with a DataFrame returning a Series</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/21040766/python-pandas-rolling-apply-two-column-input-into-function/21045831#21045831">Rolling apply with a DataFrame returning a Scalar</a></p>
+</div>
+</div>
+<div class="section" id="timeseries">
+<h2>Timeseries<a class="headerlink" href="#timeseries" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14539992/pandas-drop-rows-outside-of-time-range">Between times</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17559885/pandas-dataframe-mask-based-on-index">Using indexer between time</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/13893227/vectorized-look-up-of-values-in-pandas-dataframe">Vectorized Lookup</a></p>
+<p>Turn a matrix with hours in columns and days in rows into a continuous row sequence in the form of a time series.
+<a class="reference external" href="http://stackoverflow.com/questions/15432659/how-to-rearrange-a-python-pandas-dataframe">How to rearrange a python pandas DataFrame?</a></p>
+<div class="section" id="resampling">
+<span id="cookbook-resample"></span><h3>Resampling<a class="headerlink" href="#resampling" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="timeseries.html#timeseries-resampling"><em>Resample</em></a> docs.</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15297053/how-can-i-divide-single-values-of-a-dataframe-by-monthly-averages">TimeGrouping of values grouped across time</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14569223/timegrouper-pandas">TimeGrouping #2</a></p>
+<p><a class="reference external" href="https://github.com/pydata/pandas/issues/3791">Using TimeGrouper and another grouping to create subgroups, then apply a custom function</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15408156/resampling-with-custom-periods">Resampling with custom periods</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14898574/resample-intrday-pandas-dataframe-without-add-new-days">Resample intraday frame without adding new days</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14861023/resampling-minute-data">Resample minute data</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/q/18677271/564538">Resample with groupby</a></p>
+</div>
+</div>
+<div class="section" id="merge">
+<span id="cookbook-merge"></span><h2>Merge<a class="headerlink" href="#merge" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="merging.html#merging-concatenation"><em>Concat</em></a> docs. The <a class="reference internal" href="merging.html#merging-join"><em>Join</em></a> docs.</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14988480/pandas-version-of-rbind">emulate R rbind</a></p>
+<p><a class="reference external" href="https://github.com/pydata/pandas/issues/2996">Self Join</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14341805/pandas-merge-pd-merge-how-to-set-the-index-and-join">How to set the index and join</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/12322289/kdb-like-asof-join-for-timeseries-data-in-pandas/12336039#12336039">KDB like asof join</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15581829/how-to-perform-an-inner-or-outer-join-of-dataframes-with-pandas-on-non-simplisti">Join with a criteria based on the values</a></p>
+</div>
+<div class="section" id="plotting">
+<span id="cookbook-plotting"></span><h2>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="visualization.html#visualization"><em>Plotting</em></a> docs.</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14349055/making-matplotlib-graphs-look-like-r-by-default">Make Matplotlib look like R</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/12945971/pandas-timeseries-plot-setting-x-axis-major-and-minor-ticks-and-labels">Setting x-axis major and minor labels</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16392921/make-more-than-one-chart-in-same-ipython-notebook-cell">Plotting multiple charts in an ipython notebook</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16568964/make-a-multiline-plot-from-csv-file-in-matplotlib">Creating a multi-line plot</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17050202/plot-timeseries-of-histograms-in-python">Plotting a heatmap</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/11067368/annotate-time-series-plot-in-matplotlib">Annotate a time-series plot</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17891493/annotating-points-from-a-pandas-dataframe-in-matplotlib-plot">Annotate a time-series plot #2</a></p>
+<p><a class="reference external" href="http://pandas-xlsxwriter-charts.readthedocs.org/en/latest/introduction.html">Generate Embedded plots in excel files using Pandas, Vincent and xlsxwriter</a></p>
+</div>
+<div class="section" id="data-in-out">
+<h2>Data In/Out<a class="headerlink" href="#data-in-out" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16628329/hdf5-and-sqlite-concurrency-compression-i-o-performance">Performance comparison of SQL vs HDF5</a></p>
+<div class="section" id="csv">
+<span id="cookbook-csv"></span><h3>CSV<a class="headerlink" href="#csv" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="io.html#io-read-csv-table"><em>CSV</em></a> docs</p>
+<p><a class="reference external" href="http://wesmckinney.com/blog/?p=635">read_csv in action</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17134942/pandas-dataframe-output-end-of-csv">appending to a csv</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/11622652/large-persistent-dataframe-in-pandas/12193309#12193309">Reading a csv chunk-by-chunk</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/19674212/pandas-data-frame-select-rows-and-clear-memory">Reading only certain rows of a csv chunk-by-chunk</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15008970/way-to-read-first-few-lines-for-pandas-dataframe">Reading the first few lines of a frame</a></p>
+<p>Reading a file that is compressed but not by <tt class="docutils literal"><span class="pre">gzip/bz2</span></tt> (the native compressed formats which <tt class="docutils literal"><span class="pre">read_csv</span></tt> understands).
+This example shows a <tt class="docutils literal"><span class="pre">WinZipped</span></tt> file, but is a general application of opening the file within a context manager and
+using that handle to read.
+<a class="reference external" href="http://stackoverflow.com/questions/17789907/pandas-convert-winzipped-csv-file-to-data-frame">See here</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15555005/get-inferred-dataframe-types-iteratively-using-chunksize">Inferring dtypes from a file</a></p>
+<p><a class="reference external" href="http://github.com/pydata/pandas/issues/2886">Dealing with bad lines</a></p>
+<p><a class="reference external" href="http://nipunbatra.wordpress.com/2013/06/06/reading-unclean-data-csv-using-pandas/">Dealing with bad lines II</a></p>
+<p><a class="reference external" href="http://nipunbatra.wordpress.com/2013/06/07/pandas-reading-csv-with-unix-timestamps-and-converting-to-local-timezone/">Reading CSV with Unix timestamps and converting to local timezone</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17349574/pandas-write-multiindex-rows-with-to-csv">Write a multi-row index CSV without writing duplicates</a></p>
+</div>
+<div class="section" id="sql">
+<span id="cookbook-sql"></span><h3>SQL<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="io.html#io-sql"><em>SQL</em></a> docs</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/10065051/python-pandas-and-databases-like-mysql">Reading from databases with SQL</a></p>
+</div>
+<div class="section" id="excel">
+<span id="cookbook-excel"></span><h3>Excel<a class="headerlink" href="#excel" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="io.html#io-excel"><em>Excel</em></a> docs</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15588713/sheets-of-excel-workbook-from-a-url-into-a-pandas-dataframe">Reading from a filelike handle</a></p>
+<p id="cookbook-html"><a class="reference external" href="http://stackoverflow.com/a/18939272/564538">Reading HTML tables from a server that cannot handle the default request
+header</a></p>
+</div>
+<div class="section" id="hdfstore">
+<span id="cookbook-hdf"></span><h3>HDFStore<a class="headerlink" href="#hdfstore" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="io.html#io-hdf5"><em>HDFStores</em></a> docs</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/13926089/selecting-columns-from-pandas-hdfstore-table">Simple Queries with a Timestamp Index</a></p>
+<p><a class="reference external" href="http://github.com/pydata/pandas/issues/3032">Managing heterogeneous data using a linked multiple table hierarchy</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14614512/merging-two-tables-with-millions-of-rows-in-python/14617925#14617925">Merging on-disk tables with millions of rows</a></p>
+<p>Deduplicating a large store by chunks, essentially a recursive reduction operation. Shows a function for taking in data from
+csv file and creating a store by chunks, with date parsing as well.
+<a class="reference external" href="http://stackoverflow.com/questions/16110252/need-to-compare-very-large-files-around-1-5gb-in-python/16110391#16110391">See here</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/20428355/appending-column-to-frame-of-hdf-file-in-pandas/20428786#20428786">Creating a store chunk-by-chunk from a csv file</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16997048/how-does-one-append-large-amounts-of-data-to-a-pandas-hdfstore-and-get-a-natural/16999397#16999397">Appending to a store, while creating a unique index</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/14262433/large-data-work-flows-using-pandas">Large Data work flows</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16997048/how-does-one-append-large-amounts-of-data-to-a-pandas-hdfstore-and-get-a-natural">Reading in a sequence of files, then providing a global unique index to a store while appending</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15798209/pandas-group-by-query-on-large-data-in-hdfstore">Groupby on a HDFStore</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/20497897/converting-dict-of-dicts-into-pandas-dataframe-memory-issues">Counting with a HDFStore</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15488809/how-to-trouble-shoot-hdfstore-exception-cannot-find-the-correct-atom-type">Troubleshoot HDFStore exceptions</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15988871/hdfstore-appendstring-dataframe-fails-when-string-column-contents-are-longer">Setting min_itemsize with strings</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/17893370/ptrepack-sortby-needs-full-index">Using ptrepack to create a completely-sorted-index on a store</a></p>
+<p>Storing Attributes to a group node</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [5]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="gp">In [6]: </span><span class="n">store</span> <span class="o">=</span> <span class="n">HDFStore</span><span class="p">(</span><span class="s">&#39;test.h5&#39;</span><span class="p">)</span>
+
+<span class="gp">In [7]: </span><span class="n">store</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&#39;df&#39;</span><span class="p">,</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c"># you can store an arbitrary python object via pickle</span>
+<span class="gp">In [8]: </span><span class="n">store</span><span class="o">.</span><span class="n">get_storer</span><span class="p">(</span><span class="s">&#39;df&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">my_attribute</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">A</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="gp">In [9]: </span><span class="n">store</span><span class="o">.</span><span class="n">get_storer</span><span class="p">(</span><span class="s">&#39;df&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">my_attribute</span>
+<span class="gr">Out[9]: </span><span class="p">{</span><span class="s">&#39;A&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="computation">
+<h2>Computation<a class="headerlink" href="#computation" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://nbviewer.ipython.org/5720498">Numerical integration (sample-based) of a time series</a></p>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="timeseries.html#timeseries-timedeltas"><em>Timedeltas</em></a> docs.</p>
+<p><a class="reference external" href="http://github.com/pydata/pandas/pull/2899">Operating with timedeltas</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/15683588/iterating-through-a-pandas-dataframe">Create timedeltas with date differences</a></p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/16385785/add-days-to-dates-in-dataframe">Adding days to dates in a dataframe</a></p>
+</div>
+<div class="section" id="aliasing-axis-names">
+<h2>Aliasing Axis Names<a class="headerlink" href="#aliasing-axis-names" title="Permalink to this headline">¶</a></h2>
+<p>To globally provide aliases for axis names, one can define these 2 functions:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [10]: </span><span class="k">def</span> <span class="nf">set_axis_alias</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">alias</span><span class="p">):</span>
+<span class="gp">   ....:</span>      <span class="k">if</span> <span class="n">axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_AXIS_NUMBERS</span><span class="p">:</span>
+<span class="gp">   ....:</span>          <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;invalid axis [</span><span class="si">%s</span><span class="s">] for alias [</span><span class="si">%s</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">alias</span><span class="p">))</span>
+<span class="gp">   ....:</span>      <span class="n">cls</span><span class="o">.</span><span class="n">_AXIS_ALIASES</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">axis</span>
+<span class="gp">   ....:</span> 
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="clearer"></div>
+        </div>
+    </div>
+</div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dsintro.html" title="Intro to Data Structures"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorials.html" title="Tutorials"
+             >previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2014, the pandas development team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,596 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SciPy 0.13.0 Release Notes &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="index.html" />
+    <link rel="up" title="Release Notes" href="release.html" />
+    <link rel="next" title="SciPy 0.12.0 Release Notes" href="release.0.12.0.html" />
+    <link rel="prev" title="Release Notes" href="release.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="release.html" accesskey="U">Release Notes</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="release.0.12.0.html" title="SciPy 0.12.0 Release Notes"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="release.html" title="Release Notes"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">SciPy 0.13.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#new-features">New features</a><ul>
+<li><a class="reference internal" href="#scipy-integrate-improvements"><tt class="docutils literal"><span class="pre">scipy.integrate</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#n-dimensional-numerical-integration">N-dimensional numerical integration</a></li>
+<li><a class="reference internal" href="#dopri-improvements"><tt class="docutils literal"><span class="pre">dopri*</span></tt> improvements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-linalg-improvements"><tt class="docutils literal"><span class="pre">scipy.linalg</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#interpolative-decompositions">Interpolative decompositions</a></li>
+<li><a class="reference internal" href="#polar-decomposition">Polar decomposition</a></li>
+<li><a class="reference internal" href="#blas-level-3-functions">BLAS level 3 functions</a></li>
+<li><a class="reference internal" href="#matrix-functions">Matrix functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-optimize-improvements"><tt class="docutils literal"><span class="pre">scipy.optimize</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#trust-region-unconstrained-minimization-algorithms">Trust-region unconstrained minimization algorithms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-sparse-improvements"><tt class="docutils literal"><span class="pre">scipy.sparse</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#boolean-comparisons-and-sparse-matrices">Boolean comparisons and sparse matrices</a></li>
+<li><a class="reference internal" href="#csr-and-csc-fancy-indexing">CSR and CSC fancy indexing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-sparse-linalg-improvements"><tt class="docutils literal"><span class="pre">scipy.sparse.linalg</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-spatial-improvements"><tt class="docutils literal"><span class="pre">scipy.spatial</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-signal-improvements"><tt class="docutils literal"><span class="pre">scipy.signal</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-special-improvements"><tt class="docutils literal"><span class="pre">scipy.special</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-io-improvements"><tt class="docutils literal"><span class="pre">scipy.io</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#unformatted-fortran-file-reader">Unformatted Fortran file reader</a></li>
+<li><a class="reference internal" href="#scipy-io-wavfile-enhancements"><tt class="docutils literal"><span class="pre">scipy.io.wavfile</span></tt> enhancements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-interpolate-improvements"><tt class="docutils literal"><span class="pre">scipy.interpolate</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#b-spline-derivatives-and-antiderivatives">B-spline derivatives and antiderivatives</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-stats-improvements"><tt class="docutils literal"><span class="pre">scipy.stats</span></tt> improvements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deprecated-features">Deprecated features</a><ul>
+<li><a class="reference internal" href="#expm2-and-expm3"><tt class="docutils literal"><span class="pre">expm2</span></tt> and <tt class="docutils literal"><span class="pre">expm3</span></tt></a></li>
+<li><a class="reference internal" href="#scipy-stats-functions"><tt class="docutils literal"><span class="pre">scipy.stats</span></tt> functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#backwards-incompatible-changes">Backwards incompatible changes</a><ul>
+<li><a class="reference internal" href="#lil-matrix-assignment">LIL matrix assignment</a></li>
+<li><a class="reference internal" href="#deprecated-radon-function-removed">Deprecated <tt class="docutils literal"><span class="pre">radon</span></tt> function removed</a></li>
+<li><a class="reference internal" href="#removed-deprecated-keywords-xa-and-xb-from-stats-distributions">Removed deprecated keywords <tt class="docutils literal"><span class="pre">xa</span></tt> and <tt class="docutils literal"><span class="pre">xb</span></tt> from <tt class="docutils literal"><span class="pre">stats.distributions</span></tt></a></li>
+<li><a class="reference internal" href="#changes-to-matlab-file-readers-writers">Changes to MATLAB file readers / writers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-changes">Other changes</a></li>
+<li><a class="reference internal" href="#authors">Authors</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="release.html"
+                        title="previous chapter">Release Notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="release.0.12.0.html"
+                        title="next chapter">SciPy 0.12.0 Release Notes</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="scipy-0-13-0-release-notes">
+<h1><a class="toc-backref" href="#id3">SciPy 0.13.0 Release Notes</a><a class="headerlink" href="#scipy-0-13-0-release-notes" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#scipy-0-13-0-release-notes" id="id3">SciPy 0.13.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#new-features" id="id4">New features</a><ul>
+<li><a class="reference internal" href="#scipy-integrate-improvements" id="id5"><tt class="docutils literal"><span class="pre">scipy.integrate</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#n-dimensional-numerical-integration" id="id6">N-dimensional numerical integration</a></li>
+<li><a class="reference internal" href="#dopri-improvements" id="id7"><tt class="docutils literal"><span class="pre">dopri*</span></tt> improvements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-linalg-improvements" id="id8"><tt class="docutils literal"><span class="pre">scipy.linalg</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#interpolative-decompositions" id="id9">Interpolative decompositions</a></li>
+<li><a class="reference internal" href="#polar-decomposition" id="id10">Polar decomposition</a></li>
+<li><a class="reference internal" href="#blas-level-3-functions" id="id11">BLAS level 3 functions</a></li>
+<li><a class="reference internal" href="#matrix-functions" id="id12">Matrix functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-optimize-improvements" id="id13"><tt class="docutils literal"><span class="pre">scipy.optimize</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#trust-region-unconstrained-minimization-algorithms" id="id14">Trust-region unconstrained minimization algorithms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-sparse-improvements" id="id15"><tt class="docutils literal"><span class="pre">scipy.sparse</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#boolean-comparisons-and-sparse-matrices" id="id16">Boolean comparisons and sparse matrices</a></li>
+<li><a class="reference internal" href="#csr-and-csc-fancy-indexing" id="id17">CSR and CSC fancy indexing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-sparse-linalg-improvements" id="id18"><tt class="docutils literal"><span class="pre">scipy.sparse.linalg</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-spatial-improvements" id="id19"><tt class="docutils literal"><span class="pre">scipy.spatial</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-signal-improvements" id="id20"><tt class="docutils literal"><span class="pre">scipy.signal</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-special-improvements" id="id21"><tt class="docutils literal"><span class="pre">scipy.special</span></tt> improvements</a></li>
+<li><a class="reference internal" href="#scipy-io-improvements" id="id22"><tt class="docutils literal"><span class="pre">scipy.io</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#unformatted-fortran-file-reader" id="id23">Unformatted Fortran file reader</a></li>
+<li><a class="reference internal" href="#scipy-io-wavfile-enhancements" id="id24"><tt class="docutils literal"><span class="pre">scipy.io.wavfile</span></tt> enhancements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-interpolate-improvements" id="id25"><tt class="docutils literal"><span class="pre">scipy.interpolate</span></tt> improvements</a><ul>
+<li><a class="reference internal" href="#b-spline-derivatives-and-antiderivatives" id="id26">B-spline derivatives and antiderivatives</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scipy-stats-improvements" id="id27"><tt class="docutils literal"><span class="pre">scipy.stats</span></tt> improvements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deprecated-features" id="id28">Deprecated features</a><ul>
+<li><a class="reference internal" href="#expm2-and-expm3" id="id29"><tt class="docutils literal"><span class="pre">expm2</span></tt> and <tt class="docutils literal"><span class="pre">expm3</span></tt></a></li>
+<li><a class="reference internal" href="#scipy-stats-functions" id="id30"><tt class="docutils literal"><span class="pre">scipy.stats</span></tt> functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#backwards-incompatible-changes" id="id31">Backwards incompatible changes</a><ul>
+<li><a class="reference internal" href="#lil-matrix-assignment" id="id32">LIL matrix assignment</a></li>
+<li><a class="reference internal" href="#deprecated-radon-function-removed" id="id33">Deprecated <tt class="docutils literal"><span class="pre">radon</span></tt> function removed</a></li>
+<li><a class="reference internal" href="#removed-deprecated-keywords-xa-and-xb-from-stats-distributions" id="id34">Removed deprecated keywords <tt class="docutils literal"><span class="pre">xa</span></tt> and <tt class="docutils literal"><span class="pre">xb</span></tt> from <tt class="docutils literal"><span class="pre">stats.distributions</span></tt></a></li>
+<li><a class="reference internal" href="#changes-to-matlab-file-readers-writers" id="id35">Changes to MATLAB file readers / writers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-changes" id="id36">Other changes</a></li>
+<li><a class="reference internal" href="#authors" id="id37">Authors</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>SciPy 0.13.0 is the culmination of 7 months of hard work. It contains
+many new features, numerous bug-fixes, improved test coverage and
+better documentation.  There have been a number of deprecations and
+API changes in this release, which are documented below.  All users
+are encouraged to upgrade to this release, as there are a large number
+of bug-fixes and optimizations.  Moreover, our development attention
+will now shift to bug-fix releases on the 0.13.x branch, and on adding
+new features on the master branch.</p>
+<p>This release requires Python 2.6, 2.7 or 3.1-3.3 and NumPy 1.5.1 or greater.
+Highlights of this release are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>support for fancy indexing and boolean comparisons with sparse matrices</li>
+<li>interpolative decompositions and matrix functions in the linalg module</li>
+<li>two new trust-region solvers for unconstrained minimization</li>
+</ul>
+</div></blockquote>
+<div class="section" id="new-features">
+<h2><a class="toc-backref" href="#id4">New features</a><a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="scipy-integrate-improvements">
+<h3><a class="toc-backref" href="#id5"><tt class="docutils literal"><span class="pre">scipy.integrate</span></tt> improvements</a><a class="headerlink" href="#scipy-integrate-improvements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="n-dimensional-numerical-integration">
+<h4><a class="toc-backref" href="#id6">N-dimensional numerical integration</a><a class="headerlink" href="#n-dimensional-numerical-integration" title="Permalink to this headline">¶</a></h4>
+<p>A new function <a class="reference internal" href="generated/scipy.integrate.nquad.html#scipy.integrate.nquad" title="scipy.integrate.nquad"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.integrate.nquad</span></tt></a>, which provides N-dimensional
+integration functionality with a more flexible interface than <tt class="docutils literal"><span class="pre">dblquad</span></tt> and
+<tt class="docutils literal"><span class="pre">tplquad</span></tt>, has been added.</p>
+</div>
+<div class="section" id="dopri-improvements">
+<h4><a class="toc-backref" href="#id7"><tt class="docutils literal"><span class="pre">dopri*</span></tt> improvements</a><a class="headerlink" href="#dopri-improvements" title="Permalink to this headline">¶</a></h4>
+<p>The intermediate results from the <tt class="docutils literal"><span class="pre">dopri</span></tt> family of ODE solvers can now be
+accessed by a <em>solout</em> callback function.</p>
+</div>
+</div>
+<div class="section" id="scipy-linalg-improvements">
+<h3><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">scipy.linalg</span></tt> improvements</a><a class="headerlink" href="#scipy-linalg-improvements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="interpolative-decompositions">
+<h4><a class="toc-backref" href="#id9">Interpolative decompositions</a><a class="headerlink" href="#interpolative-decompositions" title="Permalink to this headline">¶</a></h4>
+<p>Scipy now includes a new module <a class="reference internal" href="linalg.interpolative.html#module-scipy.linalg.interpolative" title="scipy.linalg.interpolative"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.interpolative</span></tt></a>
+containing routines for computing interpolative matrix decompositions
+(ID). This feature is based on the ID software package by
+P.G. Martinsson, V. Rokhlin, Y. Shkolnisky, and M. Tygert, previously
+adapted for Python in the PymatrixId package by K.L. Ho.</p>
+</div>
+<div class="section" id="polar-decomposition">
+<h4><a class="toc-backref" href="#id10">Polar decomposition</a><a class="headerlink" href="#polar-decomposition" title="Permalink to this headline">¶</a></h4>
+<p>A new function <a class="reference internal" href="generated/scipy.linalg.polar.html#scipy.linalg.polar" title="scipy.linalg.polar"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.polar</span></tt></a>, to compute the polar decomposition
+of a matrix, was added.</p>
+</div>
+<div class="section" id="blas-level-3-functions">
+<h4><a class="toc-backref" href="#id11">BLAS level 3 functions</a><a class="headerlink" href="#blas-level-3-functions" title="Permalink to this headline">¶</a></h4>
+<p>The BLAS functions <tt class="docutils literal"><span class="pre">symm</span></tt>, <tt class="docutils literal"><span class="pre">syrk</span></tt>, <tt class="docutils literal"><span class="pre">syr2k</span></tt>, <tt class="docutils literal"><span class="pre">hemm</span></tt>, <tt class="docutils literal"><span class="pre">herk</span></tt> and
+<tt class="docutils literal"><span class="pre">her2k</span></tt> are now wrapped in <a class="reference internal" href="linalg.html#module-scipy.linalg" title="scipy.linalg"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg</span></tt></a>.</p>
+</div>
+<div class="section" id="matrix-functions">
+<h4><a class="toc-backref" href="#id12">Matrix functions</a><a class="headerlink" href="#matrix-functions" title="Permalink to this headline">¶</a></h4>
+<p>Several matrix function algorithms have been implemented or updated following
+detailed descriptions in recent papers of Nick Higham and his co-authors.
+These include the matrix square root (<tt class="docutils literal"><span class="pre">sqrtm</span></tt>), the matrix logarithm
+(<tt class="docutils literal"><span class="pre">logm</span></tt>), the matrix exponential (<tt class="docutils literal"><span class="pre">expm</span></tt>) and its Frechet derivative
+(<tt class="docutils literal"><span class="pre">expm_frechet</span></tt>), and fractional matrix powers (<tt class="docutils literal"><span class="pre">fractional_matrix_power</span></tt>).</p>
+</div>
+</div>
+<div class="section" id="scipy-optimize-improvements">
+<h3><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">scipy.optimize</span></tt> improvements</a><a class="headerlink" href="#scipy-optimize-improvements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="trust-region-unconstrained-minimization-algorithms">
+<h4><a class="toc-backref" href="#id14">Trust-region unconstrained minimization algorithms</a><a class="headerlink" href="#trust-region-unconstrained-minimization-algorithms" title="Permalink to this headline">¶</a></h4>
+<p>The <tt class="docutils literal"><span class="pre">minimize</span></tt> function gained two trust-region solvers for unconstrained
+minimization: <tt class="docutils literal"><span class="pre">dogleg</span></tt> and <tt class="docutils literal"><span class="pre">trust-ncg</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="scipy-sparse-improvements">
+<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">scipy.sparse</span></tt> improvements</a><a class="headerlink" href="#scipy-sparse-improvements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="boolean-comparisons-and-sparse-matrices">
+<h4><a class="toc-backref" href="#id16">Boolean comparisons and sparse matrices</a><a class="headerlink" href="#boolean-comparisons-and-sparse-matrices" title="Permalink to this headline">¶</a></h4>
+<p>All sparse matrix types now support boolean data, and boolean operations.  Two
+sparse matrices <em class="xref py py-obj">A</em> and <em class="xref py py-obj">B</em> can be compared in all the expected ways <em class="xref py py-obj">A &lt; B</em>,
+<em class="xref py py-obj">A &gt;= B</em>, <em class="xref py py-obj">A != B</em>, producing similar results as dense Numpy arrays.
+Comparisons with dense matrices and scalars are also supported.</p>
+</div>
+<div class="section" id="csr-and-csc-fancy-indexing">
+<h4><a class="toc-backref" href="#id17">CSR and CSC fancy indexing</a><a class="headerlink" href="#csr-and-csc-fancy-indexing" title="Permalink to this headline">¶</a></h4>
+<p>Compressed sparse row and column sparse matrix types now support fancy indexing
+with boolean matrices, slices, and lists. So where A is a (CSC or CSR) sparse
+matrix, you can do things like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[</span><span class="n">A</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c"># since Boolean sparse matrices work</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="scipy-sparse-linalg-improvements">
+<h3><a class="toc-backref" href="#id18"><tt class="docutils literal"><span class="pre">scipy.sparse.linalg</span></tt> improvements</a><a class="headerlink" href="#scipy-sparse-linalg-improvements" title="Permalink to this headline">¶</a></h3>
+<p>The new function <tt class="docutils literal"><span class="pre">onenormest</span></tt> provides a lower bound of the 1-norm of a
+linear operator and has been implemented according to Higham and Tisseur
+(2000).  This function is not only useful for sparse matrices, but can also be
+used to estimate the norm of products or powers of dense matrices without
+explictly building the intermediate matrix.</p>
+<p>The multiplicative action of the matrix exponential of a linear operator
+(<tt class="docutils literal"><span class="pre">expm_multiply</span></tt>) has been implemented following the description in Al-Mohy
+and Higham (2011).</p>
+<p>Abstract linear operators (<a class="reference internal" href="generated/scipy.sparse.linalg.LinearOperator.html#scipy.sparse.linalg.LinearOperator" title="scipy.sparse.linalg.LinearOperator"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.sparse.linalg.LinearOperator</span></tt></a>) can now be
+multiplied, added to each other, and exponentiated, producing new linear
+operators. This enables easier construction of composite linear operations.</p>
+</div>
+<div class="section" id="scipy-spatial-improvements">
+<h3><a class="toc-backref" href="#id19"><tt class="docutils literal"><span class="pre">scipy.spatial</span></tt> improvements</a><a class="headerlink" href="#scipy-spatial-improvements" title="Permalink to this headline">¶</a></h3>
+<p>The vertices of a <em class="xref py py-obj">ConvexHull</em> can now be accessed via the <em class="xref py py-obj">vertices</em> attribute,
+which gives proper orientation in 2-D.</p>
+</div>
+<div class="section" id="scipy-signal-improvements">
+<h3><a class="toc-backref" href="#id20"><tt class="docutils literal"><span class="pre">scipy.signal</span></tt> improvements</a><a class="headerlink" href="#scipy-signal-improvements" title="Permalink to this headline">¶</a></h3>
+<p>The cosine window function <a class="reference internal" href="generated/scipy.signal.cosine.html#scipy.signal.cosine" title="scipy.signal.cosine"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.signal.cosine</span></tt></a> was added.</p>
+</div>
+<div class="section" id="scipy-special-improvements">
+<h3><a class="toc-backref" href="#id21"><tt class="docutils literal"><span class="pre">scipy.special</span></tt> improvements</a><a class="headerlink" href="#scipy-special-improvements" title="Permalink to this headline">¶</a></h3>
+<p>New functions <a class="reference internal" href="generated/scipy.special.xlogy.html#scipy.special.xlogy" title="scipy.special.xlogy"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.special.xlogy</span></tt></a> and <a class="reference internal" href="generated/scipy.special.xlog1py.html#scipy.special.xlog1py" title="scipy.special.xlog1py"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.special.xlog1py</span></tt></a> were added.
+These functions can simplify and speed up code that has to calculate
+<tt class="docutils literal"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">log(y)</span></tt> and give 0 when <tt class="docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">0</span></tt>.</p>
+</div>
+<div class="section" id="scipy-io-improvements">
+<h3><a class="toc-backref" href="#id22"><tt class="docutils literal"><span class="pre">scipy.io</span></tt> improvements</a><a class="headerlink" href="#scipy-io-improvements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="unformatted-fortran-file-reader">
+<h4><a class="toc-backref" href="#id23">Unformatted Fortran file reader</a><a class="headerlink" href="#unformatted-fortran-file-reader" title="Permalink to this headline">¶</a></h4>
+<p>The new class <a class="reference internal" href="generated/scipy.io.FortranFile.html#scipy.io.FortranFile" title="scipy.io.FortranFile"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.io.FortranFile</span></tt></a> facilitates reading unformatted
+sequential files written by Fortran code.</p>
+</div>
+<div class="section" id="scipy-io-wavfile-enhancements">
+<h4><a class="toc-backref" href="#id24"><tt class="docutils literal"><span class="pre">scipy.io.wavfile</span></tt> enhancements</a><a class="headerlink" href="#scipy-io-wavfile-enhancements" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="generated/scipy.io.wavfile.write.html#scipy.io.wavfile.write" title="scipy.io.wavfile.write"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.io.wavfile.write</span></tt></a> now accepts a file buffer. Previously it only
+accepted a filename.</p>
+<p><a class="reference internal" href="generated/scipy.io.wavfile.read.html#scipy.io.wavfile.read" title="scipy.io.wavfile.read"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.io.wavfile.read</span></tt></a> and <a class="reference internal" href="generated/scipy.io.wavfile.write.html#scipy.io.wavfile.write" title="scipy.io.wavfile.write"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.io.wavfile.write</span></tt></a> can now handle floating
+point WAV files.</p>
+</div>
+</div>
+<div class="section" id="scipy-interpolate-improvements">
+<h3><a class="toc-backref" href="#id25"><tt class="docutils literal"><span class="pre">scipy.interpolate</span></tt> improvements</a><a class="headerlink" href="#scipy-interpolate-improvements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="b-spline-derivatives-and-antiderivatives">
+<h4><a class="toc-backref" href="#id26">B-spline derivatives and antiderivatives</a><a class="headerlink" href="#b-spline-derivatives-and-antiderivatives" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="generated/scipy.interpolate.splder.html#scipy.interpolate.splder" title="scipy.interpolate.splder"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.interpolate.splder</span></tt></a> and <a class="reference internal" href="generated/scipy.interpolate.splantider.html#scipy.interpolate.splantider" title="scipy.interpolate.splantider"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.interpolate.splantider</span></tt></a> functions
+for computing B-splines that represent derivatives and antiderivatives
+of B-splines were added.  These functions are also available in the
+class-based FITPACK interface as <tt class="docutils literal"><span class="pre">UnivariateSpline.derivative</span></tt> and
+<tt class="docutils literal"><span class="pre">UnivariateSpline.antiderivative</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="scipy-stats-improvements">
+<h3><a class="toc-backref" href="#id27"><tt class="docutils literal"><span class="pre">scipy.stats</span></tt> improvements</a><a class="headerlink" href="#scipy-stats-improvements" title="Permalink to this headline">¶</a></h3>
+<p>Distributions now allow using keyword parameters in addition to
+positional parameters in all methods.</p>
+<p>The function <a class="reference internal" href="generated/scipy.stats.power_divergence.html#scipy.stats.power_divergence" title="scipy.stats.power_divergence"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.power_divergence</span></tt></a> has been added for the
+Cressie-Read power divergence statistic and goodness of fit test.
+Included in this family of statistics is the &#8220;G-test&#8221;
+(<a class="reference external" href="http://en.wikipedia.org/wiki/G-test">http://en.wikipedia.org/wiki/G-test</a>).</p>
+<p><a class="reference internal" href="generated/scipy.stats.mood.html#scipy.stats.mood" title="scipy.stats.mood"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.mood</span></tt></a> now accepts multidimensional input.</p>
+<p>An option was added to <a class="reference internal" href="generated/scipy.stats.wilcoxon.html#scipy.stats.wilcoxon" title="scipy.stats.wilcoxon"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.wilcoxon</span></tt></a> for continuity correction.</p>
+<p><a class="reference internal" href="generated/scipy.stats.chisquare.html#scipy.stats.chisquare" title="scipy.stats.chisquare"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.chisquare</span></tt></a> now has an <em class="xref py py-obj">axis</em> argument.</p>
+<p><a class="reference internal" href="generated/scipy.stats.mstats.chisquare.html#scipy.stats.mstats.chisquare" title="scipy.stats.mstats.chisquare"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.mstats.chisquare</span></tt></a> now has <em class="xref py py-obj">axis</em> and <em class="xref py py-obj">ddof</em> arguments.</p>
+</div>
+</div>
+<div class="section" id="deprecated-features">
+<h2><a class="toc-backref" href="#id28">Deprecated features</a><a class="headerlink" href="#deprecated-features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="expm2-and-expm3">
+<h3><a class="toc-backref" href="#id29"><tt class="docutils literal"><span class="pre">expm2</span></tt> and <tt class="docutils literal"><span class="pre">expm3</span></tt></a><a class="headerlink" href="#expm2-and-expm3" title="Permalink to this headline">¶</a></h3>
+<p>The matrix exponential functions <tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.expm2</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.expm3</span></tt>
+are deprecated. All users should use the numerically more robust
+<a class="reference internal" href="generated/scipy.linalg.expm.html#scipy.linalg.expm" title="scipy.linalg.expm"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.linalg.expm</span></tt></a> function instead.</p>
+</div>
+<div class="section" id="scipy-stats-functions">
+<h3><a class="toc-backref" href="#id30"><tt class="docutils literal"><span class="pre">scipy.stats</span></tt> functions</a><a class="headerlink" href="#scipy-stats-functions" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="generated/scipy.stats.oneway.html#scipy.stats.oneway" title="scipy.stats.oneway"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.oneway</span></tt></a> is deprecated; <a class="reference internal" href="generated/scipy.stats.f_oneway.html#scipy.stats.f_oneway" title="scipy.stats.f_oneway"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.f_oneway</span></tt></a> should be used
+instead.</p>
+<p><a class="reference internal" href="generated/scipy.stats.glm.html#scipy.stats.glm" title="scipy.stats.glm"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.glm</span></tt></a> is deprecated.  <a class="reference internal" href="generated/scipy.stats.ttest_ind.html#scipy.stats.ttest_ind" title="scipy.stats.ttest_ind"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.ttest_ind</span></tt></a> is an equivalent
+function; more full-featured general (and generalized) linear model
+implementations can be found in statsmodels.</p>
+<p><a class="reference internal" href="generated/scipy.stats.cmedian.html#scipy.stats.cmedian" title="scipy.stats.cmedian"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats.cmedian</span></tt></a> is deprecated; <tt class="docutils literal"><span class="pre">numpy.median</span></tt> should be used instead.</p>
+</div>
+</div>
+<div class="section" id="backwards-incompatible-changes">
+<h2><a class="toc-backref" href="#id31">Backwards incompatible changes</a><a class="headerlink" href="#backwards-incompatible-changes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="lil-matrix-assignment">
+<h3><a class="toc-backref" href="#id32">LIL matrix assignment</a><a class="headerlink" href="#lil-matrix-assignment" title="Permalink to this headline">¶</a></h3>
+<p>Assigning values to LIL matrices with two index arrays now works similarly as
+assigning into ndarrays:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+<span class="go">matrix([[ 0.,  0.,  0.],</span>
+<span class="go">        [ 0.,  1.,  0.],</span>
+<span class="go">        [ 0.,  0.,  2.]])</span>
+</pre></div>
+</div>
+<p>rather than giving the result:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span>
+<span class="go">matrix([[ 0.,  1.,  2.],</span>
+<span class="go">        [ 0.,  1.,  2.],</span>
+<span class="go">        [ 0.,  1.,  2.]])</span>
+</pre></div>
+</div>
+<p>Users relying on the previous behavior will need to revisit their code.
+The previous behavior is obtained by <a href="#id1"><span class="problematic" id="id2">``</span></a>x[numpy.ix_([0,1,2],[0,1,2])] = ...`.</p>
+</div>
+<div class="section" id="deprecated-radon-function-removed">
+<h3><a class="toc-backref" href="#id33">Deprecated <tt class="docutils literal"><span class="pre">radon</span></tt> function removed</a><a class="headerlink" href="#deprecated-radon-function-removed" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">misc.radon</span></tt> function, which was deprecated in scipy 0.11.0, has been
+removed.  Users can find a more full-featured <tt class="docutils literal"><span class="pre">radon</span></tt> function in
+scikit-image.</p>
+</div>
+<div class="section" id="removed-deprecated-keywords-xa-and-xb-from-stats-distributions">
+<h3><a class="toc-backref" href="#id34">Removed deprecated keywords <tt class="docutils literal"><span class="pre">xa</span></tt> and <tt class="docutils literal"><span class="pre">xb</span></tt> from <tt class="docutils literal"><span class="pre">stats.distributions</span></tt></a><a class="headerlink" href="#removed-deprecated-keywords-xa-and-xb-from-stats-distributions" title="Permalink to this headline">¶</a></h3>
+<p>The keywords <tt class="docutils literal"><span class="pre">xa</span></tt> and <tt class="docutils literal"><span class="pre">xb</span></tt>, which were deprecated since 0.11.0, have
+been removed from the distributions in <tt class="docutils literal"><span class="pre">scipy.stats</span></tt>.</p>
+</div>
+<div class="section" id="changes-to-matlab-file-readers-writers">
+<h3><a class="toc-backref" href="#id35">Changes to MATLAB file readers / writers</a><a class="headerlink" href="#changes-to-matlab-file-readers-writers" title="Permalink to this headline">¶</a></h3>
+<p>The major change is that 1D arrays in numpy now become row vectors (shape 1, N)
+when saved to a MATLAB 5 format file.  Previously 1D arrays saved as column
+vectors (N, 1).  This is to harmonize the behavior of writing MATLAB 4 and 5
+formats, and adapt to the defaults of numpy and MATLAB - for example
+<tt class="docutils literal"><span class="pre">np.atleast_2d</span></tt> returns 1D arrays as row vectors.</p>
+<p>Trying to save arrays of greater than 2 dimensions in MATLAB 4 format now raises
+an error instead of silently reshaping the array as 2D.</p>
+<p><tt class="docutils literal"><span class="pre">scipy.io.loadmat('afile')</span></tt> used to look for <em class="xref py py-obj">afile</em> on the Python system path
+(<tt class="docutils literal"><span class="pre">sys.path</span></tt>); now <tt class="docutils literal"><span class="pre">loadmat</span></tt> only looks in the current directory for a
+relative path filename.</p>
+</div>
+</div>
+<div class="section" id="other-changes">
+<h2><a class="toc-backref" href="#id36">Other changes</a><a class="headerlink" href="#other-changes" title="Permalink to this headline">¶</a></h2>
+<p>Security fix: <tt class="docutils literal"><span class="pre">scipy.weave</span></tt> previously used temporary directories in an
+insecure manner under certain circumstances.</p>
+<p>Cython is now required to build <em>unreleased</em> versions of scipy.
+The C files generated from Cython sources are not included in the git repo
+anymore.  They are however still shipped in source releases.</p>
+<p>The code base received a fairly large PEP8 cleanup.  A <tt class="docutils literal"><span class="pre">tox</span> <span class="pre">pep8</span></tt>
+command has been added; new code should pass this test command.</p>
+<p>Scipy cannot be compiled with gfortran 4.1 anymore (at least on RH5), likely
+due to that compiler version not supporting entry constructs well.</p>
+</div>
+<div class="section" id="authors">
+<h2><a class="toc-backref" href="#id37">Authors</a><a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<p>This release contains work by the following people (contributed at least
+one patch to this release, names in alphabetical order):</p>
+<ul class="simple">
+<li>Jorge Cañardo Alastuey +</li>
+<li>Tom Aldcroft +</li>
+<li>Max Bolingbroke +</li>
+<li>Joseph Jon Booker +</li>
+<li>François Boulogne</li>
+<li>Matthew Brett</li>
+<li>Christian Brodbeck +</li>
+<li>Per Brodtkorb +</li>
+<li>Christian Brueffer +</li>
+<li>Lars Buitinck</li>
+<li>Evgeni Burovski +</li>
+<li>Tim Cera</li>
+<li>Lawrence Chan +</li>
+<li>David Cournapeau</li>
+<li>Dražen Lučanin +</li>
+<li>Alexander J. Dunlap +</li>
+<li>endolith</li>
+<li>André Gaul +</li>
+<li>Christoph Gohlke</li>
+<li>Ralf Gommers</li>
+<li>Alex Griffing +</li>
+<li>Blake Griffith +</li>
+<li>Charles Harris</li>
+<li>Bob Helmbold +</li>
+<li>Andreas Hilboll</li>
+<li>Kat Huang +</li>
+<li>Oleksandr (Sasha) Huziy +</li>
+<li>Gert-Ludwig Ingold +</li>
+<li>Thouis (Ray) Jones</li>
+<li>Juan Luis Cano Rodríguez +</li>
+<li>Robert Kern</li>
+<li>Andreas Kloeckner +</li>
+<li>Sytse Knypstra +</li>
+<li>Gustav Larsson +</li>
+<li>Denis Laxalde</li>
+<li>Christopher Lee</li>
+<li>Tim Leslie</li>
+<li>Wendy Liu +</li>
+<li>Clemens Novak +</li>
+<li>Takuya Oshima +</li>
+<li>Josef Perktold</li>
+<li>Illia Polosukhin +</li>
+<li>Przemek Porebski +</li>
+<li>Steve Richardson +</li>
+<li>Branden Rolston +</li>
+<li>Skipper Seabold</li>
+<li>Fazlul Shahriar</li>
+<li>Leo Singer +</li>
+<li>Rohit Sivaprasad +</li>
+<li>Daniel B. Smith +</li>
+<li>Julian Taylor</li>
+<li>Louis Thibault +</li>
+<li>Tomas Tomecek +</li>
+<li>John Travers</li>
+<li>Richard Tsai +</li>
+<li>Jacob Vanderplas</li>
+<li>Patrick Varilly</li>
+<li>Pauli Virtanen</li>
+<li>Stefan van der Walt</li>
+<li>Warren Weckesser</li>
+<li>Pedro Werneck +</li>
+<li>Nils Werner +</li>
+<li>Michael Wimmer +</li>
+<li>Nathan Woods +</li>
+<li>Tony S. Yu +</li>
+</ul>
+<p>A total of 65 people contributed to this release.
+People with a &#8220;+&#8221; by their names contributed a patch for the first time.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

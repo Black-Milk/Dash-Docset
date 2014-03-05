@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>scipy.signal.periodogram — SciPy v0.13.0 Reference Guide</title>
+<link href="../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="../signal.html" rel="up" title="Signal processing (scipy.signal)"/>
+<link href="scipy.signal.welch.html" rel="next" title="scipy.signal.welch"/>
+<link href="scipy.signal.argrelextrema.html" rel="prev" title="scipy.signal.argrelextrema"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="../signal.html">Signal processing (<tt class="docutils literal"><span class="pre">scipy.signal</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="../py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="scipy.signal.welch.html" title="scipy.signal.welch">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="scipy.signal.argrelextrema.html" title="scipy.signal.argrelextrema">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.signal.argrelextrema.html" title="previous chapter">scipy.signal.argrelextrema</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.signal.welch.html" title="next chapter">scipy.signal.welch</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="scipy-signal-periodogram">
+<h1>scipy.signal.periodogram<a class="headerlink" href="#scipy-signal-periodogram" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.signal.periodogram"><a name="//apple_ref/cpp/func/scipy.signal.periodogram"></a>
+<tt class="descclassname">scipy.signal.</tt><tt class="descname">periodogram</tt><big>(</big><em>x</em>, <em>fs=1.0</em>, <em>window=None</em>, <em>nfft=None</em>, <em>detrend='constant'</em>, <em>return_onesided=True</em>, <em>scaling='density'</em>, <em>axis=-1</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/signal/spectral.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.signal.periodogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate power spectral density using a periodogram.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>x</strong> : array_like</p>
+<blockquote>
+<div><p>Time series of measurement values</p>
+</div></blockquote>
+<p><strong>fs</strong> : float, optional</p>
+<blockquote>
+<div><p>Sampling frequency of the <em class="xref py py-obj">x</em> time series in units of Hz. Defaults
+to 1.0.</p>
+</div></blockquote>
+<p><strong>window</strong> : str or tuple or array_like, optional</p>
+<blockquote>
+<div><p>Desired window to use. See <a class="reference internal" href="scipy.signal.get_window.html#scipy.signal.get_window" title="scipy.signal.get_window"><tt class="xref py py-obj docutils literal"><span class="pre">get_window</span></tt></a> for a list of windows and
+required parameters. If <em class="xref py py-obj">window</em> is an array it will be used
+directly as the window. Defaults to None; equivalent to ‘boxcar’.</p>
+</div></blockquote>
+<p><strong>nfft</strong> : int, optional</p>
+<blockquote>
+<div><p>Length of the FFT used. If None the length of <em class="xref py py-obj">x</em> will be used.</p>
+</div></blockquote>
+<p><strong>detrend</strong> : str or function, optional</p>
+<blockquote>
+<div><p>Specifies how to detrend <em class="xref py py-obj">x</em> prior to computing the spectrum. If
+<a class="reference internal" href="scipy.signal.detrend.html#scipy.signal.detrend" title="scipy.signal.detrend"><tt class="xref py py-obj docutils literal"><span class="pre">detrend</span></tt></a> is a string, it is passed as the <tt class="docutils literal"><span class="pre">type</span></tt> argument to
+<a class="reference internal" href="scipy.signal.detrend.html#scipy.signal.detrend" title="scipy.signal.detrend"><tt class="xref py py-obj docutils literal"><span class="pre">detrend</span></tt></a>. If it is a function, it should return a detrended array.
+Defaults to ‘constant’.</p>
+</div></blockquote>
+<p><strong>return_onesided</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, return a one-sided spectrum for real data. If False return
+a two-sided spectrum. Note that for complex data, a two-sided
+spectrum is always returned.</p>
+</div></blockquote>
+<p><strong>scaling</strong> : { ‘density’, ‘spectrum’ }, optional</p>
+<blockquote>
+<div><p>Selects between computing the power spectral density (‘density’)
+where <em class="xref py py-obj">Pxx</em> has units of V**2/Hz if <em class="xref py py-obj">x</em> is measured in V and computing
+the power spectrum (‘spectrum’) where <em class="xref py py-obj">Pxx</em> has units of V**2 if <em class="xref py py-obj">x</em> is
+measured in V. Defaults to ‘density’</p>
+</div></blockquote>
+<p><strong>axis</strong> : int, optional</p>
+<blockquote>
+<div><p>Axis along which the periodogram is computed; the default is over
+the last axis (i.e. <tt class="docutils literal"><span class="pre">axis=-1</span></tt>).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>f</strong> : ndarray</p>
+<blockquote>
+<div><p>Array of sample frequencies.</p>
+</div></blockquote>
+<p><strong>Pxx</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Power spectral density or power spectrum of <em class="xref py py-obj">x</em>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.signal.welch.html#scipy.signal.welch" title="scipy.signal.welch"><tt class="xref py py-obj docutils literal"><span class="pre">welch</span></tt></a></dt>
+<dd>Estimate power spectral density using Welch’s method</dd>
+<dt><a class="reference internal" href="scipy.signal.lombscargle.html#scipy.signal.lombscargle" title="scipy.signal.lombscargle"><tt class="xref py py-obj docutils literal"><span class="pre">lombscargle</span></tt></a></dt>
+<dd>Lomb-Scargle periodogram for unevenly sampled data</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.12.0.</span></p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<p>Generate a test signal, a 2 Vrms sine wave at 1234 Hz, corrupted by
+0.001 V**2/Hz of white noise sampled at 10 kHz.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fs</span> <span class="o">=</span> <span class="mf">10e3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">N</span> <span class="o">=</span> <span class="mf">1e5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">amp</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">freq</span> <span class="o">=</span> <span class="mf">1234.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">noise_power</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">fs</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">/</span> <span class="n">fs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">amp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">freq</span><span class="o">*</span><span class="n">time</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">noise_power</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compute and plot the power spectral density.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="n">Pxx_den</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">periodogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Pxx_den</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'frequency [Hz]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'PSD [V**2/Hz]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../generated/scipy-signal-periodogram-1.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/scipy-signal-periodogram-1_00_00.png" src="../_images/scipy-signal-periodogram-1_00_00.png"/>
+</div>
+<p>If we average the last half of the spectral density, to exclude the
+peak, we can recover the noise power on the signal.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Pxx_den</span><span class="p">[</span><span class="mi">256</span><span class="p">:])</span>
+<span class="go">0.0009924865443739191</span>
+</pre></div>
+</div>
+<p>Now compute and plot the power spectrum.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span> <span class="n">Pxx_spec</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">periodogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="s">'flattop'</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="s">'spectrum'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Pxx_spec</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'frequency [Hz]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Linear spectrum [V RMS]'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="../_images/scipy-signal-periodogram-1_01_00.png" src="../_images/scipy-signal-periodogram-1_01_00.png"/>
+</div>
+<p>The peak height in the power spectrum is an estimate of the RMS amplitude.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Pxx_spec</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="go">2.0077340678640727</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API - importing from Scipy &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="index.html" />
+    <link rel="next" title="Release Notes" href="release.html" />
+    <link rel="prev" title="Contributing to SciPy" href="hacking.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="index.html">SciPy v0.13.0 Reference Guide</a></li>
+	 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="release.html" title="Release Notes"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="hacking.html" title="Contributing to SciPy"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API - importing from Scipy</a><ul>
+<li><a class="reference internal" href="#guidelines-for-importing-functions-from-scipy">Guidelines for importing functions from Scipy</a></li>
+<li><a class="reference internal" href="#api-definition">API definition</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hacking.html"
+                        title="previous chapter">Contributing to SciPy</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="release.html"
+                        title="next chapter">Release Notes</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="api-importing-from-scipy">
+<h1>API - importing from Scipy<a class="headerlink" href="#api-importing-from-scipy" title="Permalink to this headline">¶</a></h1>
+<p>In Python the distinction between what is the public API of a library and what
+are private implementation details is not always clear.  Unlike in other
+languages like Java, it is possible in Python to access &#8220;private&#8221; function or
+objects.  Occasionally this may be convenient, but be aware that if you do so
+your code may break without warning in future releases.  Some widely understood
+rules for what is and isn&#8217;t public in Python are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Methods / functions / classes and module attributes whose names begin
+with a leading underscore are private.</li>
+<li>If a class name begins with a leading underscore none of its members are
+public, whether or not they begin with a leading underscore.</li>
+<li>If a module name in a package begins with a leading underscore none of
+its members are public, whether or not they begin with a leading
+underscore.</li>
+<li>If a module or package defines <tt class="docutils literal"><span class="pre">__all__</span></tt> that authoritatively defines the
+public interface.</li>
+<li>If a module or package doesn&#8217;t define <tt class="docutils literal"><span class="pre">__all__</span></tt> then all names that don&#8217;t
+start with a leading underscore are public.</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Reading the above guidelines one could draw the conclusion that every
+private module or object starts with an underscore.  This is not the
+case; the presence of underscores do mark something as private, but
+the absence of underscores do not mark something as public.</p>
+</div>
+<p>In Scipy there are modules whose names don&#8217;t start with an underscore, but that
+should be considered private.  To clarify which modules these are we define
+below what the public API is for Scipy, and give some recommendations for how
+to import modules/functions/objects from Scipy.</p>
+<div class="section" id="guidelines-for-importing-functions-from-scipy">
+<h2>Guidelines for importing functions from Scipy<a class="headerlink" href="#guidelines-for-importing-functions-from-scipy" title="Permalink to this headline">¶</a></h2>
+<p>The scipy namespace itself only contains functions imported from numpy.  These
+functions still exist for backwards compatibility, but should be imported from
+numpy directly.</p>
+<p>Everything in the namespaces of scipy submodules is public.  In general, it is
+recommended to import functions from submodule namespaces.  For example, the
+function <tt class="docutils literal"><span class="pre">curve_fit</span></tt> (defined in scipy/optimize/minpack.py) should be
+imported like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This form of importing submodules is preferred for all submodules except
+<tt class="docutils literal"><span class="pre">scipy.io</span></tt> (because <tt class="docutils literal"><span class="pre">io</span></tt> is also the name of a module in the Python
+stdlib):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span>
+<span class="kn">import</span> <span class="nn">scipy.io</span> <span class="kn">as</span> <span class="nn">spio</span>
+</pre></div>
+</div>
+<p>In some cases, the public API is one level deeper.  For example the
+<tt class="docutils literal"><span class="pre">scipy.sparse.linalg</span></tt> module is public, and the functions it contains are not
+available in the <tt class="docutils literal"><span class="pre">scipy.sparse</span></tt> namespace.  Sometimes it may result in more
+easily understandable code if functions are imported from one level deeper.
+For example, in the following it is immediately clear that <tt class="docutils literal"><span class="pre">lomax</span></tt> is a
+distribution if the second form is chosen:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># first form</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">lomax</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c"># second form</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">distributions</span>
+<span class="n">distributions</span><span class="o">.</span><span class="n">lomax</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In that case the second form can be chosen, <strong>if</strong> it is documented in the next
+section that the submodule in question is public.</p>
+</div>
+<div class="section" id="api-definition">
+<h2>API definition<a class="headerlink" href="#api-definition" title="Permalink to this headline">¶</a></h2>
+<p>Every submodule listed below is public.  That means that these submodules are
+unlikely to be renamed or changed in an incompatible way, and if that is
+necessary a deprecation warning will be raised for one Scipy release before the
+change is made.</p>
+<ul class="simple">
+<li>scipy.cluster<ul>
+<li>vq</li>
+<li>hierarchy</li>
+</ul>
+</li>
+<li>scipy.constants</li>
+<li>scipy.fftpack</li>
+<li>scipy.integrate</li>
+<li>scipy.interpolate</li>
+<li>scipy.io<ul>
+<li>arff</li>
+<li>harwell_boeing</li>
+<li>idl</li>
+<li>matlab</li>
+<li>netcdf</li>
+<li>wavfile</li>
+</ul>
+</li>
+<li>scipy.linalg<ul>
+<li>scipy.linalg.blas</li>
+<li>scipy.linalg.lapack</li>
+<li>scipy.linalg.interpolative</li>
+</ul>
+</li>
+<li>scipy.misc</li>
+<li>scipy.ndimage</li>
+<li>scipy.odr</li>
+<li>scipy.optimize</li>
+<li>scipy.signal</li>
+<li>scipy.sparse<ul>
+<li>linalg</li>
+<li>csgraph</li>
+</ul>
+</li>
+<li>scipy.spatial<ul>
+<li>distance</li>
+</ul>
+</li>
+<li>scipy.special</li>
+<li>scipy.stats<ul>
+<li>distributions</li>
+<li>mstats</li>
+</ul>
+</li>
+<li>scipy.weave</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

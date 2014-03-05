@@ -1,0 +1,366 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sparse Eigenvalue Problems with ARPACK &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="SciPy Tutorial" href="index.html" />
+    <link rel="next" title="Compressed Sparse Graph Routines scipy.sparse.csgraph" href="csgraph.html" />
+    <link rel="prev" title="Linear Algebra (scipy.linalg)" href="linalg.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="index.html" accesskey="U">SciPy Tutorial</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="csgraph.html" title="Compressed Sparse Graph Routines scipy.sparse.csgraph"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="linalg.html" title="Linear Algebra (scipy.linalg)"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sparse Eigenvalue Problems with ARPACK</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#basic-functionality">Basic Functionality</a></li>
+<li><a class="reference internal" href="#shift-invert-mode">Shift-Invert Mode</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="linalg.html"
+                        title="previous chapter">Linear Algebra (<tt class="docutils literal"><span class="pre">scipy.linalg</span></tt>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="csgraph.html"
+                        title="next chapter">Compressed Sparse Graph Routines <tt class="docutils literal"><span class="pre">scipy.sparse.csgraph</span></tt></a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="sparse-eigenvalue-problems-with-arpack">
+<h1>Sparse Eigenvalue Problems with ARPACK<a class="headerlink" href="#sparse-eigenvalue-problems-with-arpack" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>ARPACK is a Fortran package which provides routines for quickly finding a few
+eigenvalues/eigenvectors of large sparse matrices.  In order to find these
+solutions, it requires only left-multiplication by the matrix in question.
+This operation is performed through a <em>reverse-communication</em> interface.  The
+result of this structure is that ARPACK is able to find eigenvalues and
+eigenvectors of any linear function mapping a vector to a vector.</p>
+<p>All of the functionality provided in ARPACK is contained within the two
+high-level interfaces <a class="reference internal" href="../generated/scipy.sparse.linalg.eigs.html#scipy.sparse.linalg.eigs" title="scipy.sparse.linalg.eigs"><tt class="xref py py-func docutils literal"><span class="pre">scipy.sparse.linalg.eigs</span></tt></a> and
+<a class="reference internal" href="../generated/scipy.sparse.linalg.eigsh.html#scipy.sparse.linalg.eigsh" title="scipy.sparse.linalg.eigsh"><tt class="xref py py-func docutils literal"><span class="pre">scipy.sparse.linalg.eigsh</span></tt></a>.  <a class="reference internal" href="../generated/scipy.sparse.linalg.eigs.html#scipy.sparse.linalg.eigs" title="scipy.sparse.linalg.eigs"><tt class="xref py py-func docutils literal"><span class="pre">eigs</span></tt></a>
+provides interfaces to find the
+eigenvalues/vectors of real or complex nonsymmetric square matrices, while
+<a class="reference internal" href="../generated/scipy.sparse.linalg.eigsh.html#scipy.sparse.linalg.eigsh" title="scipy.sparse.linalg.eigsh"><tt class="xref py py-func docutils literal"><span class="pre">eigsh</span></tt></a> provides interfaces for real-symmetric or complex-hermitian
+matrices.</p>
+</div>
+<div class="section" id="basic-functionality">
+<h2>Basic Functionality<a class="headerlink" href="#basic-functionality" title="Permalink to this headline">¶</a></h2>
+<p>ARPACK can solve either standard eigenvalue problems of the form</p>
+<div class="math">
+<p><img src="../_images/math/0602ab12dfae381b949824a49c2aa204d4f2d76b.png" alt="A \mathbf{x} = \lambda \mathbf{x}"/></p>
+</div><p>or general eigenvalue problems of the form</p>
+<div class="math">
+<p><img src="../_images/math/7ef3f2642c7672a376e17bdb9a623e0f477b74f1.png" alt="A \mathbf{x} = \lambda M \mathbf{x}"/></p>
+</div><p>The power of ARPACK is that it can compute only a specified subset of
+eigenvalue/eigenvector pairs.  This is accomplished through the keyword
+<tt class="docutils literal"><span class="pre">which</span></tt>.  The following values of <tt class="docutils literal"><span class="pre">which</span></tt> are available:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'LM'</span></tt> : Eigenvalues with largest magnitude (<tt class="docutils literal"><span class="pre">eigs</span></tt>, <tt class="docutils literal"><span class="pre">eigsh</span></tt>),
+that is, largest eigenvalues in the euclidean norm of complex numbers.</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'SM'</span></tt> : Eigenvalues with smallest magnitude (<tt class="docutils literal"><span class="pre">eigs</span></tt>, <tt class="docutils literal"><span class="pre">eigsh</span></tt>),
+that is, smallest eigenvalues in the euclidean norm of complex numbers.</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'LR'</span></tt> : Eigenvalues with largest real part (<tt class="docutils literal"><span class="pre">eigs</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'SR'</span></tt> : Eigenvalues with smallest real part (<tt class="docutils literal"><span class="pre">eigs</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'LI'</span></tt> : Eigenvalues with largest imaginary part (<tt class="docutils literal"><span class="pre">eigs</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'SI'</span></tt> : Eigenvalues with smallest imaginary part (<tt class="docutils literal"><span class="pre">eigs</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'LA'</span></tt> : Eigenvalues with largest algebraic value (<tt class="docutils literal"><span class="pre">eigsh</span></tt>),
+that is, largest eigenvalues inclusive of any negative sign.</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'SA'</span></tt> : Eigenvalues with smallest algebraic value (<tt class="docutils literal"><span class="pre">eigsh</span></tt>),
+that is, smallest eigenvalues inclusive of any negative sign.</li>
+<li><tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'BE'</span></tt> : Eigenvalues from both ends of the spectrum (<tt class="docutils literal"><span class="pre">eigsh</span></tt>)</li>
+</ul>
+<p>Note that ARPACK is generally better at finding extremal eigenvalues: that
+is, eigenvalues with large magnitudes.  In particular, using <tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'SM'</span></tt>
+may lead to slow execution time and/or anomalous results.  A better approach
+is to use <em>shift-invert mode</em>.</p>
+</div>
+<div class="section" id="shift-invert-mode">
+<h2>Shift-Invert Mode<a class="headerlink" href="#shift-invert-mode" title="Permalink to this headline">¶</a></h2>
+<p>Shift invert mode relies on the following observation.  For the generalized
+eigenvalue problem</p>
+<div class="math">
+<p><img src="../_images/math/7ef3f2642c7672a376e17bdb9a623e0f477b74f1.png" alt="A \mathbf{x} = \lambda M \mathbf{x}"/></p>
+</div><p>it can be shown that</p>
+<div class="math">
+<p><img src="../_images/math/13967012afff012fcee83ac63a7d58df552fe326.png" alt="(A - \sigma M)^{-1} M \mathbf{x} = \nu \mathbf{x}"/></p>
+</div><p>where</p>
+<div class="math">
+<p><img src="../_images/math/afa8c55297b3493efd56e7290ada01a06ef11ea2.png" alt="\nu = \frac{1}{\lambda - \sigma}"/></p>
+</div></div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Imagine you&#8217;d like to find the smallest and largest eigenvalues and the
+corresponding eigenvectors for a large matrix.  ARPACK can handle many
+forms of input: dense matrices such as <tt class="xref py py-func docutils literal"><span class="pre">numpy.ndarray</span></tt> instances, sparse
+matrices such as <a class="reference internal" href="../generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="scipy.sparse.csr_matrix"><tt class="xref py py-func docutils literal"><span class="pre">scipy.sparse.csr_matrix</span></tt></a>, or a general linear operator
+derived from <a class="reference internal" href="../generated/scipy.sparse.linalg.LinearOperator.html#scipy.sparse.linalg.LinearOperator" title="scipy.sparse.linalg.LinearOperator"><tt class="xref py py-func docutils literal"><span class="pre">scipy.sparse.linalg.LinearOperator</span></tt></a>.  For this example, for
+simplicity, we&#8217;ll construct a symmetric, positive-definite matrix.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">eigh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">eigsh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="c">#create a symmetric matrix</span>
+</pre></div>
+</div>
+<p>We now have a symmetric matrix <tt class="docutils literal"><span class="pre">X</span></tt> with which to test the routines.  First
+compute a standard eigenvalue decomposition using <tt class="docutils literal"><span class="pre">eigh</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">evals_all</span><span class="p">,</span> <span class="n">evecs_all</span> <span class="o">=</span> <span class="n">eigh</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As the dimension of <tt class="docutils literal"><span class="pre">X</span></tt> grows, this routine becomes very slow.  Especially
+if only a few eigenvectors and eigenvalues are needed, <tt class="docutils literal"><span class="pre">ARPACK</span></tt> can be a
+better option.  First let&#8217;s compute the largest eigenvalues (<tt class="docutils literal"><span class="pre">which</span> <span class="pre">=</span> <span class="pre">'LM'</span></tt>)
+of <tt class="docutils literal"><span class="pre">X</span></tt> and compare them to the known results:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">evals_large</span><span class="p">,</span> <span class="n">evecs_large</span> <span class="o">=</span> <span class="n">eigsh</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s">&#39;LM&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_all</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+<span class="go">[ 29.1446102   30.05821805  31.19467646]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_large</span>
+<span class="go">[ 29.1446102   30.05821805  31.19467646]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">evecs_large</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">evecs_all</span><span class="p">[:,</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span>
+<span class="go">[[-1.  0.  0.]</span>
+<span class="go"> [ 0.  1.  0.]</span>
+<span class="go"> [-0.  0. -1.]]</span>
+</pre></div>
+</div>
+<p>The results are as expected.  ARPACK recovers the desired eigenvalues, and they
+match the previously known results.  Furthermore, the eigenvectors are
+orthogonal, as we&#8217;d expect.  Now let&#8217;s attempt to solve for the eigenvalues
+with smallest magnitude:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">evals_small</span><span class="p">,</span> <span class="n">evecs_small</span> <span class="o">=</span> <span class="n">eigsh</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s">&#39;SM&#39;</span><span class="p">)</span>
+<span class="go">scipy.sparse.linalg.eigen.arpack.arpack.ArpackNoConvergence:</span>
+<span class="go">ARPACK error -1: No convergence (1001 iterations, 0/3 eigenvectors converged)</span>
+</pre></div>
+</div>
+<p>Oops.  We see that as mentioned above, <tt class="docutils literal"><span class="pre">ARPACK</span></tt> is not quite as adept at
+finding small eigenvalues.  There are a few ways this problem can be
+addressed.  We could increase the tolerance (<tt class="docutils literal"><span class="pre">tol</span></tt>) to lead to faster
+convergence:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">evals_small</span><span class="p">,</span> <span class="n">evecs_small</span> <span class="o">=</span> <span class="n">eigsh</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s">&#39;SM&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1E-2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_all</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">[ 0.0003783   0.00122714  0.00715878]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_small</span>
+<span class="go">[ 0.00037831  0.00122714  0.00715881]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">evecs_small</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">evecs_all</span><span class="p">[:,:</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">[[ 0.99999999  0.00000024 -0.00000049]</span>
+<span class="go"> [-0.00000023  0.99999999  0.00000056]</span>
+<span class="go"> [ 0.00000031 -0.00000037  0.99999852]]</span>
+</pre></div>
+</div>
+<p>This works, but we lose the precision in the results.  Another option is
+to increase the maximum number of iterations (<tt class="docutils literal"><span class="pre">maxiter</span></tt>) from 1000 to 5000:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">evals_small</span><span class="p">,</span> <span class="n">evecs_small</span> <span class="o">=</span> <span class="n">eigsh</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s">&#39;SM&#39;</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_all</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">[ 0.0003783   0.00122714  0.00715878]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_small</span>
+<span class="go">[ 0.0003783   0.00122714  0.00715878]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">evecs_small</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">evecs_all</span><span class="p">[:,:</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">[[ 1.  0.  0.]</span>
+<span class="go"> [-0.  1.  0.]</span>
+<span class="go"> [ 0.  0. -1.]]</span>
+</pre></div>
+</div>
+<p>We get the results we&#8217;d hoped for, but the computation time is much longer.
+Fortunately, <tt class="docutils literal"><span class="pre">ARPACK</span></tt> contains a mode that allows quick determination of
+non-external eigenvalues: <em>shift-invert mode</em>.  As mentioned above, this
+mode involves transforming the eigenvalue problem to an equivalent problem
+with different eigenvalues.  In this case, we hope to find eigenvalues near
+zero, so we&#8217;ll choose <tt class="docutils literal"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">0</span></tt>.  The transformed eigenvalues will
+then satisfy <img class="math" src="../_images/math/57e281c7dfbc90e10c60d6d901bb59468c79a853.png" alt="\nu = 1/(\sigma - \lambda) = 1/\lambda" style="vertical-align: -4px"/>, so our
+small eigenvalues <img class="math" src="../_images/math/ce4588fd900d02afcbd260bc07f54cce49a7dc4a.png" alt="\lambda" style="vertical-align: 0px"/> become large eigenvalues <img class="math" src="../_images/math/d6a7ccf879c4a4fe694033606332cb83806db296.png" alt="\nu" style="vertical-align: 0px"/>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">evals_small</span><span class="p">,</span> <span class="n">evecs_small</span> <span class="o">=</span> <span class="n">eigsh</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s">&#39;LM&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_all</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">[ 0.0003783   0.00122714  0.00715878]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_small</span>
+<span class="go">[ 0.0003783   0.00122714  0.00715878]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">evecs_small</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">evecs_all</span><span class="p">[:,:</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">[[ 1.  0.  0.]</span>
+<span class="go"> [ 0. -1. -0.]</span>
+<span class="go"> [-0. -0.  1.]]</span>
+</pre></div>
+</div>
+<p>We get the results we were hoping for, with much less computational time.
+Note that the transformation from <img class="math" src="../_images/math/4576e0a457073a3be7270b264243b262341cb11a.png" alt="\nu \to \lambda" style="vertical-align: -1px"/> takes place
+entirely in the background.  The user need not worry about the details.</p>
+<p>The shift-invert mode provides more than just a fast way to obtain a few
+small eigenvalues.  Say you
+desire to find internal eigenvalues and eigenvectors, e.g. those nearest to
+<img class="math" src="../_images/math/05fec8ca2fe4746ec7f29ef411dbcd49522c3162.png" alt="\lambda = 1" style="vertical-align: -1px"/>.  Simply set <tt class="docutils literal"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">1</span></tt> and ARPACK takes care of
+the rest:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">evals_mid</span><span class="p">,</span> <span class="n">evecs_mid</span> <span class="o">=</span> <span class="n">eigsh</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s">&#39;LM&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">evals_all</span><span class="p">)))[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_all</span><span class="p">[</span><span class="n">i_sort</span><span class="p">]</span>
+<span class="go">[ 1.16577199  0.85081388  1.06642272]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">evals_mid</span>
+<span class="go">[ 0.85081388  1.06642272  1.16577199]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">evecs_mid</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">evecs_all</span><span class="p">[:,</span><span class="n">i_sort</span><span class="p">])</span>
+<span class="go">[[-0.  1.  0.]</span>
+<span class="go"> [-0. -0.  1.]</span>
+<span class="go"> [ 1.  0.  0.]]</span>
+</pre></div>
+</div>
+<p>The eigenvalues come out in a different order, but they&#8217;re all there.
+Note that the shift-invert mode requires the internal solution of a matrix
+inverse.  This is taken care of automatically by <tt class="docutils literal"><span class="pre">eigsh</span></tt> and <a class="reference internal" href="../generated/scipy.sparse.linalg.eigs.html#scipy.sparse.linalg.eigs" title="scipy.sparse.linalg.eigs"><tt class="xref py py-obj docutils literal"><span class="pre">eigs</span></tt></a>,
+but the operation can also be specified by the user.  See the docstring of
+<a class="reference internal" href="../generated/scipy.sparse.linalg.eigsh.html#scipy.sparse.linalg.eigsh" title="scipy.sparse.linalg.eigsh"><tt class="xref py py-func docutils literal"><span class="pre">scipy.sparse.linalg.eigsh</span></tt></a> and
+<a class="reference internal" href="../generated/scipy.sparse.linalg.eigs.html#scipy.sparse.linalg.eigs" title="scipy.sparse.linalg.eigs"><tt class="xref py py-func docutils literal"><span class="pre">scipy.sparse.linalg.eigs</span></tt></a> for details.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><a class="reference external" href="http://www.caam.rice.edu/software/ARPACK/">http://www.caam.rice.edu/software/ARPACK/</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

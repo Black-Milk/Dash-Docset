@@ -1,0 +1,1004 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Reshaping and Pivot Tables &mdash; pandas 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pandas 0.13.1 documentation" href="index.html" />
+    <link rel="next" title="Time Series / Date functionality" href="timeseries.html" />
+    <link rel="prev" title="Merge, join, and concatenate" href="merging.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="timeseries.html" title="Time Series / Date functionality"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="merging.html" title="Merge, join, and concatenate"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="content-wrapper">
+    <div class="content">
+        <div class="document">
+            <div class="sphinxsidebar">
+                <h3>Table Of Contents</h3>
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="whatsnew.html">What&#8217;s New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Package overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10min.html">10 Minutes to Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dsintro.html">Intro to Data Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Essential Basic Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indexing.html">Indexing and Selecting Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="computation.html">Computational tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="missing_data.html">Working with missing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="groupby.html">Group By: split-apply-combine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merging.html">Merge, join, and concatenate</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Reshaping and Pivot Tables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reshaping-by-pivoting-dataframe-objects">Reshaping by pivoting DataFrame objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reshaping-by-stacking-and-unstacking">Reshaping by stacking and unstacking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reshaping-by-melt">Reshaping by Melt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#combining-with-stats-and-groupby">Combining with stats and GroupBy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pivot-tables-and-cross-tabulations">Pivot tables and cross-tabulations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cross-tabulations">Cross tabulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-margins-partial-aggregates">Adding margins (partial aggregates)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tiling">Tiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#computing-indicator-dummy-variables">Computing indicator / dummy variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#factorizing-values">Factorizing values</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Time Series / Date functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Plotting with matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rplot.html">Trellis plotting interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO Tools (Text, CSV, HDF5, ...)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remote_data.html">Remote Data Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enhancingperf.html">Enhancing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse.html">Sparse data structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gotchas.html">Caveats and Gotchas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="r_interface.html">rpy2 / R interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecosystem.html">Pandas Ecosystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_r.html">Comparison with R / R libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_sql.html">Comparison with SQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+</ul>
+
+                <h3 style="margin-top: 1.5em;">Search</h3>
+
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q" size="18"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+
+                <p>
+
+                <p>
+                    <script type="text/javascript"
+                            src="http://www.ohloh.net/p/482908/widgets/project_partner_badge.js"></script>
+                </p>
+            </div>
+             
+            <div class="documentwrapper">
+                <div class="bodywrapper">
+                    <div class="body">
+                        
+  <div class="section" id="reshaping-and-pivot-tables">
+<span id="reshaping"></span><h1>Reshaping and Pivot Tables<a class="headerlink" href="#reshaping-and-pivot-tables" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reshaping-by-pivoting-dataframe-objects">
+<h2>Reshaping by pivoting DataFrame objects<a class="headerlink" href="#reshaping-by-pivoting-dataframe-objects" title="Permalink to this headline">¶</a></h2>
+<p>Data is often stored in CSV files or databases in so-called &#8220;stacked&#8221; or
+&#8220;record&#8221; format:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1]: </span><span class="n">df</span>
+<span class="gr">Out[1]: </span>
+<span class="go">         date variable     value</span>
+<span class="go">0  2000-01-03        A  0.469112</span>
+<span class="go">1  2000-01-04        A -0.282863</span>
+<span class="go">2  2000-01-05        A -1.509059</span>
+<span class="go">3  2000-01-03        B -1.135632</span>
+<span class="go">4  2000-01-04        B  1.212112</span>
+<span class="go">5  2000-01-05        B -0.173215</span>
+<span class="go">6  2000-01-03        C  0.119209</span>
+<span class="go">7  2000-01-04        C -1.044236</span>
+<span class="go">8  2000-01-05        C -0.861849</span>
+<span class="go">9  2000-01-03        D -2.104569</span>
+<span class="go">10 2000-01-04        D -0.494929</span>
+<span class="go">11 2000-01-05        D  1.071804</span>
+
+<span class="go">[12 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>For the curious here is how the above DataFrame was created:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">pandas.util.testing</span> <span class="kn">as</span> <span class="nn">tm</span><span class="p">;</span> <span class="n">tm</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="k">def</span> <span class="nf">unpivot</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;value&#39;</span> <span class="p">:</span> <span class="n">frame</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="s">&#39;F&#39;</span><span class="p">),</span>
+            <span class="s">&#39;variable&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">N</span><span class="p">),</span>
+            <span class="s">&#39;date&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">K</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">])</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">unpivot</span><span class="p">(</span><span class="n">tm</span><span class="o">.</span><span class="n">makeTimeDataFrame</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>To select out everything for variable <tt class="docutils literal"><span class="pre">A</span></tt> we could do:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [2]: </span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;variable&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;A&#39;</span><span class="p">]</span>
+<span class="gr">Out[2]: </span>
+<span class="go">        date variable     value</span>
+<span class="go">0 2000-01-03        A  0.469112</span>
+<span class="go">1 2000-01-04        A -0.282863</span>
+<span class="go">2 2000-01-05        A -1.509059</span>
+
+<span class="go">[3 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>But suppose we wish to do time series operations with the variables. A better
+representation would be where the <tt class="docutils literal"><span class="pre">columns</span></tt> are the unique variables and an
+<tt class="docutils literal"><span class="pre">index</span></tt> of dates identifies individual observations. To reshape the data into
+this form, use the <tt class="docutils literal"><span class="pre">pivot</span></tt> function:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [3]: </span><span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s">&#39;variable&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s">&#39;value&#39;</span><span class="p">)</span>
+<span class="gr">Out[3]: </span>
+<span class="go">variable           A         B         C         D</span>
+<span class="go">date                                              </span>
+<span class="go">2000-01-03  0.469112 -1.135632  0.119209 -2.104569</span>
+<span class="go">2000-01-04 -0.282863  1.212112 -1.044236 -0.494929</span>
+<span class="go">2000-01-05 -1.509059 -0.173215 -0.861849  1.071804</span>
+
+<span class="go">[3 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>If the <tt class="docutils literal"><span class="pre">values</span></tt> argument is omitted, and the input DataFrame has more than
+one column of values which are not used as column or index inputs to <tt class="docutils literal"><span class="pre">pivot</span></tt>,
+then the resulting &#8220;pivoted&#8221; DataFrame will have <a class="reference internal" href="indexing.html#indexing-hierarchical"><em>hierarchical columns</em></a> whose topmost level indicates the respective value
+column:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [4]: </span><span class="n">df</span><span class="p">[</span><span class="s">&#39;value2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+
+<span class="gp">In [5]: </span><span class="n">pivoted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="s">&#39;variable&#39;</span><span class="p">)</span>
+
+<span class="gp">In [6]: </span><span class="n">pivoted</span>
+<span class="gr">Out[6]: </span>
+<span class="go">               value                                  value2            \</span>
+<span class="go">variable           A         B         C         D         A         B   </span>
+<span class="go">date                                                                     </span>
+<span class="go">2000-01-03  0.469112 -1.135632  0.119209 -2.104569  0.938225 -2.271265   </span>
+<span class="go">2000-01-04 -0.282863  1.212112 -1.044236 -0.494929 -0.565727  2.424224   </span>
+<span class="go">2000-01-05 -1.509059 -0.173215 -0.861849  1.071804 -3.018117 -0.346429   </span>
+
+<span class="go">                                </span>
+<span class="go">variable           C         D  </span>
+<span class="go">date                            </span>
+<span class="go">2000-01-03  0.238417 -4.209138  </span>
+<span class="go">2000-01-04 -2.088472 -0.989859  </span>
+<span class="go">2000-01-05 -1.723698  2.143608  </span>
+
+<span class="go">[3 rows x 8 columns]</span>
+</pre></div>
+</div>
+<p>You of course can then select subsets from the pivoted DataFrame:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [7]: </span><span class="n">pivoted</span><span class="p">[</span><span class="s">&#39;value2&#39;</span><span class="p">]</span>
+<span class="gr">Out[7]: </span>
+<span class="go">variable           A         B         C         D</span>
+<span class="go">date                                              </span>
+<span class="go">2000-01-03  0.938225 -2.271265  0.238417 -4.209138</span>
+<span class="go">2000-01-04 -0.565727  2.424224 -2.088472 -0.989859</span>
+<span class="go">2000-01-05 -3.018117 -0.346429 -1.723698  2.143608</span>
+
+<span class="go">[3 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>Note that this returns a view on the underlying data in the case where the data
+are homogeneously-typed.</p>
+</div>
+<div class="section" id="reshaping-by-stacking-and-unstacking">
+<span id="reshaping-stacking"></span><h2>Reshaping by stacking and unstacking<a class="headerlink" href="#reshaping-by-stacking-and-unstacking" title="Permalink to this headline">¶</a></h2>
+<p>Closely related to the <tt class="docutils literal"><span class="pre">pivot</span></tt> function are the related <tt class="docutils literal"><span class="pre">stack</span></tt> and
+<tt class="docutils literal"><span class="pre">unstack</span></tt> functions currently available on Series and DataFrame. These
+functions are designed to work together with <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> objects (see the
+section on <a class="reference internal" href="indexing.html#indexing-hierarchical"><em>hierarchical indexing</em></a>). Here are
+essentially what these functions do:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">stack</span></tt>: &#8220;pivot&#8221; a level of the (possibly hierarchical) column labels,
+returning a DataFrame with an index with a new inner-most level of row
+labels.</li>
+<li><tt class="docutils literal"><span class="pre">unstack</span></tt>: inverse operation from <tt class="docutils literal"><span class="pre">stack</span></tt>: &#8220;pivot&#8221; a level of the
+(possibly hierarchical) row index to the column axis, producing a reshaped
+DataFrame with a new inner-most level of column labels.</li>
+</ul>
+</div></blockquote>
+<p>The clearest way to explain is by example. Let&#8217;s take a prior example data set
+from the hierarchical indexing section:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [8]: </span><span class="n">tuples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[[</span><span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;baz&#39;</span><span class="p">,</span>
+<span class="gp">   ...:</span>                 <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;qux&#39;</span><span class="p">,</span> <span class="s">&#39;qux&#39;</span><span class="p">],</span>
+<span class="gp">   ...:</span>                <span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span>
+<span class="gp">   ...:</span>                 <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">]]))</span>
+<span class="gp">   ...:</span> 
+
+<span class="gp">In [9]: </span><span class="n">index</span> <span class="o">=</span> <span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">tuples</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;second&#39;</span><span class="p">])</span>
+
+<span class="gp">In [10]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">])</span>
+
+<span class="gp">In [11]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="gp">In [12]: </span><span class="n">df2</span>
+<span class="gr">Out[12]: </span>
+<span class="go">                     A         B</span>
+<span class="go">first second                    </span>
+<span class="go">bar   one     0.721555 -0.706771</span>
+<span class="go">      two    -1.039575  0.271860</span>
+<span class="go">baz   one    -0.424972  0.567020</span>
+<span class="go">      two     0.276232 -1.087401</span>
+
+<span class="go">[4 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">stack</span></tt> function &#8220;compresses&#8221; a level in the DataFrame&#8217;s columns to
+produce either:</p>
+<blockquote>
+<div><ul class="simple">
+<li>A Series, in the case of a simple column Index</li>
+<li>A DataFrame, in the case of a <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> in the columns</li>
+</ul>
+</div></blockquote>
+<p>If the columns have a <tt class="docutils literal"><span class="pre">MultiIndex</span></tt>, you can choose which level to stack. The
+stacked level becomes the new lowest level in a <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> on the columns:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [13]: </span><span class="n">stacked</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span>
+
+<span class="gp">In [14]: </span><span class="n">stacked</span>
+<span class="gr">Out[14]: </span>
+<span class="go">first  second   </span>
+<span class="go">bar    one     A    0.721555</span>
+<span class="go">               B   -0.706771</span>
+<span class="go">       two     A   -1.039575</span>
+<span class="go">               B    0.271860</span>
+<span class="go">baz    one     A   -0.424972</span>
+<span class="go">               B    0.567020</span>
+<span class="go">       two     A    0.276232</span>
+<span class="go">               B   -1.087401</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>With a &#8220;stacked&#8221; DataFrame or Series (having a <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> as the
+<tt class="docutils literal"><span class="pre">index</span></tt>), the inverse operation of <tt class="docutils literal"><span class="pre">stack</span></tt> is <tt class="docutils literal"><span class="pre">unstack</span></tt>, which by default
+unstacks the <strong>last level</strong>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [15]: </span><span class="n">stacked</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="gr">Out[15]: </span>
+<span class="go">                     A         B</span>
+<span class="go">first second                    </span>
+<span class="go">bar   one     0.721555 -0.706771</span>
+<span class="go">      two    -1.039575  0.271860</span>
+<span class="go">baz   one    -0.424972  0.567020</span>
+<span class="go">      two     0.276232 -1.087401</span>
+
+<span class="go">[4 rows x 2 columns]</span>
+
+<span class="gp">In [16]: </span><span class="n">stacked</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gr">Out[16]: </span>
+<span class="go">second        one       two</span>
+<span class="go">first                      </span>
+<span class="go">bar   A  0.721555 -1.039575</span>
+<span class="go">      B -0.706771  0.271860</span>
+<span class="go">baz   A -0.424972  0.276232</span>
+<span class="go">      B  0.567020 -1.087401</span>
+
+<span class="go">[4 rows x 2 columns]</span>
+
+<span class="gp">In [17]: </span><span class="n">stacked</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gr">Out[17]: </span>
+<span class="go">first          bar       baz</span>
+<span class="go">second                      </span>
+<span class="go">one    A  0.721555 -0.424972</span>
+<span class="go">       B -0.706771  0.567020</span>
+<span class="go">two    A -1.039575  0.276232</span>
+<span class="go">       B  0.271860 -1.087401</span>
+
+<span class="go">[4 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p id="reshaping-unstack-by-name">If the indexes have names, you can use the level names instead of specifying
+the level numbers:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [18]: </span><span class="n">stacked</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="s">&#39;second&#39;</span><span class="p">)</span>
+<span class="gr">Out[18]: </span>
+<span class="go">second        one       two</span>
+<span class="go">first                      </span>
+<span class="go">bar   A  0.721555 -1.039575</span>
+<span class="go">      B -0.706771  0.271860</span>
+<span class="go">baz   A -0.424972  0.276232</span>
+<span class="go">      B  0.567020 -1.087401</span>
+
+<span class="go">[4 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>You may also stack or unstack more than one level at a time by passing a list
+of levels, in which case the end result is as if each level in the list were
+processed individually.</p>
+<p>These functions are intelligent about handling missing data and do not expect
+each subgroup within the hierarchical index to have the same set of labels.
+They also can handle the index being unsorted (but you can make it sorted by
+calling <tt class="docutils literal"><span class="pre">sortlevel</span></tt>, of course). Here is a more complex example:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [19]: </span><span class="n">columns</span> <span class="o">=</span> <span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">([(</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;cat&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;dog&#39;</span><span class="p">),</span>
+<span class="gp">   ....:</span>                                   <span class="p">(</span><span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;cat&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;dog&#39;</span><span class="p">)],</span>
+<span class="gp">   ....:</span>                                  <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;exp&#39;</span><span class="p">,</span> <span class="s">&#39;animal&#39;</span><span class="p">])</span>
+<span class="gp">   ....:</span> 
+
+<span class="gp">In [20]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="gp">In [21]: </span><span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]]</span>
+
+<span class="gp">In [22]: </span><span class="n">df2</span>
+<span class="gr">Out[22]: </span>
+<span class="go">exp                  A         B                   A</span>
+<span class="go">animal             cat       dog       cat       dog</span>
+<span class="go">first second                                        </span>
+<span class="go">bar   one    -0.370647 -1.157892 -1.344312  0.844885</span>
+<span class="go">      two     1.075770 -0.109050  1.643563 -1.469388</span>
+<span class="go">baz   one     0.357021 -0.674600 -1.776904 -0.968914</span>
+<span class="go">foo   one    -0.013960 -0.362543 -0.006154 -0.923061</span>
+<span class="go">      two     0.895717  0.805244 -1.206412  2.565646</span>
+<span class="go">qux   two     0.410835  0.813850  0.132003 -0.827317</span>
+
+<span class="go">[6 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>As mentioned above, <tt class="docutils literal"><span class="pre">stack</span></tt> can be called with a <tt class="docutils literal"><span class="pre">level</span></tt> argument to select
+which level in the columns to stack:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [23]: </span><span class="n">df2</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="s">&#39;exp&#39;</span><span class="p">)</span>
+<span class="gr">Out[23]: </span>
+<span class="go">animal                 cat       dog</span>
+<span class="go">first second exp                    </span>
+<span class="go">bar   one    A   -0.370647  0.844885</span>
+<span class="go">             B   -1.344312 -1.157892</span>
+<span class="go">      two    A    1.075770 -1.469388</span>
+<span class="go">             B    1.643563 -0.109050</span>
+<span class="go">baz   one    A    0.357021 -0.968914</span>
+<span class="go">             B   -1.776904 -0.674600</span>
+<span class="go">foo   one    A   -0.013960 -0.923061</span>
+<span class="go">             B   -0.006154 -0.362543</span>
+<span class="go">      two    A    0.895717  2.565646</span>
+<span class="go">             B   -1.206412  0.805244</span>
+<span class="go">qux   two    A    0.410835 -0.827317</span>
+<span class="go">             B    0.132003  0.813850</span>
+
+<span class="go">[12 rows x 2 columns]</span>
+
+<span class="gp">In [24]: </span><span class="n">df2</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="s">&#39;animal&#39;</span><span class="p">)</span>
+<span class="gr">Out[24]: </span>
+<span class="go">exp                         A         B</span>
+<span class="go">first second animal                    </span>
+<span class="go">bar   one    cat    -0.370647 -1.344312</span>
+<span class="go">             dog     0.844885 -1.157892</span>
+<span class="go">      two    cat     1.075770  1.643563</span>
+<span class="go">             dog    -1.469388 -0.109050</span>
+<span class="go">baz   one    cat     0.357021 -1.776904</span>
+<span class="go">             dog    -0.968914 -0.674600</span>
+<span class="go">foo   one    cat    -0.013960 -0.006154</span>
+<span class="go">             dog    -0.923061 -0.362543</span>
+<span class="go">      two    cat     0.895717 -1.206412</span>
+<span class="go">             dog     2.565646  0.805244</span>
+<span class="go">qux   two    cat     0.410835  0.132003</span>
+<span class="go">             dog    -0.827317  0.813850</span>
+
+<span class="go">[12 rows x 2 columns]</span>
+</pre></div>
+</div>
+<p>Unstacking when the columns are a <tt class="docutils literal"><span class="pre">MultiIndex</span></tt> is also careful about doing
+the right thing:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [25]: </span><span class="n">df</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gr">Out[25]: </span>
+<span class="go">exp            A                   B                                     A  \</span>
+<span class="go">animal       cat                 dog               cat                 dog   </span>
+<span class="go">first        bar       baz       bar     baz       bar       baz       bar   </span>
+<span class="go">second                                                                       </span>
+<span class="go">one    -0.370647  0.357021 -1.157892 -0.6746 -1.344312 -1.776904  0.844885   </span>
+<span class="go">two     1.075770       NaN -0.109050     NaN  1.643563       NaN -1.469388   </span>
+
+<span class="go">exp               </span>
+<span class="go">animal            </span>
+<span class="go">first        baz  </span>
+<span class="go">second            </span>
+<span class="go">one    -0.968914  </span>
+<span class="go">two          NaN  </span>
+
+<span class="go">[2 rows x 8 columns]</span>
+
+<span class="gp">In [26]: </span><span class="n">df2</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gr">Out[26]: </span>
+<span class="go">exp            A                   B                                       A  \</span>
+<span class="go">animal       cat                 dog                 cat                 dog   </span>
+<span class="go">second       one       two       one       two       one       two       one   </span>
+<span class="go">first                                                                          </span>
+<span class="go">bar    -0.370647  1.075770 -1.157892 -0.109050 -1.344312  1.643563  0.844885   </span>
+<span class="go">baz     0.357021       NaN -0.674600       NaN -1.776904       NaN -0.968914   </span>
+<span class="go">foo    -0.013960  0.895717 -0.362543  0.805244 -0.006154 -1.206412 -0.923061   </span>
+<span class="go">qux          NaN  0.410835       NaN  0.813850       NaN  0.132003       NaN   </span>
+
+<span class="go">exp               </span>
+<span class="go">animal            </span>
+<span class="go">second       two  </span>
+<span class="go">first             </span>
+<span class="go">bar    -1.469388  </span>
+<span class="go">baz          NaN  </span>
+<span class="go">foo     2.565646  </span>
+<span class="go">qux    -0.827317  </span>
+
+<span class="go">[4 rows x 8 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reshaping-by-melt">
+<span id="reshaping-melt"></span><h2>Reshaping by Melt<a class="headerlink" href="#reshaping-by-melt" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">melt</span></tt> function found in <tt class="docutils literal"><span class="pre">pandas.core.reshape</span></tt> is useful to massage a
+DataFrame into a format where one or more columns are identifier variables,
+while all other columns, considered measured variables, are &#8220;pivoted&#8221; to the
+row axis, leaving just two non-identifier columns, &#8220;variable&#8221; and &#8220;value&#8221;. The
+names of those columns can be customized by supplying the <tt class="docutils literal"><span class="pre">var_name</span></tt> and
+<tt class="docutils literal"><span class="pre">value_name</span></tt> parameters.</p>
+<p>For instance,</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [27]: </span><span class="n">cheese</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;first&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="s">&#39;Mary&#39;</span><span class="p">],</span>
+<span class="gp">   ....:</span>                     <span class="s">&#39;last&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;Doe&#39;</span><span class="p">,</span> <span class="s">&#39;Bo&#39;</span><span class="p">],</span>
+<span class="gp">   ....:</span>                     <span class="s">&#39;height&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">5.5</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">],</span>
+<span class="gp">   ....:</span>                     <span class="s">&#39;weight&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">130</span><span class="p">,</span> <span class="mi">150</span><span class="p">]})</span>
+<span class="gp">   ....:</span> 
+
+<span class="gp">In [28]: </span><span class="n">cheese</span>
+<span class="gr">Out[28]: </span>
+<span class="go">  first  height last  weight</span>
+<span class="go">0  John     5.5  Doe     130</span>
+<span class="go">1  Mary     6.0   Bo     150</span>
+
+<span class="go">[2 rows x 4 columns]</span>
+
+<span class="gp">In [29]: </span><span class="n">melt</span><span class="p">(</span><span class="n">cheese</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;last&#39;</span><span class="p">])</span>
+<span class="gr">Out[29]: </span>
+<span class="go">  first last variable  value</span>
+<span class="go">0  John  Doe   height    5.5</span>
+<span class="go">1  Mary   Bo   height    6.0</span>
+<span class="go">2  John  Doe   weight  130.0</span>
+<span class="go">3  Mary   Bo   weight  150.0</span>
+
+<span class="go">[4 rows x 4 columns]</span>
+
+<span class="gp">In [30]: </span><span class="n">melt</span><span class="p">(</span><span class="n">cheese</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;last&#39;</span><span class="p">],</span> <span class="n">var_name</span><span class="o">=</span><span class="s">&#39;quantity&#39;</span><span class="p">)</span>
+<span class="gr">Out[30]: </span>
+<span class="go">  first last quantity  value</span>
+<span class="go">0  John  Doe   height    5.5</span>
+<span class="go">1  Mary   Bo   height    6.0</span>
+<span class="go">2  John  Doe   weight  130.0</span>
+<span class="go">3  Mary   Bo   weight  150.0</span>
+
+<span class="go">[4 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>Another way to transform is to use the <tt class="docutils literal"><span class="pre">wide_to_long</span></tt> panel data convenience function.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [31]: </span><span class="n">dft</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">&quot;A1970&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="p">:</span> <span class="s">&quot;b&quot;</span><span class="p">,</span> <span class="mi">2</span> <span class="p">:</span> <span class="s">&quot;c&quot;</span><span class="p">},</span>
+<span class="gp">   ....:</span>                     <span class="s">&quot;A1980&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="s">&quot;d&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="p">:</span> <span class="s">&quot;e&quot;</span><span class="p">,</span> <span class="mi">2</span> <span class="p">:</span> <span class="s">&quot;f&quot;</span><span class="p">},</span>
+<span class="gp">   ....:</span>                     <span class="s">&quot;B1970&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">1</span> <span class="p">:</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mi">2</span> <span class="p">:</span> <span class="o">.</span><span class="mi">7</span><span class="p">},</span>
+<span class="gp">   ....:</span>                     <span class="s">&quot;B1980&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mi">1</span> <span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mi">2</span> <span class="p">:</span> <span class="o">.</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">   ....:</span>                     <span class="s">&quot;X&quot;</span>     <span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>
+<span class="gp">   ....:</span>                    <span class="p">})</span>
+<span class="gp">   ....:</span> 
+
+<span class="gp">In [32]: </span><span class="n">dft</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dft</span><span class="o">.</span><span class="n">index</span>
+
+<span class="gp">In [33]: </span><span class="n">dft</span>
+<span class="gr">Out[33]: </span>
+<span class="go">  A1970 A1980  B1970  B1980         X  id</span>
+<span class="go">0     a     d    2.5    3.2 -0.076467   0</span>
+<span class="go">1     b     e    1.2    1.3 -1.187678   1</span>
+<span class="go">2     c     f    0.7    0.1  1.130127   2</span>
+
+<span class="go">[3 rows x 6 columns]</span>
+
+<span class="gp">In [34]: </span><span class="n">pd</span><span class="o">.</span><span class="n">wide_to_long</span><span class="p">(</span><span class="n">dft</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;A&quot;</span><span class="p">,</span> <span class="s">&quot;B&quot;</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="s">&quot;id&quot;</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="s">&quot;year&quot;</span><span class="p">)</span>
+<span class="gr">Out[34]: </span>
+<span class="go">                X  A    B</span>
+<span class="go">id year                  </span>
+<span class="go">0  1970 -0.076467  a  2.5</span>
+<span class="go">1  1970 -1.187678  b  1.2</span>
+<span class="go">2  1970  1.130127  c  0.7</span>
+<span class="go">0  1980 -0.076467  d  3.2</span>
+<span class="go">1  1980 -1.187678  e  1.3</span>
+<span class="go">2  1980  1.130127  f  0.1</span>
+
+<span class="go">[6 rows x 3 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="combining-with-stats-and-groupby">
+<h2>Combining with stats and GroupBy<a class="headerlink" href="#combining-with-stats-and-groupby" title="Permalink to this headline">¶</a></h2>
+<p>It should be no shock that combining <tt class="docutils literal"><span class="pre">pivot</span></tt> / <tt class="docutils literal"><span class="pre">stack</span></tt> / <tt class="docutils literal"><span class="pre">unstack</span></tt> with
+GroupBy and the basic Series and DataFrame statistical functions can produce
+some very expressive and fast data manipulations.</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [35]: </span><span class="n">df</span>
+<span class="gr">Out[35]: </span>
+<span class="go">exp                  A         B                   A</span>
+<span class="go">animal             cat       dog       cat       dog</span>
+<span class="go">first second                                        </span>
+<span class="go">bar   one    -0.370647 -1.157892 -1.344312  0.844885</span>
+<span class="go">      two     1.075770 -0.109050  1.643563 -1.469388</span>
+<span class="go">baz   one     0.357021 -0.674600 -1.776904 -0.968914</span>
+<span class="go">      two    -1.294524  0.413738  0.276662 -0.472035</span>
+<span class="go">foo   one    -0.013960 -0.362543 -0.006154 -0.923061</span>
+<span class="go">      two     0.895717  0.805244 -1.206412  2.565646</span>
+<span class="go">qux   one     1.431256  1.340309 -1.170299 -0.226169</span>
+<span class="go">      two     0.410835  0.813850  0.132003 -0.827317</span>
+
+<span class="go">[8 rows x 4 columns]</span>
+
+<span class="gp">In [36]: </span><span class="n">df</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="gr">Out[36]: </span>
+<span class="go">animal             cat       dog</span>
+<span class="go">first second                    </span>
+<span class="go">bar   one    -0.857479 -0.156504</span>
+<span class="go">      two     1.359666 -0.789219</span>
+<span class="go">baz   one    -0.709942 -0.821757</span>
+<span class="go">      two    -0.508931 -0.029148</span>
+<span class="go">foo   one    -0.010057 -0.642802</span>
+<span class="go">      two    -0.155347  1.685445</span>
+<span class="go">qux   one     0.130479  0.557070</span>
+<span class="go">      two     0.271419 -0.006733</span>
+
+<span class="go">[8 rows x 2 columns]</span>
+
+<span class="c"># same result, another way</span>
+<span class="gp">In [37]: </span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gr">Out[37]: </span>
+<span class="go">animal             cat       dog</span>
+<span class="go">first second                    </span>
+<span class="go">bar   one    -0.857479 -0.156504</span>
+<span class="go">      two     1.359666 -0.789219</span>
+<span class="go">baz   one    -0.709942 -0.821757</span>
+<span class="go">      two    -0.508931 -0.029148</span>
+<span class="go">foo   one    -0.010057 -0.642802</span>
+<span class="go">      two    -0.155347  1.685445</span>
+<span class="go">qux   one     0.130479  0.557070</span>
+<span class="go">      two     0.271419 -0.006733</span>
+
+<span class="go">[8 rows x 2 columns]</span>
+
+<span class="gp">In [38]: </span><span class="n">df</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gr">Out[38]: </span>
+<span class="go">exp            A         B</span>
+<span class="go">second                    </span>
+<span class="go">one     0.016301 -0.644049</span>
+<span class="go">two     0.110588  0.346200</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+
+<span class="gp">In [39]: </span><span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gr">Out[39]: </span>
+<span class="go">exp            A         B</span>
+<span class="go">animal                    </span>
+<span class="go">cat     0.311433 -0.431481</span>
+<span class="go">dog    -0.184544  0.133632</span>
+
+<span class="go">[2 rows x 2 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pivot-tables-and-cross-tabulations">
+<h2>Pivot tables and cross-tabulations<a class="headerlink" href="#pivot-tables-and-cross-tabulations" title="Permalink to this headline">¶</a></h2>
+<p id="reshaping-pivot">The function <tt class="docutils literal"><span class="pre">pandas.pivot_table</span></tt> can be used to create spreadsheet-style pivot
+tables. See the <a class="reference internal" href="cookbook.html#cookbook-pivot"><em>cookbook</em></a> for some advanced strategies</p>
+<p>It takes a number of arguments</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">data</span></tt>: A DataFrame object</li>
+<li><tt class="docutils literal"><span class="pre">values</span></tt>: a column or a list of columns to aggregate</li>
+<li><tt class="docutils literal"><span class="pre">rows</span></tt>: list of columns to group by on the table rows</li>
+<li><tt class="docutils literal"><span class="pre">cols</span></tt>: list of columns to group by on the table columns</li>
+<li><tt class="docutils literal"><span class="pre">aggfunc</span></tt>: function to use for aggregation, defaulting to <tt class="docutils literal"><span class="pre">numpy.mean</span></tt></li>
+</ul>
+<p>Consider a data set like this:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [40]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;A&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span><span class="p">,</span>
+<span class="gp">   ....:</span>                 <span class="s">&#39;B&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span>
+<span class="gp">   ....:</span>                 <span class="s">&#39;C&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span>
+<span class="gp">   ....:</span>                 <span class="s">&#39;D&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">24</span><span class="p">),</span>
+<span class="gp">   ....:</span>                 <span class="s">&#39;E&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">24</span><span class="p">)})</span>
+<span class="gp">   ....:</span> 
+
+<span class="gp">In [41]: </span><span class="n">df</span>
+<span class="gr">Out[41]: </span>
+<span class="go">        A  B    C         D         E</span>
+<span class="go">0     one  A  foo -1.436737  0.149748</span>
+<span class="go">1     one  B  foo -1.413681 -0.732339</span>
+<span class="go">2     two  C  foo  1.607920  0.687738</span>
+<span class="go">3   three  A  bar  1.024180  0.176444</span>
+<span class="go">4     one  B  bar  0.569605  0.403310</span>
+<span class="go">5     one  C  bar  0.875906 -0.154951</span>
+<span class="go">6     two  A  foo -2.211372  0.301624</span>
+<span class="go">7   three  B  foo  0.974466 -2.179861</span>
+<span class="go">8     one  C  foo -2.006747 -1.369849</span>
+<span class="go">9     one  A  bar -0.410001 -0.954208</span>
+<span class="go">10    two  B  bar -0.078638  1.462696</span>
+<span class="go">11  three  C  bar  0.545952 -1.743161</span>
+<span class="go">12    one  A  foo -1.219217 -0.826591</span>
+<span class="go">13    one  B  foo -1.226825 -0.345352</span>
+<span class="go">14    two  C  foo  0.769804  1.314232</span>
+<span class="go">      ... ..  ...       ...       ...</span>
+
+<span class="go">[24 rows x 5 columns]</span>
+</pre></div>
+</div>
+<p>We can produce pivot tables from this data very easily:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [42]: </span><span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s">&#39;D&#39;</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">])</span>
+<span class="gr">Out[42]: </span>
+<span class="go">C             bar       foo</span>
+<span class="go">A     B                    </span>
+<span class="go">one   A  0.274863 -1.327977</span>
+<span class="go">      B -0.079051 -1.320253</span>
+<span class="go">      C  0.377300 -0.832506</span>
+<span class="go">three A -0.128534       NaN</span>
+<span class="go">      B       NaN  0.835120</span>
+<span class="go">      C -0.037012       NaN</span>
+<span class="go">two   A       NaN -1.154627</span>
+<span class="go">      B -0.594487       NaN</span>
+<span class="go">      C       NaN  1.188862</span>
+
+<span class="go">[9 rows x 2 columns]</span>
+
+<span class="gp">In [43]: </span><span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s">&#39;D&#39;</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">],</span> <span class="n">aggfunc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span>
+<span class="gr">Out[43]: </span>
+<span class="go">A       one               three                 two          </span>
+<span class="go">C       bar       foo       bar       foo       bar       foo</span>
+<span class="go">B                                                            </span>
+<span class="go">A  0.549725 -2.655954 -0.257067       NaN       NaN -2.309255</span>
+<span class="go">B -0.158102 -2.640506       NaN  1.670241 -1.188974       NaN</span>
+<span class="go">C  0.754600 -1.665013 -0.074024       NaN       NaN  2.377724</span>
+
+<span class="go">[3 rows x 6 columns]</span>
+
+<span class="gp">In [44]: </span><span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;D&#39;</span><span class="p">,</span><span class="s">&#39;E&#39;</span><span class="p">],</span> <span class="n">rows</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">],</span> <span class="n">aggfunc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span>
+<span class="gr">Out[44]: </span>
+<span class="go">          D                                                           E  \</span>
+<span class="go">A       one               three                 two                 one   </span>
+<span class="go">C       bar       foo       bar       foo       bar       foo       bar   </span>
+<span class="go">B                                                                         </span>
+<span class="go">A  0.549725 -2.655954 -0.257067       NaN       NaN -2.309255 -2.190477   </span>
+<span class="go">B -0.158102 -2.640506       NaN  1.670241 -1.188974       NaN  1.399070   </span>
+<span class="go">C  0.754600 -1.665013 -0.074024       NaN       NaN  2.377724  2.241830   </span>
+
+<span class="go">                                                     </span>
+<span class="go">A               three                 two            </span>
+<span class="go">C       foo       bar       foo       bar       foo  </span>
+<span class="go">B                                                    </span>
+<span class="go">A -0.676843  0.867024       NaN       NaN  0.316495  </span>
+<span class="go">B -1.077692       NaN  1.177566  2.358867       NaN  </span>
+<span class="go">C -1.687290 -2.230762       NaN       NaN  2.001971  </span>
+
+<span class="go">[3 rows x 12 columns]</span>
+</pre></div>
+</div>
+<p>The result object is a DataFrame having potentially hierarchical indexes on the
+rows and columns. If the <tt class="docutils literal"><span class="pre">values</span></tt> column name is not given, the pivot table
+will include all of the data that can be aggregated in an additional level of
+hierarchy in the columns:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [45]: </span><span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">])</span>
+<span class="gr">Out[45]: </span>
+<span class="go">                D                   E          </span>
+<span class="go">C             bar       foo       bar       foo</span>
+<span class="go">A     B                                        </span>
+<span class="go">one   A  0.274863 -1.327977 -1.095238 -0.338421</span>
+<span class="go">      B -0.079051 -1.320253  0.699535 -0.538846</span>
+<span class="go">      C  0.377300 -0.832506  1.120915 -0.843645</span>
+<span class="go">three A -0.128534       NaN  0.433512       NaN</span>
+<span class="go">      B       NaN  0.835120       NaN  0.588783</span>
+<span class="go">      C -0.037012       NaN -1.115381       NaN</span>
+<span class="go">two   A       NaN -1.154627       NaN  0.158248</span>
+<span class="go">      B -0.594487       NaN  1.179433       NaN</span>
+<span class="go">      C       NaN  1.188862       NaN  1.000985</span>
+
+<span class="go">[9 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>You can render a nice output of the table omitting the missing values by
+calling <tt class="docutils literal"><span class="pre">to_string</span></tt> if you wish:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [46]: </span><span class="n">table</span> <span class="o">=</span> <span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;C&#39;</span><span class="p">])</span>
+
+<span class="gp">In [47]: </span><span class="k">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">na_rep</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">))</span>
+<span class="go">                D                   E          </span>
+<span class="go">C             bar       foo       bar       foo</span>
+<span class="go">A     B                                        </span>
+<span class="go">one   A  0.274863 -1.327977 -1.095238 -0.338421</span>
+<span class="go">      B -0.079051 -1.320253  0.699535 -0.538846</span>
+<span class="go">      C  0.377300 -0.832506  1.120915 -0.843645</span>
+<span class="go">three A -0.128534            0.433512          </span>
+<span class="go">      B            0.835120            0.588783</span>
+<span class="go">      C -0.037012           -1.115381          </span>
+<span class="go">two   A           -1.154627            0.158248</span>
+<span class="go">      B -0.594487            1.179433          </span>
+<span class="go">      C            1.188862            1.000985</span>
+</pre></div>
+</div>
+<p>Note that <tt class="docutils literal"><span class="pre">pivot_table</span></tt> is also available as an instance method on DataFrame.</p>
+<div class="section" id="cross-tabulations">
+<h3>Cross tabulations<a class="headerlink" href="#cross-tabulations" title="Permalink to this headline">¶</a></h3>
+<p>Use the <tt class="docutils literal"><span class="pre">crosstab</span></tt> function to compute a cross-tabulation of two (or more)
+factors. By default <tt class="docutils literal"><span class="pre">crosstab</span></tt> computes a frequency table of the factors
+unless an array of values and an aggregation function are passed.</p>
+<p>It takes a number of arguments</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">rows</span></tt>: array-like, values to group by in the rows</li>
+<li><tt class="docutils literal"><span class="pre">cols</span></tt>: array-like, values to group by in the columns</li>
+<li><tt class="docutils literal"><span class="pre">values</span></tt>: array-like, optional, array of values to aggregate according to
+the factors</li>
+<li><tt class="docutils literal"><span class="pre">aggfunc</span></tt>: function, optional, If no values array is passed, computes a
+frequency table</li>
+<li><tt class="docutils literal"><span class="pre">rownames</span></tt>: sequence, default None, must match number of row arrays passed</li>
+<li><tt class="docutils literal"><span class="pre">colnames</span></tt>: sequence, default None, if passed, must match number of column
+arrays passed</li>
+<li><tt class="docutils literal"><span class="pre">margins</span></tt>: boolean, default False, Add row/column margins (subtotals)</li>
+</ul>
+<p>Any Series passed will have their name attributes used unless row or column
+names for the cross-tabulation are specified</p>
+<p>For example:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [48]: </span><span class="n">foo</span><span class="p">,</span> <span class="n">bar</span><span class="p">,</span> <span class="n">dull</span><span class="p">,</span> <span class="n">shiny</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">two</span> <span class="o">=</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">,</span> <span class="s">&#39;dull&#39;</span><span class="p">,</span> <span class="s">&#39;shiny&#39;</span><span class="p">,</span> <span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span>
+
+<span class="gp">In [49]: </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">foo</span><span class="p">,</span> <span class="n">foo</span><span class="p">,</span> <span class="n">bar</span><span class="p">,</span> <span class="n">bar</span><span class="p">,</span> <span class="n">foo</span><span class="p">,</span> <span class="n">foo</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+<span class="gp">In [50]: </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">one</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">two</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">two</span><span class="p">,</span> <span class="n">one</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+<span class="gp">In [51]: </span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dull</span><span class="p">,</span> <span class="n">dull</span><span class="p">,</span> <span class="n">shiny</span><span class="p">,</span> <span class="n">dull</span><span class="p">,</span> <span class="n">dull</span><span class="p">,</span> <span class="n">shiny</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+<span class="gp">In [52]: </span><span class="n">crosstab</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="n">rownames</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">],</span> <span class="n">colnames</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">])</span>
+<span class="gr">Out[52]: </span>
+<span class="go">b     one          two       </span>
+<span class="go">c    dull  shiny  dull  shiny</span>
+<span class="go">a                            </span>
+<span class="go">bar     1      0     0      1</span>
+<span class="go">foo     2      1     1      0</span>
+
+<span class="go">[2 rows x 4 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-margins-partial-aggregates">
+<span id="reshaping-pivot-margins"></span><h3>Adding margins (partial aggregates)<a class="headerlink" href="#adding-margins-partial-aggregates" title="Permalink to this headline">¶</a></h3>
+<p>If you pass <tt class="docutils literal"><span class="pre">margins=True</span></tt> to <tt class="docutils literal"><span class="pre">pivot_table</span></tt>, special <tt class="docutils literal"><span class="pre">All</span></tt> columns and
+rows will be added with partial group aggregates across the categories on the
+rows and columns:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [53]: </span><span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">cols</span><span class="o">=</span><span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">)</span>
+<span class="gr">Out[53]: </span>
+<span class="go">                D                             E                    </span>
+<span class="go">C             bar       foo       All       bar       foo       All</span>
+<span class="go">A     B                                                            </span>
+<span class="go">one   A  0.968543  0.153810  1.084870  0.199447  0.690376  0.602542</span>
+<span class="go">      B  0.917338  0.132127  0.894343  0.418926  0.273641  0.771139</span>
+<span class="go">      C  0.705136  1.660627  1.254131  1.804346  0.744165  1.598848</span>
+<span class="go">three A  1.630183       NaN  1.630183  0.363548       NaN  0.363548</span>
+<span class="go">      B       NaN  0.197065  0.197065       NaN  3.915454  3.915454</span>
+<span class="go">      C  0.824435       NaN  0.824435  0.887815       NaN  0.887815</span>
+<span class="go">two   A       NaN  1.494463  1.494463       NaN  0.202765  0.202765</span>
+<span class="go">      B  0.729521       NaN  0.729521  0.400594       NaN  0.400594</span>
+<span class="go">      C       NaN  0.592638  0.592638       NaN  0.442998  0.442998</span>
+<span class="go">All      0.816058  1.294620  1.055572  1.190502  1.403041  1.249705</span>
+
+<span class="go">[10 rows x 6 columns]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="tiling">
+<span id="reshaping-tile"></span><h2>Tiling<a class="headerlink" href="#tiling" title="Permalink to this headline">¶</a></h2>
+<p id="reshaping-tile-cut">The <tt class="docutils literal"><span class="pre">cut</span></tt> function computes groupings for the values of the input array and
+is often used to transform continuous variables to discrete or categorical
+variables:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [54]: </span><span class="n">ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">60</span><span class="p">])</span>
+
+<span class="gp">In [55]: </span><span class="n">cut</span><span class="p">(</span><span class="n">ages</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gr">Out[55]: </span>
+<span class="go">   (9.95, 26.667]</span>
+<span class="go">   (9.95, 26.667]</span>
+<span class="go">   (9.95, 26.667]</span>
+<span class="go">   (9.95, 26.667]</span>
+<span class="go">   (9.95, 26.667]</span>
+<span class="go">   (9.95, 26.667]</span>
+<span class="go"> (26.667, 43.333]</span>
+<span class="go">     (43.333, 60]</span>
+<span class="go">     (43.333, 60]</span>
+<span class="go">Levels (3): Index([&#39;(9.95, 26.667]&#39;, &#39;(26.667, 43.333]&#39;, &#39;(43.333, 60]&#39;], dtype=object)</span>
+</pre></div>
+</div>
+<p>If the <tt class="docutils literal"><span class="pre">bins</span></tt> keyword is an integer, then equal-width bins are formed.
+Alternatively we can specify custom bin-edges:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [56]: </span><span class="n">cut</span><span class="p">(</span><span class="n">ages</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">70</span><span class="p">])</span>
+<span class="gr">Out[56]: </span>
+<span class="go">  (0, 18]</span>
+<span class="go">  (0, 18]</span>
+<span class="go">  (0, 18]</span>
+<span class="go">  (0, 18]</span>
+<span class="go"> (18, 35]</span>
+<span class="go"> (18, 35]</span>
+<span class="go"> (18, 35]</span>
+<span class="go"> (35, 70]</span>
+<span class="go"> (35, 70]</span>
+<span class="go">Levels (3): Index([&#39;(0, 18]&#39;, &#39;(18, 35]&#39;, &#39;(35, 70]&#39;], dtype=object)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="computing-indicator-dummy-variables">
+<span id="reshaping-dummies"></span><h2>Computing indicator / dummy variables<a class="headerlink" href="#computing-indicator-dummy-variables" title="Permalink to this headline">¶</a></h2>
+<p>To convert a categorical variable into a &#8220;dummy&#8221; or &#8220;indicator&#8221; DataFrame, for example
+a column in a DataFrame (a Series) which has <tt class="docutils literal"><span class="pre">k</span></tt> distinct values, can derive a DataFrame
+containing <tt class="docutils literal"><span class="pre">k</span></tt> columns of 1s and 0s:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [57]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span><span class="s">&#39;key&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="s">&#39;bbacab&#39;</span><span class="p">),</span> <span class="s">&#39;data1&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)})</span>
+
+<span class="gp">In [58]: </span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;key&#39;</span><span class="p">])</span>
+<span class="gr">Out[58]: </span>
+<span class="go">   a  b  c</span>
+<span class="go">0  0  1  0</span>
+<span class="go">1  0  1  0</span>
+<span class="go">2  1  0  0</span>
+<span class="go">3  0  0  1</span>
+<span class="go">4  1  0  0</span>
+<span class="go">5  0  1  0</span>
+
+<span class="go">[6 rows x 3 columns]</span>
+</pre></div>
+</div>
+<p>Sometimes it&#8217;s useful to prefix the column names, for example when merging the result
+with the original DataFrame:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [59]: </span><span class="n">dummies</span> <span class="o">=</span> <span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;key&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;key&#39;</span><span class="p">)</span>
+
+<span class="gp">In [60]: </span><span class="n">dummies</span>
+<span class="gr">Out[60]: </span>
+<span class="go">   key_a  key_b  key_c</span>
+<span class="go">0      0      1      0</span>
+<span class="go">1      0      1      0</span>
+<span class="go">2      1      0      0</span>
+<span class="go">3      0      0      1</span>
+<span class="go">4      1      0      0</span>
+<span class="go">5      0      1      0</span>
+
+<span class="go">[6 rows x 3 columns]</span>
+
+<span class="gp">In [61]: </span><span class="n">df</span><span class="p">[[</span><span class="s">&#39;data1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dummies</span><span class="p">)</span>
+<span class="gr">Out[61]: </span>
+<span class="go">   data1  key_a  key_b  key_c</span>
+<span class="go">0      0      0      1      0</span>
+<span class="go">1      1      0      1      0</span>
+<span class="go">2      2      1      0      0</span>
+<span class="go">3      3      0      0      1</span>
+<span class="go">4      4      1      0      0</span>
+<span class="go">5      5      0      1      0</span>
+
+<span class="go">[6 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>This function is often used along with discretization functions like <tt class="docutils literal"><span class="pre">cut</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [62]: </span><span class="n">values</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="gp">In [63]: </span><span class="n">values</span>
+<span class="gr">Out[63]: </span>
+<span class="go">array([-0.0822, -2.1829,  0.3804,  0.0848,  0.4324,  1.52  , -0.4937,</span>
+<span class="go">        0.6002,  0.2742,  0.1329])</span>
+
+<span class="gp">In [64]: </span><span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="gp">In [65]: </span><span class="n">get_dummies</span><span class="p">(</span><span class="n">cut</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">bins</span><span class="p">))</span>
+<span class="gr">Out[65]: </span>
+<span class="go">   (0, 0.2]  (0.2, 0.4]  (0.4, 0.6]  (0.6, 0.8]</span>
+<span class="go">0         0           0           0           0</span>
+<span class="go">1         0           0           0           0</span>
+<span class="go">2         0           1           0           0</span>
+<span class="go">3         1           0           0           0</span>
+<span class="go">4         0           0           1           0</span>
+<span class="go">5         0           0           0           0</span>
+<span class="go">6         0           0           0           0</span>
+<span class="go">7         0           0           0           1</span>
+<span class="go">8         0           1           0           0</span>
+<span class="go">9         1           0           0           0</span>
+
+<span class="go">[10 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>See also <tt class="xref py py-func docutils literal"><span class="pre">get_dummies()</span></tt>.</p>
+</div>
+<div class="section" id="factorizing-values">
+<h2>Factorizing values<a class="headerlink" href="#factorizing-values" title="Permalink to this headline">¶</a></h2>
+<p>To encode 1-d values as an enumerated type use <tt class="docutils literal"><span class="pre">factorize</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [66]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>
+
+<span class="gp">In [67]: </span><span class="n">x</span>
+<span class="gr">Out[67]: </span>
+<span class="go">0       A</span>
+<span class="go">1       A</span>
+<span class="go">2     NaN</span>
+<span class="go">3       B</span>
+<span class="go">4    3.14</span>
+<span class="go">5     inf</span>
+<span class="go">dtype: object</span>
+
+<span class="gp">In [68]: </span><span class="n">labels</span><span class="p">,</span> <span class="n">uniques</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">factorize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="gp">In [69]: </span><span class="n">labels</span>
+<span class="gr">Out[69]: </span><span class="n">array</span><span class="p">([</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">])</span>
+
+<span class="gp">In [70]: </span><span class="n">uniques</span>
+<span class="gr">Out[70]: </span><span class="n">array</span><span class="p">([</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <tt class="docutils literal"><span class="pre">factorize</span></tt> is similar to <tt class="docutils literal"><span class="pre">numpy.unique</span></tt>, but differs in its
+handling of NaN:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [71]: </span><span class="n">pd</span><span class="o">.</span><span class="n">factorize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gr">Out[71]: </span><span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mi">2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">3.14</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">))</span>
+
+<span class="gp">In [72]: </span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gr">Out[72]: </span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="n">nan</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;B&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="clearer"></div>
+        </div>
+    </div>
+</div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="timeseries.html" title="Time Series / Date functionality"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="merging.html" title="Merge, join, and concatenate"
+             >previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2014, the pandas development team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

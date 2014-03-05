@@ -1,0 +1,375 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>4. Dataset transformations &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="index.html" />
+    <link rel="up" title="&lt;no title&gt;" href="user_guide.html" />
+    <link rel="next" title="4.1. Feature extraction" href="modules/feature_extraction.html" />
+    <link rel="prev" title="3.6. Validation curves: plotting scores to evaluate models" href="modules/learning_curve.html" />
+  
+   
+       <script type="text/javascript" src="_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/data_transforms.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="index.html">
+            <img src="_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../stable/index.html">Home</a></li>
+                <li><a href="../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="tutorial/index.html">Tutorials</a></li>
+			<li><a href="user_guide.html">User guide</a></li>
+			<li><a href="modules/classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="auto_examples/index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="modules/learning_curve.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        3.6. Validation ...
+        </span>
+            <span class="hiddenrellink">
+            3.6. Validation curves: plotting scores to evaluate models
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="modules/feature_extraction.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        4.1. Feature ext...
+        </span>
+            <span class="hiddenrellink">
+            4.1. Feature extraction
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="user_guide.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        <no title>
+        </span>
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">4. Dataset transformations</a></li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <style type="text/css">
+  div.bodywrapper blockquote {
+      margin: 0 ;
+  }
+
+  div.toctree-wrapper ul {
+      margin-top: 0 ;
+      margin-bottom: 0 ;
+      padding-left: 10px ;
+  }
+
+  li.toctree-l1 {
+      padding: 0 0 0.5em 0 ;
+      list-style-type: none;
+      font-size: 150% ;
+      font-weight: bold;
+      }
+
+  li.toctree-l1 ul {
+      padding-left: 40px ;
+  }
+
+  li.toctree-l2 {
+      font-size: 70% ;
+      list-style-type: square;
+      font-weight: normal;
+      }
+
+  li.toctree-l3 {
+      font-size: 85% ;
+      list-style-type: circle;
+      font-weight: normal;
+      }
+
+</style><div class="section" id="dataset-transformations">
+<span id="data-transforms"></span><h1>4. Dataset transformations<a class="headerlink" href="#dataset-transformations" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/feature_extraction.html">4.1. Feature extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/feature_extraction.html#loading-features-from-dicts">4.1.1. Loading features from dicts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/feature_extraction.html#feature-hashing">4.1.2. Feature hashing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#implementation-details">4.1.2.1. Implementation details</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/feature_extraction.html#text-feature-extraction">4.1.3. Text feature extraction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#the-bag-of-words-representation">4.1.3.1. The Bag of Words representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#sparsity">4.1.3.2. Sparsity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#common-vectorizer-usage">4.1.3.3. Common Vectorizer usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#tfidf-term-weighting">4.1.3.4. Tf–idf term weighting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#decoding-text-files">4.1.3.5. Decoding text files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#applications-and-examples">4.1.3.6. Applications and examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#limitations-of-the-bag-of-words-representation">4.1.3.7. Limitations of the Bag of Words representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#vectorizing-a-large-text-corpus-with-the-hashing-trick">4.1.3.8. Vectorizing a large text corpus with the hashing trick</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#performing-out-of-core-scaling-with-hashingvectorizer">4.1.3.9. Performing out-of-core scaling with HashingVectorizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#customizing-the-vectorizer-classes">4.1.3.10. Customizing the vectorizer classes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/feature_extraction.html#image-feature-extraction">4.1.4. Image feature extraction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#patch-extraction">4.1.4.1. Patch extraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/feature_extraction.html#connectivity-graph-of-an-image">4.1.4.2. Connectivity graph of an image</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/preprocessing.html">4.2. Preprocessing data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/preprocessing.html#standardization-or-mean-removal-and-variance-scaling">4.2.1. Standardization, or mean removal and variance scaling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/preprocessing.html#scaling-features-to-a-range">4.2.1.1. Scaling features to a range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/preprocessing.html#centering-kernel-matrices">4.2.1.2. Centering kernel matrices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/preprocessing.html#normalization">4.2.2. Normalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/preprocessing.html#binarization">4.2.3. Binarization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/preprocessing.html#feature-binarization">4.2.3.1. Feature binarization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/preprocessing.html#encoding-categorical-features">4.2.4. Encoding categorical features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/preprocessing.html#label-preprocessing">4.2.5. Label preprocessing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/preprocessing.html#label-binarization">4.2.5.1. Label binarization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/preprocessing.html#label-encoding">4.2.5.2. Label encoding</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/preprocessing.html#imputation-of-missing-values">4.2.6. Imputation of missing values</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/kernel_approximation.html">4.3. Kernel Approximation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/kernel_approximation.html#nystroem-method-for-kernel-approximation">4.3.1. Nystroem Method for Kernel Approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/kernel_approximation.html#radial-basis-function-kernel">4.3.2. Radial Basis Function Kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/kernel_approximation.html#additive-chi-squared-kernel">4.3.3. Additive Chi Squared Kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/kernel_approximation.html#skewed-chi-squared-kernel">4.3.4. Skewed Chi Squared Kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/kernel_approximation.html#mathematical-details">4.3.5. Mathematical Details</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/random_projection.html">4.4. Random Projection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/random_projection.html#the-johnson-lindenstrauss-lemma">4.4.1. The Johnson-Lindenstrauss lemma</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/random_projection.html#gaussian-random-projection">4.4.2. Gaussian random projection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/random_projection.html#sparse-random-projection">4.4.3. Sparse random projection</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/metrics.html">4.5. Pairwise metrics, Affinities and Kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/metrics.html#cosine-similarity">4.5.1. Cosine similarity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/metrics.html#chi-squared-kernel">4.5.2. Chi Squared Kernel</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="_sources/data_transforms.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="modules/learning_curve.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="modules/feature_extraction.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,690 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Signal processing (scipy.signal) &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="index.html" />
+    <link rel="next" title="scipy.signal.convolve" href="generated/scipy.signal.convolve.html" />
+    <link rel="prev" title="scipy.optimize.show_options" href="generated/scipy.optimize.show_options.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="index.html">SciPy v0.13.0 Reference Guide</a></li>
+	 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="generated/scipy.signal.convolve.html" title="scipy.signal.convolve"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="generated/scipy.optimize.show_options.html" title="scipy.optimize.show_options"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Signal processing (<tt class="docutils literal"><span class="pre">scipy.signal</span></tt>)</a><ul>
+<li><a class="reference internal" href="#convolution">Convolution</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#b-splines">B-splines</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#filtering">Filtering</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#filter-design">Filter design</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#matlab-style-iir-filter-design">Matlab-style IIR filter design</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#continuous-time-linear-systems">Continuous-Time Linear Systems</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#discrete-time-linear-systems">Discrete-Time Linear Systems</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#lti-representations">LTI Representations</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#waveforms">Waveforms</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#window-functions">Window functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#wavelets">Wavelets</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#peak-finding">Peak finding</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#spectral-analysis">Spectral Analysis</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="generated/scipy.optimize.show_options.html"
+                        title="previous chapter">scipy.optimize.show_options</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/scipy.signal.convolve.html"
+                        title="next chapter">scipy.signal.convolve</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <span class="target" id="module-scipy.signal"></span><div class="section" id="module-scipy.signal">
+<span id="signal-processing-scipy-signal"></span><h1>Signal processing (<a class="reference internal" href="#module-scipy.signal" title="scipy.signal"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.signal</span></tt></a>)<a class="headerlink" href="#module-scipy.signal" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="convolution">
+<h2>Convolution<a class="headerlink" href="#convolution" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.convolve.html#scipy.signal.convolve" title="scipy.signal.convolve"><tt class="xref py py-obj docutils literal"><span class="pre">convolve</span></tt></a>(in1,&nbsp;in2[,&nbsp;mode])</td>
+<td>Convolve two N-dimensional arrays.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.correlate.html#scipy.signal.correlate" title="scipy.signal.correlate"><tt class="xref py py-obj docutils literal"><span class="pre">correlate</span></tt></a>(in1,&nbsp;in2[,&nbsp;mode])</td>
+<td>Cross-correlate two N-dimensional arrays.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.fftconvolve.html#scipy.signal.fftconvolve" title="scipy.signal.fftconvolve"><tt class="xref py py-obj docutils literal"><span class="pre">fftconvolve</span></tt></a>(in1,&nbsp;in2[,&nbsp;mode])</td>
+<td>Convolve two N-dimensional arrays using FFT.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.convolve2d.html#scipy.signal.convolve2d" title="scipy.signal.convolve2d"><tt class="xref py py-obj docutils literal"><span class="pre">convolve2d</span></tt></a>(in1,&nbsp;in2[,&nbsp;mode,&nbsp;boundary,&nbsp;fillvalue])</td>
+<td>Convolve two 2-dimensional arrays.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.correlate2d.html#scipy.signal.correlate2d" title="scipy.signal.correlate2d"><tt class="xref py py-obj docutils literal"><span class="pre">correlate2d</span></tt></a>(in1,&nbsp;in2[,&nbsp;mode,&nbsp;boundary,&nbsp;...])</td>
+<td>Cross-correlate two 2-dimensional arrays.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.sepfir2d.html#scipy.signal.sepfir2d" title="scipy.signal.sepfir2d"><tt class="xref py py-obj docutils literal"><span class="pre">sepfir2d</span></tt></a>((input,&nbsp;hrow,&nbsp;hcol)&nbsp;-&gt;&nbsp;output)</td>
+<td>Description:</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="b-splines">
+<h2>B-splines<a class="headerlink" href="#b-splines" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.bspline.html#scipy.signal.bspline" title="scipy.signal.bspline"><tt class="xref py py-obj docutils literal"><span class="pre">bspline</span></tt></a>(x,&nbsp;n)</td>
+<td>B-spline basis function of order n.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.cubic.html#scipy.signal.cubic" title="scipy.signal.cubic"><tt class="xref py py-obj docutils literal"><span class="pre">cubic</span></tt></a>(x)</td>
+<td>A cubic B-spline.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.quadratic.html#scipy.signal.quadratic" title="scipy.signal.quadratic"><tt class="xref py py-obj docutils literal"><span class="pre">quadratic</span></tt></a>(x)</td>
+<td>A quadratic B-spline.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.gauss_spline.html#scipy.signal.gauss_spline" title="scipy.signal.gauss_spline"><tt class="xref py py-obj docutils literal"><span class="pre">gauss_spline</span></tt></a>(x,&nbsp;n)</td>
+<td>Gaussian approximation to B-spline basis function of order n.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cspline1d.html#scipy.signal.cspline1d" title="scipy.signal.cspline1d"><tt class="xref py py-obj docutils literal"><span class="pre">cspline1d</span></tt></a>(signal[,&nbsp;lamb])</td>
+<td>Compute cubic spline coefficients for rank-1 array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.qspline1d.html#scipy.signal.qspline1d" title="scipy.signal.qspline1d"><tt class="xref py py-obj docutils literal"><span class="pre">qspline1d</span></tt></a>(signal[,&nbsp;lamb])</td>
+<td>Compute quadratic spline coefficients for rank-1 array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cspline2d.html#scipy.signal.cspline2d" title="scipy.signal.cspline2d"><tt class="xref py py-obj docutils literal"><span class="pre">cspline2d</span></tt></a>((input&nbsp;{,&nbsp;lambda,&nbsp;precision})&nbsp;-&gt;&nbsp;ck)</td>
+<td>Description:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.qspline2d.html#scipy.signal.qspline2d" title="scipy.signal.qspline2d"><tt class="xref py py-obj docutils literal"><span class="pre">qspline2d</span></tt></a>((input&nbsp;{,&nbsp;lambda,&nbsp;precision})&nbsp;-&gt;&nbsp;qk)</td>
+<td>Description:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cspline1d_eval.html#scipy.signal.cspline1d_eval" title="scipy.signal.cspline1d_eval"><tt class="xref py py-obj docutils literal"><span class="pre">cspline1d_eval</span></tt></a>(cj,&nbsp;newx[,&nbsp;dx,&nbsp;x0])</td>
+<td>Evaluate a spline at the new set of points.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.cspline1d_eval.html#scipy.signal.cspline1d_eval" title="scipy.signal.cspline1d_eval"><tt class="xref py py-obj docutils literal"><span class="pre">cspline1d_eval</span></tt></a>(cj,&nbsp;newx[,&nbsp;dx,&nbsp;x0])</td>
+<td>Evaluate a spline at the new set of points.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.spline_filter.html#scipy.signal.spline_filter" title="scipy.signal.spline_filter"><tt class="xref py py-obj docutils literal"><span class="pre">spline_filter</span></tt></a>(Iin[,&nbsp;lmbda])</td>
+<td>Smoothing spline (cubic) filtering of a rank-2 array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="filtering">
+<h2>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.order_filter.html#scipy.signal.order_filter" title="scipy.signal.order_filter"><tt class="xref py py-obj docutils literal"><span class="pre">order_filter</span></tt></a>(a,&nbsp;domain,&nbsp;rank)</td>
+<td>Perform an order filter on an N-dimensional array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.medfilt.html#scipy.signal.medfilt" title="scipy.signal.medfilt"><tt class="xref py py-obj docutils literal"><span class="pre">medfilt</span></tt></a>(volume[,&nbsp;kernel_size])</td>
+<td>Perform a median filter on an N-dimensional array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.medfilt2d.html#scipy.signal.medfilt2d" title="scipy.signal.medfilt2d"><tt class="xref py py-obj docutils literal"><span class="pre">medfilt2d</span></tt></a>(input[,&nbsp;kernel_size])</td>
+<td>Median filter a 2-dimensional array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.wiener.html#scipy.signal.wiener" title="scipy.signal.wiener"><tt class="xref py py-obj docutils literal"><span class="pre">wiener</span></tt></a>(im[,&nbsp;mysize,&nbsp;noise])</td>
+<td>Perform a Wiener filter on an N-dimensional array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.symiirorder1.html#scipy.signal.symiirorder1" title="scipy.signal.symiirorder1"><tt class="xref py py-obj docutils literal"><span class="pre">symiirorder1</span></tt></a>((input,&nbsp;c0,&nbsp;z1&nbsp;{,&nbsp;...)</td>
+<td>Implement a smoothing IIR filter with mirror-symmetric boundary conditions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.symiirorder2.html#scipy.signal.symiirorder2" title="scipy.signal.symiirorder2"><tt class="xref py py-obj docutils literal"><span class="pre">symiirorder2</span></tt></a>((input,&nbsp;r,&nbsp;omega&nbsp;{,&nbsp;...)</td>
+<td>Implement a smoothing IIR filter with mirror-symmetric boundary conditions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.lfilter.html#scipy.signal.lfilter" title="scipy.signal.lfilter"><tt class="xref py py-obj docutils literal"><span class="pre">lfilter</span></tt></a>(b,&nbsp;a,&nbsp;x[,&nbsp;axis,&nbsp;zi])</td>
+<td>Filter data along one-dimension with an IIR or FIR filter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.lfiltic.html#scipy.signal.lfiltic" title="scipy.signal.lfiltic"><tt class="xref py py-obj docutils literal"><span class="pre">lfiltic</span></tt></a>(b,&nbsp;a,&nbsp;y[,&nbsp;x])</td>
+<td>Construct initial conditions for lfilter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.lfilter_zi.html#scipy.signal.lfilter_zi" title="scipy.signal.lfilter_zi"><tt class="xref py py-obj docutils literal"><span class="pre">lfilter_zi</span></tt></a>(b,&nbsp;a)</td>
+<td>Compute an initial state <em class="xref py py-obj">zi</em> for the lfilter function that corresponds to the steady state of the step response.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.filtfilt.html#scipy.signal.filtfilt" title="scipy.signal.filtfilt"><tt class="xref py py-obj docutils literal"><span class="pre">filtfilt</span></tt></a>(b,&nbsp;a,&nbsp;x[,&nbsp;axis,&nbsp;padtype,&nbsp;padlen])</td>
+<td>A forward-backward filter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.deconvolve.html#scipy.signal.deconvolve" title="scipy.signal.deconvolve"><tt class="xref py py-obj docutils literal"><span class="pre">deconvolve</span></tt></a>(signal,&nbsp;divisor)</td>
+<td>Deconvolves <em class="xref py py-obj">divisor</em> out of <a class="reference external" href="http://docs.python.org/dev/library/signal.html#signal" title="(in Python v3.4)"><tt class="xref py py-obj docutils literal"><span class="pre">signal</span></tt></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.hilbert.html#scipy.signal.hilbert" title="scipy.signal.hilbert"><tt class="xref py py-obj docutils literal"><span class="pre">hilbert</span></tt></a>(x[,&nbsp;N,&nbsp;axis])</td>
+<td>Compute the analytic signal, using the Hilbert transform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.get_window.html#scipy.signal.get_window" title="scipy.signal.get_window"><tt class="xref py py-obj docutils literal"><span class="pre">get_window</span></tt></a>(window,&nbsp;Nx[,&nbsp;fftbins])</td>
+<td>Return a window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.decimate.html#scipy.signal.decimate" title="scipy.signal.decimate"><tt class="xref py py-obj docutils literal"><span class="pre">decimate</span></tt></a>(x,&nbsp;q[,&nbsp;n,&nbsp;ftype,&nbsp;axis])</td>
+<td>Downsample the signal by using a filter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.detrend.html#scipy.signal.detrend" title="scipy.signal.detrend"><tt class="xref py py-obj docutils literal"><span class="pre">detrend</span></tt></a>(data[,&nbsp;axis,&nbsp;type,&nbsp;bp])</td>
+<td>Remove linear trend along axis from data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.resample.html#scipy.signal.resample" title="scipy.signal.resample"><tt class="xref py py-obj docutils literal"><span class="pre">resample</span></tt></a>(x,&nbsp;num[,&nbsp;t,&nbsp;axis,&nbsp;window])</td>
+<td>Resample <em class="xref py py-obj">x</em> to <em class="xref py py-obj">num</em> samples using Fourier method along the given axis.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="filter-design">
+<h2>Filter design<a class="headerlink" href="#filter-design" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.bilinear.html#scipy.signal.bilinear" title="scipy.signal.bilinear"><tt class="xref py py-obj docutils literal"><span class="pre">bilinear</span></tt></a>(b,&nbsp;a[,&nbsp;fs])</td>
+<td>Return a digital filter from an analog one using a bilinear transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.firwin.html#scipy.signal.firwin" title="scipy.signal.firwin"><tt class="xref py py-obj docutils literal"><span class="pre">firwin</span></tt></a>(numtaps,&nbsp;cutoff[,&nbsp;width,&nbsp;window,&nbsp;...])</td>
+<td>FIR filter design using the window method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.firwin2.html#scipy.signal.firwin2" title="scipy.signal.firwin2"><tt class="xref py py-obj docutils literal"><span class="pre">firwin2</span></tt></a>(numtaps,&nbsp;freq,&nbsp;gain[,&nbsp;nfreqs,&nbsp;...])</td>
+<td>FIR filter design using the window method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.freqs.html#scipy.signal.freqs" title="scipy.signal.freqs"><tt class="xref py py-obj docutils literal"><span class="pre">freqs</span></tt></a>(b,&nbsp;a[,&nbsp;worN,&nbsp;plot])</td>
+<td>Compute frequency response of analog filter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.freqz.html#scipy.signal.freqz" title="scipy.signal.freqz"><tt class="xref py py-obj docutils literal"><span class="pre">freqz</span></tt></a>(b[,&nbsp;a,&nbsp;worN,&nbsp;whole,&nbsp;plot])</td>
+<td>Compute the frequency response of a digital filter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.iirdesign.html#scipy.signal.iirdesign" title="scipy.signal.iirdesign"><tt class="xref py py-obj docutils literal"><span class="pre">iirdesign</span></tt></a>(wp,&nbsp;ws,&nbsp;gpass,&nbsp;gstop[,&nbsp;analog,&nbsp;...])</td>
+<td>Complete IIR digital and analog filter design.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.iirfilter.html#scipy.signal.iirfilter" title="scipy.signal.iirfilter"><tt class="xref py py-obj docutils literal"><span class="pre">iirfilter</span></tt></a>(N,&nbsp;Wn[,&nbsp;rp,&nbsp;rs,&nbsp;btype,&nbsp;analog,&nbsp;...])</td>
+<td>IIR digital and analog filter design given order and critical points.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.kaiser_atten.html#scipy.signal.kaiser_atten" title="scipy.signal.kaiser_atten"><tt class="xref py py-obj docutils literal"><span class="pre">kaiser_atten</span></tt></a>(numtaps,&nbsp;width)</td>
+<td>Compute the attenuation of a Kaiser FIR filter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.kaiser_beta.html#scipy.signal.kaiser_beta" title="scipy.signal.kaiser_beta"><tt class="xref py py-obj docutils literal"><span class="pre">kaiser_beta</span></tt></a>(a)</td>
+<td>Compute the Kaiser parameter <em class="xref py py-obj">beta</em>, given the attenuation <em class="xref py py-obj">a</em>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.kaiserord.html#scipy.signal.kaiserord" title="scipy.signal.kaiserord"><tt class="xref py py-obj docutils literal"><span class="pre">kaiserord</span></tt></a>(ripple,&nbsp;width)</td>
+<td>Design a Kaiser window to limit ripple and width of transition region.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.remez.html#scipy.signal.remez" title="scipy.signal.remez"><tt class="xref py py-obj docutils literal"><span class="pre">remez</span></tt></a>(numtaps,&nbsp;bands,&nbsp;desired[,&nbsp;weight,&nbsp;Hz,&nbsp;...])</td>
+<td>Calculate the minimax optimal filter using the Remez exchange algorithm.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.unique_roots.html#scipy.signal.unique_roots" title="scipy.signal.unique_roots"><tt class="xref py py-obj docutils literal"><span class="pre">unique_roots</span></tt></a>(p[,&nbsp;tol,&nbsp;rtype])</td>
+<td>Determine unique roots and their multiplicities from a list of roots.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.residue.html#scipy.signal.residue" title="scipy.signal.residue"><tt class="xref py py-obj docutils literal"><span class="pre">residue</span></tt></a>(b,&nbsp;a[,&nbsp;tol,&nbsp;rtype])</td>
+<td>Compute partial-fraction expansion of b(s) / a(s).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.residuez.html#scipy.signal.residuez" title="scipy.signal.residuez"><tt class="xref py py-obj docutils literal"><span class="pre">residuez</span></tt></a>(b,&nbsp;a[,&nbsp;tol,&nbsp;rtype])</td>
+<td>Compute partial-fraction expansion of b(z) / a(z).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.invres.html#scipy.signal.invres" title="scipy.signal.invres"><tt class="xref py py-obj docutils literal"><span class="pre">invres</span></tt></a>(r,&nbsp;p,&nbsp;k[,&nbsp;tol,&nbsp;rtype])</td>
+<td>Compute b(s) and a(s) from partial fraction expansion: r,p,k</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="matlab-style-iir-filter-design">
+<h2>Matlab-style IIR filter design<a class="headerlink" href="#matlab-style-iir-filter-design" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.butter.html#scipy.signal.butter" title="scipy.signal.butter"><tt class="xref py py-obj docutils literal"><span class="pre">butter</span></tt></a>(N,&nbsp;Wn[,&nbsp;btype,&nbsp;analog,&nbsp;output])</td>
+<td>Butterworth digital and analog filter design.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.buttord.html#scipy.signal.buttord" title="scipy.signal.buttord"><tt class="xref py py-obj docutils literal"><span class="pre">buttord</span></tt></a>(wp,&nbsp;ws,&nbsp;gpass,&nbsp;gstop[,&nbsp;analog])</td>
+<td>Butterworth filter order selection.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cheby1.html#scipy.signal.cheby1" title="scipy.signal.cheby1"><tt class="xref py py-obj docutils literal"><span class="pre">cheby1</span></tt></a>(N,&nbsp;rp,&nbsp;Wn[,&nbsp;btype,&nbsp;analog,&nbsp;output])</td>
+<td>Chebyshev type I digital and analog filter design.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.cheb1ord.html#scipy.signal.cheb1ord" title="scipy.signal.cheb1ord"><tt class="xref py py-obj docutils literal"><span class="pre">cheb1ord</span></tt></a>(wp,&nbsp;ws,&nbsp;gpass,&nbsp;gstop[,&nbsp;analog])</td>
+<td>Chebyshev type I filter order selection.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cheby2.html#scipy.signal.cheby2" title="scipy.signal.cheby2"><tt class="xref py py-obj docutils literal"><span class="pre">cheby2</span></tt></a>(N,&nbsp;rs,&nbsp;Wn[,&nbsp;btype,&nbsp;analog,&nbsp;output])</td>
+<td>Chebyshev type II digital and analog filter design.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.cheb2ord.html#scipy.signal.cheb2ord" title="scipy.signal.cheb2ord"><tt class="xref py py-obj docutils literal"><span class="pre">cheb2ord</span></tt></a>(wp,&nbsp;ws,&nbsp;gpass,&nbsp;gstop[,&nbsp;analog])</td>
+<td>Chebyshev type II filter order selection.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.ellip.html#scipy.signal.ellip" title="scipy.signal.ellip"><tt class="xref py py-obj docutils literal"><span class="pre">ellip</span></tt></a>(N,&nbsp;rp,&nbsp;rs,&nbsp;Wn[,&nbsp;btype,&nbsp;analog,&nbsp;output])</td>
+<td>Elliptic (Cauer) digital and analog filter design.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.ellipord.html#scipy.signal.ellipord" title="scipy.signal.ellipord"><tt class="xref py py-obj docutils literal"><span class="pre">ellipord</span></tt></a>(wp,&nbsp;ws,&nbsp;gpass,&nbsp;gstop[,&nbsp;analog])</td>
+<td>Elliptic (Cauer) filter order selection.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.bessel.html#scipy.signal.bessel" title="scipy.signal.bessel"><tt class="xref py py-obj docutils literal"><span class="pre">bessel</span></tt></a>(N,&nbsp;Wn[,&nbsp;btype,&nbsp;analog,&nbsp;output])</td>
+<td>Bessel/Thomson digital and analog filter design.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="continuous-time-linear-systems">
+<h2>Continuous-Time Linear Systems<a class="headerlink" href="#continuous-time-linear-systems" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.freqresp.html#scipy.signal.freqresp" title="scipy.signal.freqresp"><tt class="xref py py-obj docutils literal"><span class="pre">freqresp</span></tt></a>(system[,&nbsp;w,&nbsp;n])</td>
+<td>Calculate the frequency response of a continuous-time system.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.lti.html#scipy.signal.lti" title="scipy.signal.lti"><tt class="xref py py-obj docutils literal"><span class="pre">lti</span></tt></a>(*args,&nbsp;**kwords)</td>
+<td>Linear Time Invariant class which simplifies representation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.lsim.html#scipy.signal.lsim" title="scipy.signal.lsim"><tt class="xref py py-obj docutils literal"><span class="pre">lsim</span></tt></a>(system,&nbsp;U,&nbsp;T[,&nbsp;X0,&nbsp;interp])</td>
+<td>Simulate output of a continuous-time linear system.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.lsim2.html#scipy.signal.lsim2" title="scipy.signal.lsim2"><tt class="xref py py-obj docutils literal"><span class="pre">lsim2</span></tt></a>(system[,&nbsp;U,&nbsp;T,&nbsp;X0])</td>
+<td>Simulate output of a continuous-time linear system, by using</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.impulse.html#scipy.signal.impulse" title="scipy.signal.impulse"><tt class="xref py py-obj docutils literal"><span class="pre">impulse</span></tt></a>(system[,&nbsp;X0,&nbsp;T,&nbsp;N])</td>
+<td>Impulse response of continuous-time system.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.impulse2.html#scipy.signal.impulse2" title="scipy.signal.impulse2"><tt class="xref py py-obj docutils literal"><span class="pre">impulse2</span></tt></a>(system[,&nbsp;X0,&nbsp;T,&nbsp;N])</td>
+<td>Impulse response of a single-input, continuous-time linear system.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.step.html#scipy.signal.step" title="scipy.signal.step"><tt class="xref py py-obj docutils literal"><span class="pre">step</span></tt></a>(system[,&nbsp;X0,&nbsp;T,&nbsp;N])</td>
+<td>Step response of continuous-time system.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.step2.html#scipy.signal.step2" title="scipy.signal.step2"><tt class="xref py py-obj docutils literal"><span class="pre">step2</span></tt></a>(system[,&nbsp;X0,&nbsp;T,&nbsp;N])</td>
+<td>Step response of continuous-time system.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.bode.html#scipy.signal.bode" title="scipy.signal.bode"><tt class="xref py py-obj docutils literal"><span class="pre">bode</span></tt></a>(system[,&nbsp;w,&nbsp;n])</td>
+<td>Calculate Bode magnitude and phase data of a continuous-time system.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="discrete-time-linear-systems">
+<h2>Discrete-Time Linear Systems<a class="headerlink" href="#discrete-time-linear-systems" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.dlsim.html#scipy.signal.dlsim" title="scipy.signal.dlsim"><tt class="xref py py-obj docutils literal"><span class="pre">dlsim</span></tt></a>(system,&nbsp;u[,&nbsp;t,&nbsp;x0])</td>
+<td>Simulate output of a discrete-time linear system.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.dimpulse.html#scipy.signal.dimpulse" title="scipy.signal.dimpulse"><tt class="xref py py-obj docutils literal"><span class="pre">dimpulse</span></tt></a>(system[,&nbsp;x0,&nbsp;t,&nbsp;n])</td>
+<td>Impulse response of discrete-time system.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.dstep.html#scipy.signal.dstep" title="scipy.signal.dstep"><tt class="xref py py-obj docutils literal"><span class="pre">dstep</span></tt></a>(system[,&nbsp;x0,&nbsp;t,&nbsp;n])</td>
+<td>Step response of discrete-time system.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="lti-representations">
+<h2>LTI Representations<a class="headerlink" href="#lti-representations" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.tf2zpk.html#scipy.signal.tf2zpk" title="scipy.signal.tf2zpk"><tt class="xref py py-obj docutils literal"><span class="pre">tf2zpk</span></tt></a>(b,&nbsp;a)</td>
+<td>Return zero, pole, gain (z,p,k) representation from a numerator, denominator representation of a linear filter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.zpk2tf.html#scipy.signal.zpk2tf" title="scipy.signal.zpk2tf"><tt class="xref py py-obj docutils literal"><span class="pre">zpk2tf</span></tt></a>(z,&nbsp;p,&nbsp;k)</td>
+<td>Return polynomial transfer function representation from zeros</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.tf2ss.html#scipy.signal.tf2ss" title="scipy.signal.tf2ss"><tt class="xref py py-obj docutils literal"><span class="pre">tf2ss</span></tt></a>(num,&nbsp;den)</td>
+<td>Transfer function to state-space representation.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.ss2tf.html#scipy.signal.ss2tf" title="scipy.signal.ss2tf"><tt class="xref py py-obj docutils literal"><span class="pre">ss2tf</span></tt></a>(A,&nbsp;B,&nbsp;C,&nbsp;D[,&nbsp;input])</td>
+<td>State-space to transfer function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.zpk2ss.html#scipy.signal.zpk2ss" title="scipy.signal.zpk2ss"><tt class="xref py py-obj docutils literal"><span class="pre">zpk2ss</span></tt></a>(z,&nbsp;p,&nbsp;k)</td>
+<td>Zero-pole-gain representation to state-space representation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.ss2zpk.html#scipy.signal.ss2zpk" title="scipy.signal.ss2zpk"><tt class="xref py py-obj docutils literal"><span class="pre">ss2zpk</span></tt></a>(A,&nbsp;B,&nbsp;C,&nbsp;D[,&nbsp;input])</td>
+<td>State-space representation to zero-pole-gain representation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cont2discrete.html#scipy.signal.cont2discrete" title="scipy.signal.cont2discrete"><tt class="xref py py-obj docutils literal"><span class="pre">cont2discrete</span></tt></a>(sys,&nbsp;dt[,&nbsp;method,&nbsp;alpha])</td>
+<td>Transform a continuous to a discrete state-space system.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="waveforms">
+<h2>Waveforms<a class="headerlink" href="#waveforms" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.chirp.html#scipy.signal.chirp" title="scipy.signal.chirp"><tt class="xref py py-obj docutils literal"><span class="pre">chirp</span></tt></a>(t,&nbsp;f0,&nbsp;t1,&nbsp;f1[,&nbsp;method,&nbsp;phi,&nbsp;vertex_zero])</td>
+<td>Frequency-swept cosine generator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.gausspulse.html#scipy.signal.gausspulse" title="scipy.signal.gausspulse"><tt class="xref py py-obj docutils literal"><span class="pre">gausspulse</span></tt></a>(t[,&nbsp;fc,&nbsp;bw,&nbsp;bwr,&nbsp;tpr,&nbsp;retquad,&nbsp;...])</td>
+<td>Return a Gaussian modulated sinusoid:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.sawtooth.html#scipy.signal.sawtooth" title="scipy.signal.sawtooth"><tt class="xref py py-obj docutils literal"><span class="pre">sawtooth</span></tt></a>(t[,&nbsp;width])</td>
+<td>Return a periodic sawtooth or triangle waveform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.square.html#scipy.signal.square" title="scipy.signal.square"><tt class="xref py py-obj docutils literal"><span class="pre">square</span></tt></a>(t[,&nbsp;duty])</td>
+<td>Return a periodic square-wave waveform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.sweep_poly.html#scipy.signal.sweep_poly" title="scipy.signal.sweep_poly"><tt class="xref py py-obj docutils literal"><span class="pre">sweep_poly</span></tt></a>(t,&nbsp;poly[,&nbsp;phi])</td>
+<td>Frequency-swept cosine generator, with a time-dependent frequency.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="window-functions">
+<h2>Window functions<a class="headerlink" href="#window-functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.get_window.html#scipy.signal.get_window" title="scipy.signal.get_window"><tt class="xref py py-obj docutils literal"><span class="pre">get_window</span></tt></a>(window,&nbsp;Nx[,&nbsp;fftbins])</td>
+<td>Return a window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.barthann.html#scipy.signal.barthann" title="scipy.signal.barthann"><tt class="xref py py-obj docutils literal"><span class="pre">barthann</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a modified Bartlett-Hann window.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.bartlett.html#scipy.signal.bartlett" title="scipy.signal.bartlett"><tt class="xref py py-obj docutils literal"><span class="pre">bartlett</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a Bartlett window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.blackman.html#scipy.signal.blackman" title="scipy.signal.blackman"><tt class="xref py py-obj docutils literal"><span class="pre">blackman</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a Blackman window.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.blackmanharris.html#scipy.signal.blackmanharris" title="scipy.signal.blackmanharris"><tt class="xref py py-obj docutils literal"><span class="pre">blackmanharris</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a minimum 4-term Blackman-Harris window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.bohman.html#scipy.signal.bohman" title="scipy.signal.bohman"><tt class="xref py py-obj docutils literal"><span class="pre">bohman</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a Bohman window.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.boxcar.html#scipy.signal.boxcar" title="scipy.signal.boxcar"><tt class="xref py py-obj docutils literal"><span class="pre">boxcar</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a boxcar or rectangular window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.chebwin.html#scipy.signal.chebwin" title="scipy.signal.chebwin"><tt class="xref py py-obj docutils literal"><span class="pre">chebwin</span></tt></a>(M,&nbsp;at[,&nbsp;sym])</td>
+<td>Return a Dolph-Chebyshev window.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cosine.html#scipy.signal.cosine" title="scipy.signal.cosine"><tt class="xref py py-obj docutils literal"><span class="pre">cosine</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a window with a simple cosine shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.flattop.html#scipy.signal.flattop" title="scipy.signal.flattop"><tt class="xref py py-obj docutils literal"><span class="pre">flattop</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a flat top window.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.gaussian.html#scipy.signal.gaussian" title="scipy.signal.gaussian"><tt class="xref py py-obj docutils literal"><span class="pre">gaussian</span></tt></a>(M,&nbsp;std[,&nbsp;sym])</td>
+<td>Return a Gaussian window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.general_gaussian.html#scipy.signal.general_gaussian" title="scipy.signal.general_gaussian"><tt class="xref py py-obj docutils literal"><span class="pre">general_gaussian</span></tt></a>(M,&nbsp;p,&nbsp;sig[,&nbsp;sym])</td>
+<td>Return a window with a generalized Gaussian shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.hamming.html#scipy.signal.hamming" title="scipy.signal.hamming"><tt class="xref py py-obj docutils literal"><span class="pre">hamming</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a Hamming window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.hann.html#scipy.signal.hann" title="scipy.signal.hann"><tt class="xref py py-obj docutils literal"><span class="pre">hann</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a Hann window.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.kaiser.html#scipy.signal.kaiser" title="scipy.signal.kaiser"><tt class="xref py py-obj docutils literal"><span class="pre">kaiser</span></tt></a>(M,&nbsp;beta[,&nbsp;sym])</td>
+<td>Return a Kaiser window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.nuttall.html#scipy.signal.nuttall" title="scipy.signal.nuttall"><tt class="xref py py-obj docutils literal"><span class="pre">nuttall</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a minimum 4-term Blackman-Harris window according to Nuttall.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.parzen.html#scipy.signal.parzen" title="scipy.signal.parzen"><tt class="xref py py-obj docutils literal"><span class="pre">parzen</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a Parzen window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.slepian.html#scipy.signal.slepian" title="scipy.signal.slepian"><tt class="xref py py-obj docutils literal"><span class="pre">slepian</span></tt></a>(M,&nbsp;width[,&nbsp;sym])</td>
+<td>Return a digital Slepian (DPSS) window.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.triang.html#scipy.signal.triang" title="scipy.signal.triang"><tt class="xref py py-obj docutils literal"><span class="pre">triang</span></tt></a>(M[,&nbsp;sym])</td>
+<td>Return a triangular window.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="wavelets">
+<h2>Wavelets<a class="headerlink" href="#wavelets" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.cascade.html#scipy.signal.cascade" title="scipy.signal.cascade"><tt class="xref py py-obj docutils literal"><span class="pre">cascade</span></tt></a>(hk[,&nbsp;J])</td>
+<td>Return (x, phi, psi) at dyadic points <tt class="docutils literal"><span class="pre">K/2**J</span></tt> from filter coefficients.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.daub.html#scipy.signal.daub" title="scipy.signal.daub"><tt class="xref py py-obj docutils literal"><span class="pre">daub</span></tt></a>(p)</td>
+<td>The coefficients for the FIR low-pass filter producing Daubechies wavelets.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.morlet.html#scipy.signal.morlet" title="scipy.signal.morlet"><tt class="xref py py-obj docutils literal"><span class="pre">morlet</span></tt></a>(M[,&nbsp;w,&nbsp;s,&nbsp;complete])</td>
+<td>Complex Morlet wavelet.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.qmf.html#scipy.signal.qmf" title="scipy.signal.qmf"><tt class="xref py py-obj docutils literal"><span class="pre">qmf</span></tt></a>(hk)</td>
+<td>Return high-pass qmf filter from low-pass</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.ricker.html#scipy.signal.ricker" title="scipy.signal.ricker"><tt class="xref py py-obj docutils literal"><span class="pre">ricker</span></tt></a>(points,&nbsp;a)</td>
+<td>Return a Ricker wavelet, also known as the &#8220;Mexican hat wavelet&#8221;.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.cwt.html#scipy.signal.cwt" title="scipy.signal.cwt"><tt class="xref py py-obj docutils literal"><span class="pre">cwt</span></tt></a>(data,&nbsp;wavelet,&nbsp;widths)</td>
+<td>Continuous wavelet transform.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="peak-finding">
+<h2>Peak finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.find_peaks_cwt.html#scipy.signal.find_peaks_cwt" title="scipy.signal.find_peaks_cwt"><tt class="xref py py-obj docutils literal"><span class="pre">find_peaks_cwt</span></tt></a>(vector,&nbsp;widths[,&nbsp;wavelet,&nbsp;...])</td>
+<td>Attempt to find the peaks in a 1-D array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.argrelmin.html#scipy.signal.argrelmin" title="scipy.signal.argrelmin"><tt class="xref py py-obj docutils literal"><span class="pre">argrelmin</span></tt></a>(data[,&nbsp;axis,&nbsp;order,&nbsp;mode])</td>
+<td>Calculate the relative minima of <em class="xref py py-obj">data</em>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.argrelmax.html#scipy.signal.argrelmax" title="scipy.signal.argrelmax"><tt class="xref py py-obj docutils literal"><span class="pre">argrelmax</span></tt></a>(data[,&nbsp;axis,&nbsp;order,&nbsp;mode])</td>
+<td>Calculate the relative maxima of <em class="xref py py-obj">data</em>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.argrelextrema.html#scipy.signal.argrelextrema" title="scipy.signal.argrelextrema"><tt class="xref py py-obj docutils literal"><span class="pre">argrelextrema</span></tt></a>(data,&nbsp;comparator[,&nbsp;axis,&nbsp;...])</td>
+<td>Calculate the relative extrema of <em class="xref py py-obj">data</em>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="spectral-analysis">
+<h2>Spectral Analysis<a class="headerlink" href="#spectral-analysis" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.periodogram.html#scipy.signal.periodogram" title="scipy.signal.periodogram"><tt class="xref py py-obj docutils literal"><span class="pre">periodogram</span></tt></a>(x[,&nbsp;fs,&nbsp;window,&nbsp;nfft,&nbsp;detrend,&nbsp;...])</td>
+<td>Estimate power spectral density using a periodogram.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.signal.welch.html#scipy.signal.welch" title="scipy.signal.welch"><tt class="xref py py-obj docutils literal"><span class="pre">welch</span></tt></a>(x[,&nbsp;fs,&nbsp;window,&nbsp;nperseg,&nbsp;noverlap,&nbsp;...])</td>
+<td>Estimate power spectral density using Welch&#8217;s method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.signal.lombscargle.html#scipy.signal.lombscargle" title="scipy.signal.lombscargle"><tt class="xref py py-obj docutils literal"><span class="pre">lombscargle</span></tt></a>(x,&nbsp;y,&nbsp;freqs)</td>
+<td>Computes the Lomb-Scargle periodogram.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

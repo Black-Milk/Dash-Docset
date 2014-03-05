@@ -1,0 +1,329 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>1.13. Linear and quadratic discriminant analysis &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="../_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="../index.html" />
+    <link rel="up" title="1. Supervised learning" href="../supervised_learning.html" />
+    <link rel="next" title="1.14. Isotonic regression" href="isotonic.html" />
+    <link rel="prev" title="1.12. Semi-Supervised" href="label_propagation.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/modules/lda_qda.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../../stable/index.html">Home</a></li>
+                <li><a href="../../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="../documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="../tutorial/index.html">Tutorials</a></li>
+			<li><a href="../user_guide.html">User guide</a></li>
+			<li><a href="classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="../documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="../_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="label_propagation.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        1.12. Semi-Super...
+        </span>
+            <span class="hiddenrellink">
+            1.12. Semi-Supervised
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="isotonic.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        1.14. Isotonic r...
+        </span>
+            <span class="hiddenrellink">
+            1.14. Isotonic regression
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="../supervised_learning.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        1. Supervised le...
+        </span>
+            <span class="hiddenrellink">
+            1. Supervised learning
+            </span>
+            
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">1.13. Linear and quadratic discriminant analysis</a><ul>
+<li><a class="reference internal" href="#dimensionality-reduction-using-lda">1.13.1. Dimensionality reduction using LDA</a></li>
+<li><a class="reference internal" href="#mathematical-idea">1.13.2. Mathematical Idea</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linear-and-quadratic-discriminant-analysis">
+<span id="lda-qda"></span><h1>1.13. Linear and quadratic discriminant analysis<a class="headerlink" href="#linear-and-quadratic-discriminant-analysis" title="Permalink to this headline">¶</a></h1>
+<p>Linear discriminant analysis (<a class="reference internal" href="generated/sklearn.lda.LDA.html#sklearn.lda.LDA" title="sklearn.lda.LDA"><tt class="xref py py-class docutils literal"><span class="pre">lda.LDA</span></tt></a>) and
+quadratic discriminant analysis (<a class="reference internal" href="generated/sklearn.qda.QDA.html#sklearn.qda.QDA" title="sklearn.qda.QDA"><tt class="xref py py-class docutils literal"><span class="pre">qda.QDA</span></tt></a>)
+are two classic classifiers, with, as their names suggest, a linear and a
+quadratic decision surface, respectively.</p>
+<p>These classifiers are attractive because they have closed-form solutions that
+can be easily computed, are inherently multiclass,
+and have proven to work well in practice.
+Also there are no parameters to tune for these algorithms.</p>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/plot_lda_qda.html"><img alt="ldaqda" src="../_images/plot_lda_qda_11.png" style="width: 640.0px; height: 480.0px;" /></a>
+</strong></p><p>The plot shows decision boundaries for LDA and QDA. The bottom row
+demonstrates that LDA can only learn linear boundaries, while QDA can learn
+quadratic boundaries and is therefore more flexible.</p>
+<div class="topic">
+<p class="topic-title first">Examples:</p>
+<p><a class="reference internal" href="../auto_examples/plot_lda_qda.html#example-plot-lda-qda-py"><em>Linear and Quadratic Discriminant Analysis with confidence ellipsoid</em></a>: Comparison of LDA and QDA on synthetic data.</p>
+</div>
+<div class="topic">
+<p class="topic-title first">References:</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td>&#8220;The Elements of Statistical Learning&#8221;, Hastie T., Tibshirani R.,
+Friedman J., 2008.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="dimensionality-reduction-using-lda">
+<h2>1.13.1. Dimensionality reduction using LDA<a class="headerlink" href="#dimensionality-reduction-using-lda" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="generated/sklearn.lda.LDA.html#sklearn.lda.LDA" title="sklearn.lda.LDA"><tt class="xref py py-class docutils literal"><span class="pre">lda.LDA</span></tt></a> can be used to perform supervised dimensionality reduction by
+projecting the input data to a subspace consisting of the most
+discriminant directions.
+This is implemented in <a class="reference internal" href="generated/sklearn.lda.LDA.html#sklearn.lda.LDA.transform" title="sklearn.lda.LDA.transform"><tt class="xref py py-func docutils literal"><span class="pre">lda.LDA.transform</span></tt></a>. The desired
+dimensionality can be set using the <cite>n_components</cite> constructor
+parameter. This parameter has no influence on <a class="reference internal" href="generated/sklearn.lda.LDA.html#sklearn.lda.LDA.fit" title="sklearn.lda.LDA.fit"><tt class="xref py py-func docutils literal"><span class="pre">lda.LDA.fit</span></tt></a> or <a class="reference internal" href="generated/sklearn.lda.LDA.html#sklearn.lda.LDA.predict" title="sklearn.lda.LDA.predict"><tt class="xref py py-func docutils literal"><span class="pre">lda.LDA.predict</span></tt></a>.</p>
+</div>
+<div class="section" id="mathematical-idea">
+<h2>1.13.2. Mathematical Idea<a class="headerlink" href="#mathematical-idea" title="Permalink to this headline">¶</a></h2>
+<p>Both methods work by modeling the class conditional distribution of the data <img class="math" src="../_images/math/6349652f4f3fed24cf0e66ba44b19b5c170cae96.png" alt="P(X|y=k)"/>
+for each class <cite>k</cite>. Predictions can be obtained by using Bayes&#8217; rule:</p>
+<div class="math">
+<p><img src="../_images/math/42c35ac00e7da22baf37c275ae06ddb68378e57b.png" alt="P(y | X) = P(X | y) \cdot P(y) / P(X) = P(X | y) \cdot P(Y) / ( \sum_{y'} P(X | y') \cdot p(y'))"/></p>
+</div><p>In linear and quadratic discriminant analysis, <cite>P(X|y)</cite> is modelled as a Gaussian distribution.
+In the case of LDA, the Gaussians for each class are assumed to share the same covariance matrix.
+This leads to a linear decision surface, as can be seen by comparing the the log-probability rations
+<img class="math" src="../_images/math/0516d06a9c644cd6f93d73c8151f4206a52496c0.png" alt="log[P(y=k | X) / P(y=l | X)]"/>.</p>
+<p>In the case of QDA, there are no assumptions on the covariance matrices of the Gaussians,
+leading to a quadratic decision surface.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../_sources/modules/lda_qda.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="label_propagation.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="isotonic.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="../np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

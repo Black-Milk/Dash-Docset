@@ -1,0 +1,240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.optimize.curve_fit &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="Optimization and root finding (scipy.optimize)" href="../optimize.html" />
+    <link rel="next" title="scipy.optimize.brentq" href="scipy.optimize.brentq.html" />
+    <link rel="prev" title="scipy.optimize.rosen_hess_prod" href="scipy.optimize.rosen_hess_prod.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="../optimize.html" accesskey="U">Optimization and root finding (<tt class="docutils literal"><span class="pre">scipy.optimize</span></tt>)</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="scipy.optimize.brentq.html" title="scipy.optimize.brentq"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="scipy.optimize.rosen_hess_prod.html" title="scipy.optimize.rosen_hess_prod"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.optimize.rosen_hess_prod.html"
+                        title="previous chapter">scipy.optimize.rosen_hess_prod</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.optimize.brentq.html"
+                        title="next chapter">scipy.optimize.brentq</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="scipy-optimize-curve-fit">
+<h1>scipy.optimize.curve_fit<a class="headerlink" href="#scipy-optimize-curve-fit" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.optimize.curve_fit">
+<tt class="descclassname">scipy.optimize.</tt><tt class="descname">curve_fit</tt><big>(</big><em>f</em>, <em>xdata</em>, <em>ydata</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>**kw</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/optimize/minpack.py#L451"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.optimize.curve_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use non-linear least squares to fit a function, f, to data.</p>
+<p>Assumes <tt class="docutils literal"><span class="pre">ydata</span> <span class="pre">=</span> <span class="pre">f(xdata,</span> <span class="pre">*params)</span> <span class="pre">+</span> <span class="pre">eps</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>f</strong> : callable</p>
+<blockquote>
+<div><p>The model function, f(x, ...).  It must take the independent
+variable as the first argument and the parameters to fit as
+separate remaining arguments.</p>
+</div></blockquote>
+<p><strong>xdata</strong> : An N-length sequence or an (k,N)-shaped array</p>
+<blockquote>
+<div><p>for functions with k predictors.
+The independent variable where the data is measured.</p>
+</div></blockquote>
+<p><strong>ydata</strong> : N-length sequence</p>
+<blockquote>
+<div><p>The dependent data &#8212; nominally f(xdata, ...)</p>
+</div></blockquote>
+<p><strong>p0</strong> : None, scalar, or M-length sequence</p>
+<blockquote>
+<div><p>Initial guess for the parameters.  If None, then the initial
+values will all be 1 (if the number of parameters for the function
+can be determined using introspection, otherwise a ValueError
+is raised).</p>
+</div></blockquote>
+<p><strong>sigma</strong> : None or N-length sequence</p>
+<blockquote>
+<div><p>If not None, this vector will be used as relative weights in the
+least-squares problem.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>popt</strong> : array</p>
+<blockquote>
+<div><p>Optimal values for the parameters so that the sum of the squared error
+of <tt class="docutils literal"><span class="pre">f(xdata,</span> <span class="pre">*popt)</span> <span class="pre">-</span> <span class="pre">ydata</span></tt> is minimized</p>
+</div></blockquote>
+<p><strong>pcov</strong> : 2d array</p>
+<blockquote class="last">
+<div><p>The estimated covariance of popt.  The diagonals provide the variance
+of the parameter estimate.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="scipy.optimize.leastsq.html#scipy.optimize.leastsq" title="scipy.optimize.leastsq"><tt class="xref py py-obj docutils literal"><span class="pre">leastsq</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>The algorithm uses the Levenberg-Marquardt algorithm through <a class="reference internal" href="scipy.optimize.leastsq.html#scipy.optimize.leastsq" title="scipy.optimize.leastsq"><tt class="xref py py-obj docutils literal"><span class="pre">leastsq</span></tt></a>.
+Additional keyword arguments are passed directly to that algorithm.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yn</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">yn</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

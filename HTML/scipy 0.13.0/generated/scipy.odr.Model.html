@@ -1,0 +1,265 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.odr.Model &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="Orthogonal distance regression (scipy.odr)" href="../odr.html" />
+    <link rel="next" title="scipy.odr.Model.set_meta" href="scipy.odr.Model.set_meta.html" />
+    <link rel="prev" title="scipy.odr.RealData.set_meta" href="scipy.odr.RealData.set_meta.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="../odr.html" accesskey="U">Orthogonal distance regression (<tt class="docutils literal"><span class="pre">scipy.odr</span></tt>)</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="scipy.odr.Model.set_meta.html" title="scipy.odr.Model.set_meta"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="scipy.odr.RealData.set_meta.html" title="scipy.odr.RealData.set_meta"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.odr.RealData.set_meta.html"
+                        title="previous chapter">scipy.odr.RealData.set_meta</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.odr.Model.set_meta.html"
+                        title="next chapter">scipy.odr.Model.set_meta</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="scipy-odr-model">
+<h1>scipy.odr.Model<a class="headerlink" href="#scipy-odr-model" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.odr.Model">
+<em class="property">class </em><tt class="descclassname">scipy.odr.</tt><tt class="descname">Model</tt><big>(</big><em>fcn</em>, <em>fjacb=None</em>, <em>fjacd=None</em>, <em>extra_args=None</em>, <em>estimate=None</em>, <em>implicit=0</em>, <em>meta=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/odr/odrpack.py#L399"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.odr.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Model class stores information about the function you wish to fit.</p>
+<p>It stores the function itself, at the least, and optionally stores
+functions which compute the Jacobians used during fitting. Also, one
+can provide a function that will provide reasonable starting values
+for the fit parameters possibly given the set of data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>fcn</strong> : function</p>
+<blockquote>
+<div><p>fcn(beta, x) &#8211;&gt; y</p>
+</div></blockquote>
+<p><strong>fjacb</strong> : function</p>
+<blockquote>
+<div><p>Jacobian of fcn wrt the fit parameters beta.</p>
+<p>fjacb(beta, x) &#8211;&gt; &#64;f_i(x,B)/&#64;B_j</p>
+</div></blockquote>
+<p><strong>fjacd</strong> : function</p>
+<blockquote>
+<div><p>Jacobian of fcn wrt the (possibly multidimensional) input
+variable.</p>
+<p>fjacd(beta, x) &#8211;&gt; &#64;f_i(x,B)/&#64;x_j</p>
+</div></blockquote>
+<p><strong>extra_args</strong> : tuple, optional</p>
+<blockquote>
+<div><p>If specified, <em class="xref py py-obj">extra_args</em> should be a tuple of extra
+arguments to pass to <em class="xref py py-obj">fcn</em>, <em class="xref py py-obj">fjacb</em>, and <em class="xref py py-obj">fjacd</em>. Each will be called
+by <em class="xref py py-obj">apply(fcn, (beta, x) + extra_args)</em></p>
+</div></blockquote>
+<p><strong>estimate</strong> : array_like of rank-1</p>
+<blockquote>
+<div><p>Provides estimates of the fit parameters from the data</p>
+<p>estimate(data) &#8211;&gt; estbeta</p>
+</div></blockquote>
+<p><strong>implicit</strong> : boolean</p>
+<blockquote>
+<div><p>If TRUE, specifies that the model
+is implicit; i.e <em class="xref py py-obj">fcn(beta, x)</em> ~= 0 and there is no y data to fit
+against</p>
+</div></blockquote>
+<p><strong>meta</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>freeform dictionary of metadata for the model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Note that the <em class="xref py py-obj">fcn</em>, <em class="xref py py-obj">fjacb</em>, and <em class="xref py py-obj">fjacd</em> operate on NumPy arrays and
+return a NumPy array. The <em class="xref py py-obj">estimate</em> object takes an instance of the
+Data class.</p>
+<p>Here are the rules for the shapes of the argument and return
+arrays of the callback functions:</p>
+<dl class="docutils">
+<dt><em class="xref py py-obj">x</em></dt>
+<dd>if the input data is single-dimensional, then <em class="xref py py-obj">x</em> is rank-1
+array; i.e. <tt class="docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">array([1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">...]);</span> <span class="pre">x.shape</span> <span class="pre">=</span> <span class="pre">(n,)</span></tt>
+If the input data is multi-dimensional, then <em class="xref py py-obj">x</em> is a rank-2 array;
+i.e., <tt class="docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">array([[1,</span> <span class="pre">2,</span> <span class="pre">...],</span> <span class="pre">[2,</span> <span class="pre">4,</span> <span class="pre">...]]);</span> <span class="pre">x.shape</span> <span class="pre">=</span> <span class="pre">(m,</span> <span class="pre">n)</span></tt>.
+In all cases, it has the same shape as the input data array passed to
+<a class="reference internal" href="scipy.odr.odr.html#scipy.odr.odr" title="scipy.odr.odr"><tt class="xref py py-obj docutils literal"><span class="pre">odr</span></tt></a>. <em class="xref py py-obj">m</em> is the dimensionality of the input data, <em class="xref py py-obj">n</em> is the number
+of observations.</dd>
+<dt><em class="xref py py-obj">y</em></dt>
+<dd>if the response variable is single-dimensional, then <em class="xref py py-obj">y</em> is a
+rank-1 array, i.e., <tt class="docutils literal"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">array([2,</span> <span class="pre">4,</span> <span class="pre">...]);</span> <span class="pre">y.shape</span> <span class="pre">=</span> <span class="pre">(n,)</span></tt>.
+If the response variable is multi-dimensional, then <em class="xref py py-obj">y</em> is a rank-2
+array, i.e., <tt class="docutils literal"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">array([[2,</span> <span class="pre">4,</span> <span class="pre">...],</span> <span class="pre">[3,</span> <span class="pre">6,</span> <span class="pre">...]]);</span> <span class="pre">y.shape</span> <span class="pre">=</span>
+<span class="pre">(q,</span> <span class="pre">n)</span></tt> where <em class="xref py py-obj">q</em> is the dimensionality of the response variable.</dd>
+<dt><em class="xref py py-obj">beta</em></dt>
+<dd>rank-1 array of length <em class="xref py py-obj">p</em> where <em class="xref py py-obj">p</em> is the number of parameters;
+i.e. <tt class="docutils literal"><span class="pre">beta</span> <span class="pre">=</span> <span class="pre">array([B_1,</span> <span class="pre">B_2,</span> <span class="pre">...,</span> <span class="pre">B_p])</span></tt></dd>
+<dt><em class="xref py py-obj">fjacb</em></dt>
+<dd>if the response variable is multi-dimensional, then the
+return array&#8217;s shape is <em class="xref py py-obj">(q, p, n)</em> such that <tt class="docutils literal"><span class="pre">fjacb(x,beta)[l,k,i]</span> <span class="pre">=</span>
+<span class="pre">d</span> <span class="pre">f_l(X,B)/d</span> <span class="pre">B_k</span></tt> evaluated at the i&#8217;th data point.  If <em class="xref py py-obj">q == 1</em>, then
+the return array is only rank-2 and with shape <em class="xref py py-obj">(p, n)</em>.</dd>
+<dt><em class="xref py py-obj">fjacd</em></dt>
+<dd>as with fjacb, only the return array&#8217;s shape is <em class="xref py py-obj">(q, m, n)</em>
+such that <tt class="docutils literal"><span class="pre">fjacd(x,beta)[l,j,i]</span> <span class="pre">=</span> <span class="pre">d</span> <span class="pre">f_l(X,B)/d</span> <span class="pre">X_j</span></tt> at the i&#8217;th data
+point.  If <em class="xref py py-obj">q == 1</em>, then the return array&#8217;s shape is <em class="xref py py-obj">(m, n)</em>. If
+<em class="xref py py-obj">m == 1</em>, the shape is (q, n). If <em class="xref py py-obj">m == q == 1</em>, the shape is <em class="xref py py-obj">(n,)</em>.</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.odr.Model.set_meta.html#scipy.odr.Model.set_meta" title="scipy.odr.Model.set_meta"><tt class="xref py py-obj docutils literal"><span class="pre">set_meta</span></tt></a>(**kwds)</td>
+<td>Update the metadata dictionary with the keywords and data provided here.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

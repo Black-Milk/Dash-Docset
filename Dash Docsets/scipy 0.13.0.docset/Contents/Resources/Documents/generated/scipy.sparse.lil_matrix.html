@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>scipy.sparse.lil_matrix — SciPy v0.13.0 Reference Guide</title>
+<link href="../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="../sparse.html" rel="up" title="Sparse matrices (scipy.sparse)"/>
+<link href="scipy.sparse.lil_matrix.asformat.html" rel="next" title="scipy.sparse.lil_matrix.asformat"/>
+<link href="scipy.sparse.dok_matrix.viewvalues.html" rel="prev" title="scipy.sparse.dok_matrix.viewvalues"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="../sparse.html">Sparse matrices (<tt class="docutils literal"><span class="pre">scipy.sparse</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="../py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="scipy.sparse.lil_matrix.asformat.html" title="scipy.sparse.lil_matrix.asformat">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="scipy.sparse.dok_matrix.viewvalues.html" title="scipy.sparse.dok_matrix.viewvalues">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.sparse.dok_matrix.viewvalues.html" title="previous chapter">scipy.sparse.dok_matrix.viewvalues</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.sparse.lil_matrix.asformat.html" title="next chapter">scipy.sparse.lil_matrix.asformat</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="scipy-sparse-lil-matrix">
+<h1>scipy.sparse.lil_matrix<a class="headerlink" href="#scipy-sparse-lil-matrix" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="scipy.sparse.lil_matrix"><a name="//apple_ref/cpp/cl/scipy.sparse.lil_matrix"></a>
+<em class="property">class </em><tt class="descclassname">scipy.sparse.</tt><tt class="descname">lil_matrix</tt><big>(</big><em>arg1</em>, <em>shape=None</em>, <em>dtype=None</em>, <em>copy=False</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/sparse/lil.py#L23"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.sparse.lil_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Row-based linked list sparse matrix</p>
+<p>This is an efficient structure for constructing sparse
+matrices incrementally.</p>
+<dl class="docutils">
+<dt>This can be instantiated in several ways:</dt>
+<dd><dl class="first last docutils">
+<dt>lil_matrix(D)</dt>
+<dd>with a dense matrix or rank-2 ndarray D</dd>
+<dt>lil_matrix(S)</dt>
+<dd>with another sparse matrix S (equivalent to S.tolil())</dd>
+<dt>lil_matrix((M, N), [dtype])</dt>
+<dd>to construct an empty matrix with shape (M, N)
+dtype is optional, defaulting to dtype=’d’.</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Sparse matrices can be used in arithmetic operations: they support
+addition, subtraction, multiplication, division, and matrix power.</p>
+<dl class="docutils">
+<dt>Advantages of the LIL format</dt>
+<dd><ul class="first last simple">
+<li>supports flexible slicing</li>
+<li>changes to the matrix sparsity structure are efficient</li>
+</ul>
+</dd>
+<dt>Disadvantages of the LIL format</dt>
+<dd><ul class="first last simple">
+<li>arithmetic operations LIL + LIL are slow (consider CSR or CSC)</li>
+<li>slow column slicing (consider CSC)</li>
+<li>slow matrix vector products (consider CSR or CSC)</li>
+</ul>
+</dd>
+<dt>Intended Usage</dt>
+<dd><ul class="first last simple">
+<li>LIL is a convenient format for constructing sparse matrices</li>
+<li>once a matrix has been constructed, convert to CSR or
+CSC format for fast arithmetic and matrix vector operations</li>
+<li>consider using the COO format when constructing large matrices</li>
+</ul>
+</dd>
+<dt>Data Structure</dt>
+<dd><ul class="first last simple">
+<li>An array (<tt class="docutils literal"><span class="pre">self.rows</span></tt>) of rows, each of which is a sorted
+list of column indices of non-zero elements.</li>
+<li>The corresponding nonzero values are stored in similar
+fashion in <tt class="docutils literal"><span class="pre">self.data</span></tt>.</li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>dtype</td>
+<td>(dtype) Data type of the matrix</td>
+</tr>
+<tr class="row-even"><td>shape</td>
+<td>(2-tuple) Shape of the matrix</td>
+</tr>
+<tr class="row-odd"><td>ndim</td>
+<td>(int) Number of dimensions (this is always 2)</td>
+</tr>
+<tr class="row-even"><td>nnz</td>
+<td>Number of nonzero elements</td>
+</tr>
+<tr class="row-odd"><td>data</td>
+<td>LIL format data array of the matrix</td>
+</tr>
+<tr class="row-even"><td>rows</td>
+<td>LIL format row index array of the matrix</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.asformat.html#scipy.sparse.lil_matrix.asformat" title="scipy.sparse.lil_matrix.asformat"><tt class="xref py py-obj docutils literal"><span class="pre">asformat</span></tt></a>(format)</td>
+<td>Return this matrix in a given sparse format</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.asfptype.html#scipy.sparse.lil_matrix.asfptype" title="scipy.sparse.lil_matrix.asfptype"><tt class="xref py py-obj docutils literal"><span class="pre">asfptype</span></tt></a>()</td>
+<td>Upcast matrix to a floating point format (if necessary)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.astype.html#scipy.sparse.lil_matrix.astype" title="scipy.sparse.lil_matrix.astype"><tt class="xref py py-obj docutils literal"><span class="pre">astype</span></tt></a>(t)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.conj.html#scipy.sparse.lil_matrix.conj" title="scipy.sparse.lil_matrix.conj"><tt class="xref py py-obj docutils literal"><span class="pre">conj</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.conjugate.html#scipy.sparse.lil_matrix.conjugate" title="scipy.sparse.lil_matrix.conjugate"><tt class="xref py py-obj docutils literal"><span class="pre">conjugate</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.copy.html#scipy.sparse.lil_matrix.copy" title="scipy.sparse.lil_matrix.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.diagonal.html#scipy.sparse.lil_matrix.diagonal" title="scipy.sparse.lil_matrix.diagonal"><tt class="xref py py-obj docutils literal"><span class="pre">diagonal</span></tt></a>()</td>
+<td>Returns the main diagonal of the matrix</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.dot.html#scipy.sparse.lil_matrix.dot" title="scipy.sparse.lil_matrix.dot"><tt class="xref py py-obj docutils literal"><span class="pre">dot</span></tt></a>(other)</td>
+<td>Ordinary dot product   ..</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.getH.html#scipy.sparse.lil_matrix.getH" title="scipy.sparse.lil_matrix.getH"><tt class="xref py py-obj docutils literal"><span class="pre">getH</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.get_shape.html#scipy.sparse.lil_matrix.get_shape" title="scipy.sparse.lil_matrix.get_shape"><tt class="xref py py-obj docutils literal"><span class="pre">get_shape</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.getcol.html#scipy.sparse.lil_matrix.getcol" title="scipy.sparse.lil_matrix.getcol"><tt class="xref py py-obj docutils literal"><span class="pre">getcol</span></tt></a>(j)</td>
+<td>Returns a copy of column j of the matrix, as an (m x 1) sparse</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.getformat.html#scipy.sparse.lil_matrix.getformat" title="scipy.sparse.lil_matrix.getformat"><tt class="xref py py-obj docutils literal"><span class="pre">getformat</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.getmaxprint.html#scipy.sparse.lil_matrix.getmaxprint" title="scipy.sparse.lil_matrix.getmaxprint"><tt class="xref py py-obj docutils literal"><span class="pre">getmaxprint</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.getnnz.html#scipy.sparse.lil_matrix.getnnz" title="scipy.sparse.lil_matrix.getnnz"><tt class="xref py py-obj docutils literal"><span class="pre">getnnz</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.getrow.html#scipy.sparse.lil_matrix.getrow" title="scipy.sparse.lil_matrix.getrow"><tt class="xref py py-obj docutils literal"><span class="pre">getrow</span></tt></a>(i)</td>
+<td>Returns a copy of the ‘i’th row.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.getrowview.html#scipy.sparse.lil_matrix.getrowview" title="scipy.sparse.lil_matrix.getrowview"><tt class="xref py py-obj docutils literal"><span class="pre">getrowview</span></tt></a>(i)</td>
+<td>Returns a view of the ‘i’th row (without copying).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.mean.html#scipy.sparse.lil_matrix.mean" title="scipy.sparse.lil_matrix.mean"><tt class="xref py py-obj docutils literal"><span class="pre">mean</span></tt></a>([axis])</td>
+<td>Average the matrix over the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.multiply.html#scipy.sparse.lil_matrix.multiply" title="scipy.sparse.lil_matrix.multiply"><tt class="xref py py-obj docutils literal"><span class="pre">multiply</span></tt></a>(other)</td>
+<td>Point-wise multiplication by another matrix</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.nonzero.html#scipy.sparse.lil_matrix.nonzero" title="scipy.sparse.lil_matrix.nonzero"><tt class="xref py py-obj docutils literal"><span class="pre">nonzero</span></tt></a>()</td>
+<td>nonzero indices</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.reshape.html#scipy.sparse.lil_matrix.reshape" title="scipy.sparse.lil_matrix.reshape"><tt class="xref py py-obj docutils literal"><span class="pre">reshape</span></tt></a>(shape)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.set_shape.html#scipy.sparse.lil_matrix.set_shape" title="scipy.sparse.lil_matrix.set_shape"><tt class="xref py py-obj docutils literal"><span class="pre">set_shape</span></tt></a>(shape)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.setdiag.html#scipy.sparse.lil_matrix.setdiag" title="scipy.sparse.lil_matrix.setdiag"><tt class="xref py py-obj docutils literal"><span class="pre">setdiag</span></tt></a>(values[, k])</td>
+<td>Fills the diagonal elements {a_ii} with the values from the given sequence.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.sum.html#scipy.sparse.lil_matrix.sum" title="scipy.sparse.lil_matrix.sum"><tt class="xref py py-obj docutils literal"><span class="pre">sum</span></tt></a>([axis])</td>
+<td>Sum the matrix over the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.toarray.html#scipy.sparse.lil_matrix.toarray" title="scipy.sparse.lil_matrix.toarray"><tt class="xref py py-obj docutils literal"><span class="pre">toarray</span></tt></a>([order, out])</td>
+<td>See the docstring for <tt class="xref py py-obj docutils literal"><span class="pre">spmatrix.toarray</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.tobsr.html#scipy.sparse.lil_matrix.tobsr" title="scipy.sparse.lil_matrix.tobsr"><tt class="xref py py-obj docutils literal"><span class="pre">tobsr</span></tt></a>([blocksize])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.tocoo.html#scipy.sparse.lil_matrix.tocoo" title="scipy.sparse.lil_matrix.tocoo"><tt class="xref py py-obj docutils literal"><span class="pre">tocoo</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.tocsc.html#scipy.sparse.lil_matrix.tocsc" title="scipy.sparse.lil_matrix.tocsc"><tt class="xref py py-obj docutils literal"><span class="pre">tocsc</span></tt></a>()</td>
+<td>Return Compressed Sparse Column format arrays for this matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.tocsr.html#scipy.sparse.lil_matrix.tocsr" title="scipy.sparse.lil_matrix.tocsr"><tt class="xref py py-obj docutils literal"><span class="pre">tocsr</span></tt></a>()</td>
+<td>Return Compressed Sparse Row format arrays for this matrix.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.todense.html#scipy.sparse.lil_matrix.todense" title="scipy.sparse.lil_matrix.todense"><tt class="xref py py-obj docutils literal"><span class="pre">todense</span></tt></a>([order, out])</td>
+<td>Return a dense matrix representation of this matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.todia.html#scipy.sparse.lil_matrix.todia" title="scipy.sparse.lil_matrix.todia"><tt class="xref py py-obj docutils literal"><span class="pre">todia</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.todok.html#scipy.sparse.lil_matrix.todok" title="scipy.sparse.lil_matrix.todok"><tt class="xref py py-obj docutils literal"><span class="pre">todok</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="scipy.sparse.lil_matrix.tolil.html#scipy.sparse.lil_matrix.tolil" title="scipy.sparse.lil_matrix.tolil"><tt class="xref py py-obj docutils literal"><span class="pre">tolil</span></tt></a>([copy])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="scipy.sparse.lil_matrix.transpose.html#scipy.sparse.lil_matrix.transpose" title="scipy.sparse.lil_matrix.transpose"><tt class="xref py py-obj docutils literal"><span class="pre">transpose</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

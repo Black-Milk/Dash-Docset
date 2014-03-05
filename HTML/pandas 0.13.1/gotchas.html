@@ -1,0 +1,789 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Caveats and Gotchas &mdash; pandas 0.13.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pandas 0.13.1 documentation" href="index.html" />
+    <link rel="next" title="rpy2 / R interface" href="r_interface.html" />
+    <link rel="prev" title="Sparse data structures" href="sparse.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="r_interface.html" title="rpy2 / R interface"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sparse.html" title="Sparse data structures"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+<div class="content-wrapper">
+    <div class="content">
+        <div class="document">
+            <div class="sphinxsidebar">
+                <h3>Table Of Contents</h3>
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="whatsnew.html">What&#8217;s New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Package overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10min.html">10 Minutes to Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dsintro.html">Intro to Data Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Essential Basic Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indexing.html">Indexing and Selecting Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="computation.html">Computational tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="missing_data.html">Working with missing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="groupby.html">Group By: split-apply-combine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merging.html">Merge, join, and concatenate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshaping.html">Reshaping and Pivot Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Time Series / Date functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Plotting with matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rplot.html">Trellis plotting interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO Tools (Text, CSV, HDF5, ...)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remote_data.html">Remote Data Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enhancingperf.html">Enhancing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse.html">Sparse data structures</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Caveats and Gotchas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-if-truth-statements-with-pandas">Using If/Truth Statements with Pandas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bitwise-boolean">Bitwise boolean</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nan-integer-na-values-and-na-type-promotions"><tt class="docutils literal"><span class="pre">NaN</span></tt>, Integer <tt class="docutils literal"><span class="pre">NA</span></tt> values and <tt class="docutils literal"><span class="pre">NA</span></tt> type promotions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#choice-of-na-representation">Choice of <tt class="docutils literal"><span class="pre">NA</span></tt> representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#support-for-integer-na">Support for integer <tt class="docutils literal"><span class="pre">NA</span></tt></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#na-type-promotions"><tt class="docutils literal"><span class="pre">NA</span></tt> type promotions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#why-not-make-numpy-like-r">Why not make NumPy like R?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#integer-indexing">Integer indexing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#label-based-slicing-conventions">Label-based slicing conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#non-monotonic-indexes-require-exact-matches">Non-monotonic indexes require exact matches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endpoints-are-inclusive">Endpoints are inclusive</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellaneous-indexing-gotchas">Miscellaneous indexing gotchas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reindex-versus-ix-gotchas">Reindex versus ix gotchas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reindex-potentially-changes-underlying-series-dtype">Reindex potentially changes underlying Series dtype</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#timestamp-limitations">Timestamp limitations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#minimum-and-maximum-timestamps">Minimum and maximum timestamps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#parsing-dates-from-text-files">Parsing Dates from Text Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#differences-with-numpy">Differences with NumPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#thread-safety">Thread-safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-table-parsing">HTML Table Parsing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#byte-ordering-issues">Byte-Ordering Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="r_interface.html">rpy2 / R interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ecosystem.html">Pandas Ecosystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_r.html">Comparison with R / R libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparison_with_sql.html">Comparison with SQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+</ul>
+
+                <h3 style="margin-top: 1.5em;">Search</h3>
+
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q" size="18"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+
+                <p>
+
+                <p>
+                    <script type="text/javascript"
+                            src="http://www.ohloh.net/p/482908/widgets/project_partner_badge.js"></script>
+                </p>
+            </div>
+             
+            <div class="documentwrapper">
+                <div class="bodywrapper">
+                    <div class="body">
+                        
+  <div class="section" id="caveats-and-gotchas">
+<span id="gotchas"></span><h1>Caveats and Gotchas<a class="headerlink" href="#caveats-and-gotchas" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="using-if-truth-statements-with-pandas">
+<span id="gotchas-truth"></span><h2>Using If/Truth Statements with Pandas<a class="headerlink" href="#using-if-truth-statements-with-pandas" title="Permalink to this headline">¶</a></h2>
+<p>Pandas follows the numpy convention of raising an error when you try to convert something to a <tt class="docutils literal"><span class="pre">bool</span></tt>.
+This happens in a <tt class="docutils literal"><span class="pre">if</span></tt> or when using the boolean operations, <tt class="docutils literal"><span class="pre">and</span></tt>, <tt class="docutils literal"><span class="pre">or</span></tt>, or <tt class="docutils literal"><span class="pre">not</span></tt>.  It is not clear
+what the result of</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">Series</span><span class="p">([</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">]):</span>
+<span class="go">     ...</span>
+</pre></div>
+</div>
+<p>should be. Should it be <tt class="docutils literal"><span class="pre">True</span></tt> because it&#8217;s not zero-length? <tt class="docutils literal"><span class="pre">False</span></tt> because there are <tt class="docutils literal"><span class="pre">False</span></tt> values?
+It is unclear, so instead, pandas raises a <tt class="docutils literal"><span class="pre">ValueError</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">]):</span>
+<span class="go">    print(&quot;I was true&quot;)</span>
+<span class="go">Traceback</span>
+<span class="go">    ...</span>
+<span class="go">ValueError: The truth value of an array is ambiguous. Use a.empty, a.any() or a.all().</span>
+</pre></div>
+</div>
+<p>If you see that, you need to explicitly choose what you want to do with it (e.g., use <cite>any()</cite>, <cite>all()</cite> or <cite>empty</cite>).
+or, you might want to compare if the pandas object is <tt class="docutils literal"><span class="pre">None</span></tt></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+<span class="go">       print(&quot;I was not None&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="n">was</span> <span class="ow">not</span> <span class="bp">None</span>
+</pre></div>
+</div>
+<p>or return if <tt class="docutils literal"><span class="pre">any</span></tt> value is <tt class="docutils literal"><span class="pre">True</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+<span class="go">       print(&quot;I am any&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="n">am</span> <span class="nb">any</span>
+</pre></div>
+</div>
+<p>To evaluate single-element pandas objects in a boolean context, use the method <tt class="docutils literal"><span class="pre">.bool()</span></tt>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1]: </span><span class="n">Series</span><span class="p">([</span><span class="bp">True</span><span class="p">])</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gr">Out[1]: </span><span class="bp">True</span>
+
+<span class="gp">In [2]: </span><span class="n">Series</span><span class="p">([</span><span class="bp">False</span><span class="p">])</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gr">Out[2]: </span><span class="bp">False</span>
+
+<span class="gp">In [3]: </span><span class="n">DataFrame</span><span class="p">([[</span><span class="bp">True</span><span class="p">]])</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gr">Out[3]: </span><span class="bp">True</span>
+
+<span class="gp">In [4]: </span><span class="n">DataFrame</span><span class="p">([[</span><span class="bp">False</span><span class="p">]])</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+<span class="gr">Out[4]: </span><span class="bp">False</span>
+</pre></div>
+</div>
+<div class="section" id="bitwise-boolean">
+<h3>Bitwise boolean<a class="headerlink" href="#bitwise-boolean" title="Permalink to this headline">¶</a></h3>
+<p>Bitwise boolean operators like <tt class="docutils literal"><span class="pre">==</span></tt> and <tt class="docutils literal"><span class="pre">!=</span></tt> will return a boolean <tt class="docutils literal"><span class="pre">Series</span></tt>,
+which is almost always what you want anyways.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">==</span> <span class="mi">4</span>
+<span class="go">0    False</span>
+<span class="go">1    False</span>
+<span class="go">2    False</span>
+<span class="go">3    False</span>
+<span class="go">4     True</span>
+<span class="go">dtype: bool</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="basics.html#basics-compare"><em>boolean comparisons</em></a> for more examples.</p>
+</div>
+</div>
+<div class="section" id="nan-integer-na-values-and-na-type-promotions">
+<h2><tt class="docutils literal"><span class="pre">NaN</span></tt>, Integer <tt class="docutils literal"><span class="pre">NA</span></tt> values and <tt class="docutils literal"><span class="pre">NA</span></tt> type promotions<a class="headerlink" href="#nan-integer-na-values-and-na-type-promotions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="choice-of-na-representation">
+<h3>Choice of <tt class="docutils literal"><span class="pre">NA</span></tt> representation<a class="headerlink" href="#choice-of-na-representation" title="Permalink to this headline">¶</a></h3>
+<p>For lack of <tt class="docutils literal"><span class="pre">NA</span></tt> (missing) support from the ground up in NumPy and Python in
+general, we were given the difficult choice between either</p>
+<ul class="simple">
+<li>A <em>masked array</em> solution: an array of data and an array of boolean values
+indicating whether a value</li>
+<li>Using a special sentinel value, bit pattern, or set of sentinel values to
+denote <tt class="docutils literal"><span class="pre">NA</span></tt> across the dtypes</li>
+</ul>
+<p>For many reasons we chose the latter. After years of production use it has
+proven, at least in my opinion, to be the best decision given the state of
+affairs in NumPy and Python in general. The special value <tt class="docutils literal"><span class="pre">NaN</span></tt>
+(Not-A-Number) is used everywhere as the <tt class="docutils literal"><span class="pre">NA</span></tt> value, and there are API
+functions <tt class="docutils literal"><span class="pre">isnull</span></tt> and <tt class="docutils literal"><span class="pre">notnull</span></tt> which can be used across the dtypes to
+detect NA values.</p>
+<p>However, it comes with it a couple of trade-offs which I most certainly have
+not ignored.</p>
+</div>
+<div class="section" id="support-for-integer-na">
+<span id="gotchas-intna"></span><h3>Support for integer <tt class="docutils literal"><span class="pre">NA</span></tt><a class="headerlink" href="#support-for-integer-na" title="Permalink to this headline">¶</a></h3>
+<p>In the absence of high performance <tt class="docutils literal"><span class="pre">NA</span></tt> support being built into NumPy from
+the ground up, the primary casualty is the ability to represent NAs in integer
+arrays. For example:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [5]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;abcde&#39;</span><span class="p">))</span>
+
+<span class="gp">In [6]: </span><span class="n">s</span>
+<span class="gr">Out[6]: </span>
+<span class="go">a    1</span>
+<span class="go">b    2</span>
+<span class="go">c    3</span>
+<span class="go">d    4</span>
+<span class="go">e    5</span>
+<span class="go">dtype: int64</span>
+
+<span class="gp">In [7]: </span><span class="n">s</span><span class="o">.</span><span class="n">dtype</span>
+<span class="gr">Out[7]: </span><span class="n">dtype</span><span class="p">(</span><span class="s">&#39;int64&#39;</span><span class="p">)</span>
+
+<span class="gp">In [8]: </span><span class="n">s2</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">reindex</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">])</span>
+
+<span class="gp">In [9]: </span><span class="n">s2</span>
+<span class="gr">Out[9]: </span>
+<span class="go">a     1</span>
+<span class="go">b     2</span>
+<span class="go">c     3</span>
+<span class="go">f   NaN</span>
+<span class="go">u   NaN</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [10]: </span><span class="n">s2</span><span class="o">.</span><span class="n">dtype</span>
+<span class="gr">Out[10]: </span><span class="n">dtype</span><span class="p">(</span><span class="s">&#39;float64&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This trade-off is made largely for memory and performance reasons, and also so
+that the resulting Series continues to be &#8220;numeric&#8221;. One possibility is to use
+<tt class="docutils literal"><span class="pre">dtype=object</span></tt> arrays instead.</p>
+</div>
+<div class="section" id="na-type-promotions">
+<h3><tt class="docutils literal"><span class="pre">NA</span></tt> type promotions<a class="headerlink" href="#na-type-promotions" title="Permalink to this headline">¶</a></h3>
+<p>When introducing NAs into an existing Series or DataFrame via <tt class="docutils literal"><span class="pre">reindex</span></tt> or
+some other means, boolean and integer types will be promoted to a different
+dtype in order to store the NAs. These are summarized by this table:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Typeclass</th>
+<th class="head">Promotion dtype for storing NAs</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">floating</span></tt></td>
+<td>no change</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">object</span></tt></td>
+<td>no change</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">integer</span></tt></td>
+<td>cast to <tt class="docutils literal"><span class="pre">float64</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">boolean</span></tt></td>
+<td>cast to <tt class="docutils literal"><span class="pre">object</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>While this may seem like a heavy trade-off, in practice I have found very few
+cases where this is an issue in practice. Some explanation for the motivation
+here in the next section.</p>
+</div>
+<div class="section" id="why-not-make-numpy-like-r">
+<h3>Why not make NumPy like R?<a class="headerlink" href="#why-not-make-numpy-like-r" title="Permalink to this headline">¶</a></h3>
+<p>Many people have suggested that NumPy should simply emulate the <tt class="docutils literal"><span class="pre">NA</span></tt> support
+present in the more domain-specific statistical programming langauge <a class="reference external" href="http://r-project.org">R</a>. Part of the reason is the NumPy type hierarchy:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Typeclass</th>
+<th class="head">Dtypes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">numpy.floating</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">float16,</span> <span class="pre">float32,</span> <span class="pre">float64,</span> <span class="pre">float128</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">numpy.integer</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">int8,</span> <span class="pre">int16,</span> <span class="pre">int32,</span> <span class="pre">int64</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">numpy.unsignedinteger</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">uint8,</span> <span class="pre">uint16,</span> <span class="pre">uint32,</span> <span class="pre">uint64</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">numpy.object_</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">object_</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">numpy.bool_</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">bool_</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">numpy.character</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">string_,</span> <span class="pre">unicode_</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The R language, by contrast, only has a handful of built-in data types:
+<tt class="docutils literal"><span class="pre">integer</span></tt>, <tt class="docutils literal"><span class="pre">numeric</span></tt> (floating-point), <tt class="docutils literal"><span class="pre">character</span></tt>, and
+<tt class="docutils literal"><span class="pre">boolean</span></tt>. <tt class="docutils literal"><span class="pre">NA</span></tt> types are implemented by reserving special bit patterns for
+each type to be used as the missing value. While doing this with the full NumPy
+type hierarchy would be possible, it would be a more substantial trade-off
+(especially for the 8- and 16-bit data types) and implementation undertaking.</p>
+<p>An alternate approach is that of using masked arrays. A masked array is an
+array of data with an associated boolean <em>mask</em> denoting whether each value
+should be considered <tt class="docutils literal"><span class="pre">NA</span></tt> or not. I am personally not in love with this
+approach as I feel that overall it places a fairly heavy burden on the user and
+the library implementer. Additionally, it exacts a fairly high performance cost
+when working with numerical data compared with the simple approach of using
+<tt class="docutils literal"><span class="pre">NaN</span></tt>. Thus, I have chosen the Pythonic &#8220;practicality beats purity&#8221; approach
+and traded integer <tt class="docutils literal"><span class="pre">NA</span></tt> capability for a much simpler approach of using a
+special value in float and object arrays to denote <tt class="docutils literal"><span class="pre">NA</span></tt>, and promoting
+integer arrays to floating when NAs must be introduced.</p>
+</div>
+</div>
+<div class="section" id="integer-indexing">
+<h2>Integer indexing<a class="headerlink" href="#integer-indexing" title="Permalink to this headline">¶</a></h2>
+<p>Label-based indexing with integer axis labels is a thorny topic. It has been
+discussed heavily on mailing lists and among various members of the scientific
+Python community. In pandas, our general viewpoint is that labels matter more
+than integer locations. Therefore, with an integer axis index <em>only</em>
+label-based indexing is possible with the standard tools like <tt class="docutils literal"><span class="pre">.ix</span></tt>. The
+following code will generate exceptions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">df</span>
+<span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+</pre></div>
+</div>
+<p>This deliberate decision was made to prevent ambiguities and subtle bugs (many
+users reported finding bugs when the API change was made to stop &#8220;falling back&#8221;
+on position-based indexing).</p>
+</div>
+<div class="section" id="label-based-slicing-conventions">
+<h2>Label-based slicing conventions<a class="headerlink" href="#label-based-slicing-conventions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="non-monotonic-indexes-require-exact-matches">
+<h3>Non-monotonic indexes require exact matches<a class="headerlink" href="#non-monotonic-indexes-require-exact-matches" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="endpoints-are-inclusive">
+<h3>Endpoints are inclusive<a class="headerlink" href="#endpoints-are-inclusive" title="Permalink to this headline">¶</a></h3>
+<p>Compared with standard Python sequence slicing in which the slice endpoint is
+not inclusive, label-based slicing in pandas <strong>is inclusive</strong>. The primary
+reason for this is that it is often not possible to easily determine the
+&#8220;successor&#8221; or next element after a particular label in an index. For example,
+consider the following Series:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [11]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;abcdef&#39;</span><span class="p">))</span>
+
+<span class="gp">In [12]: </span><span class="n">s</span>
+<span class="gr">Out[12]: </span>
+<span class="go">a    0.499281</span>
+<span class="go">b   -1.405256</span>
+<span class="go">c    0.162565</span>
+<span class="go">d   -0.067785</span>
+<span class="go">e   -1.260006</span>
+<span class="go">f   -1.132896</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>Suppose we wished to slice from <tt class="docutils literal"><span class="pre">c</span></tt> to <tt class="docutils literal"><span class="pre">e</span></tt>, using integers this would be</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [13]: </span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="gr">Out[13]: </span>
+<span class="go">c    0.162565</span>
+<span class="go">d   -0.067785</span>
+<span class="go">e   -1.260006</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>However, if you only had <tt class="docutils literal"><span class="pre">c</span></tt> and <tt class="docutils literal"><span class="pre">e</span></tt>, determining the next element in the
+index can be somewhat complicated. For example, the following does not work:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s">&#39;c&#39;</span><span class="p">:</span><span class="s">&#39;e&#39;</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>A very common use case is to limit a time series to start and end at two
+specific dates. To enable this, we made the design design to make label-based
+slicing include both endpoints:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [14]: </span><span class="n">s</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s">&#39;c&#39;</span><span class="p">:</span><span class="s">&#39;e&#39;</span><span class="p">]</span>
+<span class="gr">Out[14]: </span>
+<span class="go">c    0.162565</span>
+<span class="go">d   -0.067785</span>
+<span class="go">e   -1.260006</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>This is most definitely a &#8220;practicality beats purity&#8221; sort of thing, but it is
+something to watch out for if you expect label-based slicing to behave exactly
+in the way that standard Python integer slicing works.</p>
+</div>
+</div>
+<div class="section" id="miscellaneous-indexing-gotchas">
+<h2>Miscellaneous indexing gotchas<a class="headerlink" href="#miscellaneous-indexing-gotchas" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reindex-versus-ix-gotchas">
+<h3>Reindex versus ix gotchas<a class="headerlink" href="#reindex-versus-ix-gotchas" title="Permalink to this headline">¶</a></h3>
+<p>Many users will find themselves using the <tt class="docutils literal"><span class="pre">ix</span></tt> indexing capabilities as a
+concise means of selecting data from a pandas object:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [15]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">,</span> <span class="s">&#39;four&#39;</span><span class="p">],</span>
+<span class="gp">   ....:</span>                <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;abcdef&#39;</span><span class="p">))</span>
+<span class="gp">   ....:</span> 
+
+<span class="gp">In [16]: </span><span class="n">df</span>
+<span class="gr">Out[16]: </span>
+<span class="go">        one       two     three      four</span>
+<span class="go">a -2.006481  0.301016  0.059117  1.138469</span>
+<span class="go">b -2.400634 -0.280853  0.025653 -1.386071</span>
+<span class="go">c  0.863937  0.252462  1.500571  1.053202</span>
+<span class="go">d -2.338595 -0.374279 -2.359958 -1.157886</span>
+<span class="go">e -0.551865  1.592673  1.559318  1.562443</span>
+<span class="go">f  0.763264  0.162027 -0.902704  1.106010</span>
+
+<span class="go">[6 rows x 4 columns]</span>
+
+<span class="gp">In [17]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[[</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;e&#39;</span><span class="p">]]</span>
+<span class="gr">Out[17]: </span>
+<span class="go">        one       two     three      four</span>
+<span class="go">b -2.400634 -0.280853  0.025653 -1.386071</span>
+<span class="go">c  0.863937  0.252462  1.500571  1.053202</span>
+<span class="go">e -0.551865  1.592673  1.559318  1.562443</span>
+
+<span class="go">[3 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>This is, of course, completely equivalent <em>in this case</em> to using th
+<tt class="docutils literal"><span class="pre">reindex</span></tt> method:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [18]: </span><span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">([</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;e&#39;</span><span class="p">])</span>
+<span class="gr">Out[18]: </span>
+<span class="go">        one       two     three      four</span>
+<span class="go">b -2.400634 -0.280853  0.025653 -1.386071</span>
+<span class="go">c  0.863937  0.252462  1.500571  1.053202</span>
+<span class="go">e -0.551865  1.592673  1.559318  1.562443</span>
+
+<span class="go">[3 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>Some might conclude that <tt class="docutils literal"><span class="pre">ix</span></tt> and <tt class="docutils literal"><span class="pre">reindex</span></tt> are 100% equivalent based on
+this. This is indeed true <strong>except in the case of integer indexing</strong>. For
+example, the above operation could alternately have been expressed as:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [19]: </span><span class="n">df</span><span class="o">.</span><span class="n">ix</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="gr">Out[19]: </span>
+<span class="go">        one       two     three      four</span>
+<span class="go">b -2.400634 -0.280853  0.025653 -1.386071</span>
+<span class="go">c  0.863937  0.252462  1.500571  1.053202</span>
+<span class="go">e -0.551865  1.592673  1.559318  1.562443</span>
+
+<span class="go">[3 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>If you pass <tt class="docutils literal"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">4]</span></tt> to <tt class="docutils literal"><span class="pre">reindex</span></tt> you will get another thing entirely:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [20]: </span><span class="n">df</span><span class="o">.</span><span class="n">reindex</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gr">Out[20]: </span>
+<span class="go">   one  two  three  four</span>
+<span class="go">1  NaN  NaN    NaN   NaN</span>
+<span class="go">2  NaN  NaN    NaN   NaN</span>
+<span class="go">4  NaN  NaN    NaN   NaN</span>
+
+<span class="go">[3 rows x 4 columns]</span>
+</pre></div>
+</div>
+<p>So it&#8217;s important to remember that <tt class="docutils literal"><span class="pre">reindex</span></tt> is <strong>strict label indexing
+only</strong>. This can lead to some potentially surprising results in pathological
+cases where an index contains, say, both integers and strings:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [21]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="gp">In [22]: </span><span class="n">s</span>
+<span class="gr">Out[22]: </span>
+<span class="go">a    1</span>
+<span class="go">0    2</span>
+<span class="go">1    3</span>
+<span class="go">dtype: int64</span>
+
+<span class="gp">In [23]: </span><span class="n">s</span><span class="o">.</span><span class="n">ix</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gr">Out[23]: </span>
+<span class="go">0    2</span>
+<span class="go">1    3</span>
+<span class="go">dtype: int64</span>
+
+<span class="gp">In [24]: </span><span class="n">s</span><span class="o">.</span><span class="n">reindex</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gr">Out[24]: </span>
+<span class="go">0    2</span>
+<span class="go">1    3</span>
+<span class="go">dtype: int64</span>
+</pre></div>
+</div>
+<p>Because the index in this case does not contain solely integers, <tt class="docutils literal"><span class="pre">ix</span></tt> falls
+back on integer indexing. By contrast, <tt class="docutils literal"><span class="pre">reindex</span></tt> only looks for the values
+passed in the index, thus finding the integers <tt class="docutils literal"><span class="pre">0</span></tt> and <tt class="docutils literal"><span class="pre">1</span></tt>. While it would
+be possible to insert some logic to check whether a passed sequence is all
+contained in the index, that logic would exact a very high cost in large data
+sets.</p>
+</div>
+<div class="section" id="reindex-potentially-changes-underlying-series-dtype">
+<h3>Reindex potentially changes underlying Series dtype<a class="headerlink" href="#reindex-potentially-changes-underlying-series-dtype" title="Permalink to this headline">¶</a></h3>
+<p>The use of <tt class="docutils literal"><span class="pre">reindex_like</span></tt> can potentially change the dtype of a <tt class="docutils literal"><span class="pre">Series</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">series</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="bp">True</span><span class="p">])</span>
+<span class="n">x</span><span class="o">.</span><span class="n">dtype</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="bp">True</span><span class="p">])</span><span class="o">.</span><span class="n">reindex_like</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">dtype</span>
+</pre></div>
+</div>
+<p>This is because <tt class="docutils literal"><span class="pre">reindex_like</span></tt> silently inserts <tt class="docutils literal"><span class="pre">NaNs</span></tt> and the <tt class="docutils literal"><span class="pre">dtype</span></tt>
+changes accordingly.  This can cause some issues when using <tt class="docutils literal"><span class="pre">numpy</span></tt> <tt class="docutils literal"><span class="pre">ufuncs</span></tt>
+such as <tt class="docutils literal"><span class="pre">numpy.logical_and</span></tt>.</p>
+<p>See the <a class="reference external" href="https://github.com/pydata/pandas/issues/2388">this old issue</a> for a more
+detailed discussion.</p>
+</div>
+</div>
+<div class="section" id="timestamp-limitations">
+<h2>Timestamp limitations<a class="headerlink" href="#timestamp-limitations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="minimum-and-maximum-timestamps">
+<h3>Minimum and maximum timestamps<a class="headerlink" href="#minimum-and-maximum-timestamps" title="Permalink to this headline">¶</a></h3>
+<p>Since pandas represents timestamps in nanosecond resolution, the timespan that
+can be represented using a 64-bit integer is limited to approximately 584 years:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [25]: </span><span class="n">begin</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">min</span>
+
+<span class="gp">In [26]: </span><span class="n">begin</span>
+<span class="gr">Out[26]: </span><span class="n">Timestamp</span><span class="p">(</span><span class="s">&#39;1677-09-22 00:12:43.145225&#39;</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+
+<span class="gp">In [27]: </span><span class="n">end</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">max</span>
+
+<span class="gp">In [28]: </span><span class="n">end</span>
+<span class="gr">Out[28]: </span><span class="n">Timestamp</span><span class="p">(</span><span class="s">&#39;2262-04-11 23:47:16.854775807&#39;</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you need to represent time series data outside the nanosecond timespan, use
+PeriodIndex:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [29]: </span><span class="n">span</span> <span class="o">=</span> <span class="n">period_range</span><span class="p">(</span><span class="s">&#39;1215-01-01&#39;</span><span class="p">,</span> <span class="s">&#39;1381-01-01&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s">&#39;D&#39;</span><span class="p">)</span>
+
+<span class="gp">In [30]: </span><span class="n">span</span>
+<span class="gr">Out[30]: </span>
+<span class="go">&lt;class &#39;pandas.tseries.period.PeriodIndex&#39;&gt;</span>
+<span class="go">freq: D</span>
+<span class="go">[1215-01-01, ..., 1381-01-01]</span>
+<span class="go">length: 60632</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="parsing-dates-from-text-files">
+<h2>Parsing Dates from Text Files<a class="headerlink" href="#parsing-dates-from-text-files" title="Permalink to this headline">¶</a></h2>
+<p>When parsing multiple text file columns into a single date column, the new date
+column is prepended to the data and then <cite>index_col</cite> specification is indexed off
+of the new set of columns rather than the original ones:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [31]: </span><span class="k">print</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&#39;tmp.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="go">KORD,19990127, 19:00:00, 18:56:00, 0.8100</span>
+<span class="go">KORD,19990127, 20:00:00, 19:56:00, 0.0100</span>
+<span class="go">KORD,19990127, 21:00:00, 20:56:00, -0.5900</span>
+<span class="go">KORD,19990127, 21:00:00, 21:18:00, -0.9900</span>
+<span class="go">KORD,19990127, 22:00:00, 21:56:00, -0.5900</span>
+<span class="go">KORD,19990127, 23:00:00, 22:56:00, -0.5900</span>
+
+<span class="gp">In [32]: </span><span class="n">date_spec</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;nominal&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s">&#39;actual&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}</span>
+
+<span class="gp">In [33]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s">&#39;tmp.csv&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<span class="gp">   ....:</span>               <span class="n">parse_dates</span><span class="o">=</span><span class="n">date_spec</span><span class="p">,</span>
+<span class="gp">   ....:</span>               <span class="n">keep_date_col</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">   ....:</span>               <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">   ....:</span> 
+
+<span class="c"># index_col=0 refers to the combined column &quot;nominal&quot; and not the original</span>
+<span class="c"># first column of &#39;KORD&#39; strings</span>
+<span class="gp">In [34]: </span><span class="n">df</span>
+<span class="gr">Out[34]: </span>
+<span class="go">                                 actual     0         1          2          3  \</span>
+<span class="go">nominal                                                                         </span>
+<span class="go">1999-01-27 19:00:00 1999-01-27 18:56:00  KORD  19990127   19:00:00   18:56:00   </span>
+<span class="go">1999-01-27 20:00:00 1999-01-27 19:56:00  KORD  19990127   20:00:00   19:56:00   </span>
+<span class="go">1999-01-27 21:00:00 1999-01-27 20:56:00  KORD  19990127   21:00:00   20:56:00   </span>
+<span class="go">1999-01-27 21:00:00 1999-01-27 21:18:00  KORD  19990127   21:00:00   21:18:00   </span>
+<span class="go">1999-01-27 22:00:00 1999-01-27 21:56:00  KORD  19990127   22:00:00   21:56:00   </span>
+<span class="go">1999-01-27 23:00:00 1999-01-27 22:56:00  KORD  19990127   23:00:00   22:56:00   </span>
+
+<span class="go">                        4  </span>
+<span class="go">nominal                    </span>
+<span class="go">1999-01-27 19:00:00  0.81  </span>
+<span class="go">1999-01-27 20:00:00  0.01  </span>
+<span class="go">1999-01-27 21:00:00 -0.59  </span>
+<span class="go">1999-01-27 21:00:00 -0.99  </span>
+<span class="go">1999-01-27 22:00:00 -0.59  </span>
+<span class="go">1999-01-27 23:00:00 -0.59  </span>
+
+<span class="go">[6 rows x 6 columns]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="differences-with-numpy">
+<h2>Differences with NumPy<a class="headerlink" href="#differences-with-numpy" title="Permalink to this headline">¶</a></h2>
+<p>For Series and DataFrame objects, <tt class="docutils literal"><span class="pre">var</span></tt> normalizes by <tt class="docutils literal"><span class="pre">N-1</span></tt> to produce
+unbiased estimates of the sample variance, while NumPy&#8217;s <tt class="docutils literal"><span class="pre">var</span></tt> normalizes
+by N, which measures the variance of the sample. Note that <tt class="docutils literal"><span class="pre">cov</span></tt>
+normalizes by <tt class="docutils literal"><span class="pre">N-1</span></tt> in both pandas and NumPy.</p>
+</div>
+<div class="section" id="thread-safety">
+<h2>Thread-safety<a class="headerlink" href="#thread-safety" title="Permalink to this headline">¶</a></h2>
+<p>As of pandas 0.11, pandas is not 100% thread safe. The known issues relate to
+the <tt class="docutils literal"><span class="pre">DataFrame.copy</span></tt> method. If you are doing a lot of copying of DataFrame
+objects shared among threads, we recommend holding locks inside the threads
+where the data copying occurs.</p>
+<p>See <a class="reference external" href="http://stackoverflow.com/questions/13592618/python-pandas-dataframe-thread-safe">this link</a>
+for more information.</p>
+</div>
+<div class="section" id="html-table-parsing">
+<span id="html-gotchas"></span><h2>HTML Table Parsing<a class="headerlink" href="#html-table-parsing" title="Permalink to this headline">¶</a></h2>
+<p>There are some versioning issues surrounding the libraries that are used to
+parse HTML tables in the top-level pandas io function <tt class="docutils literal"><span class="pre">read_html</span></tt>.</p>
+<p><strong>Issues with</strong> <a class="reference external" href="http://lxml.de"><strong>lxml</strong></a></p>
+<blockquote>
+<div><ul class="simple">
+<li>Benefits<ul>
+<li><a class="reference external" href="http://lxml.de"><strong>lxml</strong></a> is very fast</li>
+<li><a class="reference external" href="http://lxml.de"><strong>lxml</strong></a> requires Cython to install correctly.</li>
+</ul>
+</li>
+<li>Drawbacks<ul>
+<li><a class="reference external" href="http://lxml.de"><strong>lxml</strong></a> does <em>not</em> make any guarantees about the results of it&#8217;s parse
+<em>unless</em> it is given <a class="reference external" href="http://validator.w3.org/docs/help.html#validation_basics"><strong>strictly valid markup</strong></a>.</li>
+<li>In light of the above, we have chosen to allow you, the user, to use the
+<a class="reference external" href="http://lxml.de"><strong>lxml</strong></a> backend, but <strong>this backend will use</strong> <a class="reference external" href="https://github.com/html5lib/html5lib-python"><strong>html5lib</strong></a> if <a class="reference external" href="http://lxml.de"><strong>lxml</strong></a>
+fails to parse</li>
+<li>It is therefore <em>highly recommended</em> that you install both
+<a class="reference external" href="http://www.crummy.com/software/BeautifulSoup"><strong>BeautifulSoup4</strong></a> and <a class="reference external" href="https://github.com/html5lib/html5lib-python"><strong>html5lib</strong></a>, so that you will still get a valid
+result (provided everything else is valid) even if <a class="reference external" href="http://lxml.de"><strong>lxml</strong></a> fails.</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>Issues with</strong> <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup"><strong>BeautifulSoup4</strong></a> <strong>using</strong> <a class="reference external" href="http://lxml.de"><strong>lxml</strong></a> <strong>as a backend</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>The above issues hold here as well since <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup"><strong>BeautifulSoup4</strong></a> is essentially
+just a wrapper around a parser backend.</li>
+</ul>
+</div></blockquote>
+<p><strong>Issues with</strong> <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup"><strong>BeautifulSoup4</strong></a> <strong>using</strong> <a class="reference external" href="https://github.com/html5lib/html5lib-python"><strong>html5lib</strong></a> <strong>as a backend</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li>Benefits<ul>
+<li><a class="reference external" href="https://github.com/html5lib/html5lib-python"><strong>html5lib</strong></a> is far more lenient than <a class="reference external" href="http://lxml.de"><strong>lxml</strong></a> and consequently deals
+with <em>real-life markup</em> in a much saner way rather than just, e.g.,
+dropping an element without notifying you.</li>
+<li><a class="reference external" href="https://github.com/html5lib/html5lib-python"><strong>html5lib</strong></a> <em>generates valid HTML5 markup from invalid markup
+automatically</em>. This is extremely important for parsing HTML tables,
+since it guarantees a valid document. However, that does NOT mean that
+it is &#8220;correct&#8221;, since the process of fixing markup does not have a
+single definition.</li>
+<li><a class="reference external" href="https://github.com/html5lib/html5lib-python"><strong>html5lib</strong></a> is pure Python and requires no additional build steps beyond
+its own installation.</li>
+</ul>
+</li>
+<li>Drawbacks<ul>
+<li>The biggest drawback to using <a class="reference external" href="https://github.com/html5lib/html5lib-python"><strong>html5lib</strong></a> is that it is slow as
+molasses.  However consider the fact that many tables on the web are not
+big enough for the parsing algorithm runtime to matter. It is more
+likely that the bottleneck will be in the process of reading the raw
+text from the url over the web, i.e., IO (input-output). For very large
+tables, this might not be true.</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>Issues with using</strong> <a class="reference external" href="https://store.continuum.io/cshop/anaconda"><strong>Anaconda</strong></a></p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://store.continuum.io/cshop/anaconda">Anaconda</a> ships with <a class="reference external" href="http://lxml.de">lxml</a> version 3.2.0; the following workaround for
+<a class="reference external" href="https://store.continuum.io/cshop/anaconda">Anaconda</a> was successfully used to deal with the versioning issues
+surrounding <a class="reference external" href="http://lxml.de">lxml</a> and <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup">BeautifulSoup4</a>.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Unless you have <em>both</em>:</p>
+<blockquote>
+<div><ul class="simple">
+<li>A strong restriction on the upper bound of the runtime of some code
+that incorporates <a class="reference internal" href="generated/pandas.io.html.read_html.html#pandas.io.html.read_html" title="pandas.io.html.read_html"><tt class="xref py py-func docutils literal"><span class="pre">read_html()</span></tt></a></li>
+<li>Complete knowledge that the HTML you will be parsing will be 100%
+valid at all times</li>
+</ul>
+</div></blockquote>
+<p>then you should install <a class="reference external" href="https://github.com/html5lib/html5lib-python">html5lib</a> and things will work swimmingly
+without you having to muck around with <cite>conda</cite>. If you want the best of
+both worlds then install both <a class="reference external" href="https://github.com/html5lib/html5lib-python">html5lib</a> and <a class="reference external" href="http://lxml.de">lxml</a>. If you do install
+<a class="reference external" href="http://lxml.de">lxml</a> then you need to perform the following commands to ensure that
+lxml will work correctly:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c"># remove the included version</span>
+conda remove lxml
+
+<span class="c"># install the latest version of lxml</span>
+pip install <span class="s1">&#39;git+git://github.com/lxml/lxml.git&#39;</span>
+
+<span class="c"># install the latest version of beautifulsoup4</span>
+pip install <span class="s1">&#39;bzr+lp:beautifulsoup&#39;</span>
+</pre></div>
+</div>
+<p class="last">Note that you need <a class="reference external" href="http://bazaar.canonical.com/en">bzr</a> and <a class="reference external" href="http://git-scm.com">git</a> installed to perform the last two operations.</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="byte-ordering-issues">
+<h2>Byte-Ordering Issues<a class="headerlink" href="#byte-ordering-issues" title="Permalink to this headline">¶</a></h2>
+<p>Occasionally you may have to deal with data that were created on a machine with
+a different byte order than the one on which you are running Python. To deal
+with this issue you should convert the underlying NumPy array to the native
+system byte order <em>before</em> passing it to Series/DataFrame/Panel constructors
+using something similar to the following:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [35]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="s">&#39;&gt;i4&#39;</span><span class="p">)</span> <span class="c"># big endian</span>
+
+<span class="gp">In [36]: </span><span class="n">newx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">()</span> <span class="c"># force native byteorder</span>
+
+<span class="gp">In [37]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">newx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference external" href="http://docs.scipy.org/doc/numpy/user/basics.byteswapping.html">the NumPy documentation on byte order</a> for more
+details.</p>
+</div>
+</div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="clearer"></div>
+        </div>
+    </div>
+</div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="r_interface.html" title="rpy2 / R interface"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sparse.html" title="Sparse data structures"
+             >previous</a> |</li>
+        <li><a href="index.html">pandas 0.13.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2014, the pandas development team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

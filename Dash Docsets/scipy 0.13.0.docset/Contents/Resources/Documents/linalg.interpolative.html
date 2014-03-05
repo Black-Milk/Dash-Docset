@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>Interpolative matrix decomposition (scipy.linalg.interpolative) — SciPy v0.13.0 Reference Guide</title>
+<link href="_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="_static/jquery.js" type="text/javascript"></script>
+<script src="_static/underscore.js" type="text/javascript"></script>
+<script src="_static/doctools.js" type="text/javascript"></script>
+<link href="index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="linalg.html" rel="up" title="Linear algebra (scipy.linalg)"/>
+<link href="generated/scipy.linalg.interpolative.interp_decomp.html" rel="next" title="scipy.linalg.interpolative.interp_decomp"/>
+<link href="generated/scipy.linalg.lapack.zunmqr.html" rel="prev" title="scipy.linalg.lapack.zunmqr"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="linalg.html">Linear algebra (<tt class="docutils literal"><span class="pre">scipy.linalg</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="generated/scipy.linalg.interpolative.interp_decomp.html" title="scipy.linalg.interpolative.interp_decomp">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="generated/scipy.linalg.lapack.zunmqr.html" title="scipy.linalg.lapack.zunmqr">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="index.html">
+<img alt="Logo" class="logo" src="_static/scipyshiny_small.png"/>
+</a></p>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Interpolative matrix decomposition (<tt class="docutils literal"><span class="pre">scipy.linalg.interpolative</span></tt>)</a><ul>
+<li><a class="reference internal" href="#routines">Routines</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#tutorial">Tutorial</a><ul>
+<li><a class="reference internal" href="#initializing">Initializing</a></li>
+<li><a class="reference internal" href="#computing-an-id">Computing an ID</a><ul>
+<li><a class="reference internal" href="#from-matrix-entries">From matrix entries</a></li>
+<li><a class="reference internal" href="#from-matrix-action">From matrix action</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reconstructing-an-id">Reconstructing an ID</a></li>
+<li><a class="reference internal" href="#computing-an-svd">Computing an SVD</a><ul>
+<li><a class="reference internal" href="#id6">From matrix entries</a></li>
+<li><a class="reference internal" href="#id7">From matrix action</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#utility-routines">Utility routines</a></li>
+<li><a class="reference internal" href="#remarks">Remarks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Previous topic</h4>
+<p class="topless"><a href="generated/scipy.linalg.lapack.zunmqr.html" title="previous chapter">scipy.linalg.lapack.zunmqr</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="generated/scipy.linalg.interpolative.interp_decomp.html" title="next chapter">scipy.linalg.interpolative.interp_decomp</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<span class="target" id="module-scipy.linalg.interpolative"></span><div class="section" id="interpolative-matrix-decomposition-scipy-linalg-interpolative"><a name="//apple_ref/cpp/Module/scipy.linalg.interpolative"></a>
+<h1>Interpolative matrix decomposition (<a class="reference internal" href="#module-scipy.linalg.interpolative" title="scipy.linalg.interpolative"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.linalg.interpolative</span></tt></a>)<a class="headerlink" href="#interpolative-matrix-decomposition-scipy-linalg-interpolative" title="Permalink to this headline">¶</a></h1>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.13.</span></p>
+<p>An interpolative decomposition (ID) of a matrix <img alt="A \in
+\mathbb{C}^{m \times n}" class="math" src="_images/math/72ab6535846ed4cf186eef443efd8021b12274a7.png" style="vertical-align: -1px"/> of rank <img alt="k \leq \min \{ m, n \}" class="math" src="_images/math/4696e392820e46555d0e9f0ce128c9b22a34ab52.png" style="vertical-align: -4px"/> is a
+factorization</p>
+<div class="math">
+<p><img alt="A \Pi =
+\begin{bmatrix}
+ A \Pi_{1} &amp; A \Pi_{2}
+\end{bmatrix} =
+A \Pi_{1}
+\begin{bmatrix}
+ I &amp; T
+\end{bmatrix}," src="_images/math/b5414fcd416cb7a0d69ed01a40d5ad0815e53361.png"/></p>
+</div><p>where <img alt="\Pi = [\Pi_{1}, \Pi_{2}]" class="math" src="_images/math/291cbf4e65281ee63b76ecb97f5fc038df966462.png" style="vertical-align: -4px"/> is a permutation matrix with
+<img alt="\Pi_{1} \in \{ 0, 1 \}^{n \times k}" class="math" src="_images/math/42d0553b483cbffa30e1d7b79d73b9d79d832af4.png" style="vertical-align: -4px"/>, i.e., <img alt="A \Pi_{2} =
+A \Pi_{1} T" class="math" src="_images/math/476eba1024cdf170bb1e166fa84cf022d778c7af.png" style="vertical-align: -3px"/>. This can equivalently be written as <img alt="A = BP" class="math" src="_images/math/a25e0de10e8f6c9c6ed34985e26eae18c894d636.png" style="vertical-align: 0px"/>,
+where <img alt="B = A \Pi_{1}" class="math" src="_images/math/f42a4e4e29513335d5c750c89c331e0d1a64a36e.png" style="vertical-align: -3px"/> and <img alt="P = [I, T] \Pi^{\mathsf{T}}" class="math" src="_images/math/aef0bd837b70209742c1c4c3aebc2582a4446856.png" style="vertical-align: -4px"/>
+are the <em>skeleton</em> and <em>interpolation matrices</em>, respectively.</p>
+<p>If <img alt="A" class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" style="vertical-align: 0px"/> does not have exact rank <img alt="k" class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" style="vertical-align: 0px"/>, then there exists an
+approximation in the form of an ID such that <img alt="A = BP + E" class="math" src="_images/math/617845dc7bcc00bd2029ac32f1fe84904c44b188.png" style="vertical-align: -1px"/>, where
+<img alt="\| E \| \sim \sigma_{k + 1}" class="math" src="_images/math/ce22dc293c0dbc3fb19f2012f6b1ad2e3f69cde2.png" style="vertical-align: -4px"/> is on the order of the <img alt="(k +
+1)" class="math" src="_images/math/ec9115b6c6315ce8634029c62e3c8d443f67126f.png" style="vertical-align: -4px"/>-th largest singular value of <img alt="A" class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" style="vertical-align: 0px"/>. Note that <img alt="\sigma_{k
++ 1}" class="math" src="_images/math/988e98fb6abdfc6d6de1625bbb865ec175929674.png" style="vertical-align: -3px"/> is the best possible error for a rank-<img alt="k" class="math" src="_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" style="vertical-align: 0px"/> approximation
+and, in fact, is achieved by the singular value decomposition (SVD)
+<img alt="A \approx U S V^{*}" class="math" src="_images/math/04d894244263b02bcb4b836e4afed1f5a5158d02.png" style="vertical-align: 0px"/>, where <img alt="U \in \mathbb{C}^{m \times
+k}" class="math" src="_images/math/fb0c9f76efe993a5eb72564f46331352deccd0b3.png" style="vertical-align: -1px"/> and <img alt="V \in \mathbb{C}^{n \times k}" class="math" src="_images/math/b798da70272f2d6ed518da6eac604ec3dc3d28ca.png" style="vertical-align: -1px"/> have orthonormal columns
+and <img alt="S = \mathop{\mathrm{diag}} (\sigma_{i}) \in \mathbb{C}^{k
+\times k}" class="math" src="_images/math/95561d201ae8a52db3848cd24fd0131fddf7a04f.png" style="vertical-align: -4px"/> is diagonal with nonnegative entries. The principal
+advantages of using an ID over an SVD are that:</p>
+<ul class="simple">
+<li>it is cheaper to construct;</li>
+<li>it preserves the structure of <img alt="A" class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" style="vertical-align: 0px"/>; and</li>
+<li>it is more efficient to compute with in light of the identity submatrix of <img alt="P" class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" style="vertical-align: 0px"/>.</li>
+</ul>
+<div class="section" id="routines">
+<h2>Routines<a class="headerlink" href="#routines" title="Permalink to this headline">¶</a></h2>
+<p>Main functionality:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.interp_decomp.html#scipy.linalg.interpolative.interp_decomp" title="scipy.linalg.interpolative.interp_decomp"><tt class="xref py py-obj docutils literal"><span class="pre">interp_decomp</span></tt></a>(A, eps_or_k[, rand])</td>
+<td>Compute ID of a matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.reconstruct_matrix_from_id.html#scipy.linalg.interpolative.reconstruct_matrix_from_id" title="scipy.linalg.interpolative.reconstruct_matrix_from_id"><tt class="xref py py-obj docutils literal"><span class="pre">reconstruct_matrix_from_id</span></tt></a>(B, idx, proj)</td>
+<td>Reconstruct matrix from its ID.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.reconstruct_interp_matrix.html#scipy.linalg.interpolative.reconstruct_interp_matrix" title="scipy.linalg.interpolative.reconstruct_interp_matrix"><tt class="xref py py-obj docutils literal"><span class="pre">reconstruct_interp_matrix</span></tt></a>(idx, proj)</td>
+<td>Reconstruct interpolation matrix from ID.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.reconstruct_skel_matrix.html#scipy.linalg.interpolative.reconstruct_skel_matrix" title="scipy.linalg.interpolative.reconstruct_skel_matrix"><tt class="xref py py-obj docutils literal"><span class="pre">reconstruct_skel_matrix</span></tt></a>(A, k, idx)</td>
+<td>Reconstruct skeleton matrix from ID.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.id_to_svd.html#scipy.linalg.interpolative.id_to_svd" title="scipy.linalg.interpolative.id_to_svd"><tt class="xref py py-obj docutils literal"><span class="pre">id_to_svd</span></tt></a>(B, idx, proj)</td>
+<td>Convert ID to SVD.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.svd.html#scipy.linalg.interpolative.svd" title="scipy.linalg.interpolative.svd"><tt class="xref py py-obj docutils literal"><span class="pre">svd</span></tt></a>(A, eps_or_k[, rand])</td>
+<td>Compute SVD of a matrix via an ID.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.estimate_spectral_norm.html#scipy.linalg.interpolative.estimate_spectral_norm" title="scipy.linalg.interpolative.estimate_spectral_norm"><tt class="xref py py-obj docutils literal"><span class="pre">estimate_spectral_norm</span></tt></a>(A[, its])</td>
+<td>Estimate spectral norm of a matrix by the randomized power method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.estimate_spectral_norm_diff.html#scipy.linalg.interpolative.estimate_spectral_norm_diff" title="scipy.linalg.interpolative.estimate_spectral_norm_diff"><tt class="xref py py-obj docutils literal"><span class="pre">estimate_spectral_norm_diff</span></tt></a>(A, B[, its])</td>
+<td>Estimate spectral norm of the difference of two matrices by the randomized power method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.estimate_rank.html#scipy.linalg.interpolative.estimate_rank" title="scipy.linalg.interpolative.estimate_rank"><tt class="xref py py-obj docutils literal"><span class="pre">estimate_rank</span></tt></a>(A, eps)</td>
+<td>Estimate matrix rank to a specified relative precision using randomized methods.</td>
+</tr>
+</tbody>
+</table>
+<p>Support functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.seed.html#scipy.linalg.interpolative.seed" title="scipy.linalg.interpolative.seed"><tt class="xref py py-obj docutils literal"><span class="pre">seed</span></tt></a>([seed])</td>
+<td>Seed the internal random number generator used in this ID package.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.linalg.interpolative.rand.html#scipy.linalg.interpolative.rand" title="scipy.linalg.interpolative.rand"><tt class="xref py py-obj docutils literal"><span class="pre">rand</span></tt></a>(*shape)</td>
+<td>Generate standard uniform pseudorandom numbers via a very efficient lagged</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>This module uses the ID software package <a class="reference internal" href="#r294">[R294]</a> by Martinsson, Rokhlin,
+Shkolnisky, and Tygert, which is a Fortran library for computing IDs
+using various algorithms, including the rank-revealing QR approach of
+<a class="reference internal" href="#r295">[R295]</a> and the more recent randomized methods described in <a class="reference internal" href="#r296">[R296]</a>, <a class="reference internal" href="#r297">[R297]</a>,
+and <a class="reference internal" href="#r298">[R298]</a>. This module exposes its functionality in a way convenient
+for Python users. Note that this module does not add any functionality
+beyond that of organizing a simpler and more consistent interface.</p>
+<p>We advise the user to consult also the <a class="reference external" href="https://cims.nyu.edu/~tygert/id_doc.pdf">documentation for the ID package</a>.</p>
+<table class="docutils citation" frame="void" id="r294" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R294]</a></td><td>P.G. Martinsson, V. Rokhlin, Y. Shkolnisky, M. Tygert. “ID: a
+software package for low-rank approximation of matrices via interpolative
+decompositions, version 0.2.” <a class="reference external" href="http://cims.nyu.edu/~tygert/id_doc.pdf">http://cims.nyu.edu/~tygert/id_doc.pdf</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r295" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[R295]</a></td><td>H. Cheng, Z. Gimbutas, P.G. Martinsson, V. Rokhlin. “On the
+compression of low rank matrices.” <em>SIAM J. Sci. Comput.</em> 26 (4): 1389–1404,
+2005. <a class="reference external" href="http://dx.doi.org/10.1137/030602678">doi:10.1137/030602678</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r296" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[R296]</a></td><td>E. Liberty, F. Woolfe, P.G. Martinsson, V. Rokhlin, M.
+Tygert. “Randomized algorithms for the low-rank approximation of matrices.”
+<em>Proc. Natl. Acad. Sci. U.S.A.</em> 104 (51): 20167–20172, 2007.
+<a class="reference external" href="http://dx.doi.org/10.1073/pnas.0709640104">doi:10.1073/pnas.0709640104</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r297" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[R297]</a></td><td>P.G. Martinsson, V. Rokhlin, M. Tygert. “A randomized
+algorithm for the decomposition of matrices.” <em>Appl. Comput. Harmon. Anal.</em> 30
+(1): 47–68,  2011. <a class="reference external" href="http://dx.doi.org/10.1016/j.acha.2010.02.003">doi:10.1016/j.acha.2010.02.003</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r298" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[R298]</a></td><td>F. Woolfe, E. Liberty, V. Rokhlin, M. Tygert. “A fast
+randomized algorithm for the approximation of matrices.” <em>Appl. Comput.
+Harmon. Anal.</em> 25 (3): 335–366, 2008. <a class="reference external" href="http://dx.doi.org/10.1016/j.acha.2007.12.002">doi:10.1016/j.acha.2007.12.002</a>.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="initializing">
+<h3>Initializing<a class="headerlink" href="#initializing" title="Permalink to this headline">¶</a></h3>
+<p>The first step is to import <a class="reference internal" href="#module-scipy.linalg.interpolative" title="scipy.linalg.interpolative"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.linalg.interpolative</span></tt></a> by issuing the
+command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.linalg.interpolative</span> <span class="kn">as</span> <span class="nn">sli</span>
+</pre></div>
+</div>
+<p>Now let’s build a matrix. For this, we consider a Hilbert matrix, which is well
+know to have low rank:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">hilbert</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can also do this explicitly via:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s">'F'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note the use of the flag <tt class="docutils literal"><span class="pre">order='F'</span></tt> in <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.empty.html#numpy.empty" title="(in NumPy v1.7)"><tt class="xref py py-func docutils literal"><span class="pre">numpy.empty</span></tt></a>. This
+instantiates the matrix in Fortran-contiguous order and is important for
+avoiding data copying when passing to the backend.</p>
+<p>We then define multiplication routines for the matrix by regarding it as a
+<a class="reference internal" href="generated/scipy.sparse.linalg.LinearOperator.html#scipy.sparse.linalg.LinearOperator" title="scipy.sparse.linalg.LinearOperator"><tt class="xref py py-class docutils literal"><span class="pre">scipy.sparse.linalg.LinearOperator</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">aslinearoperator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="n">aslinearoperator</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This automatically sets up methods describing the action of the matrix and its
+adjoint on a vector.</p>
+</div>
+<div class="section" id="computing-an-id">
+<h3>Computing an ID<a class="headerlink" href="#computing-an-id" title="Permalink to this headline">¶</a></h3>
+<p>We have several choices of algorithm to compute an ID. These fall largely
+according to two dichotomies:</p>
+<ol class="arabic simple">
+<li>how the matrix is represented, i.e., via its entries or via its action on a
+vector; and</li>
+<li>whether to approximate it to a fixed relative precision or to a fixed rank.</li>
+</ol>
+<p>We step through each choice in turn below.</p>
+<p>In all cases, the ID is represented by three parameters:</p>
+<ol class="arabic simple">
+<li>a rank <tt class="docutils literal"><span class="pre">k</span></tt>;</li>
+<li>an index array <tt class="docutils literal"><span class="pre">idx</span></tt>; and</li>
+<li>interpolation coefficients <tt class="docutils literal"><span class="pre">proj</span></tt>.</li>
+</ol>
+<p>The ID is specified by the relation
+<tt class="docutils literal"><span class="pre">np.dot(A[:,idx[:k]],</span> <span class="pre">proj)</span> <span class="pre">==</span> <span class="pre">A[:,idx[k:]]</span></tt>.</p>
+<div class="section" id="from-matrix-entries">
+<h4>From matrix entries<a class="headerlink" href="#from-matrix-entries" title="Permalink to this headline">¶</a></h4>
+<p>We first consider a matrix given in terms of its entries.</p>
+<p>To compute an ID to a fixed precision, type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">proj</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">interp_decomp</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">eps</span> <span class="pre">&lt;</span> <span class="pre">1</span></tt> is the desired precision.</p>
+<p>To compute an ID to a fixed rank, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">proj</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">interp_decomp</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">k</span> <span class="pre">&gt;=</span> <span class="pre">1</span></tt> is the desired rank.</p>
+<p>Both algorithms use random sampling and are usually faster than the
+corresponding older, deterministic algorithms, which can be accessed via the
+commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">proj</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">interp_decomp</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">rand</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">proj</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">interp_decomp</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">rand</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>respectively.</p>
+</div>
+<div class="section" id="from-matrix-action">
+<h4>From matrix action<a class="headerlink" href="#from-matrix-action" title="Permalink to this headline">¶</a></h4>
+<p>Now consider a matrix given in terms of its action on a vector as a
+<a class="reference internal" href="generated/scipy.sparse.linalg.LinearOperator.html#scipy.sparse.linalg.LinearOperator" title="scipy.sparse.linalg.LinearOperator"><tt class="xref py py-class docutils literal"><span class="pre">scipy.sparse.linalg.LinearOperator</span></tt></a>.</p>
+<p>To compute an ID to a fixed precision, type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">proj</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">interp_decomp</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To compute an ID to a fixed rank, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">proj</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">interp_decomp</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These algorithms are randomized.</p>
+</div>
+</div>
+<div class="section" id="reconstructing-an-id">
+<h3>Reconstructing an ID<a class="headerlink" href="#reconstructing-an-id" title="Permalink to this headline">¶</a></h3>
+<p>The ID routines above do not output the skeleton and interpolation matrices
+explicitly but instead return the relevant information in a more compact (and
+sometimes more useful) form. To build these matrices, write:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">reconstruct_skel_matrix</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>for the skeleton matrix and:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">reconstruct_interp_matrix</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">proj</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>for the interpolation matrix. The ID approximation can then be computed as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This can also be constructed directly using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">reconstruct_matrix_from_id</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">proj</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>without having to first compute <tt class="docutils literal"><span class="pre">P</span></tt>.</p>
+<p>Alternatively, this can be done explicitly as well using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span><span class="n">idx</span><span class="p">[:</span><span class="n">k</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">proj</span><span class="p">])[:,</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="computing-an-svd">
+<h3>Computing an SVD<a class="headerlink" href="#computing-an-svd" title="Permalink to this headline">¶</a></h3>
+<p>An ID can be converted to an SVD via the command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">id_to_svd</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">proj</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The SVD approximation is then:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>The SVD can also be computed “fresh” by combining both the ID and conversion
+steps into one command. Following the various ID algorithms above, there are
+correspondingly various SVD algorithms that one can employ.</p>
+<div class="section" id="id6">
+<h4>From matrix entries<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>We consider first SVD algorithms for a matrix given in terms of its entries.</p>
+<p>To compute an SVD to a fixed precision, type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To compute an SVD to a fixed rank, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Both algorithms use random sampling; for the determinstic versions, issue the
+keyword <tt class="docutils literal"><span class="pre">rand=False</span></tt> as above.</p>
+</div>
+<div class="section" id="id7">
+<h4>From matrix action<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>Now consider a matrix given in terms of its action on a vector.</p>
+<p>To compute an SVD to a fixed precision, type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To compute an SVD to a fixed rank, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="utility-routines">
+<h3>Utility routines<a class="headerlink" href="#utility-routines" title="Permalink to this headline">¶</a></h3>
+<p>Several utility routines are also available.</p>
+<p>To estimate the spectral norm of a matrix, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">snorm</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">estimate_spectral_norm</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This algorithm is based on the randomized power method and thus requires only
+matrix-vector products. The number of iterations to take can be set using the
+keyword <tt class="docutils literal"><span class="pre">its</span></tt> (default: <tt class="docutils literal"><span class="pre">its=20</span></tt>). The matrix is interpreted as a
+<a class="reference internal" href="generated/scipy.sparse.linalg.LinearOperator.html#scipy.sparse.linalg.LinearOperator" title="scipy.sparse.linalg.LinearOperator"><tt class="xref py py-class docutils literal"><span class="pre">scipy.sparse.linalg.LinearOperator</span></tt></a>, but it is also valid to supply it
+as a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.7)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>, in which case it is trivially converted using
+<a class="reference internal" href="generated/scipy.sparse.linalg.aslinearoperator.html#scipy.sparse.linalg.aslinearoperator" title="scipy.sparse.linalg.aslinearoperator"><tt class="xref py py-func docutils literal"><span class="pre">scipy.sparse.linalg.aslinearoperator</span></tt></a>.</p>
+<p>The same algorithm can also estimate the spectral norm of the difference of two
+matrices <tt class="docutils literal"><span class="pre">A1</span></tt> and <tt class="docutils literal"><span class="pre">A2</span></tt> as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">estimate_spectral_norm_diff</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is often useful for checking the accuracy of a matrix approximation.</p>
+<p>Some routines in <a class="reference internal" href="#module-scipy.linalg.interpolative" title="scipy.linalg.interpolative"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.linalg.interpolative</span></tt></a> require estimating the rank
+of a matrix as well. This can be done with either:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">estimate_rank</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">sli</span><span class="o">.</span><span class="n">estimate_rank</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>depending on the representation. The parameter <tt class="docutils literal"><span class="pre">eps</span></tt> controls the definition
+of the numerical rank.</p>
+<p>Finally, the random number generation required for all randomized routines can
+be controlled via <a class="reference internal" href="generated/scipy.linalg.interpolative.seed.html#scipy.linalg.interpolative.seed" title="scipy.linalg.interpolative.seed"><tt class="xref py py-func docutils literal"><span class="pre">scipy.linalg.interpolative.seed</span></tt></a>. To reset the seed
+values to their original values, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sli</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="s">'default'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To specify the seed values, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sli</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">s</span></tt> must be an integer or array of 55 floats. If an integer, the array
+of floats is obtained by using <tt class="xref py py-obj docutils literal"><span class="pre">np.random.rand</span></tt> with the given integer seed.</p>
+<p>To simply generate some random numbers, type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sli</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">n</span></tt> is the number of random numbers to generate.</p>
+</div>
+<div class="section" id="remarks">
+<h3>Remarks<a class="headerlink" href="#remarks" title="Permalink to this headline">¶</a></h3>
+<p>The above functions all automatically detect the appropriate interface and work
+with both real and complex data types, passing input arguments to the proper
+backend routine.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

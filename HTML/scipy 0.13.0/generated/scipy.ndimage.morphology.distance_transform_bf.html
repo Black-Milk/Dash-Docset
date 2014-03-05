@@ -1,0 +1,237 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.ndimage.morphology.distance_transform_bf &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="Multi-dimensional image processing (scipy.ndimage)" href="../ndimage.html" />
+    <link rel="next" title="scipy.ndimage.morphology.distance_transform_cdt" href="scipy.ndimage.morphology.distance_transform_cdt.html" />
+    <link rel="prev" title="scipy.ndimage.morphology.black_tophat" href="scipy.ndimage.morphology.black_tophat.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="../ndimage.html" accesskey="U">Multi-dimensional image processing (<tt class="docutils literal"><span class="pre">scipy.ndimage</span></tt>)</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="scipy.ndimage.morphology.distance_transform_cdt.html" title="scipy.ndimage.morphology.distance_transform_cdt"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="scipy.ndimage.morphology.black_tophat.html" title="scipy.ndimage.morphology.black_tophat"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.ndimage.morphology.black_tophat.html"
+                        title="previous chapter">scipy.ndimage.morphology.black_tophat</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.ndimage.morphology.distance_transform_cdt.html"
+                        title="next chapter">scipy.ndimage.morphology.distance_transform_cdt</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="scipy-ndimage-morphology-distance-transform-bf">
+<h1>scipy.ndimage.morphology.distance_transform_bf<a class="headerlink" href="#scipy-ndimage-morphology-distance-transform-bf" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.ndimage.morphology.distance_transform_bf">
+<tt class="descclassname">scipy.ndimage.morphology.</tt><tt class="descname">distance_transform_bf</tt><big>(</big><em>input</em>, <em>metric='euclidean'</em>, <em>sampling=None</em>, <em>return_distances=True</em>, <em>return_indices=False</em>, <em>distances=None</em>, <em>indices=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/ndimage/morphology.py#L1738"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.ndimage.morphology.distance_transform_bf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance transform function by a brute force algorithm.</p>
+<p>This function calculates the distance transform of the <em class="xref py py-obj">input</em>, by
+replacing each background element (zero values), with its
+shortest distance to the foreground (any element non-zero).</p>
+<p>In addition to the distance transform, the feature transform can
+be calculated. In this case the index of the closest background
+element is returned along the first axis of the result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>input</strong> : array_like</p>
+<blockquote>
+<div><p>Input</p>
+</div></blockquote>
+<p><strong>metric</strong> : str, optional</p>
+<blockquote>
+<div><p>Three types of distance metric are supported: &#8216;euclidean&#8217;, &#8216;taxicab&#8217;
+and &#8216;chessboard&#8217;.</p>
+</div></blockquote>
+<p><strong>sampling</strong> : {int, sequence of ints}, optional</p>
+<blockquote>
+<div><p>This parameter is only used in the case of the euclidean <em class="xref py py-obj">metric</em>
+distance transform.</p>
+<p>The sampling along each axis can be given by the <em class="xref py py-obj">sampling</em> parameter
+which should be a sequence of length equal to the input rank, or a
+single number in which the <em class="xref py py-obj">sampling</em> is assumed to be equal along all
+axes.</p>
+</div></blockquote>
+<p><strong>return_distances</strong> : bool, optional</p>
+<blockquote>
+<div><p>The <em class="xref py py-obj">return_distances</em> flag can be used to indicate if the distance
+transform is returned.</p>
+<p>The default is True.</p>
+</div></blockquote>
+<p><strong>return_indices</strong> : bool, optional</p>
+<blockquote>
+<div><p>The <em class="xref py py-obj">return_indices</em> flags can be used to indicate if the feature
+transform is returned.</p>
+<p>The default is False.</p>
+</div></blockquote>
+<p><strong>distances</strong> : float64 ndarray, optional</p>
+<blockquote>
+<div><p>Optional output array to hold distances (if <em class="xref py py-obj">return_distances</em> is
+True).</p>
+</div></blockquote>
+<p><strong>indices</strong> : int64 ndarray, optional</p>
+<blockquote>
+<div><p>Optional output array to hold indices (if <em class="xref py py-obj">return_indices</em> is True).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>distances</strong> : ndarray</p>
+<blockquote>
+<div><p>Distance array if <em class="xref py py-obj">return_distances</em> is True.</p>
+</div></blockquote>
+<p><strong>indices</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Indices array if <em class="xref py py-obj">return_indices</em> is True.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This function employs a slow brute force algorithm, see also the
+function distance_transform_cdt for more efficient taxicab and
+chessboard algorithms.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

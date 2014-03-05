@@ -1,0 +1,417 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>Gaussian HMM of stock data &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="../../_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="../../index.html" />
+    <link rel="up" title="Examples" href="../index.html" />
+    <link rel="next" title="Compressive sensing: tomography reconstruction with L1 prior (Lasso)" href="plot_tomography_l1_reconstruction.html" />
+    <link rel="prev" title="Outlier detection on a real data set" href="plot_outlier_detection_housing.html" />
+  
+   
+       <script type="text/javascript" src="../../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/auto_examples/applications/plot_hmm_stock_analysis.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../../../stable/index.html">Home</a></li>
+                <li><a href="../../../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="../../documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="../../tutorial/index.html">Tutorials</a></li>
+			<li><a href="../../user_guide.html">User guide</a></li>
+			<li><a href="../../modules/classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="../../documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="../index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="../../_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="plot_outlier_detection_housing.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        Outlier detectio...
+        </span>
+            <span class="hiddenrellink">
+            Outlier detection on a real data set
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="plot_tomography_l1_reconstruction.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        Compressive sens...
+        </span>
+            <span class="hiddenrellink">
+            Compressive sensing: tomography reconstruction with L1 prior (Lasso)
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../../np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../../py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="../index.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        Examples
+        </span>
+            <span class="hiddenrellink">
+            Examples
+            </span>
+            
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">Gaussian HMM of stock data</a></li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gaussian-hmm-of-stock-data">
+<span id="example-applications-plot-hmm-stock-analysis-py"></span><h1>Gaussian HMM of stock data<a class="headerlink" href="#gaussian-hmm-of-stock-data" title="Permalink to this headline">¶</a></h1>
+<p>This script shows how to use Gaussian HMM.
+It uses stock price data, which can be obtained from yahoo finance.
+For more information on how to get stock prices with matplotlib, please refer
+to date_demo1.py of matplotlib.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The HMM module and its functions will be removed in 0.17
+as it no longer falls within the project&#8217;s scope and API.</p>
+</div>
+<img alt="../../_images/plot_hmm_stock_analysis_1.png" class="align-center" src="../../_images/plot_hmm_stock_analysis_1.png" />
+<p><strong>Script output</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>fitting to HMM and decoding ...done
+
+Transition matrix
+[[  7.19322579e-01   1.54770307e-01   1.18457368e-01   3.49583607e-03
+    3.95390999e-03]
+ [  1.49771835e-01   8.20043214e-01   2.93185716e-02   2.03005256e-05
+    8.46078233e-04]
+ [  3.15646441e-01   3.27364404e-02   6.27522206e-01   2.40949130e-02
+    1.21544337e-15]
+ [  3.66293359e-17   3.61483976e-18   3.24077006e-01   4.12899069e-01
+    2.63023926e-01]
+ [  1.15254477e-08   2.42259061e-03   9.23963480e-17   2.08824390e-02
+    9.76694959e-01]]
+
+means and vars of each hidden state
+0th hidden state
+mean =  [  1.09941919e-02   6.99026958e+07]
+var =  [  1.12635653e-01   1.52659647e+14]
+
+1th hidden state
+mean =  [  6.08502309e-03   4.91049391e+07]
+var =  [  4.58259539e-02   1.09568496e+14]
+
+2th hidden state
+mean =  [  3.56988874e-02   1.10427663e+08]
+var =  [  1.79608440e-01   8.80834750e+14]
+
+3th hidden state
+mean =  [ -7.36837119e-01   1.49278337e+08]
+var =  [  5.59990785e+00   1.02528348e+16]
+
+4th hidden state
+mean =  [  2.65663798e-02   4.96943611e+07]
+var =  [  8.06520156e-01   2.50294134e+14]
+</pre></div>
+</div>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../../_downloads/plot_hmm_stock_analysis.py"><tt class="xref download docutils literal"><span class="pre">plot_hmm_stock_analysis.py</span></tt></a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+<span class="kn">from</span> <span class="nn">matplotlib.finance</span> <span class="kn">import</span> <span class="n">quotes_historical_yahoo</span>
+<span class="kn">from</span> <span class="nn">matplotlib.dates</span> <span class="kn">import</span> <a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.YearLocator"><span class="n">YearLocator</span></a><span class="p">,</span> <a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.MonthLocator"><span class="n">MonthLocator</span></a><span class="p">,</span> <a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.DateFormatter"><span class="n">DateFormatter</span></a>
+<span class="kn">from</span> <span class="nn">sklearn.hmm</span> <span class="kn">import</span> <a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">GaussianHMM</span></a>
+
+
+<span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+<span class="c">###############################################################################</span>
+<span class="c"># Downloading the data</span>
+<span class="n">date1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1995</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c"># start date</span>
+<span class="n">date2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2012</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>  <span class="c"># end date</span>
+<span class="c"># get quotes from yahoo finance</span>
+<span class="n">quotes</span> <span class="o">=</span> <span class="n">quotes_historical_yahoo</span><span class="p">(</span><span class="s">&quot;INTC&quot;</span><span class="p">,</span> <span class="n">date1</span><span class="p">,</span> <span class="n">date2</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">quotes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span>
+
+<span class="c"># unpack quotes</span>
+<span class="n">dates</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.array.html#numpy.array"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">([</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">quotes</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">close_v</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.array.html#numpy.array"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">([</span><span class="n">q</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">quotes</span><span class="p">])</span>
+<span class="n">volume</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.array.html#numpy.array"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">([</span><span class="n">q</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">quotes</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="c"># take diff of close value</span>
+<span class="c"># this makes len(diff) = len(close_t) - 1</span>
+<span class="c"># therefore, others quantity also need to be shifted</span>
+<span class="n">diff</span> <span class="o">=</span> <span class="n">close_v</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">close_v</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="n">close_v</span> <span class="o">=</span> <span class="n">close_v</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="c"># pack diff and volume for training</span>
+<span class="n">X</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.column_stack.html#numpy.column_stack"><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span></a><span class="p">([</span><span class="n">diff</span><span class="p">,</span> <span class="n">volume</span><span class="p">])</span>
+
+<span class="c">###############################################################################</span>
+<span class="c"># Run Gaussian HMM</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;fitting to HMM and decoding ...&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="n">n_components</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c"># make an HMM instance and execute fit</span>
+<a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">model</span></a> <span class="o">=</span> <a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">GaussianHMM</span></a><span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="n">covariance_type</span><span class="o">=</span><span class="s">&quot;diag&quot;</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">model</span></a><span class="o">.</span><span class="n">fit</span><span class="p">([</span><span class="n">X</span><span class="p">])</span>
+
+<span class="c"># predict the optimal sequence of internal hidden state</span>
+<span class="n">hidden_states</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">model</span></a><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;done</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+
+<span class="c">###############################################################################</span>
+<span class="c"># print trained parameters and plot</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Transition matrix&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">model</span></a><span class="o">.</span><span class="n">transmat_</span><span class="p">)</span>
+<span class="k">print</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;means and vars of each hidden state&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_components</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%d</span><span class="s">th hidden state&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;mean = &quot;</span><span class="p">,</span> <a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">model</span></a><span class="o">.</span><span class="n">means_</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;var = &quot;</span><span class="p">,</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.diag.html#numpy.diag"><span class="n">np</span><span class="o">.</span><span class="n">diag</span></a><span class="p">(</span><a href="../../modules/generated/sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM"><span class="n">model</span></a><span class="o">.</span><span class="n">covars_</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="k">print</span><span class="p">()</span>
+
+<a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.YearLocator"><span class="n">years</span></a> <span class="o">=</span> <a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.YearLocator"><span class="n">YearLocator</span></a><span class="p">()</span>   <span class="c"># every year</span>
+<a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.MonthLocator"><span class="n">months</span></a> <span class="o">=</span> <a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.MonthLocator"><span class="n">MonthLocator</span></a><span class="p">()</span>  <span class="c"># every month</span>
+<a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.DateFormatter"><span class="n">yearsFmt</span></a> <span class="o">=</span> <a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.DateFormatter"><span class="n">DateFormatter</span></a><span class="p">(</span><span class="s">&#39;%Y&#39;</span><span class="p">)</span>
+<a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure"><span class="n">fig</span></a> <span class="o">=</span> <a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure"><span class="n">pl</span><span class="o">.</span><span class="n">figure</span></a><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure"><span class="n">fig</span></a><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_components</span><span class="p">):</span>
+    <span class="c"># use fancy indexing to plot data in each state</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">hidden_states</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">close_v</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;</span><span class="si">%d</span><span class="s">th hidden state&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+<a href="http://matplotlib.org/api/legend_api.html#matplotlib.legend"><span class="n">ax</span><span class="o">.</span><span class="n">legend</span></a><span class="p">()</span>
+
+<span class="c"># format the ticks</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.YearLocator"><span class="n">years</span></a><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.DateFormatter"><span class="n">yearsFmt</span></a><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.MonthLocator"><span class="n">months</span></a><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">autoscale_view</span><span class="p">()</span>
+
+<span class="c"># format the coords message box</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fmt_xdata</span> <span class="o">=</span> <a href="http://matplotlib.org/api/dates_api.html#matplotlib.dates.DateFormatter"><span class="n">DateFormatter</span></a><span class="p">(</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fmt_ydata</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s">&#39;$</span><span class="si">%1.2f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">x</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+<a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure"><span class="n">fig</span></a><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.show"><span class="n">pl</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the example:</strong>  5.30 seconds
+( 0 minutes  5.30 seconds)</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../../_sources/auto_examples/applications/plot_hmm_stock_analysis.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="plot_outlier_detection_housing.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="plot_tomography_l1_reconstruction.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="../../np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../../py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

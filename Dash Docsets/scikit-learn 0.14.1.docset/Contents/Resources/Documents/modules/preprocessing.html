@@ -1,0 +1,708 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>4.2. Preprocessing data &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="../_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="../index.html" />
+    <link rel="up" title="4. Dataset transformations" href="../data_transforms.html" />
+    <link rel="next" title="4.3. Kernel Approximation" href="kernel_approximation.html" />
+    <link rel="prev" title="4.1. Feature extraction" href="feature_extraction.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/modules/preprocessing.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../../stable/index.html">Home</a></li>
+                <li><a href="../../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="../documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="../tutorial/index.html">Tutorials</a></li>
+			<li><a href="../user_guide.html">User guide</a></li>
+			<li><a href="classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="../documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="../_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="feature_extraction.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        4.1. Feature ext...
+        </span>
+            <span class="hiddenrellink">
+            4.1. Feature extraction
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="kernel_approximation.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        4.3. Kernel Appr...
+        </span>
+            <span class="hiddenrellink">
+            4.3. Kernel Approximation
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="../data_transforms.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        4. Dataset trans...
+        </span>
+            <span class="hiddenrellink">
+            4. Dataset transformations
+            </span>
+            
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">4.2. Preprocessing data</a><ul>
+<li><a class="reference internal" href="#standardization-or-mean-removal-and-variance-scaling">4.2.1. Standardization, or mean removal and variance scaling</a><ul>
+<li><a class="reference internal" href="#scaling-features-to-a-range">4.2.1.1. Scaling features to a range</a></li>
+<li><a class="reference internal" href="#centering-kernel-matrices">4.2.1.2. Centering kernel matrices</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#normalization">4.2.2. Normalization</a></li>
+<li><a class="reference internal" href="#binarization">4.2.3. Binarization</a><ul>
+<li><a class="reference internal" href="#feature-binarization">4.2.3.1. Feature binarization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#encoding-categorical-features">4.2.4. Encoding categorical features</a></li>
+<li><a class="reference internal" href="#label-preprocessing">4.2.5. Label preprocessing</a><ul>
+<li><a class="reference internal" href="#label-binarization">4.2.5.1. Label binarization</a></li>
+<li><a class="reference internal" href="#label-encoding">4.2.5.2. Label encoding</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#imputation-of-missing-values">4.2.6. Imputation of missing values</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="preprocessing-data">
+<span id="preprocessing"></span><h1>4.2. Preprocessing data<a class="headerlink" href="#preprocessing-data" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">sklearn.preprocessing</span></tt> package provides several common
+utility functions and transformer classes to change raw feature vectors
+into a representation that is more suitable for the downstream estimators.</p>
+<div class="section" id="standardization-or-mean-removal-and-variance-scaling">
+<span id="preprocessing-scaler"></span><h2>4.2.1. Standardization, or mean removal and variance scaling<a class="headerlink" href="#standardization-or-mean-removal-and-variance-scaling" title="Permalink to this headline">¶</a></h2>
+<p><strong>Standardization</strong> of datasets is a <strong>common requirement for many
+machine learning estimators</strong> implemented in the scikit: they might behave
+badly if the individual feature do not more or less look like standard
+normally distributed data: Gaussian with <strong>zero mean and unit variance</strong>.</p>
+<p>In practice we often ignore the shape of the distribution and just
+transform the data to center it by removing the mean value of each
+feature, then scale it by dividing non-constant features by their
+standard deviation.</p>
+<p>For instance, many elements used in the objective function of
+a learning algorithm (such as the RBF kernel of Support Vector
+Machines or the l1 and l2 regularizers of linear models) assume that
+all features are centered around zero and have variance in the same
+order. If a feature has a variance that is orders of magnitude larger
+that others, it might dominate the objective function and make the
+estimator unable to learn from other features correctly as expected.</p>
+<p>The function <a class="reference internal" href="generated/sklearn.preprocessing.scale.html#sklearn.preprocessing.scale" title="sklearn.preprocessing.scale"><tt class="xref py py-func docutils literal"><span class="pre">scale</span></tt></a> provides a quick and easy way to perform this
+operation on a single array-like dataset:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">preprocessing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>              <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>              <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_scaled</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_scaled</span>                                          
+<span class="go">array([[ 0.  ..., -1.22...,  1.33...],</span>
+<span class="go">       [ 1.22...,  0.  ..., -0.26...],</span>
+<span class="go">       [-1.22...,  1.22..., -1.06...]])</span>
+</pre></div>
+</div>
+<p>Scaled data has zero mean and unit variance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X_scaled</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">array([ 0.,  0.,  0.])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_scaled</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">array([ 1.,  1.,  1.])</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">preprocessing</span></tt> module further provides a utility class
+<a class="reference internal" href="generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="sklearn.preprocessing.StandardScaler"><tt class="xref py py-class docutils literal"><span class="pre">StandardScaler</span></tt></a> that implements the <tt class="docutils literal"><span class="pre">Transformer</span></tt> API to compute
+the mean and standard deviation on a training set so as to be
+able to later reapply the same transformation on the testing set.
+This class is hence suitable for use in the early steps of a
+<a class="reference internal" href="generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="sklearn.pipeline.Pipeline"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.pipeline.Pipeline</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span>
+<span class="go">StandardScaler(copy=True, with_mean=True, with_std=True)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span><span class="o">.</span><span class="n">mean_</span>                                      
+<span class="go">array([ 1. ...,  0. ...,  0.33...])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span><span class="o">.</span><span class="n">std_</span>                                       
+<span class="go">array([ 0.81...,  0.81...,  1.24...])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>                               
+<span class="go">array([[ 0.  ..., -1.22...,  1.33...],</span>
+<span class="go">       [ 1.22...,  0.  ..., -0.26...],</span>
+<span class="go">       [-1.22...,  1.22..., -1.06...]])</span>
+</pre></div>
+</div>
+<p>The scaler instance can then be used on new data to transform it the
+same way it did on the training set:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]])</span>                
+<span class="go">array([[-2.44...,  1.22..., -0.26...]])</span>
+</pre></div>
+</div>
+<p>It is possible to disable either centering or scaling by either
+passing <tt class="docutils literal"><span class="pre">with_mean=False</span></tt> or <tt class="docutils literal"><span class="pre">with_std=False</span></tt> to the constructor
+of <a class="reference internal" href="generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="sklearn.preprocessing.StandardScaler"><tt class="xref py py-class docutils literal"><span class="pre">StandardScaler</span></tt></a>.</p>
+<div class="section" id="scaling-features-to-a-range">
+<h3>4.2.1.1. Scaling features to a range<a class="headerlink" href="#scaling-features-to-a-range" title="Permalink to this headline">¶</a></h3>
+<p>An alternative standardization is scaling features to
+lie between a given minimum and maximum value, often between zero and one.
+This can be achieved using <a class="reference internal" href="generated/sklearn.preprocessing.MinMaxScaler.html#sklearn.preprocessing.MinMaxScaler" title="sklearn.preprocessing.MinMaxScaler"><tt class="xref py py-class docutils literal"><span class="pre">MinMaxScaler</span></tt></a>.</p>
+<p>The motivation to use this scaling include robustness to very small
+standard deviations of features and preserving zero entries in sparse data.</p>
+<p>Here is an example to scale a toy data matrix to the <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">1]</span></tt> range:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]])</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">min_max_scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MinMaxScaler</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_train_minmax</span> <span class="o">=</span> <span class="n">min_max_scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_train_minmax</span>
+<span class="go">array([[ 0.5       ,  0.        ,  1.        ],</span>
+<span class="go">       [ 1.        ,  0.5       ,  0.33333333],</span>
+<span class="go">       [ 0.        ,  1.        ,  0.        ]])</span>
+</pre></div>
+</div>
+<p>The same instance of the transformer can then be applied to some new test data
+unseen during the fit call: the same scaling and shifting operations will be
+applied to be consistent with the transformation performed on the train data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="o">-</span><span class="mf">3.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_test_minmax</span> <span class="o">=</span> <span class="n">min_max_scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_test_minmax</span>
+<span class="go">array([[-1.5       ,  0.        ,  1.66666667]])</span>
+</pre></div>
+</div>
+<p>It is possible to introspect the scaler attributes to find about the exact
+nature of the transformation learned on the training data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">min_max_scaler</span><span class="o">.</span><span class="n">scale_</span>                             
+<span class="go">array([ 0.5       ,  0.5       ,  0.33...])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">min_max_scaler</span><span class="o">.</span><span class="n">min_</span>                               
+<span class="go">array([ 0.        ,  0.5       ,  0.33...])</span>
+</pre></div>
+</div>
+<p>If <a class="reference internal" href="generated/sklearn.preprocessing.MinMaxScaler.html#sklearn.preprocessing.MinMaxScaler" title="sklearn.preprocessing.MinMaxScaler"><tt class="xref py py-class docutils literal"><span class="pre">MinMaxScaler</span></tt></a> is given an explicit <tt class="docutils literal"><span class="pre">feature_range=(min,</span> <span class="pre">max)</span></tt> the
+full formula is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">X_std</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="n">X_scaled</span> <span class="o">=</span> <span class="n">X_std</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span> <span class="o">-</span> <span class="nb">min</span><span class="p">)</span> <span class="o">+</span> <span class="nb">min</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">References:</p>
+<p>Further discussion on the importance of centering and scaling data is
+available on this FAQ: <a class="reference external" href="http://www.faqs.org/faqs/ai-faq/neural-nets/part2/section-16.html">Should I normalize/standardize/rescale the data?</a></p>
+</div>
+<div class="topic">
+<p class="topic-title first">Scaling vs Whitening</p>
+<p>It is sometimes not enough to center and scale the features
+independently, since a downstream model can further make some assumption
+on the linear independence of the features.</p>
+<p>To address this issue you can use <a class="reference internal" href="generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA" title="sklearn.decomposition.PCA"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.decomposition.PCA</span></tt></a>
+or <a class="reference internal" href="generated/sklearn.decomposition.RandomizedPCA.html#sklearn.decomposition.RandomizedPCA" title="sklearn.decomposition.RandomizedPCA"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.decomposition.RandomizedPCA</span></tt></a> with <tt class="docutils literal"><span class="pre">whiten=True</span></tt>
+to further remove the linear correlation across features.</p>
+</div>
+<div class="topic">
+<p class="topic-title first">Sparse input</p>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.scale.html#sklearn.preprocessing.scale" title="sklearn.preprocessing.scale"><tt class="xref py py-func docutils literal"><span class="pre">scale</span></tt></a> and <a class="reference internal" href="generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="sklearn.preprocessing.StandardScaler"><tt class="xref py py-class docutils literal"><span class="pre">StandardScaler</span></tt></a> accept <tt class="docutils literal"><span class="pre">scipy.sparse</span></tt> matrices
+as input <strong>only when with_mean=False is explicitly passed to the
+constructor</strong>. Otherwise a <tt class="docutils literal"><span class="pre">ValueError</span></tt> will be raised as
+silently centering would break the sparsity and would often crash the
+execution by allocating excessive amounts of memory unintentionally.</p>
+<p>If the centered data is expected to be small enough, explicitly convert
+the input to an array using the <tt class="docutils literal"><span class="pre">toarray</span></tt> method of sparse matrices
+instead.</p>
+<p>For sparse input the data is <strong>converted to the Compressed Sparse Rows
+representation</strong> (see <tt class="docutils literal"><span class="pre">scipy.sparse.csr_matrix</span></tt>).
+To avoid unnecessary memory copies, it is recommended to choose the CSR
+representation upstream.</p>
+</div>
+<div class="topic">
+<p class="topic-title first">Scaling target variables in regression</p>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.scale.html#sklearn.preprocessing.scale" title="sklearn.preprocessing.scale"><tt class="xref py py-func docutils literal"><span class="pre">scale</span></tt></a> and <a class="reference internal" href="generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="sklearn.preprocessing.StandardScaler"><tt class="xref py py-class docutils literal"><span class="pre">StandardScaler</span></tt></a> work out-of-the-box with 1d arrays.
+This is very useful for scaling the target / response variables used
+for regression.</p>
+</div>
+</div>
+<div class="section" id="centering-kernel-matrices">
+<h3>4.2.1.2. Centering kernel matrices<a class="headerlink" href="#centering-kernel-matrices" title="Permalink to this headline">¶</a></h3>
+<p>If you have a kernel matrix of a kernel <img class="math" src="../_images/math/28e003020d0ae96250b302d7d779c791f183f707.png" alt="K"/> that computes a dot product
+in a feature space defined by function <img class="math" src="../_images/math/ec6ee91dd7171da4cf7a8858d648c7537f0c02af.png" alt="phi"/>,
+a <a class="reference internal" href="generated/sklearn.preprocessing.KernelCenterer.html#sklearn.preprocessing.KernelCenterer" title="sklearn.preprocessing.KernelCenterer"><tt class="xref py py-class docutils literal"><span class="pre">KernelCenterer</span></tt></a> can transform the kernel matrix
+so that it contains inner products in the feature space
+defined by <img class="math" src="../_images/math/ec6ee91dd7171da4cf7a8858d648c7537f0c02af.png" alt="phi"/> followed by removal of the mean in that space.</p>
+</div>
+</div>
+<div class="section" id="normalization">
+<h2>4.2.2. Normalization<a class="headerlink" href="#normalization" title="Permalink to this headline">¶</a></h2>
+<p><strong>Normalization</strong> is the process of <strong>scaling individual samples to have
+unit norm</strong>. This process can be useful if you plan to use a quadratic form
+such as the dot-product or any other kernel to quantify the similarity
+of any pair of samples.</p>
+<p>This assumption is the base of the <a class="reference external" href="http://en.wikipedia.org/wiki/Vector_Space_Model">Vector Space Model</a> often used in text
+classification and clustering contexts.</p>
+<p>The function <a class="reference internal" href="generated/sklearn.preprocessing.normalize.html#sklearn.preprocessing.normalize" title="sklearn.preprocessing.normalize"><tt class="xref py py-func docutils literal"><span class="pre">normalize</span></tt></a> provides a quick and easy way to perform this
+operation on a single array-like dataset, either using the <tt class="docutils literal"><span class="pre">l1</span></tt> or <tt class="docutils literal"><span class="pre">l2</span></tt>
+norms:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_normalized</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s">&#39;l2&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_normalized</span>                                      
+<span class="go">array([[ 0.40..., -0.40...,  0.81...],</span>
+<span class="go">       [ 1.  ...,  0.  ...,  0.  ...],</span>
+<span class="go">       [ 0.  ...,  0.70..., -0.70...]])</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">preprocessing</span></tt> module further provides a utility class
+<a class="reference internal" href="generated/sklearn.preprocessing.Normalizer.html#sklearn.preprocessing.Normalizer" title="sklearn.preprocessing.Normalizer"><tt class="xref py py-class docutils literal"><span class="pre">Normalizer</span></tt></a> that implements the same operation using the
+<tt class="docutils literal"><span class="pre">Transformer</span></tt> API (even though the <tt class="docutils literal"><span class="pre">fit</span></tt> method is useless in this case:
+the class is stateless as this operation treats samples independently).</p>
+<p>This class is hence suitable for use in the early steps of a
+<a class="reference internal" href="generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="sklearn.pipeline.Pipeline"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.pipeline.Pipeline</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">normalizer</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">Normalizer</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c"># fit does nothing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalizer</span>
+<span class="go">Normalizer(copy=True, norm=&#39;l2&#39;)</span>
+</pre></div>
+</div>
+<p>The normalizer instance can then be used on sample vectors as any transformer:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">normalizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>                            
+<span class="go">array([[ 0.40..., -0.40...,  0.81...],</span>
+<span class="go">       [ 1.  ...,  0.  ...,  0.  ...],</span>
+<span class="go">       [ 0.  ...,  0.70..., -0.70...]])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalizer</span><span class="o">.</span><span class="n">transform</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]])</span>             
+<span class="go">array([[-0.70...,  0.70...,  0.  ...]])</span>
+</pre></div>
+</div>
+<div class="topic">
+<p class="topic-title first">Sparse input</p>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.normalize.html#sklearn.preprocessing.normalize" title="sklearn.preprocessing.normalize"><tt class="xref py py-func docutils literal"><span class="pre">normalize</span></tt></a> and <a class="reference internal" href="generated/sklearn.preprocessing.Normalizer.html#sklearn.preprocessing.Normalizer" title="sklearn.preprocessing.Normalizer"><tt class="xref py py-class docutils literal"><span class="pre">Normalizer</span></tt></a> accept <strong>both dense array-like
+and sparse matrices from scipy.sparse as input</strong>.</p>
+<p>For sparse input the data is <strong>converted to the Compressed Sparse Rows
+representation</strong> (see <tt class="docutils literal"><span class="pre">scipy.sparse.csr_matrix</span></tt>) before being fed to
+efficient Cython routines. To avoid unnecessary memory copies, it is
+recommended to choose the CSR representation upstream.</p>
+</div>
+</div>
+<div class="section" id="binarization">
+<h2>4.2.3. Binarization<a class="headerlink" href="#binarization" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="feature-binarization">
+<h3>4.2.3.1. Feature binarization<a class="headerlink" href="#feature-binarization" title="Permalink to this headline">¶</a></h3>
+<p><strong>Feature binarization</strong> is the process of <strong>thresholding numerical
+features to get boolean values</strong>. This can be useful for downstream
+probabilistic estimators that make assumption that the input data
+is distributed according to a multi-variate <a class="reference external" href="http://en.wikipedia.org/wiki/Bernoulli_distribution">Bernoulli distribution</a>. For instance,
+this is the case for the <a class="reference internal" href="generated/sklearn.neural_network.BernoulliRBM.html#sklearn.neural_network.BernoulliRBM" title="sklearn.neural_network.BernoulliRBM"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.neural_network.BernoulliRBM</span></tt></a>.</p>
+<p>It is also common among the text processing community to use binary
+feature values (probably to simplify the probabilistic reasoning) even
+if normalized counts (a.k.a. term frequencies) or TF-IDF valued features
+often perform slightly better in practice.</p>
+<p>As for the <a class="reference internal" href="generated/sklearn.preprocessing.Normalizer.html#sklearn.preprocessing.Normalizer" title="sklearn.preprocessing.Normalizer"><tt class="xref py py-class docutils literal"><span class="pre">Normalizer</span></tt></a>, the utility class
+<a class="reference internal" href="generated/sklearn.preprocessing.Binarizer.html#sklearn.preprocessing.Binarizer" title="sklearn.preprocessing.Binarizer"><tt class="xref py py-class docutils literal"><span class="pre">Binarizer</span></tt></a> is meant to be used in the early stages of
+<a class="reference internal" href="generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="sklearn.pipeline.Pipeline"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.pipeline.Pipeline</span></tt></a>. The <tt class="docutils literal"><span class="pre">fit</span></tt> method does nothing
+as each sample is treated independently of others:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">]]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binarizer</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">Binarizer</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c"># fit does nothing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binarizer</span>
+<span class="go">Binarizer(copy=True, threshold=0.0)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binarizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">array([[ 1.,  0.,  1.],</span>
+<span class="go">       [ 1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  1.,  0.]])</span>
+</pre></div>
+</div>
+<p>It is possible to adjust the threshold of the binarizer:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">binarizer</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">Binarizer</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">1.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binarizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">array([[ 0.,  0.,  1.],</span>
+<span class="go">       [ 1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.]])</span>
+</pre></div>
+</div>
+<p>As for the <a class="reference internal" href="generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="sklearn.preprocessing.StandardScaler"><tt class="xref py py-class docutils literal"><span class="pre">StandardScaler</span></tt></a> and <a class="reference internal" href="generated/sklearn.preprocessing.Normalizer.html#sklearn.preprocessing.Normalizer" title="sklearn.preprocessing.Normalizer"><tt class="xref py py-class docutils literal"><span class="pre">Normalizer</span></tt></a> classes, the
+preprocessing module provides a companion function <a class="reference internal" href="generated/sklearn.preprocessing.binarize.html#sklearn.preprocessing.binarize" title="sklearn.preprocessing.binarize"><tt class="xref py py-func docutils literal"><span class="pre">binarize</span></tt></a>
+to be used when the transformer API is not necessary.</p>
+<div class="topic">
+<p class="topic-title first">Sparse input</p>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.binarize.html#sklearn.preprocessing.binarize" title="sklearn.preprocessing.binarize"><tt class="xref py py-func docutils literal"><span class="pre">binarize</span></tt></a> and <a class="reference internal" href="generated/sklearn.preprocessing.Binarizer.html#sklearn.preprocessing.Binarizer" title="sklearn.preprocessing.Binarizer"><tt class="xref py py-class docutils literal"><span class="pre">Binarizer</span></tt></a> accept <strong>both dense array-like
+and sparse matrices from scipy.sparse as input</strong>.</p>
+<p>For sparse input the data is <strong>converted to the Compressed Sparse Rows
+representation</strong> (see <tt class="docutils literal"><span class="pre">scipy.sparse.csr_matrix</span></tt>).
+To avoid unnecessary memory copies, it is recommended to choose the CSR
+representation upstream.</p>
+</div>
+</div>
+</div>
+<div class="section" id="encoding-categorical-features">
+<span id="preprocessing-categorical-features"></span><h2>4.2.4. Encoding categorical features<a class="headerlink" href="#encoding-categorical-features" title="Permalink to this headline">¶</a></h2>
+<p>Often features are not given as continuous values but categorical.
+For example a person could have features <tt class="docutils literal"><span class="pre">[&quot;male&quot;,</span> <span class="pre">&quot;female&quot;]</span></tt>,
+<tt class="docutils literal"><span class="pre">[&quot;from</span> <span class="pre">Europe&quot;,</span> <span class="pre">&quot;from</span> <span class="pre">US&quot;,</span> <span class="pre">&quot;from</span> <span class="pre">Asia&quot;]</span></tt>,
+<tt class="docutils literal"><span class="pre">[&quot;uses</span> <span class="pre">Firefox&quot;,</span> <span class="pre">&quot;uses</span> <span class="pre">Chrome&quot;,</span> <span class="pre">&quot;uses</span> <span class="pre">Safari&quot;,</span> <span class="pre">&quot;uses</span> <span class="pre">Internet</span> <span class="pre">Explorer&quot;]</span></tt>.
+Such features can be efficiently coded as integers, for instance
+<tt class="docutils literal"><span class="pre">[&quot;male&quot;,</span> <span class="pre">&quot;from</span> <span class="pre">US&quot;,</span> <span class="pre">&quot;uses</span> <span class="pre">Internet</span> <span class="pre">Explorer&quot;]</span></tt> could be expressed as
+<tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">3]</span></tt> while <tt class="docutils literal"><span class="pre">[&quot;female&quot;,</span> <span class="pre">&quot;from</span> <span class="pre">Asia&quot;,</span> <span class="pre">&quot;uses</span> <span class="pre">Chrome&quot;]</span></tt> would be
+<tt class="docutils literal"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">1]</span></tt>.</p>
+<p>Such integer representation can not be used directly with scikit-learn estimators, as these
+expect continuous input, and would interpret the categories as being ordered, which is often
+not desired (i.e. the set of browsers was ordered arbitrarily).</p>
+<p>One possibility to convert categorical features to features that can be used
+with scikit-learn estimators is to use a one-of-K or one-hot encoding, which is
+implemented in <a class="reference internal" href="generated/sklearn.preprocessing.OneHotEncoder.html#sklearn.preprocessing.OneHotEncoder" title="sklearn.preprocessing.OneHotEncoder"><tt class="xref py py-class docutils literal"><span class="pre">OneHotEncoder</span></tt></a>.  This estimator transforms each
+categorical feature with <tt class="docutils literal"><span class="pre">m</span></tt> possible values into <tt class="docutils literal"><span class="pre">m</span></tt> binary features, with
+only one active.</p>
+<p>Continuing the example above:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">enc</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">enc</span><span class="o">.</span><span class="n">fit</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>  
+<span class="go">OneHotEncoder(categorical_features=&#39;all&#39;, dtype=&lt;... &#39;float&#39;&gt;,</span>
+<span class="go">       n_values=&#39;auto&#39;, sparse=True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">enc</span><span class="o">.</span><span class="n">transform</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+<span class="go">array([[ 1.,  0.,  0.,  1.,  0.,  0.,  0.,  0.,  1.]])</span>
+</pre></div>
+</div>
+<p>By default, how many values each feature can take is inferred automatically from the dataset.
+It is possible to specify this explicitly using the parameter <tt class="docutils literal"><span class="pre">n_values</span></tt>.
+There are two genders, three possible continents and four web browsers in our
+dataset.
+Then we fit the estimator, and transform a data point.
+In the result, the first two numbers encode the gender, the next set of three
+numbers the continent and the last four the web browser.</p>
+<p>See <a class="reference internal" href="feature_extraction.html#dict-feature-extraction"><em>Loading features from dicts</em></a> for categorical features that are represented
+as a dict, not as integers.</p>
+</div>
+<div class="section" id="label-preprocessing">
+<h2>4.2.5. Label preprocessing<a class="headerlink" href="#label-preprocessing" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="label-binarization">
+<h3>4.2.5.1. Label binarization<a class="headerlink" href="#label-binarization" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.LabelBinarizer.html#sklearn.preprocessing.LabelBinarizer" title="sklearn.preprocessing.LabelBinarizer"><tt class="xref py py-class docutils literal"><span class="pre">LabelBinarizer</span></tt></a> is a utility class to help create a label indicator
+matrix from a list of multi-class labels:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lb</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelBinarizer</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lb</span><span class="o">.</span><span class="n">fit</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="go">LabelBinarizer(neg_label=0, pos_label=1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lb</span><span class="o">.</span><span class="n">classes_</span>
+<span class="go">array([1, 2, 4, 6])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lb</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="go">array([[1, 0, 0, 0],</span>
+<span class="go">       [0, 0, 0, 1]])</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.LabelBinarizer.html#sklearn.preprocessing.LabelBinarizer" title="sklearn.preprocessing.LabelBinarizer"><tt class="xref py py-class docutils literal"><span class="pre">LabelBinarizer</span></tt></a> also supports multiple labels per instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lb</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)])</span>
+<span class="go">array([[1, 1, 0],</span>
+<span class="go">       [0, 0, 1]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lb</span><span class="o">.</span><span class="n">classes_</span>
+<span class="go">array([1, 2, 3])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="label-encoding">
+<h3>4.2.5.2. Label encoding<a class="headerlink" href="#label-encoding" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder" title="sklearn.preprocessing.LabelEncoder"><tt class="xref py py-class docutils literal"><span class="pre">LabelEncoder</span></tt></a> is a utility class to help normalize labels such that
+they contain only values between 0 and n_classes-1. This is sometimes useful
+for writing efficient Cython routines. <a class="reference internal" href="generated/sklearn.preprocessing.LabelEncoder.html#sklearn.preprocessing.LabelEncoder" title="sklearn.preprocessing.LabelEncoder"><tt class="xref py py-class docutils literal"><span class="pre">LabelEncoder</span></tt></a> can be used as
+follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">preprocessing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">le</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelEncoder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">le</span><span class="o">.</span><span class="n">fit</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="go">LabelEncoder()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">le</span><span class="o">.</span><span class="n">classes_</span>
+<span class="go">array([1, 2, 6])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">le</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="go">array([0, 0, 1, 2])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">le</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="go">array([1, 1, 2, 6])</span>
+</pre></div>
+</div>
+<p>It can also be used to transform non-numerical labels (as long as they are
+hashable and comparable) to numerical labels:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">le</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelEncoder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">le</span><span class="o">.</span><span class="n">fit</span><span class="p">([</span><span class="s">&quot;paris&quot;</span><span class="p">,</span> <span class="s">&quot;paris&quot;</span><span class="p">,</span> <span class="s">&quot;tokyo&quot;</span><span class="p">,</span> <span class="s">&quot;amsterdam&quot;</span><span class="p">])</span>
+<span class="go">LabelEncoder()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">le</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
+<span class="go">[&#39;amsterdam&#39;, &#39;paris&#39;, &#39;tokyo&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">le</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="s">&quot;tokyo&quot;</span><span class="p">,</span> <span class="s">&quot;tokyo&quot;</span><span class="p">,</span> <span class="s">&quot;paris&quot;</span><span class="p">])</span>
+<span class="go">array([2, 2, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">le</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+<span class="go">[&#39;tokyo&#39;, &#39;tokyo&#39;, &#39;paris&#39;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="imputation-of-missing-values">
+<h2>4.2.6. Imputation of missing values<a class="headerlink" href="#imputation-of-missing-values" title="Permalink to this headline">¶</a></h2>
+<p>For various reasons, many real world datasets contain missing values, often
+encoded as blanks, NaNs or other placeholders. Such datasets however are
+incompatible with scikit-learn estimators which assume that all values in an
+array are numerical, and that all have and hold meaning. A basic strategy to use
+incomplete datasets is to discard entire rows and/or columns containing missing
+values. However, this comes at the price of losing data which may be valuable
+(even though incomplete). A better strategy is to impute the missing values,
+i.e., to infer them from the known part of the data.</p>
+<p>The <a class="reference internal" href="generated/sklearn.preprocessing.Imputer.html#sklearn.preprocessing.Imputer" title="sklearn.preprocessing.Imputer"><tt class="xref py py-class docutils literal"><span class="pre">Imputer</span></tt></a> class provides basic strategies for imputing missing
+values, either using the mean, the median or the most frequent value of
+the row or column in which the missing values are located. This class
+also allows for different missing values encodings.</p>
+<p>The following snippet demonstrates how to replace missing values,
+encoded as <tt class="docutils literal"><span class="pre">np.nan</span></tt>, using the mean value of the columns (axis 0)
+that contain the missing values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">Imputer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imp</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span><span class="n">missing_values</span><span class="o">=</span><span class="s">&#39;NaN&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imp</span><span class="o">.</span><span class="n">fit</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+<span class="go">Imputer(axis=0, copy=True, missing_values=&#39;NaN&#39;, strategy=&#39;mean&#39;, verbose=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">imp</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>                           
+<span class="go">[[ 4.          2.        ]</span>
+<span class="go"> [ 6.          3.666...]</span>
+<span class="go"> [ 7.          6.        ]]</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="generated/sklearn.preprocessing.Imputer.html#sklearn.preprocessing.Imputer" title="sklearn.preprocessing.Imputer"><tt class="xref py py-class docutils literal"><span class="pre">Imputer</span></tt></a> class also supports sparse matrices:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.sparse</span> <span class="kn">as</span> <span class="nn">sp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imp</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span><span class="n">missing_values</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">Imputer(axis=0, copy=True, missing_values=0, strategy=&#39;mean&#39;, verbose=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_test</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">imp</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>                      
+<span class="go">[[ 4.          2.        ]</span>
+<span class="go"> [ 6.          3.666...]</span>
+<span class="go"> [ 7.          6.        ]]</span>
+</pre></div>
+</div>
+<p>Note that, here, missing values are encoded by 0 and are thus implicitly stored
+in the matrix. This format is thus suitable when there are many more missing
+values than observed values.</p>
+<p><a class="reference internal" href="generated/sklearn.preprocessing.Imputer.html#sklearn.preprocessing.Imputer" title="sklearn.preprocessing.Imputer"><tt class="xref py py-class docutils literal"><span class="pre">Imputer</span></tt></a> can be used in a Pipeline as a way to build a composite
+estimator that supports imputation. See <a class="reference internal" href="../auto_examples/imputation.html#example-imputation-py"><em>Imputing missing values before building an estimator</em></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../_sources/modules/preprocessing.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="feature_extraction.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="kernel_approximation.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="../np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

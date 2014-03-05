@@ -1,0 +1,292 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.optimize.broyden2 &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="Optimization and root finding (scipy.optimize)" href="../optimize.html" />
+    <link rel="next" title="scipy.optimize.newton_krylov" href="scipy.optimize.newton_krylov.html" />
+    <link rel="prev" title="scipy.optimize.broyden1" href="scipy.optimize.broyden1.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="../optimize.html" accesskey="U">Optimization and root finding (<tt class="docutils literal"><span class="pre">scipy.optimize</span></tt>)</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="scipy.optimize.newton_krylov.html" title="scipy.optimize.newton_krylov"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="scipy.optimize.broyden1.html" title="scipy.optimize.broyden1"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.optimize.broyden1.html"
+                        title="previous chapter">scipy.optimize.broyden1</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.optimize.newton_krylov.html"
+                        title="next chapter">scipy.optimize.newton_krylov</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="scipy-optimize-broyden2">
+<h1>scipy.optimize.broyden2<a class="headerlink" href="#scipy-optimize-broyden2" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.optimize.broyden2">
+<tt class="descclassname">scipy.optimize.</tt><tt class="descname">broyden2</tt><big>(</big><em>F</em>, <em>xin</em>, <em>iter=None</em>, <em>alpha=None</em>, <em>reduction_method='restart'</em>, <em>max_rank=None</em>, <em>verbose=False</em>, <em>maxiter=None</em>, <em>f_tol=None</em>, <em>f_rtol=None</em>, <em>x_tol=None</em>, <em>x_rtol=None</em>, <em>tol_norm=None</em>, <em>line_search='armijo'</em>, <em>callback=None</em>, <em>**kw</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/optimize/nonlin.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.optimize.broyden2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a root of a function, using Broyden&#8217;s second Jacobian approximation.</p>
+<p>This method is also known as &#8220;Broyden&#8217;s bad method&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>F</strong> : function(x) -&gt; f</p>
+<blockquote>
+<div><p>Function whose root to find; should take and return an array-like
+object.</p>
+</div></blockquote>
+<p><strong>x0</strong> : array_like</p>
+<blockquote>
+<div><p>Initial guess for the solution</p>
+</div></blockquote>
+<p><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Initial guess for the Jacobian is <tt class="docutils literal"><span class="pre">(-1/alpha)</span></tt>.</p>
+</div></blockquote>
+<p><strong>reduction_method</strong> : str or tuple, optional</p>
+<blockquote>
+<div><p>Method used in ensuring that the rank of the Broyden matrix
+stays low. Can either be a string giving the name of the method,
+or a tuple of the form <tt class="docutils literal"><span class="pre">(method,</span> <span class="pre">param1,</span> <span class="pre">param2,</span> <span class="pre">...)</span></tt>
+that gives the name of the method and values for additional parameters.</p>
+<p>Methods available:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">restart</span></tt>: drop all matrix columns. Has no extra parameters.</li>
+<li><tt class="docutils literal"><span class="pre">simple</span></tt>: drop oldest matrix column. Has no extra parameters.</li>
+<li><tt class="docutils literal"><span class="pre">svd</span></tt>: keep only the most significant SVD components.
+Takes an extra parameter, <tt class="docutils literal"><span class="pre">to_retain`,</span> <span class="pre">which</span> <span class="pre">determines</span> <span class="pre">the</span>
+<span class="pre">number</span> <span class="pre">of</span> <span class="pre">SVD</span> <span class="pre">components</span> <span class="pre">to</span> <span class="pre">retain</span> <span class="pre">when</span> <span class="pre">rank</span> <span class="pre">reduction</span> <span class="pre">is</span> <span class="pre">done.</span>
+<span class="pre">Default</span> <span class="pre">is</span> <span class="pre">``max_rank</span> <span class="pre">-</span> <span class="pre">2</span></tt>.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p><strong>max_rank</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum rank for the Broyden matrix.
+Default is infinity (ie., no rank reduction).</p>
+</div></blockquote>
+<p><strong>iter</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of iterations to make. If omitted (default), make as many
+as required to meet tolerances.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool, optional</p>
+<blockquote>
+<div><p>Print status to stdout on every iteration.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum number of iterations to make. If more are needed to
+meet convergence, <em class="xref py py-obj">NoConvergence</em> is raised.</p>
+</div></blockquote>
+<p><strong>f_tol</strong> : float, optional</p>
+<blockquote>
+<div><p>Absolute tolerance (in max-norm) for the residual.
+If omitted, default is 6e-6.</p>
+</div></blockquote>
+<p><strong>f_rtol</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative tolerance for the residual. If omitted, not used.</p>
+</div></blockquote>
+<p><strong>x_tol</strong> : float, optional</p>
+<blockquote>
+<div><p>Absolute minimum step size, as determined from the Jacobian
+approximation. If the step size is smaller than this, optimization
+is terminated as successful. If omitted, not used.</p>
+</div></blockquote>
+<p><strong>x_rtol</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative minimum step size. If omitted, not used.</p>
+</div></blockquote>
+<p><strong>tol_norm</strong> : function(vector) -&gt; scalar, optional</p>
+<blockquote>
+<div><p>Norm to use in convergence check. Default is the maximum norm.</p>
+</div></blockquote>
+<p><strong>line_search</strong> : {None, &#8216;armijo&#8217; (default), &#8216;wolfe&#8217;}, optional</p>
+<blockquote>
+<div><p>Which type of a line search to use to determine the step size in the
+direction given by the Jacobian approximation. Defaults to &#8216;armijo&#8217;.</p>
+</div></blockquote>
+<p><strong>callback</strong> : function, optional</p>
+<blockquote>
+<div><p>Optional callback function. It is called on every iteration as
+<tt class="docutils literal"><span class="pre">callback(x,</span> <span class="pre">f)</span></tt> where <em class="xref py py-obj">x</em> is the current solution and <em class="xref py py-obj">f</em>
+the corresponding residual.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>sol</strong> : ndarray</p>
+<blockquote>
+<div><p>An array (of similar array type as <em class="xref py py-obj">x0</em>) containing the final solution.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>NoConvergence</strong></p>
+<blockquote class="last">
+<div><p>When a solution was not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This algorithm implements the inverse Jacobian Quasi-Newton update</p>
+<div class="math">
+<p><img src="../_images/math/02cf0537357aaa4143103836f92ee2dd03dd20bc.png" alt="H_+ = H + (dx - H df) df^\dagger / ( df^\dagger df)"/></p>
+</div><p>corresponding to Broyden&#8217;s second method.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="vr" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[vR]</a></td><td><p class="first">B.A. van der Rotten, PhD thesis,
+&#8220;A limited memory Broyden method to solve high-dimensional
+systems of nonlinear equations&#8221;. Mathematisch Instituut,
+Universiteit Leiden, The Netherlands (2003).</p>
+<p class="last"><a class="reference external" href="http://www.math.leidenuniv.nl/scripties/Rotten.pdf">http://www.math.leidenuniv.nl/scripties/Rotten.pdf</a></p>
+</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

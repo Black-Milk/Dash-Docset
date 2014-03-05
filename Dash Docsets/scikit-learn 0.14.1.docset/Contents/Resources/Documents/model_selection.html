@@ -1,0 +1,417 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>3. Model selection and evaluation &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="index.html" />
+    <link rel="up" title="&lt;no title&gt;" href="user_guide.html" />
+    <link rel="next" title="3.1. Cross-validation: evaluating estimator performance" href="modules/cross_validation.html" />
+    <link rel="prev" title="2.10. Neural network models (unsupervised)" href="modules/neural_networks.html" />
+  
+   
+       <script type="text/javascript" src="_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/model_selection.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="index.html">
+            <img src="_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../stable/index.html">Home</a></li>
+                <li><a href="../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="tutorial/index.html">Tutorials</a></li>
+			<li><a href="user_guide.html">User guide</a></li>
+			<li><a href="modules/classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="auto_examples/index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="modules/neural_networks.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        2.10. Neural net...
+        </span>
+            <span class="hiddenrellink">
+            2.10. Neural network models (unsupervised)
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="modules/cross_validation.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        3.1. Cross-valid...
+        </span>
+            <span class="hiddenrellink">
+            3.1. Cross-validation: evaluating estimator performance
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="user_guide.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        <no title>
+        </span>
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">3. Model selection and evaluation</a></li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <style type="text/css">
+  div.bodywrapper blockquote {
+      margin: 0 ;
+  }
+
+  div.toctree-wrapper ul {
+      margin-top: 0 ;
+      margin-bottom: 0 ;
+      padding-left: 10px ;
+  }
+
+  li.toctree-l1 {
+      padding: 0 0 0.5em 0 ;
+      list-style-type: none;
+      font-size: 150% ;
+      font-weight: bold;
+      }
+
+  li.toctree-l1 ul {
+      padding-left: 40px ;
+  }
+
+  li.toctree-l2 {
+      font-size: 70% ;
+      list-style-type: square;
+      font-weight: normal;
+      }
+
+  li.toctree-l3 {
+      font-size: 85% ;
+      list-style-type: circle;
+      font-weight: normal;
+      }
+
+</style><div class="section" id="model-selection-and-evaluation">
+<span id="model-selection"></span><h1>3. Model selection and evaluation<a class="headerlink" href="#model-selection-and-evaluation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/cross_validation.html">3.1. Cross-validation: evaluating estimator performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/cross_validation.html#computing-cross-validated-metrics">3.1.1. Computing cross-validated metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/cross_validation.html#cross-validation-iterators">3.1.2. Cross validation iterators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#k-fold">3.1.2.1. K-fold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#stratified-k-fold">3.1.2.2. Stratified k-fold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#leave-one-out-loo">3.1.2.3. Leave-One-Out - LOO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#leave-p-out-lpo">3.1.2.4. Leave-P-Out - LPO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#leave-one-label-out-lolo">3.1.2.5. Leave-One-Label-Out - LOLO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#leave-p-label-out">3.1.2.6. Leave-P-Label-Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#random-permutations-cross-validation-a-k-a-shuffle-split">3.1.2.7. Random permutations cross-validation a.k.a. Shuffle &amp; Split</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#see-also">3.1.2.8. See also</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/cross_validation.html#bootstrapping-cross-validation">3.1.2.9. Bootstrapping cross-validation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/cross_validation.html#cross-validation-and-model-selection">3.1.3. Cross validation and model selection</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/grid_search.html">3.2. Grid Search: Searching for estimator parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/grid_search.html#exhaustive-grid-search">3.2.1. Exhaustive Grid Search</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/grid_search.html#scoring-functions-for-parameter-search">3.2.1.1. Scoring functions for parameter search</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/grid_search.html#randomized-parameter-optimization">3.2.2. Randomized Parameter Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/grid_search.html#alternatives-to-brute-force-parameter-search">3.2.3. Alternatives to brute force parameter search</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/grid_search.html#model-specific-cross-validation">3.2.3.1. Model specific cross-validation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.linear_model.RidgeCV.html">3.2.3.1.1. <tt class="docutils literal"><span class="pre">sklearn.linear_model</span></tt>.RidgeCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.linear_model.RidgeClassifierCV.html">3.2.3.1.2. <tt class="docutils literal"><span class="pre">sklearn.linear_model</span></tt>.RidgeClassifierCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.linear_model.LarsCV.html">3.2.3.1.3. <tt class="docutils literal"><span class="pre">sklearn.linear_model</span></tt>.LarsCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.linear_model.LassoLarsCV.html">3.2.3.1.4. <tt class="docutils literal"><span class="pre">sklearn.linear_model</span></tt>.LassoLarsCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.linear_model.LassoCV.html">3.2.3.1.5. <tt class="docutils literal"><span class="pre">sklearn.linear_model</span></tt>.LassoCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.linear_model.ElasticNetCV.html">3.2.3.1.6. <tt class="docutils literal"><span class="pre">sklearn.linear_model</span></tt>.ElasticNetCV</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/grid_search.html#information-criterion">3.2.3.2. Information Criterion</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.linear_model.LassoLarsIC.html">3.2.3.2.1. <tt class="docutils literal"><span class="pre">sklearn.linear_model</span></tt>.LassoLarsIC</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/grid_search.html#out-of-bag-estimates">3.2.3.3. Out of Bag Estimates</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.ensemble.RandomForestClassifier.html">3.2.3.3.1. <tt class="docutils literal"><span class="pre">sklearn.ensemble</span></tt>.RandomForestClassifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.ensemble.RandomForestRegressor.html">3.2.3.3.2. <tt class="docutils literal"><span class="pre">sklearn.ensemble</span></tt>.RandomForestRegressor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.ensemble.ExtraTreesClassifier.html">3.2.3.3.3. <tt class="docutils literal"><span class="pre">sklearn.ensemble</span></tt>.ExtraTreesClassifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.ensemble.ExtraTreesRegressor.html">3.2.3.3.4. <tt class="docutils literal"><span class="pre">sklearn.ensemble</span></tt>.ExtraTreesRegressor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.ensemble.GradientBoostingClassifier.html">3.2.3.3.5. <tt class="docutils literal"><span class="pre">sklearn.ensemble</span></tt>.GradientBoostingClassifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/generated/sklearn.ensemble.GradientBoostingRegressor.html">3.2.3.3.6. <tt class="docutils literal"><span class="pre">sklearn.ensemble</span></tt>.GradientBoostingRegressor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/pipeline.html">3.3. Pipeline: chaining estimators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/pipeline.html#usage">3.3.1. Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/pipeline.html#notes">3.3.2. Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/pipeline.html#featureunion-combining-feature-extractors">3.4. FeatureUnion: Combining feature extractors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/pipeline.html#id1">3.4.1. Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/model_evaluation.html">3.5. Model evaluation: quantifying the quality of predictions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/model_evaluation.html#the-scoring-parameter-defining-model-evaluation-rules">3.5.1. The <cite>scoring</cite> parameter: defining model evaluation rules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/model_evaluation.html#common-cases-predefined-values">3.5.1.1. Common cases: predefined values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/model_evaluation.html#defining-your-scoring-strategy-from-score-functions">3.5.1.2. Defining your scoring strategy from score functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/model_evaluation.html#implementing-your-own-scoring-object">3.5.1.3. Implementing your own scoring object</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/model_evaluation.html#function-for-prediction-error-metrics">3.5.2. Function for prediction-error metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/model_evaluation.html#classification-metrics">3.5.2.1. Classification metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#accuracy-score">3.5.2.1.1. Accuracy score</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#confusion-matrix">3.5.2.1.2. Confusion matrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#classification-report">3.5.2.1.3. Classification report</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#hamming-loss">3.5.2.1.4. Hamming loss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#jaccard-similarity-coefficient-score">3.5.2.1.5. Jaccard similarity coefficient score</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#precision-recall-and-f-measures">3.5.2.1.6. Precision, recall and F-measures</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/model_evaluation.html#binary-classification">3.5.2.1.6.1. Binary classification</a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/model_evaluation.html#multiclass-and-multilabel-classification">3.5.2.1.6.2. Multiclass and multilabel classification</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#hinge-loss">3.5.2.1.7. Hinge loss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#log-loss">3.5.2.1.8. Log loss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#matthews-correlation-coefficient">3.5.2.1.9. Matthews correlation coefficient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#receiver-operating-characteristic-roc">3.5.2.1.10. Receiver operating characteristic (ROC)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#zero-one-loss">3.5.2.1.11. Zero one loss</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/model_evaluation.html#regression-metrics">3.5.2.2. Regression metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#explained-variance-score">3.5.2.2.1. Explained variance score</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#mean-absolute-error">3.5.2.2.2. Mean absolute error</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#mean-squared-error">3.5.2.2.3. Mean squared error</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/model_evaluation.html#r2-score-the-coefficient-of-determination">3.5.2.2.4. R² score, the coefficient of determination</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/model_evaluation.html#clustering-metrics">3.5.3. Clustering metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/model_evaluation.html#biclustering-metrics">3.5.4. Biclustering metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/model_evaluation.html#id8">3.5.4.1. Clustering metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/model_evaluation.html#dummy-estimators">3.5.5. Dummy estimators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/learning_curve.html">3.6. Validation curves: plotting scores to evaluate models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/learning_curve.html#validation-curve">3.6.1. Validation curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/learning_curve.html#learning-curve">3.6.2. Learning curve</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="_sources/model_selection.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="modules/neural_networks.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="modules/cross_validation.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

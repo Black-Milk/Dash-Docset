@@ -1,0 +1,1985 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Release Notes &mdash; NumPy v1.8 Manual</title>
+    
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
+    <link rel="stylesheet" href="_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="about.html" >
+    <link rel="top" title="NumPy v1.8 Manual" href="index.html" >
+    <link rel="next" title="About NumPy" href="about.html" >
+    <link rel="prev" title="git resources" href="dev/gitwash/git_resources.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+        
+        <li class="active"><a href="index.html">NumPy v1.8 Manual</a></li>
+        
+ 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="about.html" title="About NumPy"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="dev/gitwash/git_resources.html" title="git resources"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Release Notes</a><ul>
+<li><a class="reference internal" href="#numpy-1-8-0-release-notes">NumPy 1.8.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#highlights">Highlights</a></li>
+<li><a class="reference internal" href="#dropped-support">Dropped Support</a></li>
+<li><a class="reference internal" href="#future-changes">Future Changes</a></li>
+<li><a class="reference internal" href="#compatibility-notes">Compatibility notes</a><ul>
+<li><a class="reference internal" href="#npy-relaxed-strides-checking">NPY_RELAXED_STRIDES_CHECKING</a></li>
+<li><a class="reference internal" href="#binary-operations-with-non-arrays-as-second-argument">Binary operations with non-arrays as second argument</a></li>
+<li><a class="reference internal" href="#function-median-used-with-overwrite-input-only-partially-sorts-array">Function <em class="xref py py-obj">median</em> used with <em class="xref py py-obj">overwrite_input</em> only partially sorts array</a></li>
+<li><a class="reference internal" href="#fix-to-financial-npv">Fix to financial.npv</a></li>
+<li><a class="reference internal" href="#runtime-warnings-when-comparing-nan-numbers">Runtime warnings when comparing NaN numbers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#new-features">New Features</a><ul>
+<li><a class="reference internal" href="#support-for-linear-algebra-on-stacked-arrays">Support for linear algebra on stacked arrays</a></li>
+<li><a class="reference internal" href="#in-place-fancy-indexing-for-ufuncs">In place fancy indexing for ufuncs</a></li>
+<li><a class="reference internal" href="#new-functions-partition-and-argpartition">New functions <em class="xref py py-obj">partition</em> and <em class="xref py py-obj">argpartition</em></a></li>
+<li><a class="reference internal" href="#new-functions-nanmean-nanvar-and-nanstd">New functions <em class="xref py py-obj">nanmean</em>, <em class="xref py py-obj">nanvar</em> and <em class="xref py py-obj">nanstd</em></a></li>
+<li><a class="reference internal" href="#new-functions-full-and-full-like">New functions <em class="xref py py-obj">full</em> and <em class="xref py py-obj">full_like</em></a></li>
+<li><a class="reference internal" href="#io-compatibility-with-large-files">IO compatibility with large files</a></li>
+<li><a class="reference internal" href="#building-against-openblas">Building against OpenBLAS</a></li>
+<li><a class="reference internal" href="#new-constant">New constant</a></li>
+<li><a class="reference internal" href="#new-modes-for-qr">New modes for qr</a></li>
+<li><a class="reference internal" href="#new-invert-argument-to-in1d">New <em class="xref py py-obj">invert</em> argument to <em class="xref py py-obj">in1d</em></a></li>
+<li><a class="reference internal" href="#advanced-indexing-using-np-newaxis">Advanced indexing using <em class="xref py py-obj">np.newaxis</em></a></li>
+<li><a class="reference internal" href="#c-api">C-API</a></li>
+<li><a class="reference internal" href="#runtests-py">runtests.py</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#improvements">Improvements</a><ul>
+<li><a class="reference internal" href="#io-performance-improvements">IO performance improvements</a></li>
+<li><a class="reference internal" href="#performance-improvements-to-pad">Performance improvements to <em class="xref py py-obj">pad</em></a></li>
+<li><a class="reference internal" href="#performance-improvements-to-isnan-isinf-isfinite-and-byteswap">Performance improvements to <em class="xref py py-obj">isnan</em>, <em class="xref py py-obj">isinf</em>, <em class="xref py py-obj">isfinite</em> and <em class="xref py py-obj">byteswap</em></a></li>
+<li><a class="reference internal" href="#performance-improvements-via-sse2-vectorization">Performance improvements via SSE2 vectorization</a></li>
+<li><a class="reference internal" href="#performance-improvements-to-median">Performance improvements to <em class="xref py py-obj">median</em></a></li>
+<li><a class="reference internal" href="#overrideable-operand-flags-in-ufunc-c-api">Overrideable operand flags in ufunc C-API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changes">Changes</a><ul>
+<li><a class="reference internal" href="#general">General</a></li>
+<li><a class="reference internal" href="#c-api-array-additions">C-API Array Additions</a></li>
+<li><a class="reference internal" href="#c-api-ufunc-additions">C-API Ufunc Additions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deprecations">Deprecations</a><ul>
+<li><a class="reference internal" href="#id1">General</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#authors">Authors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-7-1-release-notes">NumPy 1.7.1 Release Notes</a><ul>
+<li><a class="reference internal" href="#issues-fixed">Issues fixed</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-7-0-release-notes">NumPy 1.7.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#id2">Highlights</a></li>
+<li><a class="reference internal" href="#id3">Compatibility notes</a></li>
+<li><a class="reference internal" href="#id4">New features</a><ul>
+<li><a class="reference internal" href="#reduction-ufuncs-generalize-axis-parameter">Reduction UFuncs Generalize axis= Parameter</a></li>
+<li><a class="reference internal" href="#reduction-ufuncs-new-keepdims-parameter">Reduction UFuncs New keepdims= Parameter</a></li>
+<li><a class="reference internal" href="#datetime-support">Datetime support</a></li>
+<li><a class="reference internal" href="#custom-formatter-for-printing-arrays">Custom formatter for printing arrays</a></li>
+<li><a class="reference internal" href="#new-function-numpy-random-choice">New function numpy.random.choice</a></li>
+<li><a class="reference internal" href="#new-function-isclose">New function isclose</a></li>
+<li><a class="reference internal" href="#preliminary-multi-dimensional-support-in-the-polynomial-package">Preliminary multi-dimensional support in the polynomial package</a></li>
+<li><a class="reference internal" href="#ability-to-pad-rank-n-arrays">Ability to pad rank-n arrays</a></li>
+<li><a class="reference internal" href="#new-argument-to-searchsorted">New argument to searchsorted</a></li>
+<li><a class="reference internal" href="#build-system">Build system</a></li>
+<li><a class="reference internal" href="#id5">C API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">Changes</a><ul>
+<li><a class="reference internal" href="#id7">General</a></li>
+<li><a class="reference internal" href="#casting-rules">Casting Rules</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8">Deprecations</a><ul>
+<li><a class="reference internal" href="#id9">General</a></li>
+<li><a class="reference internal" href="#id10">C-API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-6-2-release-notes">NumPy 1.6.2 Release Notes</a><ul>
+<li><a class="reference internal" href="#id11">Issues fixed</a><ul>
+<li><a class="reference internal" href="#numpy-core"><tt class="docutils literal"><span class="pre">numpy.core</span></tt></a></li>
+<li><a class="reference internal" href="#numpy-lib"><tt class="docutils literal"><span class="pre">numpy.lib</span></tt></a></li>
+<li><a class="reference internal" href="#numpy-distutils"><tt class="docutils literal"><span class="pre">numpy.distutils</span></tt></a></li>
+<li><a class="reference internal" href="#numpy-random"><tt class="docutils literal"><span class="pre">numpy.random</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id12">Changes</a><ul>
+<li><a class="reference internal" href="#numpy-f2py"><tt class="docutils literal"><span class="pre">numpy.f2py</span></tt></a></li>
+<li><a class="reference internal" href="#numpy-poly"><tt class="docutils literal"><span class="pre">numpy.poly</span></tt></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-6-1-release-notes">NumPy 1.6.1 Release Notes</a><ul>
+<li><a class="reference internal" href="#id13">Issues Fixed</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-6-0-release-notes">NumPy 1.6.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#id14">Highlights</a></li>
+<li><a class="reference internal" href="#id15">New features</a><ul>
+<li><a class="reference internal" href="#new-16-bit-floating-point-type">New 16-bit floating point type</a></li>
+<li><a class="reference internal" href="#new-iterator">New iterator</a></li>
+<li><a class="reference internal" href="#legendre-laguerre-hermite-hermitee-polynomials-in-numpy-polynomial">Legendre, Laguerre, Hermite, HermiteE polynomials in <tt class="docutils literal"><span class="pre">numpy.polynomial</span></tt></a></li>
+<li><a class="reference internal" href="#fortran-assumed-shape-array-and-size-function-support-in-numpy-f2py">Fortran assumed shape array and size function support in <tt class="docutils literal"><span class="pre">numpy.f2py</span></tt></a></li>
+<li><a class="reference internal" href="#other-new-functions">Other new functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id16">Changes</a><ul>
+<li><a class="reference internal" href="#default-error-handling"><tt class="docutils literal"><span class="pre">default</span> <span class="pre">error</span> <span class="pre">handling</span></tt></a></li>
+<li><a class="reference internal" href="#id17"><tt class="docutils literal"><span class="pre">numpy.distutils</span></tt></a></li>
+<li><a class="reference internal" href="#numpy-testing"><tt class="docutils literal"><span class="pre">numpy.testing</span></tt></a></li>
+<li><a class="reference internal" href="#id18"><tt class="docutils literal"><span class="pre">C</span> <span class="pre">API</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deprecated-features">Deprecated features</a></li>
+<li><a class="reference internal" href="#removed-features">Removed features</a><ul>
+<li><a class="reference internal" href="#numpy-fft"><tt class="docutils literal"><span class="pre">numpy.fft</span></tt></a></li>
+<li><a class="reference internal" href="#numpy-memmap"><tt class="docutils literal"><span class="pre">numpy.memmap</span></tt></a></li>
+<li><a class="reference internal" href="#id19"><tt class="docutils literal"><span class="pre">numpy.lib</span></tt></a></li>
+<li><a class="reference internal" href="#numpy-ma"><tt class="docutils literal"><span class="pre">numpy.ma</span></tt></a></li>
+<li><a class="reference internal" href="#id20"><tt class="docutils literal"><span class="pre">numpy.distutils</span></tt></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-5-0-release-notes">NumPy 1.5.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#id21">Highlights</a><ul>
+<li><a class="reference internal" href="#python-3-compatibility">Python 3 compatibility</a></li>
+<li><a class="reference internal" href="#pep-3118-compatibility"><strong>PEP 3118</strong> compatibility</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id22">New features</a><ul>
+<li><a class="reference internal" href="#warning-on-casting-complex-to-real">Warning on casting complex to real</a></li>
+<li><a class="reference internal" href="#dot-method-for-ndarrays">Dot method for ndarrays</a></li>
+<li><a class="reference internal" href="#linalg-slogdet-function">linalg.slogdet function</a></li>
+<li><a class="reference internal" href="#new-header">new header</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id23">Changes</a><ul>
+<li><a class="reference internal" href="#polynomial-polynomial">polynomial.polynomial</a></li>
+<li><a class="reference internal" href="#polynomial-chebyshev">polynomial.chebyshev</a></li>
+<li><a class="reference internal" href="#histogram">histogram</a></li>
+<li><a class="reference internal" href="#correlate">correlate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-4-0-release-notes">NumPy 1.4.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#id24">Highlights</a></li>
+<li><a class="reference internal" href="#id25">New features</a><ul>
+<li><a class="reference internal" href="#extended-array-wrapping-mechanism-for-ufuncs">Extended array wrapping mechanism for ufuncs</a></li>
+<li><a class="reference internal" href="#automatic-detection-of-forward-incompatibilities">Automatic detection of forward incompatibilities</a></li>
+<li><a class="reference internal" href="#new-iterators">New iterators</a></li>
+<li><a class="reference internal" href="#new-polynomial-support">New polynomial support</a></li>
+<li><a class="reference internal" href="#new-c-api">New C API</a></li>
+<li><a class="reference internal" href="#new-ufuncs">New ufuncs</a></li>
+<li><a class="reference internal" href="#new-defines">New defines</a></li>
+<li><a class="reference internal" href="#testing">Testing</a></li>
+<li><a class="reference internal" href="#reusing-npymath">Reusing npymath</a></li>
+<li><a class="reference internal" href="#improved-set-operations">Improved set operations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id26">Improvements</a></li>
+<li><a class="reference internal" href="#id27">Deprecations</a></li>
+<li><a class="reference internal" href="#internal-changes">Internal changes</a><ul>
+<li><a class="reference internal" href="#use-c99-complex-functions-when-available">Use C99 complex functions when available</a></li>
+<li><a class="reference internal" href="#split-multiarray-and-umath-source-code">split multiarray and umath source code</a></li>
+<li><a class="reference internal" href="#separate-compilation">Separate compilation</a></li>
+<li><a class="reference internal" href="#separate-core-math-library">Separate core math library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-1-3-0-release-notes">NumPy 1.3.0 Release Notes</a><ul>
+<li><a class="reference internal" href="#id28">Highlights</a><ul>
+<li><a class="reference internal" href="#python-2-6-support">Python 2.6 support</a></li>
+<li><a class="reference internal" href="#generalized-ufuncs">Generalized ufuncs</a></li>
+<li><a class="reference internal" href="#experimental-windows-64-bits-support">Experimental Windows 64 bits support</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id29">New features</a><ul>
+<li><a class="reference internal" href="#formatting-issues">Formatting issues</a></li>
+<li><a class="reference internal" href="#nan-handling-in-max-min">Nan handling in max/min</a></li>
+<li><a class="reference internal" href="#nan-handling-in-sign">Nan handling in sign</a></li>
+<li><a class="reference internal" href="#id30">New ufuncs</a></li>
+<li><a class="reference internal" href="#masked-arrays">Masked arrays</a></li>
+<li><a class="reference internal" href="#gfortran-support-on-windows">gfortran support on windows</a></li>
+<li><a class="reference internal" href="#arch-option-for-windows-binary">Arch option for windows binary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id31">Deprecated features</a><ul>
+<li><a class="reference internal" href="#id32">Histogram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation-changes">Documentation changes</a></li>
+<li><a class="reference internal" href="#id33">New C API</a><ul>
+<li><a class="reference internal" href="#multiarray-api">Multiarray API</a></li>
+<li><a class="reference internal" href="#ufunc-api">Ufunc API</a></li>
+<li><a class="reference internal" href="#id34">New defines</a></li>
+<li><a class="reference internal" href="#portable-nan-infinity-etc">Portable NAN, INFINITY, etc...</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id35">Internal changes</a><ul>
+<li><a class="reference internal" href="#numpy-core-math-configuration-revamp">numpy.core math configuration revamp</a></li>
+<li><a class="reference internal" href="#umath-refactor">umath refactor</a></li>
+<li><a class="reference internal" href="#improvements-to-build-warnings">Improvements to build warnings</a></li>
+<li><a class="reference internal" href="#id36">Separate core math library</a></li>
+<li><a class="reference internal" href="#cpu-arch-detection">CPU arch detection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="dev/gitwash/git_resources.html"
+                        title="previous chapter">git resources</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="about.html"
+                        title="next chapter">About NumPy</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="release-notes">
+<h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="numpy-1-8-0-release-notes">
+<h2>NumPy 1.8.0 Release Notes<a class="headerlink" href="#numpy-1-8-0-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This release supports  Python 2.6 -2.7 and 3.2 - 3.3.</p>
+<div class="section" id="highlights">
+<h3>Highlights<a class="headerlink" href="#highlights" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>New, no 2to3, Python 2 and Python 3 are supported by a common code base.</li>
+<li>New, gufuncs for linear algebra, enabling operations on stacked arrays.</li>
+<li>New, inplace fancy indexing for ufuncs with the <tt class="docutils literal"><span class="pre">.at</span></tt> method.</li>
+<li>New, <tt class="docutils literal"><span class="pre">partition</span></tt> function, partial sorting via selection for fast median.</li>
+<li>New, <tt class="docutils literal"><span class="pre">nanmean</span></tt>, <tt class="docutils literal"><span class="pre">nanvar</span></tt>, and <tt class="docutils literal"><span class="pre">nanstd</span></tt> functions skipping NaNs.</li>
+<li>New, <tt class="docutils literal"><span class="pre">full</span></tt> and <tt class="docutils literal"><span class="pre">full_like</span></tt> functions to create value initialized arrays.</li>
+<li>New, <tt class="docutils literal"><span class="pre">PyUFunc_RegisterLoopForDescr</span></tt>, better ufunc support for user dtypes.</li>
+<li>Numerous performance improvements in many areas.</li>
+</ul>
+</div>
+<div class="section" id="dropped-support">
+<h3>Dropped Support<a class="headerlink" href="#dropped-support" title="Permalink to this headline">¶</a></h3>
+<p>Support for Python versions 2.4 and 2.5 has been dropped,</p>
+<p>Support for SCons has been removed.</p>
+</div>
+<div class="section" id="future-changes">
+<h3>Future Changes<a class="headerlink" href="#future-changes" title="Permalink to this headline">¶</a></h3>
+<p>The Datetime64 type remains experimental in this release. In 1.9 there will
+probably be some changes to make it more useable.</p>
+<p>The diagonal method currently returns a new array and raises a
+FutureWarning. In 1.9 it will return a readonly view.</p>
+<p>Multiple field selection from a array of structured type currently
+returns a new array and raises a FutureWarning. In 1.9 it will return a
+readonly view.</p>
+<p>The numpy/oldnumeric and numpy/numarray compatibility modules will be
+removed in 1.9.</p>
+</div>
+<div class="section" id="compatibility-notes">
+<h3>Compatibility notes<a class="headerlink" href="#compatibility-notes" title="Permalink to this headline">¶</a></h3>
+<p>The doc/sphinxext content has been moved into its own github repository,
+and is included in numpy as a submodule. See the instructions in
+doc/HOWTO_BUILD_DOCS.rst.txt for how to access the content.</p>
+<p>The hash function of numpy.void scalars has been changed.  Previously the
+pointer to the data was hashed as an integer.  Now, the hash function uses
+the tuple-hash algorithm to combine the hash functions of the elements of
+the scalar, but only if the scalar is read-only.</p>
+<p>Numpy has switched its build system to using &#8216;separate compilation&#8217; by
+default.  In previous releases this was supported, but not default. This
+should produce the same results as the old system, but if you&#8217;re trying to
+do something complicated like link numpy statically or using an unusual
+compiler, then it&#8217;s possible you will encounter problems. If so, please
+file a bug and as a temporary workaround you can re-enable the old build
+system by exporting the shell variable NPY_SEPARATE_COMPILATION=0.</p>
+<p>For the AdvancedNew iterator the <tt class="docutils literal"><span class="pre">oa_ndim</span></tt> flag should now be -1 to indicate
+that no <tt class="docutils literal"><span class="pre">op_axes</span></tt> and <tt class="docutils literal"><span class="pre">itershape</span></tt> are passed in. The <tt class="docutils literal"><span class="pre">oa_ndim</span> <span class="pre">==</span> <span class="pre">0</span></tt>
+case, now indicates a 0-D iteration and <tt class="docutils literal"><span class="pre">op_axes</span></tt> being NULL and the old
+usage is deprecated. This does not effect the <tt class="docutils literal"><span class="pre">NpyIter_New</span></tt> or
+<tt class="docutils literal"><span class="pre">NpyIter_MultiNew</span></tt> functions.</p>
+<p>The functions nanargmin and nanargmax now return np.iinfo[&#8216;intp&#8217;].min for
+the index in all-NaN slices. Previously the functions would raise a ValueError
+for array returns and NaN for scalar returns.</p>
+<div class="section" id="npy-relaxed-strides-checking">
+<h4>NPY_RELAXED_STRIDES_CHECKING<a class="headerlink" href="#npy-relaxed-strides-checking" title="Permalink to this headline">¶</a></h4>
+<p>There is a new compile time environment variable
+<tt class="docutils literal"><span class="pre">NPY_RELAXED_STRIDES_CHECKING</span></tt>. If this variable is set to 1, then
+numpy will consider more arrays to be C- or F-contiguous &#8211; for
+example, it becomes possible to have a column vector which is
+considered both C- and F-contiguous simultaneously. The new definition
+is more accurate, allows for faster code that makes fewer unnecessary
+copies, and simplifies numpy&#8217;s code internally. However, it may also
+break third-party libraries that make too-strong assumptions about the
+stride values of C- and F-contiguous arrays. (It is also currently
+known that this breaks Cython code using memoryviews, which will be
+fixed in Cython.) THIS WILL BECOME THE DEFAULT IN A FUTURE RELEASE, SO
+PLEASE TEST YOUR CODE NOW AGAINST NUMPY BUILT WITH:</p>
+<div class="highlight-python"><pre>NPY_RELAXED_STRIDES_CHECKING=1 python setup.py install</pre>
+</div>
+<p>You can check whether NPY_RELAXED_STRIDES_CHECKING is in effect by
+running:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s">&quot;C&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">f_contiguous</span>
+</pre></div>
+</div>
+<p>This will be <tt class="docutils literal"><span class="pre">True</span></tt> if relaxed strides checking is enabled, and
+<tt class="docutils literal"><span class="pre">False</span></tt> otherwise. The typical problem we&#8217;ve seen so far is C code
+that works with C-contiguous arrays, and assumes that the itemsize can
+be accessed by looking at the last element in the <tt class="docutils literal"><span class="pre">PyArray_STRIDES(arr)</span></tt>
+array. When relaxed strides are in effect, this is not true (and in
+fact, it never was true in some corner cases). Instead, use
+<tt class="docutils literal"><span class="pre">PyArray_ITEMSIZE(arr)</span></tt>.</p>
+<p>For more information check the &#8220;Internal memory layout of an ndarray&#8221;
+section in the documentation.</p>
+</div>
+<div class="section" id="binary-operations-with-non-arrays-as-second-argument">
+<h4>Binary operations with non-arrays as second argument<a class="headerlink" href="#binary-operations-with-non-arrays-as-second-argument" title="Permalink to this headline">¶</a></h4>
+<p>Binary operations of the form <tt class="docutils literal"><span class="pre">&lt;array-or-subclass&gt;</span> <span class="pre">*</span> <span class="pre">&lt;non-array-subclass&gt;</span></tt>
+where <tt class="docutils literal"><span class="pre">&lt;non-array-subclass&gt;</span></tt> declares an <tt class="docutils literal"><span class="pre">__array_priority__</span></tt> higher than
+that of <tt class="docutils literal"><span class="pre">&lt;array-or-subclass&gt;</span></tt> will now unconditionally return
+<em>NotImplemented</em>, giving <tt class="docutils literal"><span class="pre">&lt;non-array-subclass&gt;</span></tt> a chance to handle the
+operation.  Previously, <em class="xref py py-obj">NotImplemented</em> would only be returned if
+<tt class="docutils literal"><span class="pre">&lt;non-array-subclass&gt;</span></tt> actually implemented the reversed operation, and after
+a (potentially expensive) array conversion of <tt class="docutils literal"><span class="pre">&lt;non-array-subclass&gt;</span></tt> had been
+attempted. (<a class="reference external" href="https://github.com/numpy/numpy/issues/3375">bug</a>, <a class="reference external" href="https://github.com/numpy/numpy/pull/3501">pull request</a>)</p>
+</div>
+<div class="section" id="function-median-used-with-overwrite-input-only-partially-sorts-array">
+<h4>Function <em class="xref py py-obj">median</em> used with <em class="xref py py-obj">overwrite_input</em> only partially sorts array<a class="headerlink" href="#function-median-used-with-overwrite-input-only-partially-sorts-array" title="Permalink to this headline">¶</a></h4>
+<p>If <em class="xref py py-obj">median</em> is used with <em class="xref py py-obj">overwrite_input</em> option the input array will now only
+be partially sorted instead of fully sorted.</p>
+</div>
+<div class="section" id="fix-to-financial-npv">
+<h4>Fix to financial.npv<a class="headerlink" href="#fix-to-financial-npv" title="Permalink to this headline">¶</a></h4>
+<p>The npv function had a bug. Contrary to what the documentation stated, it
+summed from indexes <tt class="docutils literal"><span class="pre">1</span></tt> to <tt class="docutils literal"><span class="pre">M</span></tt> instead of from <tt class="docutils literal"><span class="pre">0</span></tt> to <tt class="docutils literal"><span class="pre">M</span> <span class="pre">-</span> <span class="pre">1</span></tt>. The
+fix changes the returned value. The mirr function called the npv function,
+but worked around the problem, so that was also fixed and the return value
+of the mirr function remains unchanged.</p>
+</div>
+<div class="section" id="runtime-warnings-when-comparing-nan-numbers">
+<h4>Runtime warnings when comparing NaN numbers<a class="headerlink" href="#runtime-warnings-when-comparing-nan-numbers" title="Permalink to this headline">¶</a></h4>
+<p>Comparing <tt class="docutils literal"><span class="pre">NaN</span></tt> floating point numbers now raises the <tt class="docutils literal"><span class="pre">invalid</span></tt> runtime
+warning. If a <tt class="docutils literal"><span class="pre">NaN</span></tt> is expected the warning can be ignored using np.errstate.
+E.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">):</span>
+    <span class="n">operation</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="new-features">
+<h3>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="support-for-linear-algebra-on-stacked-arrays">
+<h4>Support for linear algebra on stacked arrays<a class="headerlink" href="#support-for-linear-algebra-on-stacked-arrays" title="Permalink to this headline">¶</a></h4>
+<p>The gufunc machinery is now used for np.linalg, allowing operations on
+stacked arrays and vectors. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([[[ 1.,  1.],</span>
+<span class="go">        [ 0.,  1.]],</span>
+
+<span class="go">       [[ 1.,  1.],</span>
+<span class="go">        [ 0.,  1.]]])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">array([[[ 1., -1.],</span>
+<span class="go">        [ 0.,  1.]],</span>
+
+<span class="go">       [[ 1., -1.],</span>
+<span class="go">        [ 0.,  1.]]])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="in-place-fancy-indexing-for-ufuncs">
+<h4>In place fancy indexing for ufuncs<a class="headerlink" href="#in-place-fancy-indexing-for-ufuncs" title="Permalink to this headline">¶</a></h4>
+<p>The function <tt class="docutils literal"><span class="pre">at</span></tt> has been added to ufunc objects to allow in place
+ufuncs with no buffering when fancy indexing is used. For example, the
+following will increment the first and second items in the array, and will
+increment the third item twice: <tt class="docutils literal"><span class="pre">numpy.add.at(arr,</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">2],</span> <span class="pre">1)</span></tt></p>
+<p>This is what many have mistakenly thought <tt class="docutils literal"><span class="pre">arr[[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">2]]</span> <span class="pre">+=</span> <span class="pre">1</span></tt> would do,
+but that does not work as the incremented value of <tt class="docutils literal"><span class="pre">arr[2]</span></tt> is simply copied
+into the third slot in <tt class="docutils literal"><span class="pre">arr</span></tt> twice, not incremented twice.</p>
+</div>
+<div class="section" id="new-functions-partition-and-argpartition">
+<h4>New functions <em class="xref py py-obj">partition</em> and <em class="xref py py-obj">argpartition</em><a class="headerlink" href="#new-functions-partition-and-argpartition" title="Permalink to this headline">¶</a></h4>
+<p>New functions to partially sort arrays via a selection algorithm.</p>
+<p>A <tt class="docutils literal"><span class="pre">partition</span></tt> by index <tt class="docutils literal"><span class="pre">k</span></tt> moves the <tt class="docutils literal"><span class="pre">k</span></tt> smallest element to the front of
+an array.  All elements before <tt class="docutils literal"><span class="pre">k</span></tt> are then smaller or equal than the value
+in position <tt class="docutils literal"><span class="pre">k</span></tt> and all elements following <tt class="docutils literal"><span class="pre">k</span></tt> are then greater or equal
+than the value in position <tt class="docutils literal"><span class="pre">k</span></tt>. The ordering of the values within these
+bounds is undefined.
+A sequence of indices can be provided to sort all of them into their sorted
+position at once iterative partitioning.
+This can be used to efficiently obtain order statistics like median or
+percentiles of samples.
+<tt class="docutils literal"><span class="pre">partition</span></tt> has a linear time complexity of <tt class="docutils literal"><span class="pre">O(n)</span></tt> while a full sort has
+<tt class="docutils literal"><span class="pre">O(n</span> <span class="pre">log(n))</span></tt>.</p>
+</div>
+<div class="section" id="new-functions-nanmean-nanvar-and-nanstd">
+<h4>New functions <em class="xref py py-obj">nanmean</em>, <em class="xref py py-obj">nanvar</em> and <em class="xref py py-obj">nanstd</em><a class="headerlink" href="#new-functions-nanmean-nanvar-and-nanstd" title="Permalink to this headline">¶</a></h4>
+<p>New nan aware statistical functions are added. In these functions the
+results are what would be obtained if nan values were ommited from all
+computations.</p>
+</div>
+<div class="section" id="new-functions-full-and-full-like">
+<h4>New functions <em class="xref py py-obj">full</em> and <em class="xref py py-obj">full_like</em><a class="headerlink" href="#new-functions-full-and-full-like" title="Permalink to this headline">¶</a></h4>
+<p>New convenience functions to create arrays filled with a specific value;
+complementary to the existing <em class="xref py py-obj">zeros</em> and <em class="xref py py-obj">zeros_like</em> functions.</p>
+</div>
+<div class="section" id="io-compatibility-with-large-files">
+<h4>IO compatibility with large files<a class="headerlink" href="#io-compatibility-with-large-files" title="Permalink to this headline">¶</a></h4>
+<p>Large NPZ files &gt;2GB can be loaded on 64-bit systems.</p>
+</div>
+<div class="section" id="building-against-openblas">
+<h4>Building against OpenBLAS<a class="headerlink" href="#building-against-openblas" title="Permalink to this headline">¶</a></h4>
+<p>It is now possible to build numpy against OpenBLAS by editing site.cfg.</p>
+</div>
+<div class="section" id="new-constant">
+<h4>New constant<a class="headerlink" href="#new-constant" title="Permalink to this headline">¶</a></h4>
+<p>Euler&#8217;s constant is now exposed in numpy as euler_gamma.</p>
+</div>
+<div class="section" id="new-modes-for-qr">
+<h4>New modes for qr<a class="headerlink" href="#new-modes-for-qr" title="Permalink to this headline">¶</a></h4>
+<p>New modes &#8216;complete&#8217;, &#8216;reduced&#8217;, and &#8216;raw&#8217; have been added to the qr
+factorization and the old &#8216;full&#8217; and &#8216;economic&#8217; modes are deprecated.
+The &#8216;reduced&#8217; mode replaces the old &#8216;full&#8217; mode and is the default as was
+the &#8216;full&#8217; mode, so backward compatibility can be maintained by not
+specifying the mode.</p>
+<p>The &#8216;complete&#8217; mode returns a full dimensional factorization, which can be
+useful for obtaining a basis for the orthogonal complement of the range
+space. The &#8216;raw&#8217; mode returns arrays that contain the Householder
+reflectors and scaling factors that can be used in the future to apply q
+without needing to convert to a matrix. The &#8216;economic&#8217; mode is simply
+deprecated, there isn&#8217;t much use for it and it isn&#8217;t any more efficient
+than the &#8216;raw&#8217; mode.</p>
+</div>
+<div class="section" id="new-invert-argument-to-in1d">
+<h4>New <em class="xref py py-obj">invert</em> argument to <em class="xref py py-obj">in1d</em><a class="headerlink" href="#new-invert-argument-to-in1d" title="Permalink to this headline">¶</a></h4>
+<p>The function <em class="xref py py-obj">in1d</em> now accepts a <em class="xref py py-obj">invert</em> argument which, when <em class="xref py py-obj">True</em>,
+causes the returned array to be inverted.</p>
+</div>
+<div class="section" id="advanced-indexing-using-np-newaxis">
+<h4>Advanced indexing using <em class="xref py py-obj">np.newaxis</em><a class="headerlink" href="#advanced-indexing-using-np-newaxis" title="Permalink to this headline">¶</a></h4>
+<p>It is now possible to use <em class="xref py py-obj">np.newaxis</em>/<em class="xref py py-obj">None</em> together with index
+arrays instead of only in simple indices. This means that
+<tt class="docutils literal"><span class="pre">array[np.newaxis,</span> <span class="pre">[0,</span> <span class="pre">1]]</span></tt> will now work as expected and select the first
+two rows while prepending a new axis to the array.</p>
+</div>
+<div class="section" id="c-api">
+<h4>C-API<a class="headerlink" href="#c-api" title="Permalink to this headline">¶</a></h4>
+<p>New ufuncs can now be registered with builtin input types and a custom
+output type. Before this change, NumPy wouldn&#8217;t be able to find the right
+ufunc loop function when the ufunc was called from Python, because the ufunc
+loop signature matching logic wasn&#8217;t looking at the output operand type.
+Now the correct ufunc loop is found, as long as the user provides an output
+argument with the correct output type.</p>
+</div>
+<div class="section" id="runtests-py">
+<h4>runtests.py<a class="headerlink" href="#runtests-py" title="Permalink to this headline">¶</a></h4>
+<p>A simple test runner script <tt class="docutils literal"><span class="pre">runtests.py</span></tt> was added. It also builds Numpy via
+<tt class="docutils literal"><span class="pre">setup.py</span> <span class="pre">build</span></tt> and can be used to run tests easily during development.</p>
+</div>
+</div>
+<div class="section" id="improvements">
+<h3>Improvements<a class="headerlink" href="#improvements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="io-performance-improvements">
+<h4>IO performance improvements<a class="headerlink" href="#io-performance-improvements" title="Permalink to this headline">¶</a></h4>
+<p>Performance in reading large files was improved by chunking (see also IO compatibility).</p>
+</div>
+<div class="section" id="performance-improvements-to-pad">
+<h4>Performance improvements to <em class="xref py py-obj">pad</em><a class="headerlink" href="#performance-improvements-to-pad" title="Permalink to this headline">¶</a></h4>
+<p>The <em class="xref py py-obj">pad</em> function has a new implementation, greatly improving performance for
+all inputs except <em class="xref py py-obj">mode=</em> (retained for backwards compatibility).
+Scaling with dimensionality is dramatically improved for rank &gt;= 4.</p>
+</div>
+<div class="section" id="performance-improvements-to-isnan-isinf-isfinite-and-byteswap">
+<h4>Performance improvements to <em class="xref py py-obj">isnan</em>, <em class="xref py py-obj">isinf</em>, <em class="xref py py-obj">isfinite</em> and <em class="xref py py-obj">byteswap</em><a class="headerlink" href="#performance-improvements-to-isnan-isinf-isfinite-and-byteswap" title="Permalink to this headline">¶</a></h4>
+<p><em class="xref py py-obj">isnan</em>, <em class="xref py py-obj">isinf</em>, <em class="xref py py-obj">isfinite</em> and <em class="xref py py-obj">byteswap</em> have been improved to take
+advantage of compiler builtins to avoid expensive calls to libc.
+This improves performance of these operations by about a factor of two on gnu
+libc systems.</p>
+</div>
+<div class="section" id="performance-improvements-via-sse2-vectorization">
+<h4>Performance improvements via SSE2 vectorization<a class="headerlink" href="#performance-improvements-via-sse2-vectorization" title="Permalink to this headline">¶</a></h4>
+<p>Several functions have been optimized to make use of SSE2 CPU SIMD instructions.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Float32 and float64:</dt>
+<dd><ul class="first last simple">
+<li>base math (<em class="xref py py-obj">add</em>, <em class="xref py py-obj">subtract</em>, <em class="xref py py-obj">divide</em>, <em class="xref py py-obj">multiply</em>)</li>
+<li><em class="xref py py-obj">sqrt</em></li>
+<li><em class="xref py py-obj">minimum/maximum</em></li>
+<li><em class="xref py py-obj">absolute</em></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Bool:</dt>
+<dd><ul class="first last simple">
+<li><em class="xref py py-obj">logical_or</em></li>
+<li><em class="xref py py-obj">logical_and</em></li>
+<li><em class="xref py py-obj">logical_not</em></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>This improves performance of these operations up to 4x/2x for float32/float64
+and up to 10x for bool depending on the location of the data in the CPU caches.
+The performance gain is greatest for in-place operations.</p>
+<p>In order to use the improved functions the SSE2 instruction set must be enabled
+at compile time. It is enabled by default on x86_64 systems. On x86_32 with a
+capable CPU it must be enabled by passing the appropriate flag to the CFLAGS
+build variable (-msse2 with gcc).</p>
+</div>
+<div class="section" id="performance-improvements-to-median">
+<h4>Performance improvements to <em class="xref py py-obj">median</em><a class="headerlink" href="#performance-improvements-to-median" title="Permalink to this headline">¶</a></h4>
+<p><em class="xref py py-obj">median</em> is now implemented in terms of <em class="xref py py-obj">partition</em> instead of <em class="xref py py-obj">sort</em> which
+reduces its time complexity from O(n log(n)) to O(n).
+If used with the <em class="xref py py-obj">overwrite_input</em> option the array will now only be partially
+sorted instead of fully sorted.</p>
+</div>
+<div class="section" id="overrideable-operand-flags-in-ufunc-c-api">
+<h4>Overrideable operand flags in ufunc C-API<a class="headerlink" href="#overrideable-operand-flags-in-ufunc-c-api" title="Permalink to this headline">¶</a></h4>
+<p>When creating a ufunc, the default ufunc operand flags can be overridden
+via the new op_flags attribute of the ufunc object. For example, to set
+the operand flag for the first input to read/write:</p>
+<p>PyObject *ufunc = PyUFunc_FromFuncAndData(...);
+ufunc-&gt;op_flags[0] = NPY_ITER_READWRITE;</p>
+<p>This allows a ufunc to perform an operation in place. Also, global nditer flags
+can be overridden via the new iter_flags attribute of the ufunc object.
+For example, to set the reduce flag for a ufunc:</p>
+<p>ufunc-&gt;iter_flags = NPY_ITER_REDUCE_OK;</p>
+</div>
+</div>
+<div class="section" id="changes">
+<h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="general">
+<h4>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h4>
+<p>The function np.take now allows 0-d arrays as indices.</p>
+<p>The separate compilation mode is now enabled by default.</p>
+<p>Several changes to np.insert and np.delete:</p>
+<ul class="simple">
+<li>Previously, negative indices and indices that pointed past the end of
+the array were simply ignored. Now, this will raise a Future or Deprecation
+Warning. In the future they will be treated like normal indexing treats
+them &#8211; negative indices will wrap around, and out-of-bound indices will
+generate an error.</li>
+<li>Previously, boolean indices were treated as if they were integers (always
+referring to either the 0th or 1st item in the array). In the future, they
+will be treated as masks. In this release, they raise a FutureWarning
+warning of this coming change.</li>
+<li>In Numpy 1.7. np.insert already allowed the syntax
+<em class="xref py py-obj">np.insert(arr, 3, [1,2,3])</em> to insert multiple items at a single position.
+In Numpy 1.8. this is also possible for <em class="xref py py-obj">np.insert(arr, [3], [1, 2, 3])</em>.</li>
+</ul>
+<p>Padded regions from np.pad are now correctly rounded, not truncated.</p>
+</div>
+<div class="section" id="c-api-array-additions">
+<h4>C-API Array Additions<a class="headerlink" href="#c-api-array-additions" title="Permalink to this headline">¶</a></h4>
+<p>Four new functions have been added to the array C-API.</p>
+<ul class="simple">
+<li>PyArray_Partition</li>
+<li>PyArray_ArgPartition</li>
+<li>PyArray_SelectkindConverter</li>
+<li>PyDataMem_NEW_ZEROED</li>
+</ul>
+</div>
+<div class="section" id="c-api-ufunc-additions">
+<h4>C-API Ufunc Additions<a class="headerlink" href="#c-api-ufunc-additions" title="Permalink to this headline">¶</a></h4>
+<p>One new function has been added to the ufunc C-API that allows to register
+an inner loop for user types using the descr.</p>
+<ul class="simple">
+<li>PyUFunc_RegisterLoopForDescr</li>
+</ul>
+</div>
+</div>
+<div class="section" id="deprecations">
+<h3>Deprecations<a class="headerlink" href="#deprecations" title="Permalink to this headline">¶</a></h3>
+<p>The &#8216;full&#8217; and &#8216;economic&#8217; modes of qr factorization are deprecated.</p>
+<div class="section" id="id1">
+<h4>General<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>The use of non-integer for indices and most integer arguments has been
+deprecated. Previously float indices and function arguments such as axes or
+shapes were truncated to integers without warning. For example
+<em class="xref py py-obj">arr.reshape(3., -1)</em> or <em class="xref py py-obj">arr[0.]</em> will trigger a deprecation warning in
+NumPy 1.8., and in some future version of NumPy they will raise an error.</p>
+</div>
+</div>
+<div class="section" id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h3>
+<p>This release contains work by the following people who contributed at least
+one patch to this release. The names are in alphabetical order by first name:</p>
+<ul class="simple">
+<li>87</li>
+<li>Adam Ginsburg +</li>
+<li>Adam Griffiths +</li>
+<li>Alexander Belopolsky +</li>
+<li>Alex Barth +</li>
+<li>Alex Ford +</li>
+<li>Andreas Hilboll +</li>
+<li>Andreas Kloeckner +</li>
+<li>Andreas Schwab +</li>
+<li>Andrew Horton +</li>
+<li>argriffing +</li>
+<li>Arink Verma +</li>
+<li>Bago Amirbekian +</li>
+<li>Bartosz Telenczuk +</li>
+<li>bebert218 +</li>
+<li>Benjamin Root +</li>
+<li>Bill Spotz +</li>
+<li>Bradley M. Froehle</li>
+<li>Carwyn Pelley +</li>
+<li>Charles Harris</li>
+<li>Chris</li>
+<li>Christian Brueffer +</li>
+<li>Christoph Dann +</li>
+<li>Christoph Gohlke</li>
+<li>Dan Hipschman +</li>
+<li>Daniel +</li>
+<li>Dan Miller +</li>
+<li>daveydave400 +</li>
+<li>David Cournapeau</li>
+<li>David Warde-Farley</li>
+<li>Denis Laxalde</li>
+<li>dmuellner +</li>
+<li>Edward Catmur +</li>
+<li>Egor Zindy +</li>
+<li>endolith</li>
+<li>Eric Firing</li>
+<li>Eric Fode</li>
+<li>Eric Moore +</li>
+<li>Eric Price +</li>
+<li>Fazlul Shahriar +</li>
+<li>Félix Hartmann +</li>
+<li>Fernando Perez</li>
+<li>Frank B +</li>
+<li>Frank Breitling +</li>
+<li>Frederic</li>
+<li>Gabriel</li>
+<li>GaelVaroquaux</li>
+<li>Guillaume Gay +</li>
+<li>Han Genuit</li>
+<li>HaroldMills +</li>
+<li>hklemm +</li>
+<li>jamestwebber +</li>
+<li>Jason Madden +</li>
+<li>Jay Bourque</li>
+<li>jeromekelleher +</li>
+<li>Jesús Gómez +</li>
+<li>jmozmoz +</li>
+<li>jnothman +</li>
+<li>Johannes Schönberger +</li>
+<li>John Benediktsson +</li>
+<li>John Salvatier +</li>
+<li>John Stechschulte +</li>
+<li>Jonathan Waltman +</li>
+<li>Joon Ro +</li>
+<li>Jos de Kloe +</li>
+<li>Joseph Martinot-Lagarde +</li>
+<li>Josh Warner (Mac) +</li>
+<li>Jostein Bø Fløystad +</li>
+<li>Juan Luis Cano Rodríguez +</li>
+<li>Julian Taylor +</li>
+<li>Julien Phalip +</li>
+<li>K.-Michael Aye +</li>
+<li>Kumar Appaiah +</li>
+<li>Lars Buitinck</li>
+<li>Leon Weber +</li>
+<li>Luis Pedro Coelho</li>
+<li>Marcin Juszkiewicz</li>
+<li>Mark Wiebe</li>
+<li>Marten van Kerkwijk +</li>
+<li>Martin Baeuml +</li>
+<li>Martin Spacek</li>
+<li>Martin Teichmann +</li>
+<li>Matt Davis +</li>
+<li>Matthew Brett</li>
+<li>Maximilian Albert +</li>
+<li>m-d-w +</li>
+<li>Michael Droettboom</li>
+<li>mwtoews +</li>
+<li>Nathaniel J. Smith</li>
+<li>Nicolas Scheffer +</li>
+<li>Nils Werner +</li>
+<li>ochoadavid +</li>
+<li>Ondřej Čertík</li>
+<li>ovillellas +</li>
+<li>Paul Ivanov</li>
+<li>Pauli Virtanen</li>
+<li>peterjc</li>
+<li>Ralf Gommers</li>
+<li>Raul Cota +</li>
+<li>Richard Hattersley +</li>
+<li>Robert Costa +</li>
+<li>Robert Kern</li>
+<li>Rob Ruana +</li>
+<li>Ronan Lamy</li>
+<li>Sandro Tosi</li>
+<li>Sascha Peilicke +</li>
+<li>Sebastian Berg</li>
+<li>Skipper Seabold</li>
+<li>Stefan van der Walt</li>
+<li>Steve +</li>
+<li>Takafumi Arakaki +</li>
+<li>Thomas Robitaille +</li>
+<li>Tomas Tomecek +</li>
+<li>Travis E. Oliphant</li>
+<li>Valentin Haenel</li>
+<li>Vladimir Rutsky +</li>
+<li>Warren Weckesser</li>
+<li>Yaroslav Halchenko</li>
+<li>Yury V. Zaytsev +</li>
+</ul>
+<p>A total of 119 people contributed to this release.
+People with a &#8220;+&#8221; by their names contributed a patch for the first time.</p>
+</div>
+</div>
+<div class="section" id="numpy-1-7-1-release-notes">
+<h2>NumPy 1.7.1 Release Notes<a class="headerlink" href="#numpy-1-7-1-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This is a bugfix only release in the 1.7.x series.</p>
+<div class="section" id="issues-fixed">
+<h3>Issues fixed<a class="headerlink" href="#issues-fixed" title="Permalink to this headline">¶</a></h3>
+<p>gh-2973   Fix <em class="xref py py-obj">1</em> is printed during numpy.test()
+gh-2983   BUG: gh-2969: Backport memory leak fix 80b3a34.
+gh-3007   Backport gh-3006
+gh-2984   Backport fix complex polynomial fit
+gh-2982   BUG: Make nansum work with booleans.
+gh-2985   Backport large sort fixes
+gh-3039   Backport object take
+gh-3105   Backport nditer fix op axes initialization
+gh-3108   BUG: npy-pkg-config ini files were missing after Bento build.
+gh-3124   BUG: PyArray_LexSort allocates too much temporary memory.
+gh-3131   BUG: Exported f2py_size symbol prevents linking multiple f2py
+modules.
+gh-3117   Backport gh-2992
+gh-3135   DOC: Add mention of PyArray_SetBaseObject stealing a reference
+gh-3134   DOC: Fix typo in fft docs (the indexing variable is &#8216;m&#8217;, not &#8216;n&#8217;).
+gh-3136   Backport #3128</p>
+</div>
+</div>
+<div class="section" id="numpy-1-7-0-release-notes">
+<h2>NumPy 1.7.0 Release Notes<a class="headerlink" href="#numpy-1-7-0-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This release includes several new features as well as numerous bug fixes and
+refactorings. It supports Python 2.4 - 2.7 and 3.1 - 3.3 and is the last
+release that supports Python 2.4 - 2.5.</p>
+<div class="section" id="id2">
+<h3>Highlights<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">where=</span></tt> parameter to ufuncs (allows the use of boolean arrays to choose
+where a computation should be done)</li>
+<li><tt class="docutils literal"><span class="pre">vectorize</span></tt> improvements (added &#8216;excluded&#8217; and &#8216;cache&#8217; keyword, general
+cleanup and bug fixes)</li>
+<li><tt class="docutils literal"><span class="pre">numpy.random.choice</span></tt> (random sample generating function)</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h3>Compatibility notes<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>In a future version of numpy, the functions np.diag, np.diagonal, and the
+diagonal method of ndarrays will return a view onto the original array,
+instead of producing a copy as they do now. This makes a difference if you
+write to the array returned by any of these functions. To facilitate this
+transition, numpy 1.7 produces a FutureWarning if it detects that you may
+be attempting to write to such an array. See the documentation for
+np.diagonal for details.</p>
+<p>Similar to np.diagonal above, in a future version of numpy, indexing a
+record array by a list of field names will return a view onto the original
+array, instead of producing a copy as they do now. As with np.diagonal,
+numpy 1.7 produces a FutureWarning if it detects that you may be attempting
+to write to such an array. See the documentation for array indexing for
+details.</p>
+<p>In a future version of numpy, the default casting rule for UFunc out=
+parameters will be changed from &#8216;unsafe&#8217; to &#8216;same_kind&#8217;. (This also applies
+to in-place operations like a += b, which is equivalent to np.add(a, b,
+out=a).) Most usages which violate the &#8216;same_kind&#8217; rule are likely bugs, so
+this change may expose previously undetected errors in projects that depend
+on NumPy. In this version of numpy, such usages will continue to succeed,
+but will raise a DeprecationWarning.</p>
+<p>Full-array boolean indexing has been optimized to use a different,
+optimized code path.   This code path should produce the same results,
+but any feedback about changes to your code would be appreciated.</p>
+<p>Attempting to write to a read-only array (one with <tt class="docutils literal"><span class="pre">arr.flags.writeable</span></tt>
+set to <tt class="docutils literal"><span class="pre">False</span></tt>) used to raise either a RuntimeError, ValueError, or
+TypeError inconsistently, depending on which code path was taken. It now
+consistently raises a ValueError.</p>
+<p>The &lt;ufunc&gt;.reduce functions evaluate some reductions in a different order
+than in previous versions of NumPy, generally providing higher performance.
+Because of the nature of floating-point arithmetic, this may subtly change
+some results, just as linking NumPy to a different BLAS implementations
+such as MKL can.</p>
+<p>If upgrading from 1.5, then generally in 1.6 and 1.7 there have been
+substantial code added and some code paths altered, particularly in the
+areas of type resolution and buffered iteration over universal functions.
+This might have an impact on your code particularly if you relied on
+accidental behavior in the past.</p>
+</div>
+<div class="section" id="id4">
+<h3>New features<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="reduction-ufuncs-generalize-axis-parameter">
+<h4>Reduction UFuncs Generalize axis= Parameter<a class="headerlink" href="#reduction-ufuncs-generalize-axis-parameter" title="Permalink to this headline">¶</a></h4>
+<p>Any ufunc.reduce function call, as well as other reductions like sum, prod,
+any, all, max and min support the ability to choose a subset of the axes to
+reduce over. Previously, one could say axis=None to mean all the axes or
+axis=# to pick a single axis.  Now, one can also say axis=(#,#) to pick a
+list of axes for reduction.</p>
+</div>
+<div class="section" id="reduction-ufuncs-new-keepdims-parameter">
+<h4>Reduction UFuncs New keepdims= Parameter<a class="headerlink" href="#reduction-ufuncs-new-keepdims-parameter" title="Permalink to this headline">¶</a></h4>
+<p>There is a new keepdims= parameter, which if set to True, doesn&#8217;t throw
+away the reduction axes but instead sets them to have size one.  When this
+option is set, the reduction result will broadcast correctly to the
+original operand which was reduced.</p>
+</div>
+<div class="section" id="datetime-support">
+<h4>Datetime support<a class="headerlink" href="#datetime-support" title="Permalink to this headline">¶</a></h4>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The datetime API is <em>experimental</em> in 1.7.0, and may undergo changes
+in future versions of NumPy.</p>
+</div>
+<p>There have been a lot of fixes and enhancements to datetime64 compared
+to NumPy 1.6:</p>
+<ul class="simple">
+<li>the parser is quite strict about only accepting ISO 8601 dates, with a few
+convenience extensions</li>
+<li>converts between units correctly</li>
+<li>datetime arithmetic works correctly</li>
+<li>business day functionality (allows the datetime to be used in contexts where
+only certain days of the week are valid)</li>
+</ul>
+<p>The notes in <a class="reference external" href="https://github.com/numpy/numpy/blob/maintenance/1.7.x/doc/source/reference/arrays.datetime.rst">doc/source/reference/arrays.datetime.rst</a>
+(also available in the online docs at <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/arrays.datetime.html">arrays.datetime.html</a>) should be
+consulted for more details.</p>
+</div>
+<div class="section" id="custom-formatter-for-printing-arrays">
+<h4>Custom formatter for printing arrays<a class="headerlink" href="#custom-formatter-for-printing-arrays" title="Permalink to this headline">¶</a></h4>
+<p>See the new <tt class="docutils literal"><span class="pre">formatter</span></tt> parameter of the <tt class="docutils literal"><span class="pre">numpy.set_printoptions</span></tt>
+function.</p>
+</div>
+<div class="section" id="new-function-numpy-random-choice">
+<h4>New function numpy.random.choice<a class="headerlink" href="#new-function-numpy-random-choice" title="Permalink to this headline">¶</a></h4>
+<p>A generic sampling function has been added which will generate samples from
+a given array-like. The samples can be with or without replacement, and
+with uniform or given non-uniform probabilities.</p>
+</div>
+<div class="section" id="new-function-isclose">
+<h4>New function isclose<a class="headerlink" href="#new-function-isclose" title="Permalink to this headline">¶</a></h4>
+<p>Returns a boolean array where two arrays are element-wise equal within a
+tolerance. Both relative and absolute tolerance can be specified.</p>
+</div>
+<div class="section" id="preliminary-multi-dimensional-support-in-the-polynomial-package">
+<h4>Preliminary multi-dimensional support in the polynomial package<a class="headerlink" href="#preliminary-multi-dimensional-support-in-the-polynomial-package" title="Permalink to this headline">¶</a></h4>
+<p>Axis keywords have been added to the integration and differentiation
+functions and a tensor keyword was added to the evaluation functions.
+These additions allow multi-dimensional coefficient arrays to be used in
+those functions. New functions for evaluating 2-D and 3-D coefficient
+arrays on grids or sets of points were added together with 2-D and 3-D
+pseudo-Vandermonde matrices that can be used for fitting.</p>
+</div>
+<div class="section" id="ability-to-pad-rank-n-arrays">
+<h4>Ability to pad rank-n arrays<a class="headerlink" href="#ability-to-pad-rank-n-arrays" title="Permalink to this headline">¶</a></h4>
+<p>A pad module containing functions for padding n-dimensional arrays has been
+added. The various private padding functions are exposed as options to a
+public &#8216;pad&#8217; function.  Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">pad</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;mean&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Current modes are <tt class="docutils literal"><span class="pre">constant</span></tt>, <tt class="docutils literal"><span class="pre">edge</span></tt>, <tt class="docutils literal"><span class="pre">linear_ramp</span></tt>, <tt class="docutils literal"><span class="pre">maximum</span></tt>,
+<tt class="docutils literal"><span class="pre">mean</span></tt>, <tt class="docutils literal"><span class="pre">median</span></tt>, <tt class="docutils literal"><span class="pre">minimum</span></tt>, <tt class="docutils literal"><span class="pre">reflect</span></tt>, <tt class="docutils literal"><span class="pre">symmetric</span></tt>, <tt class="docutils literal"><span class="pre">wrap</span></tt>, and
+<tt class="docutils literal"><span class="pre">&lt;function&gt;</span></tt>.</p>
+</div>
+<div class="section" id="new-argument-to-searchsorted">
+<h4>New argument to searchsorted<a class="headerlink" href="#new-argument-to-searchsorted" title="Permalink to this headline">¶</a></h4>
+<p>The function searchsorted now accepts a &#8216;sorter&#8217; argument that is a
+permutation array that sorts the array to search.</p>
+</div>
+<div class="section" id="build-system">
+<h4>Build system<a class="headerlink" href="#build-system" title="Permalink to this headline">¶</a></h4>
+<p>Added experimental support for the AArch64 architecture.</p>
+</div>
+<div class="section" id="id5">
+<h4>C API<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>New function <tt class="docutils literal"><span class="pre">PyArray_RequireWriteable</span></tt> provides a consistent interface
+for checking array writeability &#8211; any C code which works with arrays whose
+WRITEABLE flag is not known to be True a priori, should make sure to call
+this function before writing.</p>
+<p>NumPy C Style Guide added (<tt class="docutils literal"><span class="pre">doc/C_STYLE_GUIDE.rst.txt</span></tt>).</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Changes<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h4>General<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>The function np.concatenate tries to match the layout of its input arrays.
+Previously, the layout did not follow any particular reason, and depended
+in an undesirable way on the particular axis chosen for concatenation. A
+bug was also fixed which silently allowed out of bounds axis arguments.</p>
+<p>The ufuncs logical_or, logical_and, and logical_not now follow Python&#8217;s
+behavior with object arrays, instead of trying to call methods on the
+objects. For example the expression (3 and &#8216;test&#8217;) produces the string
+&#8216;test&#8217;, and now np.logical_and(np.array(3, &#8216;O&#8217;), np.array(&#8216;test&#8217;, &#8216;O&#8217;))
+produces &#8216;test&#8217; as well.</p>
+<p>The <tt class="docutils literal"><span class="pre">.base</span></tt> attribute on ndarrays, which is used on views to ensure that the
+underlying array owning the memory is not deallocated prematurely, now
+collapses out references when you have a view-of-a-view. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</pre></div>
+</div>
+<p>In numpy 1.6, <tt class="docutils literal"><span class="pre">c.base</span></tt> is <tt class="docutils literal"><span class="pre">b</span></tt>, and <tt class="docutils literal"><span class="pre">c.base.base</span></tt> is <tt class="docutils literal"><span class="pre">a</span></tt>. In numpy 1.7,
+<tt class="docutils literal"><span class="pre">c.base</span></tt> is <tt class="docutils literal"><span class="pre">a</span></tt>.</p>
+<p>To increase backwards compatibility for software which relies on the old
+behaviour of <tt class="docutils literal"><span class="pre">.base</span></tt>, we only &#8216;skip over&#8217; objects which have exactly the same
+type as the newly created view. This makes a difference if you use <tt class="docutils literal"><span class="pre">ndarray</span></tt>
+subclasses. For example, if we have a mix of <tt class="docutils literal"><span class="pre">ndarray</span></tt> and <tt class="docutils literal"><span class="pre">matrix</span></tt> objects
+which are all views on the same original <tt class="docutils literal"><span class="pre">ndarray</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+</pre></div>
+</div>
+<p>then <tt class="docutils literal"><span class="pre">d.base</span></tt> will be <tt class="docutils literal"><span class="pre">b</span></tt>. This is because <tt class="docutils literal"><span class="pre">d</span></tt> is a <tt class="docutils literal"><span class="pre">matrix</span></tt> object,
+and so the collapsing process only continues so long as it encounters other
+<tt class="docutils literal"><span class="pre">matrix</span></tt> objects. It considers <tt class="docutils literal"><span class="pre">c</span></tt>, <tt class="docutils literal"><span class="pre">b</span></tt>, and <tt class="docutils literal"><span class="pre">a</span></tt> in that order, and
+<tt class="docutils literal"><span class="pre">b</span></tt> is the last entry in that list which is a <tt class="docutils literal"><span class="pre">matrix</span></tt> object.</p>
+</div>
+<div class="section" id="casting-rules">
+<h4>Casting Rules<a class="headerlink" href="#casting-rules" title="Permalink to this headline">¶</a></h4>
+<p>Casting rules have undergone some changes in corner cases, due to the
+NA-related work. In particular for combinations of scalar+scalar:</p>
+<ul class="simple">
+<li>the <em class="xref py py-obj">longlong</em> type (<em class="xref py py-obj">q</em>) now stays <em class="xref py py-obj">longlong</em> for operations with any other
+number (<em class="xref py py-obj">? b h i l q p B H I</em>), previously it was cast as <em class="xref py py-obj">int_</em> (<em class="xref py py-obj">l</em>). The
+<em class="xref py py-obj">ulonglong</em> type (<em class="xref py py-obj">Q</em>) now stays as <em class="xref py py-obj">ulonglong</em> instead of <em class="xref py py-obj">uint</em> (<em class="xref py py-obj">L</em>).</li>
+<li>the <em class="xref py py-obj">timedelta64</em> type (<em class="xref py py-obj">m</em>) can now be mixed with any integer type (<em class="xref py py-obj">b h i l
+q p B H I L Q P</em>), previously it raised <em class="xref py py-obj">TypeError</em>.</li>
+</ul>
+<p>For array + scalar, the above rules just broadcast except the case when
+the array and scalars are unsigned/signed integers, then the result gets
+converted to the array type (of possibly larger size) as illustrated by the
+following examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">(</span><span class="mi">257</span><span class="p">))</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;uint16&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">(</span><span class="mi">257</span><span class="p">))</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;int16&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">17</span><span class="p">))</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;int32&#39;)</span>
+</pre></div>
+</div>
+<p>Whether the size gets increased depends on the size of the scalar, for
+example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">(</span><span class="mi">255</span><span class="p">))</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;uint8&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">(</span><span class="mi">256</span><span class="p">))</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;uint16&#39;)</span>
+</pre></div>
+</div>
+<p>Also a <tt class="docutils literal"><span class="pre">complex128</span></tt> scalar + <tt class="docutils literal"><span class="pre">float32</span></tt> array is cast to <tt class="docutils literal"><span class="pre">complex64</span></tt>.</p>
+<p>In NumPy 1.7 the <em class="xref py py-obj">datetime64</em> type (<em class="xref py py-obj">M</em>) must be constructed by explicitly
+specifying the type as the second argument (e.g. <tt class="docutils literal"><span class="pre">np.datetime64(2000,</span> <span class="pre">'Y')</span></tt>).</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>Deprecations<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h4>General<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<p>Specifying a custom string formatter with a <em class="xref py py-obj">_format</em> array attribute is
+deprecated. The new <a class="reference external" href="http://docs.python.org/dev/library/formatter.html#formatter" title="(in Python v3.4)"><tt class="xref py py-obj docutils literal"><span class="pre">formatter</span></tt></a> keyword in <tt class="docutils literal"><span class="pre">numpy.set_printoptions</span></tt> or
+<tt class="docutils literal"><span class="pre">numpy.array2string</span></tt> can be used instead.</p>
+<p>The deprecated imports in the polynomial package have been removed.</p>
+<p><tt class="docutils literal"><span class="pre">concatenate</span></tt> now raises DepractionWarning for 1D arrays if <tt class="docutils literal"><span class="pre">axis</span> <span class="pre">!=</span> <span class="pre">0</span></tt>.
+Versions of numpy &lt; 1.7.0 ignored axis argument value for 1D arrays. We
+allow this for now, but in due course we will raise an error.</p>
+</div>
+<div class="section" id="id10">
+<h4>C-API<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p>Direct access to the fields of PyArrayObject* has been deprecated. Direct
+access has been recommended against for many releases. Expect similar
+deprecations for PyArray_Descr* and other core objects in the future as
+preparation for NumPy 2.0.</p>
+<p>The macros in old_defines.h are deprecated and will be removed in the next
+major release (&gt;= 2.0). The sed script tools/replace_old_macros.sed can be
+used to replace these macros with the newer versions.</p>
+<p>You can test your code against the deprecated C API by #defining
+NPY_NO_DEPRECATED_API to the target version number, for example
+NPY_1_7_API_VERSION, before including any NumPy headers.</p>
+<p>The <tt class="docutils literal"><span class="pre">NPY_CHAR</span></tt> member of the <tt class="docutils literal"><span class="pre">NPY_TYPES</span></tt> enum is deprecated and will be
+removed in NumPy 1.8. See the discussion at
+<a class="reference external" href="https://github.com/numpy/numpy/issues/2801">gh-2801</a> for more details.</p>
+</div>
+</div>
+</div>
+<div class="section" id="numpy-1-6-2-release-notes">
+<h2>NumPy 1.6.2 Release Notes<a class="headerlink" href="#numpy-1-6-2-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This is a bugfix release in the 1.6.x series.  Due to the delay of the NumPy
+1.7.0 release, this release contains far more fixes than a regular NumPy bugfix
+release.  It also includes a number of documentation and build improvements.</p>
+<div class="section" id="id11">
+<h3>Issues fixed<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="numpy-core">
+<h4><tt class="docutils literal"><span class="pre">numpy.core</span></tt><a class="headerlink" href="#numpy-core" title="Permalink to this headline">¶</a></h4>
+<p>#2063  make unique() return consistent index
+#1138  allow creating arrays from empty buffers or empty slices
+#1446  correct note about correspondence vstack and concatenate
+#1149  make argmin() work for datetime
+#1672  fix allclose() to work for scalar inf
+#1747  make np.median() work for 0-D arrays
+#1776  make complex division by zero to yield inf properly
+#1675  add scalar support for the format() function
+#1905  explicitly check for NaNs in allclose()
+#1952  allow floating ddof in std() and var()
+#1948  fix regression for indexing chararrays with empty list
+#2017  fix type hashing
+#2046  deleting array attributes causes segfault
+#2033  a**2.0 has incorrect type
+#2045  make attribute/iterator_element deletions not segfault
+#2021  fix segfault in searchsorted()
+#2073  fix float16 __array_interface__ bug</p>
+</div>
+<div class="section" id="numpy-lib">
+<h4><tt class="docutils literal"><span class="pre">numpy.lib</span></tt><a class="headerlink" href="#numpy-lib" title="Permalink to this headline">¶</a></h4>
+<p>#2048  break reference cycle in NpzFile
+#1573  savetxt() now handles complex arrays
+#1387  allow bincount() to accept empty arrays
+#1899  fixed histogramdd() bug with empty inputs
+#1793  fix failing npyio test under py3k
+#1936  fix extra nesting for subarray dtypes
+#1848  make tril/triu return the same dtype as the original array
+#1918  use Py_TYPE to access ob_type, so it works also on Py3</p>
+</div>
+<div class="section" id="numpy-distutils">
+<h4><tt class="docutils literal"><span class="pre">numpy.distutils</span></tt><a class="headerlink" href="#numpy-distutils" title="Permalink to this headline">¶</a></h4>
+<p>#1261  change compile flag on AIX from -O5 to -O3
+#1377  update HP compiler flags
+#1383  provide better support for C++ code on HPUX
+#1857  fix build for py3k + pip
+BLD:   raise a clearer warning in case of building without cleaning up first
+BLD:   follow build_ext coding convention in build_clib
+BLD:   fix up detection of Intel CPU on OS X in system_info.py
+BLD:   add support for the new X11 directory structure on Ubuntu &amp; co.
+BLD:   add ufsparse to the libraries search path.
+BLD:   add &#8216;pgfortran&#8217; as a valid compiler in the Portland Group
+BLD:   update version match regexp for IBM AIX Fortran compilers.</p>
+</div>
+<div class="section" id="numpy-random">
+<h4><tt class="docutils literal"><span class="pre">numpy.random</span></tt><a class="headerlink" href="#numpy-random" title="Permalink to this headline">¶</a></h4>
+<p>BUG:  Use npy_intp instead of long in mtrand</p>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>Changes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="numpy-f2py">
+<h4><tt class="docutils literal"><span class="pre">numpy.f2py</span></tt><a class="headerlink" href="#numpy-f2py" title="Permalink to this headline">¶</a></h4>
+<p>ENH:   Introduce new options extra_f77_compiler_args and extra_f90_compiler_args
+BLD:   Improve reporting of fcompiler value
+BUG:   Fix f2py test_kind.py test</p>
+</div>
+<div class="section" id="numpy-poly">
+<h4><tt class="docutils literal"><span class="pre">numpy.poly</span></tt><a class="headerlink" href="#numpy-poly" title="Permalink to this headline">¶</a></h4>
+<p>ENH:   Add some tests for polynomial printing
+ENH:   Add companion matrix functions
+DOC:   Rearrange the polynomial documents
+BUG:   Fix up links to classes
+DOC:   Add version added to some of the polynomial package modules
+DOC:   Document xxxfit functions in the polynomial package modules
+BUG:   The polynomial convenience classes let different types interact
+DOC:   Document the use of the polynomial convenience classes
+DOC:   Improve numpy reference documentation of polynomial classes
+ENH:   Improve the computation of polynomials from roots
+STY:   Code cleanup in polynomial [*]fromroots functions
+DOC:   Remove references to cast and NA, which were added in 1.7</p>
+</div>
+</div>
+</div>
+<div class="section" id="numpy-1-6-1-release-notes">
+<h2>NumPy 1.6.1 Release Notes<a class="headerlink" href="#numpy-1-6-1-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This is a bugfix only release in the 1.6.x series.</p>
+<div class="section" id="id13">
+<h3>Issues Fixed<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>#1834   einsum fails for specific shapes
+#1837   einsum throws nan or freezes python for specific array shapes
+#1838   object &lt;-&gt; structured type arrays regression
+#1851   regression for SWIG based code in 1.6.0
+#1863   Buggy results when operating on array copied with astype()
+#1870   Fix corner case of object array assignment
+#1843   Py3k: fix error with recarray
+#1885   nditer: Error in detecting double reduction loop
+#1874   f2py: fix &#8211;include_paths bug
+#1749   Fix ctypes.load_library()
+#1895/1896  iter: writeonly operands weren&#8217;t always being buffered correctly</p>
+</div>
+</div>
+<div class="section" id="numpy-1-6-0-release-notes">
+<h2>NumPy 1.6.0 Release Notes<a class="headerlink" href="#numpy-1-6-0-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This release includes several new features as well as numerous bug fixes and
+improved documentation.  It is backward compatible with the 1.5.0 release, and
+supports Python 2.4 - 2.7 and 3.1 - 3.2.</p>
+<div class="section" id="id14">
+<h3>Highlights<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Re-introduction of datetime dtype support to deal with dates in arrays.</li>
+<li>A new 16-bit floating point type.</li>
+<li>A new iterator, which improves performance of many functions.</li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h3>New features<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="new-16-bit-floating-point-type">
+<h4>New 16-bit floating point type<a class="headerlink" href="#new-16-bit-floating-point-type" title="Permalink to this headline">¶</a></h4>
+<p>This release adds support for the IEEE 754-2008 binary16 format, available as
+the data type <tt class="docutils literal"><span class="pre">numpy.half</span></tt>.  Within Python, the type behaves similarly to
+<em class="xref py py-obj">float</em> or <em class="xref py py-obj">double</em>, and C extensions can add support for it with the exposed
+half-float API.</p>
+</div>
+<div class="section" id="new-iterator">
+<h4>New iterator<a class="headerlink" href="#new-iterator" title="Permalink to this headline">¶</a></h4>
+<p>A new iterator has been added, replacing the functionality of the
+existing iterator and multi-iterator with a single object and API.
+This iterator works well with general memory layouts different from
+C or Fortran contiguous, and handles both standard NumPy and
+customized broadcasting. The buffering, automatic data type
+conversion, and optional output parameters, offered by
+ufuncs but difficult to replicate elsewhere, are now exposed by this
+iterator.</p>
+</div>
+<div class="section" id="legendre-laguerre-hermite-hermitee-polynomials-in-numpy-polynomial">
+<h4>Legendre, Laguerre, Hermite, HermiteE polynomials in <tt class="docutils literal"><span class="pre">numpy.polynomial</span></tt><a class="headerlink" href="#legendre-laguerre-hermite-hermitee-polynomials-in-numpy-polynomial" title="Permalink to this headline">¶</a></h4>
+<p>Extend the number of polynomials available in the polynomial package. In
+addition, a new <tt class="docutils literal"><span class="pre">window</span></tt> attribute has been added to the classes in
+order to specify the range the <tt class="docutils literal"><span class="pre">domain</span></tt> maps to. This is mostly useful
+for the Laguerre, Hermite, and HermiteE polynomials whose natural domains
+are infinite and provides a more intuitive way to get the correct mapping
+of values without playing unnatural tricks with the domain.</p>
+</div>
+<div class="section" id="fortran-assumed-shape-array-and-size-function-support-in-numpy-f2py">
+<h4>Fortran assumed shape array and size function support in <tt class="docutils literal"><span class="pre">numpy.f2py</span></tt><a class="headerlink" href="#fortran-assumed-shape-array-and-size-function-support-in-numpy-f2py" title="Permalink to this headline">¶</a></h4>
+<p>F2py now supports wrapping Fortran 90 routines that use assumed shape
+arrays.  Before such routines could be called from Python but the
+corresponding Fortran routines received assumed shape arrays as zero
+length arrays which caused unpredicted results. Thanks to Lorenz
+Hüdepohl for pointing out the correct way to interface routines with
+assumed shape arrays.</p>
+<p>In addition, f2py supports now automatic wrapping of Fortran routines
+that use two argument <tt class="docutils literal"><span class="pre">size</span></tt> function in dimension specifications.</p>
+</div>
+<div class="section" id="other-new-functions">
+<h4>Other new functions<a class="headerlink" href="#other-new-functions" title="Permalink to this headline">¶</a></h4>
+<p><tt class="docutils literal"><span class="pre">numpy.ravel_multi_index</span></tt> : Converts a multi-index tuple into
+an array of flat indices, applying boundary modes to the indices.</p>
+<p><tt class="docutils literal"><span class="pre">numpy.einsum</span></tt> : Evaluate the Einstein summation convention.  Using the
+Einstein summation convention, many common multi-dimensional array operations
+can be represented in a simple fashion.  This function provides a way compute
+such summations.</p>
+<p><tt class="docutils literal"><span class="pre">numpy.count_nonzero</span></tt> : Counts the number of non-zero elements in an array.</p>
+<p><tt class="docutils literal"><span class="pre">numpy.result_type</span></tt> and <tt class="docutils literal"><span class="pre">numpy.min_scalar_type</span></tt> : These functions expose
+the underlying type promotion used by the ufuncs and other operations to
+determine the types of outputs. These improve upon the <tt class="docutils literal"><span class="pre">numpy.common_type</span></tt>
+and <tt class="docutils literal"><span class="pre">numpy.mintypecode</span></tt> which provide similar functionality but do
+not match the ufunc implementation.</p>
+</div>
+</div>
+<div class="section" id="id16">
+<h3>Changes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="default-error-handling">
+<h4><tt class="docutils literal"><span class="pre">default</span> <span class="pre">error</span> <span class="pre">handling</span></tt><a class="headerlink" href="#default-error-handling" title="Permalink to this headline">¶</a></h4>
+<p>The default error handling has been change from <tt class="docutils literal"><span class="pre">print</span></tt> to <tt class="docutils literal"><span class="pre">warn</span></tt> for
+all except for <tt class="docutils literal"><span class="pre">underflow</span></tt>, which remains as <tt class="docutils literal"><span class="pre">ignore</span></tt>.</p>
+</div>
+<div class="section" id="id17">
+<h4><tt class="docutils literal"><span class="pre">numpy.distutils</span></tt><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h4>
+<p>Several new compilers are supported for building Numpy: the Portland Group
+Fortran compiler on OS X, the PathScale compiler suite and the 64-bit Intel C
+compiler on Linux.</p>
+</div>
+<div class="section" id="numpy-testing">
+<h4><tt class="docutils literal"><span class="pre">numpy.testing</span></tt><a class="headerlink" href="#numpy-testing" title="Permalink to this headline">¶</a></h4>
+<p>The testing framework gained <tt class="docutils literal"><span class="pre">numpy.testing.assert_allclose</span></tt>, which provides
+a more convenient way to compare floating point arrays than
+<em class="xref py py-obj">assert_almost_equal</em>, <em class="xref py py-obj">assert_approx_equal</em> and <em class="xref py py-obj">assert_array_almost_equal</em>.</p>
+</div>
+<div class="section" id="id18">
+<h4><tt class="docutils literal"><span class="pre">C</span> <span class="pre">API</span></tt><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h4>
+<p>In addition to the APIs for the new iterator and half data type, a number
+of other additions have been made to the C API. The type promotion
+mechanism used by ufuncs is exposed via <tt class="docutils literal"><span class="pre">PyArray_PromoteTypes</span></tt>,
+<tt class="docutils literal"><span class="pre">PyArray_ResultType</span></tt>, and <tt class="docutils literal"><span class="pre">PyArray_MinScalarType</span></tt>. A new enumeration
+<tt class="docutils literal"><span class="pre">NPY_CASTING</span></tt> has been added which controls what types of casts are
+permitted. This is used by the new functions <tt class="docutils literal"><span class="pre">PyArray_CanCastArrayTo</span></tt>
+and <tt class="docutils literal"><span class="pre">PyArray_CanCastTypeTo</span></tt>.  A more flexible way to handle
+conversion of arbitrary python objects into arrays is exposed by
+<tt class="docutils literal"><span class="pre">PyArray_GetArrayParamsFromObject</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="deprecated-features">
+<h3>Deprecated features<a class="headerlink" href="#deprecated-features" title="Permalink to this headline">¶</a></h3>
+<p>The &#8220;normed&#8221; keyword in <tt class="docutils literal"><span class="pre">numpy.histogram</span></tt> is deprecated. Its functionality
+will be replaced by the new &#8220;density&#8221; keyword.</p>
+</div>
+<div class="section" id="removed-features">
+<h3>Removed features<a class="headerlink" href="#removed-features" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="numpy-fft">
+<h4><tt class="docutils literal"><span class="pre">numpy.fft</span></tt><a class="headerlink" href="#numpy-fft" title="Permalink to this headline">¶</a></h4>
+<p>The functions <em class="xref py py-obj">refft</em>, <em class="xref py py-obj">refft2</em>, <em class="xref py py-obj">refftn</em>, <em class="xref py py-obj">irefft</em>, <em class="xref py py-obj">irefft2</em>, <em class="xref py py-obj">irefftn</em>,
+which were aliases for the same functions without the &#8216;e&#8217; in the name, were
+removed.</p>
+</div>
+<div class="section" id="numpy-memmap">
+<h4><tt class="docutils literal"><span class="pre">numpy.memmap</span></tt><a class="headerlink" href="#numpy-memmap" title="Permalink to this headline">¶</a></h4>
+<p>The <em class="xref py py-obj">sync()</em> and <em class="xref py py-obj">close()</em> methods of memmap were removed.  Use <em class="xref py py-obj">flush()</em> and
+&#8220;del memmap&#8221; instead.</p>
+</div>
+<div class="section" id="id19">
+<h4><tt class="docutils literal"><span class="pre">numpy.lib</span></tt><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h4>
+<p>The deprecated functions <tt class="docutils literal"><span class="pre">numpy.unique1d</span></tt>, <tt class="docutils literal"><span class="pre">numpy.setmember1d</span></tt>,
+<tt class="docutils literal"><span class="pre">numpy.intersect1d_nu</span></tt> and <tt class="docutils literal"><span class="pre">numpy.lib.ufunclike.log2</span></tt> were removed.</p>
+</div>
+<div class="section" id="numpy-ma">
+<h4><tt class="docutils literal"><span class="pre">numpy.ma</span></tt><a class="headerlink" href="#numpy-ma" title="Permalink to this headline">¶</a></h4>
+<p>Several deprecated items were removed from the <tt class="docutils literal"><span class="pre">numpy.ma</span></tt> module:</p>
+<div class="highlight-python"><pre>* ``numpy.ma.MaskedArray`` "raw_data" method
+* ``numpy.ma.MaskedArray`` constructor "flag" keyword
+* ``numpy.ma.make_mask`` "flag" keyword
+* ``numpy.ma.allclose`` "fill_value" keyword</pre>
+</div>
+</div>
+<div class="section" id="id20">
+<h4><tt class="docutils literal"><span class="pre">numpy.distutils</span></tt><a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+<p>The <tt class="docutils literal"><span class="pre">numpy.get_numpy_include</span></tt> function was removed, use <tt class="docutils literal"><span class="pre">numpy.get_include</span></tt>
+instead.</p>
+</div>
+</div>
+</div>
+<div class="section" id="numpy-1-5-0-release-notes">
+<h2>NumPy 1.5.0 Release Notes<a class="headerlink" href="#numpy-1-5-0-release-notes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id21">
+<h3>Highlights<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="python-3-compatibility">
+<h4>Python 3 compatibility<a class="headerlink" href="#python-3-compatibility" title="Permalink to this headline">¶</a></h4>
+<p>This is the first NumPy release which is compatible with Python 3. Support for
+Python 3 and Python 2 is done from a single code base. Extensive notes on
+changes can be found at
+<a class="reference external" href="http://projects.scipy.org/numpy/browser/trunk/doc/Py3K.txt">http://projects.scipy.org/numpy/browser/trunk/doc/Py3K.txt</a>.</p>
+<p>Note that the Numpy testing framework relies on nose, which does not have a
+Python 3 compatible release yet. A working Python 3 branch of nose can be found
+at <a class="reference external" href="http://bitbucket.org/jpellerin/nose3/">http://bitbucket.org/jpellerin/nose3/</a> however.</p>
+<p>Porting of SciPy to Python 3 is expected to be completed soon.</p>
+</div>
+<div class="section" id="pep-3118-compatibility">
+<h4><span class="target" id="index-0"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-3118"><strong>PEP 3118</strong></a> compatibility<a class="headerlink" href="#pep-3118-compatibility" title="Permalink to this headline">¶</a></h4>
+<p>The new buffer protocol described by PEP 3118 is fully supported in this
+version of Numpy. On Python versions &gt;= 2.6 Numpy arrays expose the buffer
+interface, and array(), asarray() and other functions accept new-style buffers
+as input.</p>
+</div>
+</div>
+<div class="section" id="id22">
+<h3>New features<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="warning-on-casting-complex-to-real">
+<h4>Warning on casting complex to real<a class="headerlink" href="#warning-on-casting-complex-to-real" title="Permalink to this headline">¶</a></h4>
+<p>Numpy now emits a <tt class="xref py py-obj docutils literal"><span class="pre">numpy.ComplexWarning</span></tt> when a complex number is cast
+into a real number. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">+</span><span class="mi">2j</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mi">2j</span><span class="p">])</span>
+<span class="go">ComplexWarning: Casting complex values to real discards the imaginary part</span>
+</pre></div>
+</div>
+<p>The cast indeed discards the imaginary part, and this may not be the
+intended behavior in all cases, hence the warning. This warning can be
+turned off in the standard way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ComplexWarning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dot-method-for-ndarrays">
+<h4>Dot method for ndarrays<a class="headerlink" href="#dot-method-for-ndarrays" title="Permalink to this headline">¶</a></h4>
+<p>Ndarrays now have the dot product also as a method, which allows writing
+chains of matrix products as</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>instead of the longer alternative</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="linalg-slogdet-function">
+<h4>linalg.slogdet function<a class="headerlink" href="#linalg-slogdet-function" title="Permalink to this headline">¶</a></h4>
+<p>The slogdet function returns the sign and logarithm of the determinant
+of a matrix. Because the determinant may involve the product of many
+small/large values, the result is often more accurate than that obtained
+by simple multiplication.</p>
+</div>
+<div class="section" id="new-header">
+<h4>new header<a class="headerlink" href="#new-header" title="Permalink to this headline">¶</a></h4>
+<p>The new header file ndarraytypes.h contains the symbols from
+ndarrayobject.h that do not depend on the PY_ARRAY_UNIQUE_SYMBOL and
+NO_IMPORT/_ARRAY macros. Broadly, these symbols are types, typedefs,
+and enumerations; the array function calls are left in
+ndarrayobject.h. This allows users to include array-related types and
+enumerations without needing to concern themselves with the macro
+expansions and their side- effects.</p>
+</div>
+</div>
+<div class="section" id="id23">
+<h3>Changes<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="polynomial-polynomial">
+<h4>polynomial.polynomial<a class="headerlink" href="#polynomial-polynomial" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The polyint and polyder functions now check that the specified number
+integrations or derivations is a non-negative integer. The number 0 is
+a valid value for both functions.</li>
+<li>A degree method has been added to the Polynomial class.</li>
+<li>A trimdeg method has been added to the Polynomial class. It operates like
+truncate except that the argument is the desired degree of the result,
+not the number of coefficients.</li>
+<li>Polynomial.fit now uses None as the default domain for the fit. The default
+Polynomial domain can be specified by using [] as the domain value.</li>
+<li>Weights can be used in both polyfit and Polynomial.fit</li>
+<li>A linspace method has been added to the Polynomial class to ease plotting.</li>
+<li>The polymulx function was added.</li>
+</ul>
+</div>
+<div class="section" id="polynomial-chebyshev">
+<h4>polynomial.chebyshev<a class="headerlink" href="#polynomial-chebyshev" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The chebint and chebder functions now check that the specified number
+integrations or derivations is a non-negative integer. The number 0 is
+a valid value for both functions.</li>
+<li>A degree method has been added to the Chebyshev class.</li>
+<li>A trimdeg method has been added to the Chebyshev class. It operates like
+truncate except that the argument is the desired degree of the result,
+not the number of coefficients.</li>
+<li>Chebyshev.fit now uses None as the default domain for the fit. The default
+Chebyshev domain can be specified by using [] as the domain value.</li>
+<li>Weights can be used in both chebfit and Chebyshev.fit</li>
+<li>A linspace method has been added to the Chebyshev class to ease plotting.</li>
+<li>The chebmulx function was added.</li>
+<li>Added functions for the Chebyshev points of the first and second kind.</li>
+</ul>
+</div>
+<div class="section" id="histogram">
+<h4>histogram<a class="headerlink" href="#histogram" title="Permalink to this headline">¶</a></h4>
+<p>After a two years transition period, the old behavior of the histogram function
+has been phased out, and the &#8220;new&#8221; keyword has been removed.</p>
+</div>
+<div class="section" id="correlate">
+<h4>correlate<a class="headerlink" href="#correlate" title="Permalink to this headline">¶</a></h4>
+<p>The old behavior of correlate was deprecated in 1.4.0, the new behavior (the
+usual definition for cross-correlation) is now the default.</p>
+</div>
+</div>
+</div>
+<div class="section" id="numpy-1-4-0-release-notes">
+<h2>NumPy 1.4.0 Release Notes<a class="headerlink" href="#numpy-1-4-0-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This minor includes numerous bug fixes, as well as a few new features. It
+is backward compatible with 1.3.0 release.</p>
+<div class="section" id="id24">
+<h3>Highlights<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>New datetime dtype support to deal with dates in arrays</li>
+<li>Faster import time</li>
+<li>Extended array wrapping mechanism for ufuncs</li>
+<li>New Neighborhood iterator (C-level only)</li>
+<li>C99-like complex functions in npymath</li>
+</ul>
+</div>
+<div class="section" id="id25">
+<h3>New features<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="extended-array-wrapping-mechanism-for-ufuncs">
+<h4>Extended array wrapping mechanism for ufuncs<a class="headerlink" href="#extended-array-wrapping-mechanism-for-ufuncs" title="Permalink to this headline">¶</a></h4>
+<p>An __array_prepare__ method has been added to ndarray to provide subclasses
+greater flexibility to interact with ufuncs and ufunc-like functions. ndarray
+already provided __array_wrap__, which allowed subclasses to set the array type
+for the result and populate metadata on the way out of the ufunc (as seen in
+the implementation of MaskedArray). For some applications it is necessary to
+provide checks and populate metadata <em>on the way in</em>. __array_prepare__ is
+therefore called just after the ufunc has initialized the output array but
+before computing the results and populating it. This way, checks can be made
+and errors raised before operations which may modify data in place.</p>
+</div>
+<div class="section" id="automatic-detection-of-forward-incompatibilities">
+<h4>Automatic detection of forward incompatibilities<a class="headerlink" href="#automatic-detection-of-forward-incompatibilities" title="Permalink to this headline">¶</a></h4>
+<p>Previously, if an extension was built against a version N of NumPy, and used on
+a system with NumPy M &lt; N, the import_array was successfull, which could cause
+crashes because the version M does not have a function in N. Starting from
+NumPy 1.4.0, this will cause a failure in import_array, so the error will be
+catched early on.</p>
+</div>
+<div class="section" id="new-iterators">
+<h4>New iterators<a class="headerlink" href="#new-iterators" title="Permalink to this headline">¶</a></h4>
+<p>A new neighborhood iterator has been added to the C API. It can be used to
+iterate over the items in a neighborhood of an array, and can handle boundaries
+conditions automatically. Zero and one padding are available, as well as
+arbitrary constant value, mirror and circular padding.</p>
+</div>
+<div class="section" id="new-polynomial-support">
+<h4>New polynomial support<a class="headerlink" href="#new-polynomial-support" title="Permalink to this headline">¶</a></h4>
+<p>New modules chebyshev and polynomial have been added. The new polynomial module
+is not compatible with the current polynomial support in numpy, but is much
+like the new chebyshev module. The most noticeable difference to most will
+be that coefficients are specified from low to high power, that the low
+level functions do <em>not</em> work with the Chebyshev and Polynomial classes as
+arguements, and that the Chebyshev and Polynomial classes include a domain.
+Mapping between domains is a linear substitution and the two classes can be
+converted one to the other, allowing, for instance, a Chebyshev series in
+one domain to be expanded as a polynomial in another domain. The new classes
+should generally be used instead of the low level functions, the latter are
+provided for those who wish to build their own classes.</p>
+<p>The new modules are not automatically imported into the numpy namespace,
+they must be explicitly brought in with an &#8220;import numpy.polynomial&#8221;
+statement.</p>
+</div>
+<div class="section" id="new-c-api">
+<h4>New C API<a class="headerlink" href="#new-c-api" title="Permalink to this headline">¶</a></h4>
+<p>The following C functions have been added to the C API:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>PyArray_GetNDArrayCFeatureVersion: return the <em>API</em> version of the
+loaded numpy.</li>
+<li>PyArray_Correlate2 - like PyArray_Correlate, but implements the usual
+definition of correlation. Inputs are not swapped, and conjugate is
+taken for complex arrays.</li>
+<li>PyArray_NeighborhoodIterNew - a new iterator to iterate over a
+neighborhood of a point, with automatic boundaries handling. It is
+documented in the iterators section of the C-API reference, and you can
+find some examples in  the multiarray_test.c.src file in numpy.core.</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="new-ufuncs">
+<h4>New ufuncs<a class="headerlink" href="#new-ufuncs" title="Permalink to this headline">¶</a></h4>
+<p>The following ufuncs have been added to the C API:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>copysign - return the value of the first argument with the sign copied
+from the second argument.</li>
+<li>nextafter - return the next representable floating point value of the
+first argument toward the second argument.</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="new-defines">
+<h4>New defines<a class="headerlink" href="#new-defines" title="Permalink to this headline">¶</a></h4>
+<p>The alpha processor is now defined and available in numpy/npy_cpu.h. The
+failed detection of the PARISC processor has been fixed. The defines are:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>NPY_CPU_HPPA: PARISC</li>
+<li>NPY_CPU_ALPHA: Alpha</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="testing">
+<h4>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ol class="arabic simple">
+<li>deprecated decorator: this decorator may be used to avoid cluttering
+testing output while testing DeprecationWarning is effectively raised by
+the decorated test.</li>
+<li>assert_array_almost_equal_nulps: new method to compare two arrays of
+floating point values. With this function, two values are considered
+close if there are not many representable floating point values in
+between, thus being more robust than assert_array_almost_equal when the
+values fluctuate a lot.</li>
+<li>assert_array_max_ulp: raise an assertion if there are more than N
+representable numbers between two floating point values.</li>
+<li>assert_warns: raise an AssertionError if a callable does not generate a
+warning of the appropriate class, without altering the warning state.</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="reusing-npymath">
+<h4>Reusing npymath<a class="headerlink" href="#reusing-npymath" title="Permalink to this headline">¶</a></h4>
+<p>In 1.3.0, we started putting portable C math routines in npymath library, so
+that people can use those to write portable extensions. Unfortunately, it was
+not possible to easily link against this library: in 1.4.0, support has been
+added to numpy.distutils so that 3rd party can reuse this library. See coremath
+documentation for more information.</p>
+</div>
+<div class="section" id="improved-set-operations">
+<h4>Improved set operations<a class="headerlink" href="#improved-set-operations" title="Permalink to this headline">¶</a></h4>
+<p>In previous versions of NumPy some set functions (intersect1d,
+setxor1d, setdiff1d and setmember1d) could return incorrect results if
+the input arrays contained duplicate items. These now work correctly
+for input arrays with duplicates. setmember1d has been renamed to
+in1d, as with the change to accept arrays with duplicates it is
+no longer a set operation, and is conceptually similar to an
+elementwise version of the Python operator &#8216;in&#8217;.  All of these
+functions now accept the boolean keyword assume_unique. This is False
+by default, but can be set True if the input arrays are known not
+to contain duplicates, which can increase the functions&#8217; execution
+speed.</p>
+</div>
+</div>
+<div class="section" id="id26">
+<h3>Improvements<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">numpy import is noticeably faster (from 20 to 30 % depending on the
+platform and computer)</p>
+</li>
+<li><p class="first">The sort functions now sort nans to the end.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Real sort order is [R, nan]</li>
+<li>Complex sort order is [R + Rj, R + nanj, nan + Rj, nan + nanj]</li>
+</ul>
+</div></blockquote>
+<p>Complex numbers with the same nan placements are sorted according to
+the non-nan part if it exists.</p>
+</li>
+<li><p class="first">The type comparison functions have been made consistent with the new
+sort order of nans. Searchsorted now works with sorted arrays
+containing nan values.</p>
+</li>
+<li><p class="first">Complex division has been made more resistent to overflow.</p>
+</li>
+<li><p class="first">Complex floor division has been made more resistent to overflow.</p>
+</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="id27">
+<h3>Deprecations<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
+<p>The following functions are deprecated:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>correlate: it takes a new keyword argument old_behavior. When True (the
+default), it returns the same result as before. When False, compute the
+conventional correlation, and take the conjugate for complex arrays. The
+old behavior will be removed in NumPy 1.5, and raises a
+DeprecationWarning in 1.4.</li>
+<li>unique1d: use unique instead. unique1d raises a deprecation
+warning in 1.4, and will be removed in 1.5.</li>
+<li>intersect1d_nu: use intersect1d instead. intersect1d_nu raises
+a deprecation warning in 1.4, and will be removed in 1.5.</li>
+<li>setmember1d: use in1d instead. setmember1d raises a deprecation
+warning in 1.4, and will be removed in 1.5.</li>
+</ol>
+</div></blockquote>
+<p>The following raise errors:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>When operating on 0-d arrays, <tt class="docutils literal"><span class="pre">numpy.max</span></tt> and other functions accept
+only <tt class="docutils literal"><span class="pre">axis=0</span></tt>, <tt class="docutils literal"><span class="pre">axis=-1</span></tt> and <tt class="docutils literal"><span class="pre">axis=None</span></tt>. Using an out-of-bounds
+axes is an indication of a bug, so Numpy raises an error for these cases
+now.</li>
+<li>Specifying <tt class="docutils literal"><span class="pre">axis</span> <span class="pre">&gt;</span> <span class="pre">MAX_DIMS</span></tt> is no longer allowed; Numpy raises now an
+error instead of behaving similarly as for <tt class="docutils literal"><span class="pre">axis=None</span></tt>.</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="internal-changes">
+<h3>Internal changes<a class="headerlink" href="#internal-changes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="use-c99-complex-functions-when-available">
+<h4>Use C99 complex functions when available<a class="headerlink" href="#use-c99-complex-functions-when-available" title="Permalink to this headline">¶</a></h4>
+<p>The numpy complex types are now guaranteed to be ABI compatible with C99
+complex type, if availble on the platform. Moreoever, the complex ufunc now use
+the platform C99 functions intead of our own.</p>
+</div>
+<div class="section" id="split-multiarray-and-umath-source-code">
+<h4>split multiarray and umath source code<a class="headerlink" href="#split-multiarray-and-umath-source-code" title="Permalink to this headline">¶</a></h4>
+<p>The source code of multiarray and umath has been split into separate logic
+compilation units. This should make the source code more amenable for
+newcomers.</p>
+</div>
+<div class="section" id="separate-compilation">
+<h4>Separate compilation<a class="headerlink" href="#separate-compilation" title="Permalink to this headline">¶</a></h4>
+<p>By default, every file of multiarray (and umath) is merged into one for
+compilation as was the case before, but if NPY_SEPARATE_COMPILATION env
+variable is set to a non-negative value, experimental individual compilation of
+each file is enabled. This makes the compile/debug cycle much faster when
+working on core numpy.</p>
+</div>
+<div class="section" id="separate-core-math-library">
+<h4>Separate core math library<a class="headerlink" href="#separate-core-math-library" title="Permalink to this headline">¶</a></h4>
+<p>New functions which have been added:</p>
+<blockquote>
+<div><ul class="simple">
+<li>npy_copysign</li>
+<li>npy_nextafter</li>
+<li>npy_cpack</li>
+<li>npy_creal</li>
+<li>npy_cimag</li>
+<li>npy_cabs</li>
+<li>npy_cexp</li>
+<li>npy_clog</li>
+<li>npy_cpow</li>
+<li>npy_csqr</li>
+<li>npy_ccos</li>
+<li>npy_csin</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+</div>
+<div class="section" id="numpy-1-3-0-release-notes">
+<h2>NumPy 1.3.0 Release Notes<a class="headerlink" href="#numpy-1-3-0-release-notes" title="Permalink to this headline">¶</a></h2>
+<p>This minor includes numerous bug fixes, official python 2.6 support, and
+several new features such as generalized ufuncs.</p>
+<div class="section" id="id28">
+<h3>Highlights<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="python-2-6-support">
+<h4>Python 2.6 support<a class="headerlink" href="#python-2-6-support" title="Permalink to this headline">¶</a></h4>
+<p>Python 2.6 is now supported on all previously supported platforms, including
+windows.</p>
+<p><a class="reference external" href="http://www.python.org/dev/peps/pep-0361/">http://www.python.org/dev/peps/pep-0361/</a></p>
+</div>
+<div class="section" id="generalized-ufuncs">
+<h4>Generalized ufuncs<a class="headerlink" href="#generalized-ufuncs" title="Permalink to this headline">¶</a></h4>
+<p>There is a general need for looping over not only functions on scalars but also
+over functions on vectors (or arrays), as explained on
+<a class="reference external" href="http://scipy.org/scipy/numpy/wiki/GeneralLoopingFunctions">http://scipy.org/scipy/numpy/wiki/GeneralLoopingFunctions</a>. We propose to
+realize this concept by generalizing the universal functions (ufuncs), and
+provide a C implementation that adds ~500 lines to the numpy code base. In
+current (specialized) ufuncs, the elementary function is limited to
+element-by-element operations, whereas the generalized version supports
+&#8220;sub-array&#8221; by &#8220;sub-array&#8221; operations. The Perl vector library PDL provides a
+similar functionality and its terms are re-used in the following.</p>
+<p>Each generalized ufunc has information associated with it that states what the
+&#8220;core&#8221; dimensionality of the inputs is, as well as the corresponding
+dimensionality of the outputs (the element-wise ufuncs have zero core
+dimensions). The list of the core dimensions for all arguments is called the
+&#8220;signature&#8221; of a ufunc. For example, the ufunc numpy.add has signature
+&#8220;(),()-&gt;()&#8221; defining two scalar inputs and one scalar output.</p>
+<p>Another example is (see the GeneralLoopingFunctions page) the function
+inner1d(a,b) with a signature of &#8220;(i),(i)-&gt;()&#8221;. This applies the inner product
+along the last axis of each input, but keeps the remaining indices intact. For
+example, where a is of shape (3,5,N) and b is of shape (5,N), this will return
+an output of shape (3,5). The underlying elementary function is called 3*5
+times. In the signature, we specify one core dimension &#8220;(i)&#8221; for each input and
+zero core dimensions &#8220;()&#8221; for the output, since it takes two 1-d arrays and
+returns a scalar. By using the same name &#8220;i&#8221;, we specify that the two
+corresponding dimensions should be of the same size (or one of them is of size
+1 and will be broadcasted).</p>
+<p>The dimensions beyond the core dimensions are called &#8220;loop&#8221; dimensions. In the
+above example, this corresponds to (3,5).</p>
+<p>The usual numpy &#8220;broadcasting&#8221; rules apply, where the signature determines how
+the dimensions of each input/output object are split into core and loop
+dimensions:</p>
+<p>While an input array has a smaller dimensionality than the corresponding number
+of core dimensions, 1&#8217;s are pre-pended to its shape.  The core dimensions are
+removed from all inputs and the remaining dimensions are broadcasted; defining
+the loop dimensions.  The output is given by the loop dimensions plus the
+output core dimensions.</p>
+</div>
+<div class="section" id="experimental-windows-64-bits-support">
+<h4>Experimental Windows 64 bits support<a class="headerlink" href="#experimental-windows-64-bits-support" title="Permalink to this headline">¶</a></h4>
+<p>Numpy can now be built on windows 64 bits (amd64 only, not IA64), with both MS
+compilers and mingw-w64 compilers:</p>
+<p>This is <em>highly experimental</em>: DO NOT USE FOR PRODUCTION USE. See INSTALL.txt,
+Windows 64 bits section for more information on limitations and how to build it
+by yourself.</p>
+</div>
+</div>
+<div class="section" id="id29">
+<h3>New features<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="formatting-issues">
+<h4>Formatting issues<a class="headerlink" href="#formatting-issues" title="Permalink to this headline">¶</a></h4>
+<p>Float formatting is now handled by numpy instead of the C runtime: this enables
+locale independent formatting, more robust fromstring and related methods.
+Special values (inf and nan) are also more consistent across platforms (nan vs
+IND/NaN, etc...), and more consistent with recent python formatting work (in
+2.6 and later).</p>
+</div>
+<div class="section" id="nan-handling-in-max-min">
+<h4>Nan handling in max/min<a class="headerlink" href="#nan-handling-in-max-min" title="Permalink to this headline">¶</a></h4>
+<p>The maximum/minimum ufuncs now reliably propagate nans. If one of the
+arguments is a nan, then nan is retured. This affects np.min/np.max, amin/amax
+and the array methods max/min. New ufuncs fmax and fmin have been added to deal
+with non-propagating nans.</p>
+</div>
+<div class="section" id="nan-handling-in-sign">
+<h4>Nan handling in sign<a class="headerlink" href="#nan-handling-in-sign" title="Permalink to this headline">¶</a></h4>
+<p>The ufunc sign now returns nan for the sign of anan.</p>
+</div>
+<div class="section" id="id30">
+<h4>New ufuncs<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>fmax - same as maximum for integer types and non-nan floats. Returns the
+non-nan argument if one argument is nan and returns nan if both arguments
+are nan.</li>
+<li>fmin - same as minimum for integer types and non-nan floats. Returns the
+non-nan argument if one argument is nan and returns nan if both arguments
+are nan.</li>
+<li>deg2rad - converts degrees to radians, same as the radians ufunc.</li>
+<li>rad2deg - converts radians to degrees, same as the degrees ufunc.</li>
+<li>log2 - base 2 logarithm.</li>
+<li>exp2 - base 2 exponential.</li>
+<li>trunc - truncate floats to nearest integer towards zero.</li>
+<li>logaddexp - add numbers stored as logarithms and return the logarithm
+of the result.</li>
+<li>logaddexp2 - add numbers stored as base 2 logarithms and return the base 2
+logarithm of the result result.</li>
+</ol>
+</div>
+<div class="section" id="masked-arrays">
+<h4>Masked arrays<a class="headerlink" href="#masked-arrays" title="Permalink to this headline">¶</a></h4>
+<p>Several new features and bug fixes, including:</p>
+<blockquote>
+<div><ul class="simple">
+<li>structured arrays should now be fully supported by MaskedArray
+(r6463, r6324, r6305, r6300, r6294...)</li>
+<li>Minor bug fixes (r6356, r6352, r6335, r6299, r6298)</li>
+<li>Improved support for __iter__ (r6326)</li>
+<li>made baseclass, sharedmask and hardmask accesible to the user (but
+read-only)</li>
+<li>doc update</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="gfortran-support-on-windows">
+<h4>gfortran support on windows<a class="headerlink" href="#gfortran-support-on-windows" title="Permalink to this headline">¶</a></h4>
+<p>Gfortran can now be used as a fortran compiler for numpy on windows, even when
+the C compiler is Visual Studio (VS 2005 and above; VS 2003 will NOT work).
+Gfortran + Visual studio does not work on windows 64 bits (but gcc + gfortran
+does). It is unclear whether it will be possible to use gfortran and visual
+studio at all on x64.</p>
+</div>
+<div class="section" id="arch-option-for-windows-binary">
+<h4>Arch option for windows binary<a class="headerlink" href="#arch-option-for-windows-binary" title="Permalink to this headline">¶</a></h4>
+<p>Automatic arch detection can now be bypassed from the command line for the superpack installed:</p>
+<blockquote>
+<div>numpy-1.3.0-superpack-win32.exe /arch=nosse</div></blockquote>
+<p>will install a numpy which works on any x86, even if the running computer
+supports SSE set.</p>
+</div>
+</div>
+<div class="section" id="id31">
+<h3>Deprecated features<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id32">
+<h4>Histogram<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h4>
+<p>The semantics of histogram has been modified to fix long-standing issues
+with outliers handling. The main changes concern</p>
+<ol class="arabic simple">
+<li>the definition of the bin edges, now including the rightmost edge, and</li>
+<li>the handling of upper outliers, now ignored rather than tallied in the
+rightmost bin.</li>
+</ol>
+<p>The previous behavior is still accessible using <em class="xref py py-obj">new=False</em>, but this is
+deprecated, and will be removed entirely in 1.4.0.</p>
+</div>
+</div>
+<div class="section" id="documentation-changes">
+<h3>Documentation changes<a class="headerlink" href="#documentation-changes" title="Permalink to this headline">¶</a></h3>
+<p>A lot of documentation has been added. Both user guide and references can be
+built from sphinx.</p>
+</div>
+<div class="section" id="id33">
+<h3>New C API<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="multiarray-api">
+<h4>Multiarray API<a class="headerlink" href="#multiarray-api" title="Permalink to this headline">¶</a></h4>
+<p>The following functions have been added to the multiarray C API:</p>
+<blockquote>
+<div><ul class="simple">
+<li>PyArray_GetEndianness: to get runtime endianness</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="ufunc-api">
+<h4>Ufunc API<a class="headerlink" href="#ufunc-api" title="Permalink to this headline">¶</a></h4>
+<p>The following functions have been added to the ufunc API:</p>
+<blockquote>
+<div><ul class="simple">
+<li>PyUFunc_FromFuncAndDataAndSignature: to declare a more general ufunc
+(generalized ufunc).</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id34">
+<h4>New defines<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h4>
+<p>New public C defines are available for ARCH specific code through numpy/npy_cpu.h:</p>
+<blockquote>
+<div><ul class="simple">
+<li>NPY_CPU_X86: x86 arch (32 bits)</li>
+<li>NPY_CPU_AMD64: amd64 arch (x86_64, NOT Itanium)</li>
+<li>NPY_CPU_PPC: 32 bits ppc</li>
+<li>NPY_CPU_PPC64: 64 bits ppc</li>
+<li>NPY_CPU_SPARC: 32 bits sparc</li>
+<li>NPY_CPU_SPARC64: 64 bits sparc</li>
+<li>NPY_CPU_S390: S390</li>
+<li>NPY_CPU_IA64: ia64</li>
+<li>NPY_CPU_PARISC: PARISC</li>
+</ul>
+</div></blockquote>
+<p>New macros for CPU endianness has been added as well (see internal changes
+below for details):</p>
+<blockquote>
+<div><ul class="simple">
+<li>NPY_BYTE_ORDER: integer</li>
+<li>NPY_LITTLE_ENDIAN/NPY_BIG_ENDIAN defines</li>
+</ul>
+</div></blockquote>
+<p>Those provide portable alternatives to glibc endian.h macros for platforms
+without it.</p>
+</div>
+<div class="section" id="portable-nan-infinity-etc">
+<h4>Portable NAN, INFINITY, etc...<a class="headerlink" href="#portable-nan-infinity-etc" title="Permalink to this headline">¶</a></h4>
+<p>npy_math.h now makes available several portable macro to get NAN, INFINITY:</p>
+<blockquote>
+<div><ul class="simple">
+<li>NPY_NAN: equivalent to NAN, which is a GNU extension</li>
+<li>NPY_INFINITY: equivalent to C99 INFINITY</li>
+<li>NPY_PZERO, NPY_NZERO: positive and negative zero respectively</li>
+</ul>
+</div></blockquote>
+<p>Corresponding single and extended precision macros are available as well. All
+references to NAN, or home-grown computation of NAN on the fly have been
+removed for consistency.</p>
+</div>
+</div>
+<div class="section" id="id35">
+<h3>Internal changes<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="numpy-core-math-configuration-revamp">
+<h4>numpy.core math configuration revamp<a class="headerlink" href="#numpy-core-math-configuration-revamp" title="Permalink to this headline">¶</a></h4>
+<p>This should make the porting to new platforms easier, and more robust. In
+particular, the configuration stage does not need to execute any code on the
+target platform, which is a first step toward cross-compilation.</p>
+<p><a class="reference external" href="http://projects.scipy.org/numpy/browser/trunk/doc/neps/math_config_clean.txt">http://projects.scipy.org/numpy/browser/trunk/doc/neps/math_config_clean.txt</a></p>
+</div>
+<div class="section" id="umath-refactor">
+<h4>umath refactor<a class="headerlink" href="#umath-refactor" title="Permalink to this headline">¶</a></h4>
+<p>A lot of code cleanup for umath/ufunc code (charris).</p>
+</div>
+<div class="section" id="improvements-to-build-warnings">
+<h4>Improvements to build warnings<a class="headerlink" href="#improvements-to-build-warnings" title="Permalink to this headline">¶</a></h4>
+<p>Numpy can now build with -W -Wall without warnings</p>
+<p><a class="reference external" href="http://projects.scipy.org/numpy/browser/trunk/doc/neps/warnfix.txt">http://projects.scipy.org/numpy/browser/trunk/doc/neps/warnfix.txt</a></p>
+</div>
+<div class="section" id="id36">
+<h4>Separate core math library<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h4>
+<p>The core math functions (sin, cos, etc... for basic C types) have been put into
+a separate library; it acts as a compatibility layer, to support most C99 maths
+functions (real only for now). The library includes platform-specific fixes for
+various maths functions, such as using those versions should be more robust
+than using your platform functions directly. The API for existing functions is
+exactly the same as the C99 math functions API; the only difference is the npy
+prefix (npy_cos vs cos).</p>
+<p>The core library will be made available to any extension in 1.4.0.</p>
+</div>
+<div class="section" id="cpu-arch-detection">
+<h4>CPU arch detection<a class="headerlink" href="#cpu-arch-detection" title="Permalink to this headline">¶</a></h4>
+<p>npy_cpu.h defines numpy specific CPU defines, such as NPY_CPU_X86, etc...
+Those are portable across OS and toolchains, and set up when the header is
+parsed, so that they can be safely used even in the case of cross-compilation
+(the values is not set when numpy is built), or for multi-arch binaries (e.g.
+fat binaries on Max OS X).</p>
+<p>npy_endian.h defines numpy specific endianness defines, modeled on the glibc
+endian.h. NPY_BYTE_ORDER  is equivalent to BYTE_ORDER, and one of
+NPY_LITTLE_ENDIAN or NPY_BIG_ENDIAN is defined. As for CPU archs, those are set
+when the header is parsed by the compiler, and as such can be used for
+cross-compilation and multi-arch binaries.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Nov 10, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

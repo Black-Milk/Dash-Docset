@@ -1,0 +1,451 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>Biclustering documents with the Spectral Co-clustering algorithm &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="../../_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="../../index.html" />
+    <link rel="up" title="Examples" href="../index.html" />
+    <link rel="next" title="A demo of the mean-shift clustering algorithm" href="../cluster/plot_mean_shift.html" />
+    <link rel="prev" title="A demo of the Spectral Biclustering algorithm" href="plot_spectral_biclustering.html" />
+  
+   
+       <script type="text/javascript" src="../../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/auto_examples/bicluster/bicluster_newsgroups.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../../../stable/index.html">Home</a></li>
+                <li><a href="../../../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="../../documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="../../tutorial/index.html">Tutorials</a></li>
+			<li><a href="../../user_guide.html">User guide</a></li>
+			<li><a href="../../modules/classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="../../documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="../index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="../../_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="plot_spectral_biclustering.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        A demo of the Sp...
+        </span>
+            <span class="hiddenrellink">
+            A demo of the Spectral Biclustering algorithm
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../cluster/plot_mean_shift.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        A demo of the me...
+        </span>
+            <span class="hiddenrellink">
+            A demo of the mean-shift clustering algorithm
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../../np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../../py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="../index.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        Examples
+        </span>
+            <span class="hiddenrellink">
+            Examples
+            </span>
+            
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">Biclustering documents with the Spectral Co-clustering algorithm</a></li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="biclustering-documents-with-the-spectral-co-clustering-algorithm">
+<span id="example-bicluster-bicluster-newsgroups-py"></span><h1>Biclustering documents with the Spectral Co-clustering algorithm<a class="headerlink" href="#biclustering-documents-with-the-spectral-co-clustering-algorithm" title="Permalink to this headline">¶</a></h1>
+<p>This example demonstrates the Spectral Co-clustering algorithm on the
+twenty newsgroups dataset. The &#8216;comp.os.ms-windows.misc&#8217; category is
+excluded because it contains many posts containing nothing but data.</p>
+<p>The TF-IDF vectorized posts form a word frequency matrix, which is
+then biclustered using Dhillon&#8217;s Spectral Co-Clustering algorithm. The
+resulting document-word biclusters indicate subsets words used more
+often in those subsets documents.</p>
+<p>For a few of the best biclusters, its most common document categories
+and its ten most important words get printed. The best biclusters are
+determined by their normalized cut. The best words are determined by
+comparing their sums inside and outside the bicluster.</p>
+<p>For comparison, the documents are also clustered using
+MiniBatchKMeans. The document clusters derived from the biclusters
+achieve a better V-measure than clusters found by MiniBatchKMeans.</p>
+<p>Output:</p>
+<div class="highlight-python"><div class="highlight"><pre>Vectorizing...
+Coclustering...
+Done in 9.53s. V-measure: 0.4455
+MiniBatchKMeans...
+Done in 12.00s. V-measure: 0.3309
+
+Best biclusters:
+----------------
+bicluster 0 : 1951 documents, 4373 words
+categories   : 23% talk.politics.guns, 19% talk.politics.misc, 14% sci.med
+words        : gun, guns, geb, banks, firearms, drugs, gordon, clinton, cdt, amendment
+
+bicluster 1 : 1165 documents, 3304 words
+categories   : 29% talk.politics.mideast, 26% soc.religion.christian, 25% alt.atheism
+words        : god, jesus, christians, atheists, kent, sin, morality, belief, resurrection, marriage
+
+bicluster 2 : 2219 documents, 2830 words
+categories   : 18% comp.sys.mac.hardware, 16% comp.sys.ibm.pc.hardware, 16% comp.graphics
+words        : voltage, dsp, board, receiver, circuit, shipping, packages, stereo, compression, package
+
+bicluster 3 : 1860 documents, 2745 words
+categories   : 26% rec.motorcycles, 23% rec.autos, 13% misc.forsale
+words        : bike, car, dod, engine, motorcycle, ride, honda, cars, bmw, bikes
+
+bicluster 4 : 12 documents, 155 words
+categories   : 100% rec.sport.hockey
+words        : scorer, unassisted, reichel, semak, sweeney, kovalenko, ricci, audette, momesso, nedved
+</pre></div>
+</div>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../../_downloads/bicluster_newsgroups.py"><tt class="xref download docutils literal"><span class="pre">bicluster_newsgroups.py</span></tt></a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.cluster.bicluster</span> <span class="kn">import</span> <span class="n">SpectralCoclustering</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">MiniBatchKMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets.twenty_newsgroups</span> <span class="kn">import</span> <span class="n">fetch_20newsgroups</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics.cluster</span> <span class="kn">import</span> <span class="n">v_measure_score</span>
+
+
+<span class="k">def</span> <span class="nf">number_aware_tokenizer</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Tokenizer that maps all numeric tokens to a placeholder.</span>
+
+<span class="sd">    For many applications, tokens that begin with a number are not directly</span>
+<span class="sd">    useful, but the fact that such a token exists can be relevant.  By applying</span>
+<span class="sd">    this form of dimensionality reduction, some methods may perform better.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">token_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">u&#39;(?u)</span><span class="se">\\</span><span class="s">b</span><span class="se">\\</span><span class="s">w</span><span class="se">\\</span><span class="s">w+</span><span class="se">\\</span><span class="s">b&#39;</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">token_pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;#NUMBER&quot;</span> <span class="k">if</span> <span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="s">&quot;0123456789_&quot;</span> <span class="k">else</span> <span class="n">token</span>
+              <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tokens</span>
+
+<span class="c"># exclude &#39;comp.os.ms-windows.misc&#39;</span>
+<span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;alt.atheism&#39;</span><span class="p">,</span> <span class="s">&#39;comp.graphics&#39;</span><span class="p">,</span>
+              <span class="s">&#39;comp.sys.ibm.pc.hardware&#39;</span><span class="p">,</span> <span class="s">&#39;comp.sys.mac.hardware&#39;</span><span class="p">,</span>
+              <span class="s">&#39;comp.windows.x&#39;</span><span class="p">,</span> <span class="s">&#39;misc.forsale&#39;</span><span class="p">,</span> <span class="s">&#39;rec.autos&#39;</span><span class="p">,</span>
+              <span class="s">&#39;rec.motorcycles&#39;</span><span class="p">,</span> <span class="s">&#39;rec.sport.baseball&#39;</span><span class="p">,</span>
+              <span class="s">&#39;rec.sport.hockey&#39;</span><span class="p">,</span> <span class="s">&#39;sci.crypt&#39;</span><span class="p">,</span> <span class="s">&#39;sci.electronics&#39;</span><span class="p">,</span>
+              <span class="s">&#39;sci.med&#39;</span><span class="p">,</span> <span class="s">&#39;sci.space&#39;</span><span class="p">,</span> <span class="s">&#39;soc.religion.christian&#39;</span><span class="p">,</span>
+              <span class="s">&#39;talk.politics.guns&#39;</span><span class="p">,</span> <span class="s">&#39;talk.politics.mideast&#39;</span><span class="p">,</span>
+              <span class="s">&#39;talk.politics.misc&#39;</span><span class="p">,</span> <span class="s">&#39;talk.religion.misc&#39;</span><span class="p">]</span>
+<span class="n">newsgroups</span> <span class="o">=</span> <span class="n">fetch_20newsgroups</span><span class="p">(</span><span class="n">categories</span><span class="o">=</span><span class="n">categories</span><span class="p">)</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="n">newsgroups</span><span class="o">.</span><span class="n">target</span>
+
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s">&#39;english&#39;</span><span class="p">,</span> <span class="n">min_df</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                             <span class="n">tokenizer</span><span class="o">=</span><span class="n">number_aware_tokenizer</span><span class="p">)</span>
+<span class="n">cocluster</span> <span class="o">=</span> <span class="n">SpectralCoclustering</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">),</span>
+                                 <span class="n">svd_method</span><span class="o">=</span><span class="s">&#39;arpack&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">MiniBatchKMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span>
+                         <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Vectorizing...&quot;</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">newsgroups</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Coclustering...&quot;</span><span class="p">)</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="n">cocluster</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">y_cocluster</span> <span class="o">=</span> <span class="n">cocluster</span><span class="o">.</span><span class="n">row_labels_</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Done in {:.2f}s. V-measure: {:.4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span>
+    <span class="n">v_measure_score</span><span class="p">(</span><span class="n">y_cocluster</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;MiniBatchKMeans...&quot;</span><span class="p">)</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="n">y_kmeans</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Done in {:.2f}s. V-measure: {:.4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span>
+    <span class="n">v_measure_score</span><span class="p">(</span><span class="n">y_kmeans</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)))</span>
+
+<span class="n">feature_names</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
+<span class="n">document_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">newsgroups</span><span class="o">.</span><span class="n">target_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">newsgroups</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">bicluster_ncut</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">cocluster</span><span class="o">.</span><span class="n">get_indices</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">cols</span><span class="p">)):</span>
+        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">float_info</span><span class="o">.</span><span class="n">max</span>
+    <span class="n">row_complement</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">cocluster</span><span class="o">.</span><span class="n">rows_</span><span class="p">[</span><span class="n">i</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">col_complement</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">cocluster</span><span class="o">.</span><span class="n">columns_</span><span class="p">[</span><span class="n">i</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">rows</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">row_complement</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span>
+           <span class="n">X</span><span class="p">[</span><span class="n">rows</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">col_complement</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">cut</span> <span class="o">/</span> <span class="n">weight</span>
+
+
+<span class="k">def</span> <span class="nf">most_common</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Items of a defaultdict(int) with the highest values.</span>
+
+<span class="sd">    Like Counter.most_common in Python &gt;=2.7.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+
+<span class="n">bicluster_ncuts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bicluster_ncut</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newsgroups</span><span class="o">.</span><span class="n">target_names</span><span class="p">)))</span>
+<span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">bicluster_ncuts</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Best biclusters:&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;----------------&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">best_idx</span><span class="p">):</span>
+    <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span> <span class="o">=</span> <span class="n">cocluster</span><span class="o">.</span><span class="n">get_shape</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+    <span class="n">cluster_docs</span><span class="p">,</span> <span class="n">cluster_words</span> <span class="o">=</span> <span class="n">cocluster</span><span class="o">.</span><span class="n">get_indices</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_docs</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_words</span><span class="p">):</span>
+        <span class="k">continue</span>
+
+    <span class="c"># categories</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cluster_docs</span><span class="p">:</span>
+        <span class="n">counter</span><span class="p">[</span><span class="n">document_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">cat_string</span> <span class="o">=</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;{:.0f}% {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_rows</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">most_common</span><span class="p">(</span><span class="n">counter</span><span class="p">)[:</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="c"># words</span>
+    <span class="n">out_of_cluster_docs</span> <span class="o">=</span> <span class="n">cocluster</span><span class="o">.</span><span class="n">row_labels_</span> <span class="o">!=</span> <span class="n">cluster</span>
+    <span class="n">out_of_cluster_docs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">out_of_cluster_docs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">word_col</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">cluster_words</span><span class="p">]</span>
+    <span class="n">word_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">word_col</span><span class="p">[</span><span class="n">cluster_docs</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span>
+                           <span class="n">word_col</span><span class="p">[</span><span class="n">out_of_cluster_docs</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">word_scores</span> <span class="o">=</span> <span class="n">word_scores</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">important_words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">feature_names</span><span class="p">[</span><span class="n">cluster_words</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">word_scores</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[:</span><span class="o">-</span><span class="mi">11</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;bicluster {} : {} documents, {} words&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">idx</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;categories   : {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cat_string</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;words        : {}</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">important_words</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../../_sources/auto_examples/bicluster/bicluster_newsgroups.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="plot_spectral_biclustering.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../cluster/plot_mean_shift.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="../../np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../../py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

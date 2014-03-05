@@ -1,0 +1,272 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.linalg.eig_banded &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="Linear algebra (scipy.linalg)" href="../linalg.html" />
+    <link rel="next" title="scipy.linalg.eigvals_banded" href="scipy.linalg.eigvals_banded.html" />
+    <link rel="prev" title="scipy.linalg.eigvalsh" href="scipy.linalg.eigvalsh.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="../linalg.html" accesskey="U">Linear algebra (<tt class="docutils literal"><span class="pre">scipy.linalg</span></tt>)</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="scipy.linalg.eigvals_banded.html" title="scipy.linalg.eigvals_banded"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="scipy.linalg.eigvalsh.html" title="scipy.linalg.eigvalsh"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.linalg.eigvalsh.html"
+                        title="previous chapter">scipy.linalg.eigvalsh</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.linalg.eigvals_banded.html"
+                        title="next chapter">scipy.linalg.eigvals_banded</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="scipy-linalg-eig-banded">
+<h1>scipy.linalg.eig_banded<a class="headerlink" href="#scipy-linalg-eig-banded" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.linalg.eig_banded">
+<tt class="descclassname">scipy.linalg.</tt><tt class="descname">eig_banded</tt><big>(</big><em>a_band</em>, <em>lower=False</em>, <em>eigvals_only=False</em>, <em>overwrite_a_band=False</em>, <em>select='a'</em>, <em>select_range=None</em>, <em>max_ev=0</em>, <em>check_finite=True</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/linalg/decomp.py#L409"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.linalg.eig_banded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve real symmetric or complex hermitian band matrix eigenvalue problem.</p>
+<p>Find eigenvalues w and optionally right eigenvectors v of a:</p>
+<div class="highlight-python"><pre>a v[:,i] = w[i] v[:,i]
+v.H v    = identity</pre>
+</div>
+<p>The matrix a is stored in a_band either in lower diagonal or upper
+diagonal ordered form:</p>
+<blockquote>
+<div>a_band[u + i - j, j] == a[i,j]        (if upper form; i &lt;= j)
+a_band[    i - j, j] == a[i,j]        (if lower form; i &gt;= j)</div></blockquote>
+<p>where u is the number of bands above the diagonal.</p>
+<p>Example of a_band (shape of a is (6,6), u=2):</p>
+<div class="highlight-python"><pre>upper form:
+*   *   a02 a13 a24 a35
+*   a01 a12 a23 a34 a45
+a00 a11 a22 a33 a44 a55
+
+lower form:
+a00 a11 a22 a33 a44 a55
+a10 a21 a32 a43 a54 *
+a20 a31 a42 a53 *   *</pre>
+</div>
+<p>Cells marked with * are not used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>a_band</strong> : (u+1, M) array_like</p>
+<blockquote>
+<div><p>The bands of the M by M matrix a.</p>
+</div></blockquote>
+<p><strong>lower</strong> : bool, optional</p>
+<blockquote>
+<div><p>Is the matrix in the lower form. (Default is upper form)</p>
+</div></blockquote>
+<p><strong>eigvals_only</strong> : bool, optional</p>
+<blockquote>
+<div><p>Compute only the eigenvalues and no eigenvectors.
+(Default: calculate also eigenvectors)</p>
+</div></blockquote>
+<p><strong>overwrite_a_band</strong> : bool, optional</p>
+<blockquote>
+<div><p>Discard data in a_band (may enhance performance)</p>
+</div></blockquote>
+<p><strong>select</strong> : {&#8216;a&#8217;, &#8216;v&#8217;, &#8216;i&#8217;}, optional</p>
+<blockquote>
+<div><p>Which eigenvalues to calculate</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">select</th>
+<th class="head">calculated</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#8216;a&#8217;</td>
+<td>All eigenvalues</td>
+</tr>
+<tr class="row-odd"><td>&#8216;v&#8217;</td>
+<td>Eigenvalues in the interval (min, max]</td>
+</tr>
+<tr class="row-even"><td>&#8216;i&#8217;</td>
+<td>Eigenvalues with indices min &lt;= i &lt;= max</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>select_range</strong> : (min, max), optional</p>
+<blockquote>
+<div><p>Range of selected eigenvalues</p>
+</div></blockquote>
+<p><strong>max_ev</strong> : int, optional</p>
+<blockquote>
+<div><p>For select==&#8217;v&#8217;, maximum number of eigenvalues expected.
+For other values of select, has no meaning.</p>
+<p>In doubt, leave this parameter untouched.</p>
+</div></blockquote>
+<p><strong>check_finite</strong> : boolean, optional</p>
+<blockquote>
+<div><p>Whether to check that the input matrix contains only finite numbers.
+Disabling may give a performance gain, but may result in problems
+(crashes, non-termination) if the inputs do contain infinities or NaNs.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>w</strong> : (M,) ndarray</p>
+<blockquote>
+<div><p>The eigenvalues, in ascending order, each repeated according to its
+multiplicity.</p>
+</div></blockquote>
+<p><strong>v</strong> : (M, M) float or complex ndarray</p>
+<blockquote>
+<div><p>The normalized eigenvector corresponding to the eigenvalue w[i] is
+the column v[:,i].</p>
+</div></blockquote>
+<p class="last">Raises LinAlgError if eigenvalue computation does not converge</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

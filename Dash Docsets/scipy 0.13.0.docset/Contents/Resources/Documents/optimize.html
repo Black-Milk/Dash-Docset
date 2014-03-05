@@ -1,0 +1,430 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>Optimization and root finding (scipy.optimize) — SciPy v0.13.0 Reference Guide</title>
+<link href="_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="_static/jquery.js" type="text/javascript"></script>
+<script src="_static/underscore.js" type="text/javascript"></script>
+<script src="_static/doctools.js" type="text/javascript"></script>
+<link href="index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="generated/scipy.optimize.minimize.html" rel="next" title="scipy.optimize.minimize"/>
+<link href="generated/scipy.odr.odr_stop.html" rel="prev" title="scipy.odr.odr_stop"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="index.html">SciPy v0.13.0 Reference Guide</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="generated/scipy.optimize.minimize.html" title="scipy.optimize.minimize">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="generated/scipy.odr.odr_stop.html" title="scipy.odr.odr_stop">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="index.html">
+<img alt="Logo" class="logo" src="_static/scipyshiny_small.png"/>
+</a></p>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Optimization and root finding (<tt class="docutils literal"><span class="pre">scipy.optimize</span></tt>)</a><ul>
+<li><a class="reference internal" href="#optimization">Optimization</a><ul>
+<li><a class="reference internal" href="#general-purpose">General-purpose</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#constrained-multivariate">Constrained (multivariate)</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#global">Global</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#scalar-function-minimizers">Scalar function minimizers</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#rosenbrock-function">Rosenbrock function</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fitting">Fitting</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#root-finding">Root finding</a><ul>
+<li><a class="reference internal" href="#scalar-functions">Scalar functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#multidimensional">Multidimensional</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#utility-functions">Utility Functions</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Previous topic</h4>
+<p class="topless"><a href="generated/scipy.odr.odr_stop.html" title="previous chapter">scipy.odr.odr_stop</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="generated/scipy.optimize.minimize.html" title="next chapter">scipy.optimize.minimize</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<span class="target" id="module-scipy.optimize"></span><div class="section" id="optimization-and-root-finding-scipy-optimize"><a name="//apple_ref/cpp/Module/scipy.optimize"></a>
+<h1>Optimization and root finding (<a class="reference internal" href="#module-scipy.optimize" title="scipy.optimize"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.optimize</span></tt></a>)<a class="headerlink" href="#optimization-and-root-finding-scipy-optimize" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="optimization">
+<h2>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="general-purpose">
+<h3>General-purpose<a class="headerlink" href="#general-purpose" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.minimize.html#scipy.optimize.minimize" title="scipy.optimize.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a>(fun, x0[, args, method, jac, hess, ...])</td>
+<td>Minimization of scalar function of one or more variables.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.fmin.html#scipy.optimize.fmin" title="scipy.optimize.fmin"><tt class="xref py py-obj docutils literal"><span class="pre">fmin</span></tt></a>(func, x0[, args, xtol, ftol, maxiter, ...])</td>
+<td>Minimize a function using the downhill simplex algorithm.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.fmin_powell.html#scipy.optimize.fmin_powell" title="scipy.optimize.fmin_powell"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_powell</span></tt></a>(func, x0[, args, xtol, ftol, ...])</td>
+<td>Minimize a function using modified Powell’s method. This method</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.fmin_cg.html#scipy.optimize.fmin_cg" title="scipy.optimize.fmin_cg"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_cg</span></tt></a>(f, x0[, fprime, args, gtol, norm, ...])</td>
+<td>Minimize a function using a nonlinear conjugate gradient algorithm.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.fmin_bfgs.html#scipy.optimize.fmin_bfgs" title="scipy.optimize.fmin_bfgs"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_bfgs</span></tt></a>(f, x0[, fprime, args, gtol, norm, ...])</td>
+<td>Minimize a function using the BFGS algorithm.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.fmin_ncg.html#scipy.optimize.fmin_ncg" title="scipy.optimize.fmin_ncg"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_ncg</span></tt></a>(f, x0, fprime[, fhess_p, fhess, ...])</td>
+<td>Unconstrained minimization of a function using the Newton-CG method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.leastsq.html#scipy.optimize.leastsq" title="scipy.optimize.leastsq"><tt class="xref py py-obj docutils literal"><span class="pre">leastsq</span></tt></a>(func, x0[, args, Dfun, full_output, ...])</td>
+<td>Minimize the sum of squares of a set of equations.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="constrained-multivariate">
+<h3>Constrained (multivariate)<a class="headerlink" href="#constrained-multivariate" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.fmin_l_bfgs_b.html#scipy.optimize.fmin_l_bfgs_b" title="scipy.optimize.fmin_l_bfgs_b"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_l_bfgs_b</span></tt></a>(func, x0[, fprime, args, ...])</td>
+<td>Minimize a function func using the L-BFGS-B algorithm.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.fmin_tnc.html#scipy.optimize.fmin_tnc" title="scipy.optimize.fmin_tnc"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_tnc</span></tt></a>(func, x0[, fprime, args, ...])</td>
+<td>Minimize a function with variables subject to bounds, using</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.fmin_cobyla.html#scipy.optimize.fmin_cobyla" title="scipy.optimize.fmin_cobyla"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_cobyla</span></tt></a>(func, x0, cons[, args, ...])</td>
+<td>Minimize a function using the Constrained Optimization BY Linear</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.fmin_slsqp.html#scipy.optimize.fmin_slsqp" title="scipy.optimize.fmin_slsqp"><tt class="xref py py-obj docutils literal"><span class="pre">fmin_slsqp</span></tt></a>(func, x0[, eqcons, f_eqcons, ...])</td>
+<td>Minimize a function using Sequential Least SQuares Programming</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.nnls.html#scipy.optimize.nnls" title="scipy.optimize.nnls"><tt class="xref py py-obj docutils literal"><span class="pre">nnls</span></tt></a>(A, b)</td>
+<td>Solve <tt class="docutils literal"><span class="pre">argmin_x</span> <span class="pre">||</span> <span class="pre">Ax</span> <span class="pre">-</span> <span class="pre">b</span> <span class="pre">||_2</span></tt> for <tt class="docutils literal"><span class="pre">x&gt;=0</span></tt>. This is a wrapper</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="global">
+<h3>Global<a class="headerlink" href="#global" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.anneal.html#scipy.optimize.anneal" title="scipy.optimize.anneal"><tt class="xref py py-obj docutils literal"><span class="pre">anneal</span></tt></a>(func, x0[, args, schedule, ...])</td>
+<td>Minimize a function using simulated annealing.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.basinhopping.html#scipy.optimize.basinhopping" title="scipy.optimize.basinhopping"><tt class="xref py py-obj docutils literal"><span class="pre">basinhopping</span></tt></a>(func, x0[, niter, T, stepsize, ...])</td>
+<td>Find the global minimum of a function using the basin-hopping algorithm  ..</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.brute.html#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a>(func, ranges[, args, Ns, full_output, ...])</td>
+<td>Minimize a function over a given range by brute force.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="scalar-function-minimizers">
+<h3>Scalar function minimizers<a class="headerlink" href="#scalar-function-minimizers" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.minimize_scalar.html#scipy.optimize.minimize_scalar" title="scipy.optimize.minimize_scalar"><tt class="xref py py-obj docutils literal"><span class="pre">minimize_scalar</span></tt></a>(fun[, bracket, bounds, ...])</td>
+<td>Minimization of scalar function of one variable.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.fminbound.html#scipy.optimize.fminbound" title="scipy.optimize.fminbound"><tt class="xref py py-obj docutils literal"><span class="pre">fminbound</span></tt></a>(func, x1, x2[, args, xtol, ...])</td>
+<td>Bounded minimization for scalar functions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.brent.html#scipy.optimize.brent" title="scipy.optimize.brent"><tt class="xref py py-obj docutils literal"><span class="pre">brent</span></tt></a>(func[, args, brack, tol, full_output, ...])</td>
+<td>Given a function of one-variable and a possible bracketing interval, return the minimum of the function isolated to a fractional precision of tol.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.golden.html#scipy.optimize.golden" title="scipy.optimize.golden"><tt class="xref py py-obj docutils literal"><span class="pre">golden</span></tt></a>(func[, args, brack, tol, full_output])</td>
+<td>Return the minimum of a function of one variable.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.bracket.html#scipy.optimize.bracket" title="scipy.optimize.bracket"><tt class="xref py py-obj docutils literal"><span class="pre">bracket</span></tt></a>(func[, xa, xb, args, grow_limit, ...])</td>
+<td>Bracket the minimum of the function.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="rosenbrock-function">
+<h3>Rosenbrock function<a class="headerlink" href="#rosenbrock-function" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.rosen.html#scipy.optimize.rosen" title="scipy.optimize.rosen"><tt class="xref py py-obj docutils literal"><span class="pre">rosen</span></tt></a>(x)</td>
+<td>The Rosenbrock function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.rosen_der.html#scipy.optimize.rosen_der" title="scipy.optimize.rosen_der"><tt class="xref py py-obj docutils literal"><span class="pre">rosen_der</span></tt></a>(x)</td>
+<td>The derivative (i.e.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.rosen_hess.html#scipy.optimize.rosen_hess" title="scipy.optimize.rosen_hess"><tt class="xref py py-obj docutils literal"><span class="pre">rosen_hess</span></tt></a>(x)</td>
+<td>The Hessian matrix of the Rosenbrock function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.rosen_hess_prod.html#scipy.optimize.rosen_hess_prod" title="scipy.optimize.rosen_hess_prod"><tt class="xref py py-obj docutils literal"><span class="pre">rosen_hess_prod</span></tt></a>(x, p)</td>
+<td>Product of the Hessian matrix of the Rosenbrock function with a vector.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="fitting">
+<h2>Fitting<a class="headerlink" href="#fitting" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="scipy.optimize.curve_fit"><tt class="xref py py-obj docutils literal"><span class="pre">curve_fit</span></tt></a>(f, xdata, ydata[, p0, sigma])</td>
+<td>Use non-linear least squares to fit a function, f, to data.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="root-finding">
+<h2>Root finding<a class="headerlink" href="#root-finding" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="scalar-functions">
+<h3>Scalar functions<a class="headerlink" href="#scalar-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.brentq.html#scipy.optimize.brentq" title="scipy.optimize.brentq"><tt class="xref py py-obj docutils literal"><span class="pre">brentq</span></tt></a>(f, a, b[, args, xtol, rtol, maxiter, ...])</td>
+<td>Find a root of a function in given interval.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.brenth.html#scipy.optimize.brenth" title="scipy.optimize.brenth"><tt class="xref py py-obj docutils literal"><span class="pre">brenth</span></tt></a>(f, a, b[, args, xtol, rtol, maxiter, ...])</td>
+<td>Find root of f in [a,b].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.ridder.html#scipy.optimize.ridder" title="scipy.optimize.ridder"><tt class="xref py py-obj docutils literal"><span class="pre">ridder</span></tt></a>(f, a, b[, args, xtol, rtol, maxiter, ...])</td>
+<td>Find a root of a function in an interval.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.bisect.html#scipy.optimize.bisect" title="scipy.optimize.bisect"><tt class="xref py py-obj docutils literal"><span class="pre">bisect</span></tt></a>(f, a, b[, args, xtol, rtol, maxiter, ...])</td>
+<td>Find root of a function within an interval.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.newton.html#scipy.optimize.newton" title="scipy.optimize.newton"><tt class="xref py py-obj docutils literal"><span class="pre">newton</span></tt></a>(func, x0[, fprime, args, tol, ...])</td>
+<td>Find a zero using the Newton-Raphson or secant method.</td>
+</tr>
+</tbody>
+</table>
+<p>Fixed point finding:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.fixed_point.html#scipy.optimize.fixed_point" title="scipy.optimize.fixed_point"><tt class="xref py py-obj docutils literal"><span class="pre">fixed_point</span></tt></a>(func, x0[, args, xtol, maxiter])</td>
+<td>Find a fixed point of the function.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="multidimensional">
+<h3>Multidimensional<a class="headerlink" href="#multidimensional" title="Permalink to this headline">¶</a></h3>
+<p>General nonlinear solvers:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.root.html#scipy.optimize.root" title="scipy.optimize.root"><tt class="xref py py-obj docutils literal"><span class="pre">root</span></tt></a>(fun, x0[, args, method, jac, tol, ...])</td>
+<td>Find a root of a vector function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.fsolve.html#scipy.optimize.fsolve" title="scipy.optimize.fsolve"><tt class="xref py py-obj docutils literal"><span class="pre">fsolve</span></tt></a>(func, x0[, args, fprime, ...])</td>
+<td>Find the roots of a function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.broyden1.html#scipy.optimize.broyden1" title="scipy.optimize.broyden1"><tt class="xref py py-obj docutils literal"><span class="pre">broyden1</span></tt></a>(F, xin[, iter, alpha, ...])</td>
+<td>Find a root of a function, using Broyden’s first Jacobian approximation.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.broyden2.html#scipy.optimize.broyden2" title="scipy.optimize.broyden2"><tt class="xref py py-obj docutils literal"><span class="pre">broyden2</span></tt></a>(F, xin[, iter, alpha, ...])</td>
+<td>Find a root of a function, using Broyden’s second Jacobian approximation.</td>
+</tr>
+</tbody>
+</table>
+<p>Large-scale nonlinear solvers:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.newton_krylov.html#scipy.optimize.newton_krylov" title="scipy.optimize.newton_krylov"><tt class="xref py py-obj docutils literal"><span class="pre">newton_krylov</span></tt></a>(F, xin[, iter, rdiff, method, ...])</td>
+<td>Find a root of a function, using Krylov approximation for inverse Jacobian.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.anderson.html#scipy.optimize.anderson" title="scipy.optimize.anderson"><tt class="xref py py-obj docutils literal"><span class="pre">anderson</span></tt></a>(F, xin[, iter, alpha, w0, M, ...])</td>
+<td>Find a root of a function, using (extended) Anderson mixing.</td>
+</tr>
+</tbody>
+</table>
+<p>Simple iterations:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.excitingmixing.html#scipy.optimize.excitingmixing" title="scipy.optimize.excitingmixing"><tt class="xref py py-obj docutils literal"><span class="pre">excitingmixing</span></tt></a>(F, xin[, iter, alpha, ...])</td>
+<td>Find a root of a function, using a tuned diagonal Jacobian approximation.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.linearmixing.html#scipy.optimize.linearmixing" title="scipy.optimize.linearmixing"><tt class="xref py py-obj docutils literal"><span class="pre">linearmixing</span></tt></a>(F, xin[, iter, alpha, verbose, ...])</td>
+<td>Find a root of a function, using a scalar Jacobian approximation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.diagbroyden.html#scipy.optimize.diagbroyden" title="scipy.optimize.diagbroyden"><tt class="xref py py-obj docutils literal"><span class="pre">diagbroyden</span></tt></a>(F, xin[, iter, alpha, verbose, ...])</td>
+<td>Find a root of a function, using diagonal Broyden Jacobian approximation.</td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference internal" href="optimize.nonlin.html#module-scipy.optimize.nonlin" title="scipy.optimize.nonlin"><tt class="xref py py-mod docutils literal"><span class="pre">Additional</span> <span class="pre">information</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">nonlinear</span> <span class="pre">solvers</span></tt></a></p>
+</div>
+</div>
+<div class="section" id="utility-functions">
+<h2>Utility Functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.line_search.html#scipy.optimize.line_search" title="scipy.optimize.line_search"><tt class="xref py py-obj docutils literal"><span class="pre">line_search</span></tt></a>(f, myfprime, xk, pk[, gfk, ...])</td>
+<td>Find alpha that satisfies strong Wolfe conditions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.optimize.check_grad.html#scipy.optimize.check_grad" title="scipy.optimize.check_grad"><tt class="xref py py-obj docutils literal"><span class="pre">check_grad</span></tt></a>(func, grad, x0, *args)</td>
+<td>Check the correctness of a gradient function by comparing it against a (forward) finite-difference approximation of the gradient.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.optimize.show_options.html#scipy.optimize.show_options" title="scipy.optimize.show_options"><tt class="xref py py-obj docutils literal"><span class="pre">show_options</span></tt></a>(solver[, method])</td>
+<td>Show documentation for additional options of optimization solvers.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

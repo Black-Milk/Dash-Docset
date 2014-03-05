@@ -1,0 +1,1060 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>The N-dimensional array (ndarray) &mdash; NumPy v1.8 Manual</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" >
+    <link rel="top" title="NumPy v1.8 Manual" href="../index.html" >
+    <link rel="up" title="Array objects" href="arrays.html" >
+    <link rel="next" title="numpy.ndarray" href="generated/numpy.ndarray.html" >
+    <link rel="prev" title="Array objects" href="arrays.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+        
+        <li class="active"><a href="../index.html">NumPy v1.8 Manual</a></li>
+        
+
+          <li class="active"><a href="index.html" >NumPy Reference</a></li>
+          <li class="active"><a href="arrays.html" accesskey="U">Array objects</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="generated/numpy.ndarray.html" title="numpy.ndarray"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="arrays.html" title="Array objects"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The N-dimensional array (<tt class="docutils literal"><span class="pre">ndarray</span></tt>)</a><ul>
+<li><a class="reference internal" href="#constructing-arrays">Constructing arrays</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#indexing-arrays">Indexing arrays</a></li>
+<li><a class="reference internal" href="#internal-memory-layout-of-an-ndarray">Internal memory layout of an ndarray</a></li>
+<li><a class="reference internal" href="#array-attributes">Array attributes</a><ul>
+<li><a class="reference internal" href="#memory-layout">Memory layout</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-type">Data type</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-attributes">Other attributes</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#array-interface">Array interface</a></li>
+<li><a class="reference internal" href="#ctypes-foreign-function-interface"><tt class="docutils literal"><span class="pre">ctypes</span></tt> foreign function interface</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#array-methods">Array methods</a><ul>
+<li><a class="reference internal" href="#array-conversion">Array conversion</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#shape-manipulation">Shape manipulation</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#item-selection-and-manipulation">Item selection and manipulation</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#calculation">Calculation</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#arithmetic-and-comparison-operations">Arithmetic and comparison operations</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#special-methods">Special methods</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="arrays.html"
+                        title="previous chapter">Array objects</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/numpy.ndarray.html"
+                        title="next chapter">numpy.ndarray</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="the-n-dimensional-array-ndarray">
+<span id="arrays-ndarray"></span><h1>The N-dimensional array (<tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt>)<a class="headerlink" href="#the-n-dimensional-array-ndarray" title="Permalink to this headline">¶</a></h1>
+<p>An <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> is a (usually fixed-size) multidimensional
+container of items of the same type and size. The number of dimensions
+and items in an array is defined by its <a class="reference internal" href="generated/numpy.ndarray.shape.html#numpy.ndarray.shape" title="numpy.ndarray.shape"><tt class="xref py py-attr docutils literal"><span class="pre">shape</span></tt></a>,
+which is a <a class="reference external" href="http://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></a> of <em>N</em> positive integers that specify the
+sizes of each dimension. The type of items in the array is specified by
+a separate <a class="reference internal" href="arrays.dtypes.html#arrays-dtypes"><em>data-type object (dtype)</em></a>, one of which
+is associated with each ndarray.</p>
+<p>As with other container objects in Python, the contents of an
+<a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> can be accessed and modified by <a class="reference internal" href="arrays.indexing.html#arrays-indexing"><em>indexing or
+slicing</em></a> the array (using, for example, <em>N</em> integers),
+and via the methods and attributes of the <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a>.</p>
+<p id="index-0">Different <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarrays</span></tt></a> can share the same data, so that
+changes made in one <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> may be visible in another. That
+is, an ndarray can be a <em>&#8220;view&#8221;</em> to another ndarray, and the data it
+is referring to is taken care of by the <em>&#8220;base&#8221;</em> ndarray. ndarrays can
+also be views to memory owned by Python <a class="reference external" href="http://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">strings</span></tt></a> or
+objects implementing the <tt class="xref py py-class docutils literal"><span class="pre">buffer</span></tt> or <a class="reference internal" href="arrays.interface.html#arrays-interface"><em>array</em></a> interfaces.</p>
+<div class="admonition-example admonition">
+<p class="first admonition-title">Example</p>
+<p>A 2-dimensional array of size 2 x 3, composed of 4-byte integer
+elements:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;int32&#39;)</span>
+</pre></div>
+</div>
+<p>The array can be indexed using Python container-like syntax:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="c"># i.e., the element of x in the *second* row, *third*</span>
+<span class="go">column, namely, 6.</span>
+</pre></div>
+</div>
+<p>For example <a class="reference internal" href="arrays.indexing.html#arrays-indexing"><em>slicing</em></a> can produce views of
+the array:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
+<span class="go">array([2, 5])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span> <span class="c"># this also changes the corresponding element in x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
+<span class="go">array([9, 5])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([[1, 9, 3],</span>
+<span class="go">       [4, 5, 6]])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="constructing-arrays">
+<h2>Constructing arrays<a class="headerlink" href="#constructing-arrays" title="Permalink to this headline">¶</a></h2>
+<p>New arrays can be constructed using the routines detailed in
+<a class="reference internal" href="routines.array-creation.html#routines-array-creation"><em>Array creation routines</em></a>, and also by using the low-level
+<a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> constructor:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a></td>
+<td>An array object represents a multidimensional, homogeneous array of fixed-size items.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="indexing-arrays">
+<span id="arrays-ndarray-indexing"></span><h2>Indexing arrays<a class="headerlink" href="#indexing-arrays" title="Permalink to this headline">¶</a></h2>
+<p>Arrays can be indexed using an extended Python slicing syntax,
+<tt class="docutils literal"><span class="pre">array[selection]</span></tt>.  Similar syntax is also used for accessing
+fields in a <a class="reference internal" href="arrays.dtypes.html#arrays-dtypes"><em>record array</em></a>.</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="arrays.indexing.html#arrays-indexing"><em>Array Indexing</em></a>.</p>
+</div>
+</div>
+<div class="section" id="internal-memory-layout-of-an-ndarray">
+<h2>Internal memory layout of an ndarray<a class="headerlink" href="#internal-memory-layout-of-an-ndarray" title="Permalink to this headline">¶</a></h2>
+<p>An instance of class <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> consists of a contiguous
+one-dimensional segment of computer memory (owned by the array, or by
+some other object), combined with an indexing scheme that maps <em>N</em>
+integers into the location of an item in the block.  The ranges in
+which the indices can vary is specified by the <a class="reference internal" href="generated/numpy.ndarray.shape.html#numpy.ndarray.shape" title="numpy.ndarray.shape"><tt class="xref py py-obj docutils literal"><span class="pre">shape</span></tt></a> of the array. How many bytes each item takes and how
+the bytes are interpreted is defined by the <a class="reference internal" href="arrays.dtypes.html#arrays-dtypes"><em>data-type object</em></a> associated with the array.</p>
+<p id="index-1">A segment of memory is inherently 1-dimensional, and there are many
+different schemes for arranging the items of an <em>N</em>-dimensional array
+in a 1-dimensional block. Numpy is flexible, and <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a>
+objects can accommodate any <em>strided indexing scheme</em>. In a strided
+scheme, the N-dimensional index <img class="math" src="../_images/math/2c15e2777d64d929c7eb206944f917658c919ce5.png" alt="(n_0, n_1, ..., n_{N-1})" style="vertical-align: -4px"/>
+corresponds to the offset (in bytes):</p>
+<div class="math">
+<p><img src="../_images/math/84a171bc38281f840534efac98f967edfcd0588c.png" alt="n_{\mathrm{offset}} = \sum_{k=0}^{N-1} s_k n_k"/></p>
+</div><p>from the beginning of the memory block associated with the
+array. Here, <img class="math" src="../_images/math/fdc028050428615cc28ee3c1f9a67eda8e9a726c.png" alt="s_k" style="vertical-align: -2px"/> are integers which specify the <a class="reference internal" href="generated/numpy.ndarray.strides.html#numpy.ndarray.strides" title="numpy.ndarray.strides"><tt class="xref py py-obj docutils literal"><span class="pre">strides</span></tt></a> of the array. The <a class="reference internal" href="../glossary.html#term-column-major"><em class="xref std std-term">column-major</em></a> order (used,
+for example, in the Fortran language and in <em>Matlab</em>) and
+<a class="reference internal" href="../glossary.html#term-row-major"><em class="xref std std-term">row-major</em></a> order (used in C) schemes are just specific kinds of
+strided scheme, and correspond to memory that can be <em>addressed</em> by the strides:</p>
+<div class="math">
+<p><img src="../_images/math/204de8a6c723336788e8144df33c3aa4c3fab8b2.png" alt="s_k^{\mathrm{column}} = \prod_{j=0}^{k-1} d_j ,
+\quad  s_k^{\mathrm{row}} = \prod_{j=k+1}^{N-1} d_j ."/></p>
+</div><p id="index-2">where <img class="math" src="../_images/math/a0ff1b6ecb989b3d67e6a0bd715f3985bdf96e0d.png" alt="d_j" style="vertical-align: -4px"/> <em class="xref py py-obj">= self.itemsize * self.shape[j]</em>.</p>
+<p>Both the C and Fortran orders are <em class="xref std std-term">contiguous</em>, <em>i.e.,</em>
+<em class="xref std std-term">single-segment</em>, memory layouts, in which every part of the
+memory block can be accessed by some combination of the indices.</p>
+<p>While a C-style and Fortran-style contiguous array, which has the corresponding
+flags set, can be addressed with the above strides, the actual strides may be
+different. This can happen in two cases:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>If <tt class="docutils literal"><span class="pre">self.shape[k]</span> <span class="pre">==</span> <span class="pre">1</span></tt> then for any legal index <tt class="docutils literal"><span class="pre">index[k]</span> <span class="pre">==</span> <span class="pre">0</span></tt>.
+This means that in the formula for the offset
+<img class="math" src="../_images/math/d7b7b3dd2960f98387792d451ec37b7c15cac296.png" alt="n_k = 0" style="vertical-align: -2px"/> and thus <img class="math" src="../_images/math/41162f630f8421650200b9bf0b2ab4c22b0851be.png" alt="s_k n_k = 0" style="vertical-align: -2px"/> and the value of
+<img class="math" src="../_images/math/fdc028050428615cc28ee3c1f9a67eda8e9a726c.png" alt="s_k" style="vertical-align: -2px"/> <em class="xref py py-obj">= self.strides[k]</em> is arbitrary.</li>
+<li>If an array has no elements (<tt class="docutils literal"><span class="pre">self.size</span> <span class="pre">==</span> <span class="pre">0</span></tt>) there is no legal index
+and the strides are never used. Any array with no elements may be
+considered C-style and Fortran-style contiguous.</li>
+</ol>
+</div></blockquote>
+<p>Point 1. means that <tt class="docutils literal"><span class="pre">self``and</span> <span class="pre">``self.squeeze()</span></tt> always have the same
+contiguity and <em class="xref std std-term">aligned</em> flags value. This also means that even a high
+dimensional array could be C-style and Fortran-style contiguous at the same
+time.</p>
+<p id="index-3">An array is considered aligned if the memory offsets for all elements and the
+base offset itself is a multiple of <em class="xref py py-obj">self.itemsize</em>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Points (1) and (2) are not yet applied by default. Beginning with
+Numpy 1.8.0, they are applied consistently only if the environment
+variable <tt class="docutils literal"><span class="pre">NPY_RELAXED_STRIDES_CHECKING=1</span></tt> was defined when NumPy
+was built. Eventually this will become the default.</p>
+<p class="last">You can check whether this option was enabled when your NumPy was
+built by looking at the value of <tt class="docutils literal"><span class="pre">np.ones((10,1),</span>
+<span class="pre">order='C').flags.f_contiguous</span></tt>. If this is <tt class="docutils literal"><span class="pre">True</span></tt>, then your
+NumPy has relaxed strides checking enabled.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">It does <em>not</em> generally hold that <tt class="docutils literal"><span class="pre">self.strides[-1]</span> <span class="pre">==</span> <span class="pre">self.itemsize</span></tt>
+for C-style contiguous arrays or <tt class="docutils literal"><span class="pre">self.strides[0]</span> <span class="pre">==</span> <span class="pre">self.itemsize</span></tt> for
+Fortran-style contiguous arrays is true.</p>
+</div>
+<p>Data in new <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarrays</span></tt></a> is in the <a class="reference internal" href="../glossary.html#term-row-major"><em class="xref std std-term">row-major</em></a>
+(C) order, unless otherwise specified, but, for example, <a class="reference internal" href="arrays.indexing.html#arrays-indexing"><em>basic
+array slicing</em></a> often produces <a class="reference internal" href="../glossary.html#term-view"><em class="xref std std-term">views</em></a>
+in a different scheme.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Several algorithms in NumPy work on arbitrarily strided arrays.
+However, some algorithms require single-segment arrays. When an
+irregularly strided array is passed in to such algorithms, a copy
+is automatically made.</p>
+</div>
+</div>
+<div class="section" id="array-attributes">
+<span id="arrays-ndarray-attributes"></span><h2>Array attributes<a class="headerlink" href="#array-attributes" title="Permalink to this headline">¶</a></h2>
+<p>Array attributes reflect information that is intrinsic to the array
+itself. Generally, accessing an array through its attributes allows
+you to get and sometimes set intrinsic properties of the array without
+creating a new array. The exposed attributes are the core parts of an
+array and only some of them can be reset meaningfully without creating
+a new array. Information on each attribute is given below.</p>
+<div class="section" id="memory-layout">
+<h3>Memory layout<a class="headerlink" href="#memory-layout" title="Permalink to this headline">¶</a></h3>
+<p>The following attributes contain information about the memory layout
+of the array:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.flags.html#numpy.ndarray.flags" title="numpy.ndarray.flags"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.flags</span></tt></a></td>
+<td>Information about the memory layout of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.shape.html#numpy.ndarray.shape" title="numpy.ndarray.shape"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.shape</span></tt></a></td>
+<td>Tuple of array dimensions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.strides.html#numpy.ndarray.strides" title="numpy.ndarray.strides"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.strides</span></tt></a></td>
+<td>Tuple of bytes to step in each dimension when traversing an array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.ndim.html#numpy.ndarray.ndim" title="numpy.ndarray.ndim"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.ndim</span></tt></a></td>
+<td>Number of array dimensions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.data.html#numpy.ndarray.data" title="numpy.ndarray.data"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.data</span></tt></a></td>
+<td>Python buffer object pointing to the start of the array&#8217;s data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.size.html#numpy.ndarray.size" title="numpy.ndarray.size"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.size</span></tt></a></td>
+<td>Number of elements in the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.itemsize.html#numpy.ndarray.itemsize" title="numpy.ndarray.itemsize"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.itemsize</span></tt></a></td>
+<td>Length of one array element in bytes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.nbytes.html#numpy.ndarray.nbytes" title="numpy.ndarray.nbytes"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.nbytes</span></tt></a></td>
+<td>Total bytes consumed by the elements of the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.base.html#numpy.ndarray.base" title="numpy.ndarray.base"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.base</span></tt></a></td>
+<td>Base object if memory is from some other object.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-type">
+<h3>Data type<a class="headerlink" href="#data-type" title="Permalink to this headline">¶</a></h3>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="arrays.dtypes.html#arrays-dtypes"><em>Data type objects</em></a></p>
+</div>
+<p>The data type object associated with the array can be found in the
+<a class="reference internal" href="generated/numpy.ndarray.dtype.html#numpy.ndarray.dtype" title="numpy.ndarray.dtype"><tt class="xref py py-attr docutils literal"><span class="pre">dtype</span></tt></a> attribute:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.dtype.html#numpy.ndarray.dtype" title="numpy.ndarray.dtype"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.dtype</span></tt></a></td>
+<td>Data-type of the array&#8217;s elements.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="other-attributes">
+<h3>Other attributes<a class="headerlink" href="#other-attributes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.T.html#numpy.ndarray.T" title="numpy.ndarray.T"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.T</span></tt></a></td>
+<td>Same as self.transpose(), except that self is returned if self.ndim &lt; 2.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.real.html#numpy.ndarray.real" title="numpy.ndarray.real"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.real</span></tt></a></td>
+<td>The real part of the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.imag.html#numpy.ndarray.imag" title="numpy.ndarray.imag"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.imag</span></tt></a></td>
+<td>The imaginary part of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.flat.html#numpy.ndarray.flat" title="numpy.ndarray.flat"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.flat</span></tt></a></td>
+<td>A 1-D iterator over the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.ctypes.html#numpy.ndarray.ctypes" title="numpy.ndarray.ctypes"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.ctypes</span></tt></a></td>
+<td>An object to simplify the interaction of the array with the ctypes module.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="arrays.classes.html#numpy.__array_priority__" title="numpy.__array_priority__"><tt class="xref py py-obj docutils literal"><span class="pre">__array_priority__</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="array-interface">
+<span id="arrays-ndarray-array-interface"></span><h3>Array interface<a class="headerlink" href="#array-interface" title="Permalink to this headline">¶</a></h3>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="arrays.interface.html#arrays-interface"><em>The Array Interface</em></a>.</p>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="arrays.interface.html#__array_interface__" title="__array_interface__"><tt class="xref py py-obj docutils literal"><span class="pre">__array_interface__</span></tt></a></td>
+<td>Python-side of the array interface</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">__array_struct__</span></tt></td>
+<td>C-side of the array interface</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="ctypes-foreign-function-interface">
+<h3><a class="reference external" href="http://docs.python.org/dev/library/ctypes.html#ctypes" title="(in Python v3.4)"><tt class="xref py py-mod docutils literal"><span class="pre">ctypes</span></tt></a> foreign function interface<a class="headerlink" href="#ctypes-foreign-function-interface" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.ctypes.html#numpy.ndarray.ctypes" title="numpy.ndarray.ctypes"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.ctypes</span></tt></a></td>
+<td>An object to simplify the interaction of the array with the ctypes module.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="array-methods">
+<span id="array-ndarray-methods"></span><h2>Array methods<a class="headerlink" href="#array-methods" title="Permalink to this headline">¶</a></h2>
+<p>An <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> object has many methods which operate on or with
+the array in some fashion, typically returning an array result. These
+methods are briefly explained below. (Each method&#8217;s docstring has a
+more complete description.)</p>
+<p>For the following methods there are also corresponding functions in
+<a class="reference internal" href="index.html#module-numpy" title="numpy"><tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt></a>: <a class="reference internal" href="generated/numpy.all.html#numpy.all" title="numpy.all"><tt class="xref py py-func docutils literal"><span class="pre">all</span></tt></a>, <a class="reference internal" href="generated/numpy.any.html#numpy.any" title="numpy.any"><tt class="xref py py-func docutils literal"><span class="pre">any</span></tt></a>, <a class="reference internal" href="generated/numpy.argmax.html#numpy.argmax" title="numpy.argmax"><tt class="xref py py-func docutils literal"><span class="pre">argmax</span></tt></a>,
+<a class="reference internal" href="generated/numpy.argmin.html#numpy.argmin" title="numpy.argmin"><tt class="xref py py-func docutils literal"><span class="pre">argmin</span></tt></a>, <a class="reference internal" href="generated/numpy.argpartition.html#numpy.argpartition" title="numpy.argpartition"><tt class="xref py py-func docutils literal"><span class="pre">argpartition</span></tt></a>, <a class="reference internal" href="generated/numpy.argsort.html#numpy.argsort" title="numpy.argsort"><tt class="xref py py-func docutils literal"><span class="pre">argsort</span></tt></a>, <a class="reference internal" href="generated/numpy.choose.html#numpy.choose" title="numpy.choose"><tt class="xref py py-func docutils literal"><span class="pre">choose</span></tt></a>,
+<a class="reference internal" href="generated/numpy.clip.html#numpy.clip" title="numpy.clip"><tt class="xref py py-func docutils literal"><span class="pre">clip</span></tt></a>, <a class="reference internal" href="generated/numpy.compress.html#numpy.compress" title="numpy.compress"><tt class="xref py py-func docutils literal"><span class="pre">compress</span></tt></a>, <a class="reference internal" href="generated/numpy.copy.html#numpy.copy" title="numpy.copy"><tt class="xref py py-func docutils literal"><span class="pre">copy</span></tt></a>, <a class="reference internal" href="generated/numpy.cumprod.html#numpy.cumprod" title="numpy.cumprod"><tt class="xref py py-func docutils literal"><span class="pre">cumprod</span></tt></a>,
+<a class="reference internal" href="generated/numpy.cumsum.html#numpy.cumsum" title="numpy.cumsum"><tt class="xref py py-func docutils literal"><span class="pre">cumsum</span></tt></a>, <a class="reference internal" href="generated/numpy.diagonal.html#numpy.diagonal" title="numpy.diagonal"><tt class="xref py py-func docutils literal"><span class="pre">diagonal</span></tt></a>, <a class="reference internal" href="generated/numpy.imag.html#numpy.imag" title="numpy.imag"><tt class="xref py py-func docutils literal"><span class="pre">imag</span></tt></a>, <a class="reference internal" href="generated/numpy.amax.html#numpy.amax" title="numpy.amax"><tt class="xref py py-func docutils literal"><span class="pre">max</span></tt></a>,
+<a class="reference internal" href="generated/numpy.mean.html#numpy.mean" title="numpy.mean"><tt class="xref py py-func docutils literal"><span class="pre">mean</span></tt></a>, <a class="reference internal" href="generated/numpy.amin.html#numpy.amin" title="numpy.amin"><tt class="xref py py-func docutils literal"><span class="pre">min</span></tt></a>, <a class="reference internal" href="generated/numpy.nonzero.html#numpy.nonzero" title="numpy.nonzero"><tt class="xref py py-func docutils literal"><span class="pre">nonzero</span></tt></a>, <a class="reference internal" href="generated/numpy.partition.html#numpy.partition" title="numpy.partition"><tt class="xref py py-func docutils literal"><span class="pre">partition</span></tt></a>,
+<a class="reference internal" href="generated/numpy.prod.html#numpy.prod" title="numpy.prod"><tt class="xref py py-func docutils literal"><span class="pre">prod</span></tt></a>, <a class="reference internal" href="generated/numpy.ptp.html#numpy.ptp" title="numpy.ptp"><tt class="xref py py-func docutils literal"><span class="pre">ptp</span></tt></a>, <a class="reference internal" href="generated/numpy.put.html#numpy.put" title="numpy.put"><tt class="xref py py-func docutils literal"><span class="pre">put</span></tt></a>, <a class="reference internal" href="generated/numpy.ravel.html#numpy.ravel" title="numpy.ravel"><tt class="xref py py-func docutils literal"><span class="pre">ravel</span></tt></a>, <a class="reference internal" href="generated/numpy.real.html#numpy.real" title="numpy.real"><tt class="xref py py-func docutils literal"><span class="pre">real</span></tt></a>,
+<a class="reference internal" href="generated/numpy.repeat.html#numpy.repeat" title="numpy.repeat"><tt class="xref py py-func docutils literal"><span class="pre">repeat</span></tt></a>, <a class="reference internal" href="generated/numpy.reshape.html#numpy.reshape" title="numpy.reshape"><tt class="xref py py-func docutils literal"><span class="pre">reshape</span></tt></a>, <a class="reference internal" href="generated/numpy.around.html#numpy.around" title="numpy.around"><tt class="xref py py-func docutils literal"><span class="pre">round</span></tt></a>,
+<a class="reference internal" href="generated/numpy.searchsorted.html#numpy.searchsorted" title="numpy.searchsorted"><tt class="xref py py-func docutils literal"><span class="pre">searchsorted</span></tt></a>, <a class="reference internal" href="generated/numpy.sort.html#numpy.sort" title="numpy.sort"><tt class="xref py py-func docutils literal"><span class="pre">sort</span></tt></a>, <a class="reference internal" href="generated/numpy.squeeze.html#numpy.squeeze" title="numpy.squeeze"><tt class="xref py py-func docutils literal"><span class="pre">squeeze</span></tt></a>, <a class="reference internal" href="generated/numpy.std.html#numpy.std" title="numpy.std"><tt class="xref py py-func docutils literal"><span class="pre">std</span></tt></a>,
+<a class="reference internal" href="generated/numpy.sum.html#numpy.sum" title="numpy.sum"><tt class="xref py py-func docutils literal"><span class="pre">sum</span></tt></a>, <a class="reference internal" href="generated/numpy.swapaxes.html#numpy.swapaxes" title="numpy.swapaxes"><tt class="xref py py-func docutils literal"><span class="pre">swapaxes</span></tt></a>, <a class="reference internal" href="generated/numpy.take.html#numpy.take" title="numpy.take"><tt class="xref py py-func docutils literal"><span class="pre">take</span></tt></a>, <a class="reference internal" href="generated/numpy.trace.html#numpy.trace" title="numpy.trace"><tt class="xref py py-func docutils literal"><span class="pre">trace</span></tt></a>,
+<a class="reference internal" href="generated/numpy.transpose.html#numpy.transpose" title="numpy.transpose"><tt class="xref py py-func docutils literal"><span class="pre">transpose</span></tt></a>, <a class="reference internal" href="generated/numpy.var.html#numpy.var" title="numpy.var"><tt class="xref py py-func docutils literal"><span class="pre">var</span></tt></a>.</p>
+<div class="section" id="array-conversion">
+<h3>Array conversion<a class="headerlink" href="#array-conversion" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.item.html#numpy.ndarray.item" title="numpy.ndarray.item"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.item</span></tt></a>(*args)</td>
+<td>Copy an element of an array to a standard Python scalar and return it.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.tolist.html#numpy.ndarray.tolist" title="numpy.ndarray.tolist"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.tolist</span></tt></a>()</td>
+<td>Return the array as a (possibly nested) list.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.itemset.html#numpy.ndarray.itemset" title="numpy.ndarray.itemset"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.itemset</span></tt></a>(*args)</td>
+<td>Insert scalar into an array (scalar is cast to array&#8217;s dtype, if possible)</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.setasflat</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.tostring.html#numpy.ndarray.tostring" title="numpy.ndarray.tostring"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.tostring</span></tt></a>([order])</td>
+<td>Construct a Python string containing the raw data bytes in the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.tofile.html#numpy.ndarray.tofile" title="numpy.ndarray.tofile"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.tofile</span></tt></a>(fid[,&nbsp;sep,&nbsp;format])</td>
+<td>Write array to a file as text or binary (default).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.dump.html#numpy.ndarray.dump" title="numpy.ndarray.dump"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.dump</span></tt></a>(file)</td>
+<td>Dump a pickle of the array to the specified file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.dumps.html#numpy.ndarray.dumps" title="numpy.ndarray.dumps"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.dumps</span></tt></a>()</td>
+<td>Returns the pickle of the array as a string.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.astype.html#numpy.ndarray.astype" title="numpy.ndarray.astype"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.astype</span></tt></a>(dtype[,&nbsp;order,&nbsp;casting,&nbsp;...])</td>
+<td>Copy of the array, cast to a specified type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.byteswap.html#numpy.ndarray.byteswap" title="numpy.ndarray.byteswap"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.byteswap</span></tt></a>(inplace)</td>
+<td>Swap the bytes of the array elements</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.copy.html#numpy.ndarray.copy" title="numpy.ndarray.copy"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.copy</span></tt></a>([order])</td>
+<td>Return a copy of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.view.html#numpy.ndarray.view" title="numpy.ndarray.view"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.view</span></tt></a>([dtype,&nbsp;type])</td>
+<td>New view of array with the same data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.getfield.html#numpy.ndarray.getfield" title="numpy.ndarray.getfield"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.getfield</span></tt></a>(dtype[,&nbsp;offset])</td>
+<td>Returns a field of the given array as a certain type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.setflags.html#numpy.ndarray.setflags" title="numpy.ndarray.setflags"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.setflags</span></tt></a>([write,&nbsp;align,&nbsp;uic])</td>
+<td>Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.fill.html#numpy.ndarray.fill" title="numpy.ndarray.fill"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.fill</span></tt></a>(value)</td>
+<td>Fill the array with a scalar value.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="shape-manipulation">
+<h3>Shape manipulation<a class="headerlink" href="#shape-manipulation" title="Permalink to this headline">¶</a></h3>
+<p>For reshape, resize, and transpose, the single tuple argument may be
+replaced with <tt class="docutils literal"><span class="pre">n</span></tt> integers which will be interpreted as an n-tuple.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.reshape.html#numpy.ndarray.reshape" title="numpy.ndarray.reshape"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.reshape</span></tt></a>(shape[,&nbsp;order])</td>
+<td>Returns an array containing the same data with a new shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.resize.html#numpy.ndarray.resize" title="numpy.ndarray.resize"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.resize</span></tt></a>(new_shape[,&nbsp;refcheck])</td>
+<td>Change shape and size of array in-place.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.transpose.html#numpy.ndarray.transpose" title="numpy.ndarray.transpose"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.transpose</span></tt></a>(*axes)</td>
+<td>Returns a view of the array with axes transposed.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.swapaxes.html#numpy.ndarray.swapaxes" title="numpy.ndarray.swapaxes"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.swapaxes</span></tt></a>(axis1,&nbsp;axis2)</td>
+<td>Return a view of the array with <em class="xref py py-obj">axis1</em> and <em class="xref py py-obj">axis2</em> interchanged.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.flatten.html#numpy.ndarray.flatten" title="numpy.ndarray.flatten"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.flatten</span></tt></a>([order])</td>
+<td>Return a copy of the array collapsed into one dimension.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.ravel.html#numpy.ndarray.ravel" title="numpy.ndarray.ravel"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.ravel</span></tt></a>([order])</td>
+<td>Return a flattened array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.squeeze.html#numpy.ndarray.squeeze" title="numpy.ndarray.squeeze"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.squeeze</span></tt></a>([axis])</td>
+<td>Remove single-dimensional entries from the shape of <em class="xref py py-obj">a</em>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="item-selection-and-manipulation">
+<h3>Item selection and manipulation<a class="headerlink" href="#item-selection-and-manipulation" title="Permalink to this headline">¶</a></h3>
+<p>For array methods that take an <em>axis</em> keyword, it defaults to
+<tt class="xref py py-const docutils literal"><span class="pre">None</span></tt>. If axis is <em>None</em>, then the array is treated as a 1-D
+array. Any other value for <em>axis</em> represents the dimension along which
+the operation should proceed.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.take.html#numpy.ndarray.take" title="numpy.ndarray.take"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.take</span></tt></a>(indices[,&nbsp;axis,&nbsp;out,&nbsp;mode])</td>
+<td>Return an array formed from the elements of <em class="xref py py-obj">a</em> at the given indices.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.put.html#numpy.ndarray.put" title="numpy.ndarray.put"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.put</span></tt></a>(indices,&nbsp;values[,&nbsp;mode])</td>
+<td>Set <tt class="docutils literal"><span class="pre">a.flat[n]</span> <span class="pre">=</span> <span class="pre">values[n]</span></tt> for all <em class="xref py py-obj">n</em> in indices.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.repeat.html#numpy.ndarray.repeat" title="numpy.ndarray.repeat"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.repeat</span></tt></a>(repeats[,&nbsp;axis])</td>
+<td>Repeat elements of an array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.choose.html#numpy.ndarray.choose" title="numpy.ndarray.choose"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.choose</span></tt></a>(choices[,&nbsp;out,&nbsp;mode])</td>
+<td>Use an index array to construct a new array from a set of choices.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.sort.html#numpy.ndarray.sort" title="numpy.ndarray.sort"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.sort</span></tt></a>([axis,&nbsp;kind,&nbsp;order])</td>
+<td>Sort an array, in-place.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.argsort.html#numpy.ndarray.argsort" title="numpy.ndarray.argsort"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.argsort</span></tt></a>([axis,&nbsp;kind,&nbsp;order])</td>
+<td>Returns the indices that would sort this array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.partition.html#numpy.ndarray.partition" title="numpy.ndarray.partition"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.partition</span></tt></a>(kth[,&nbsp;axis,&nbsp;kind,&nbsp;order])</td>
+<td>Rearranges the elements in the array in such a way that value of the element in kth position is in the position it would be in a sorted array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.argpartition.html#numpy.ndarray.argpartition" title="numpy.ndarray.argpartition"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.argpartition</span></tt></a>(kth[,&nbsp;axis,&nbsp;kind,&nbsp;order])</td>
+<td>Returns the indices that would partition this array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.searchsorted.html#numpy.ndarray.searchsorted" title="numpy.ndarray.searchsorted"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.searchsorted</span></tt></a>(v[,&nbsp;side,&nbsp;sorter])</td>
+<td>Find indices where elements of v should be inserted in a to maintain order.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.nonzero.html#numpy.ndarray.nonzero" title="numpy.ndarray.nonzero"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.nonzero</span></tt></a>()</td>
+<td>Return the indices of the elements that are non-zero.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.compress.html#numpy.ndarray.compress" title="numpy.ndarray.compress"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.compress</span></tt></a>(condition[,&nbsp;axis,&nbsp;out])</td>
+<td>Return selected slices of this array along given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.diagonal.html#numpy.ndarray.diagonal" title="numpy.ndarray.diagonal"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.diagonal</span></tt></a>([offset,&nbsp;axis1,&nbsp;axis2])</td>
+<td>Return specified diagonals.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="calculation">
+<h3>Calculation<a class="headerlink" href="#calculation" title="Permalink to this headline">¶</a></h3>
+<p id="index-4">Many of these methods take an argument named <em>axis</em>. In such cases,</p>
+<ul class="simple">
+<li>If <em>axis</em> is <em>None</em> (the default), the array is treated as a 1-D
+array and the operation is performed over the entire array. This
+behavior is also the default if self is a 0-dimensional array or
+array scalar. (An array scalar is an instance of the types/classes
+float32, float64, etc., whereas a 0-dimensional array is an ndarray
+instance containing precisely one array scalar.)</li>
+<li>If <em>axis</em> is an integer, then the operation is done over the given
+axis (for each 1-D subarray that can be created along the given axis).</li>
+</ul>
+<div class="admonition-example-of-the-axis-argument admonition">
+<p class="first admonition-title">Example of the <em>axis</em> argument</p>
+<p>A 3-dimensional array of size 3 x 3 x 3, summed over each of its
+three axes</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([[[ 0,  1,  2],</span>
+<span class="go">        [ 3,  4,  5],</span>
+<span class="go">        [ 6,  7,  8]],</span>
+<span class="go">       [[ 9, 10, 11],</span>
+<span class="go">        [12, 13, 14],</span>
+<span class="go">        [15, 16, 17]],</span>
+<span class="go">       [[18, 19, 20],</span>
+<span class="go">        [21, 22, 23],</span>
+<span class="go">        [24, 25, 26]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">array([[27, 30, 33],</span>
+<span class="go">       [36, 39, 42],</span>
+<span class="go">       [45, 48, 51]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># for sum, axis is the first keyword, so we may omit it,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># specifying only its value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">(array([[27, 30, 33],</span>
+<span class="go">        [36, 39, 42],</span>
+<span class="go">        [45, 48, 51]]),</span>
+<span class="go"> array([[ 9, 12, 15],</span>
+<span class="go">        [36, 39, 42],</span>
+<span class="go">        [63, 66, 69]]),</span>
+<span class="go"> array([[ 3, 12, 21],</span>
+<span class="go">        [30, 39, 48],</span>
+<span class="go">        [57, 66, 75]]))</span>
+</pre></div>
+</div>
+</div>
+<p>The parameter <em>dtype</em> specifies the data type over which a reduction
+operation (like summing) should take place. The default reduce data
+type is the same as the data type of <em>self</em>. To avoid overflow, it can
+be useful to perform the reduction using a larger data type.</p>
+<p>For several methods, an optional <em>out</em> argument can also be provided
+and the result will be placed into the output array given. The <em>out</em>
+argument must be an <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> and have the same number of
+elements. It can have a different data type in which case casting will
+be performed.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.argmax.html#numpy.ndarray.argmax" title="numpy.ndarray.argmax"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.argmax</span></tt></a>([axis,&nbsp;out])</td>
+<td>Return indices of the maximum values along the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.min.html#numpy.ndarray.min" title="numpy.ndarray.min"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.min</span></tt></a>([axis,&nbsp;out])</td>
+<td>Return the minimum along a given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.argmin.html#numpy.ndarray.argmin" title="numpy.ndarray.argmin"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.argmin</span></tt></a>([axis,&nbsp;out])</td>
+<td>Return indices of the minimum values along the given axis of <em class="xref py py-obj">a</em>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.ptp.html#numpy.ndarray.ptp" title="numpy.ndarray.ptp"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.ptp</span></tt></a>([axis,&nbsp;out])</td>
+<td>Peak to peak (maximum - minimum) value along a given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.clip.html#numpy.ndarray.clip" title="numpy.ndarray.clip"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.clip</span></tt></a>(a_min,&nbsp;a_max[,&nbsp;out])</td>
+<td>Return an array whose values are limited to <tt class="docutils literal"><span class="pre">[a_min,</span> <span class="pre">a_max]</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.conj.html#numpy.ndarray.conj" title="numpy.ndarray.conj"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.conj</span></tt></a>()</td>
+<td>Complex-conjugate all elements.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.round.html#numpy.ndarray.round" title="numpy.ndarray.round"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.round</span></tt></a>([decimals,&nbsp;out])</td>
+<td>Return <em class="xref py py-obj">a</em> with each element rounded to the given number of decimals.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.trace.html#numpy.ndarray.trace" title="numpy.ndarray.trace"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.trace</span></tt></a>([offset,&nbsp;axis1,&nbsp;axis2,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the sum along diagonals of the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.sum.html#numpy.ndarray.sum" title="numpy.ndarray.sum"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.sum</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the sum of the array elements over the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.cumsum.html#numpy.ndarray.cumsum" title="numpy.ndarray.cumsum"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.cumsum</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the cumulative sum of the elements along the given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.mean.html#numpy.ndarray.mean" title="numpy.ndarray.mean"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.mean</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Returns the average of the array elements along given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.var.html#numpy.ndarray.var" title="numpy.ndarray.var"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.var</span></tt></a>([axis,&nbsp;dtype,&nbsp;out,&nbsp;ddof])</td>
+<td>Returns the variance of the array elements, along given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.std.html#numpy.ndarray.std" title="numpy.ndarray.std"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.std</span></tt></a>([axis,&nbsp;dtype,&nbsp;out,&nbsp;ddof])</td>
+<td>Returns the standard deviation of the array elements along given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.prod.html#numpy.ndarray.prod" title="numpy.ndarray.prod"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.prod</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the product of the array elements over the given axis</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.cumprod.html#numpy.ndarray.cumprod" title="numpy.ndarray.cumprod"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.cumprod</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the cumulative product of the elements along the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.all.html#numpy.ndarray.all" title="numpy.ndarray.all"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.all</span></tt></a>([axis,&nbsp;out])</td>
+<td>Returns True if all elements evaluate to True.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.any.html#numpy.ndarray.any" title="numpy.ndarray.any"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.any</span></tt></a>([axis,&nbsp;out])</td>
+<td>Returns True if any of the elements of <em class="xref py py-obj">a</em> evaluate to True.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="arithmetic-and-comparison-operations">
+<h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
+<p id="index-5">Arithmetic and comparison operations on <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarrays</span></tt></a>
+are defined as element-wise operations, and generally yield
+<a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> objects as results.</p>
+<p>Each of the arithmetic operations (<tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">/</span></tt>, <tt class="docutils literal"><span class="pre">//</span></tt>,
+<tt class="docutils literal"><span class="pre">%</span></tt>, <tt class="docutils literal"><span class="pre">divmod()</span></tt>, <tt class="docutils literal"><span class="pre">**</span></tt> or <tt class="docutils literal"><span class="pre">pow()</span></tt>, <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt>, <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&amp;</span></tt>,
+<tt class="docutils literal"><span class="pre">^</span></tt>, <tt class="docutils literal"><span class="pre">|</span></tt>, <tt class="docutils literal"><span class="pre">~</span></tt>) and the comparisons (<tt class="docutils literal"><span class="pre">==</span></tt>, <tt class="docutils literal"><span class="pre">&lt;</span></tt>, <tt class="docutils literal"><span class="pre">&gt;</span></tt>,
+<tt class="docutils literal"><span class="pre">&lt;=</span></tt>, <tt class="docutils literal"><span class="pre">&gt;=</span></tt>, <tt class="docutils literal"><span class="pre">!=</span></tt>) is equivalent to the corresponding
+<em class="xref std std-term">universal function</em> (or <a class="reference internal" href="../glossary.html#term-ufunc"><em class="xref std std-term">ufunc</em></a> for short) in Numpy.  For
+more information, see the section on <a class="reference internal" href="ufuncs.html#ufuncs"><em>Universal Functions</em></a>.</p>
+<p>Comparison operators:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__lt__.html#numpy.ndarray.__lt__" title="numpy.ndarray.__lt__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__lt__</span></tt></a></td>
+<td>x.__lt__(y) &lt;==&gt; x&lt;y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__le__.html#numpy.ndarray.__le__" title="numpy.ndarray.__le__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__le__</span></tt></a></td>
+<td>x.__le__(y) &lt;==&gt; x&lt;=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__gt__.html#numpy.ndarray.__gt__" title="numpy.ndarray.__gt__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__gt__</span></tt></a></td>
+<td>x.__gt__(y) &lt;==&gt; x&gt;y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__ge__.html#numpy.ndarray.__ge__" title="numpy.ndarray.__ge__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__ge__</span></tt></a></td>
+<td>x.__ge__(y) &lt;==&gt; x&gt;=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__eq__.html#numpy.ndarray.__eq__" title="numpy.ndarray.__eq__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__eq__</span></tt></a></td>
+<td>x.__eq__(y) &lt;==&gt; x==y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__ne__.html#numpy.ndarray.__ne__" title="numpy.ndarray.__ne__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__ne__</span></tt></a></td>
+<td>x.__ne__(y) &lt;==&gt; x!=y</td>
+</tr>
+</tbody>
+</table>
+<p>Truth value of an array (<a class="reference external" href="http://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">bool</span></tt></a>):</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__nonzero__.html#numpy.ndarray.__nonzero__" title="numpy.ndarray.__nonzero__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__nonzero__</span></tt></a></td>
+<td>x.__nonzero__() &lt;==&gt; x != 0</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Truth-value testing of an array invokes
+<a class="reference internal" href="generated/numpy.ndarray.__nonzero__.html#numpy.ndarray.__nonzero__" title="numpy.ndarray.__nonzero__"><tt class="xref py py-meth docutils literal"><span class="pre">ndarray.__nonzero__</span></tt></a>, which raises an error if the number of
+elements in the the array is larger than 1, because the truth value
+of such arrays is ambiguous. Use <a class="reference internal" href="generated/numpy.ndarray.any.html#numpy.ndarray.any" title="numpy.ndarray.any"><tt class="xref py py-meth docutils literal"><span class="pre">.any()</span></tt></a> and
+<a class="reference internal" href="generated/numpy.ndarray.all.html#numpy.ndarray.all" title="numpy.ndarray.all"><tt class="xref py py-meth docutils literal"><span class="pre">.all()</span></tt></a> instead to be clear about what is meant
+in such cases. (If the number of elements is 0, the array evaluates
+to <tt class="docutils literal"><span class="pre">False</span></tt>.)</p>
+</div>
+<p>Unary operations:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__neg__.html#numpy.ndarray.__neg__" title="numpy.ndarray.__neg__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__neg__</span></tt></a></td>
+<td>x.__neg__() &lt;==&gt; -x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__pos__.html#numpy.ndarray.__pos__" title="numpy.ndarray.__pos__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__pos__</span></tt></a></td>
+<td>x.__pos__() &lt;==&gt; +x</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__abs__.html#numpy.ndarray.__abs__" title="numpy.ndarray.__abs__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__abs__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;abs(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__invert__.html#numpy.ndarray.__invert__" title="numpy.ndarray.__invert__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__invert__</span></tt></a></td>
+<td>x.__invert__() &lt;==&gt; ~x</td>
+</tr>
+</tbody>
+</table>
+<p>Arithmetic:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__add__.html#numpy.ndarray.__add__" title="numpy.ndarray.__add__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__add__</span></tt></a></td>
+<td>x.__add__(y) &lt;==&gt; x+y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__sub__.html#numpy.ndarray.__sub__" title="numpy.ndarray.__sub__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__sub__</span></tt></a></td>
+<td>x.__sub__(y) &lt;==&gt; x-y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__mul__.html#numpy.ndarray.__mul__" title="numpy.ndarray.__mul__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__mul__</span></tt></a></td>
+<td>x.__mul__(y) &lt;==&gt; x*y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__div__.html#numpy.ndarray.__div__" title="numpy.ndarray.__div__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__div__</span></tt></a></td>
+<td>x.__div__(y) &lt;==&gt; x/y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__truediv__.html#numpy.ndarray.__truediv__" title="numpy.ndarray.__truediv__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__truediv__</span></tt></a></td>
+<td>x.__truediv__(y) &lt;==&gt; x/y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__floordiv__.html#numpy.ndarray.__floordiv__" title="numpy.ndarray.__floordiv__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__floordiv__</span></tt></a></td>
+<td>x.__floordiv__(y) &lt;==&gt; x//y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__mod__.html#numpy.ndarray.__mod__" title="numpy.ndarray.__mod__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__mod__</span></tt></a></td>
+<td>x.__mod__(y) &lt;==&gt; x%y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__divmod__.html#numpy.ndarray.__divmod__" title="numpy.ndarray.__divmod__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__divmod__</span></tt></a>(y)&nbsp;&lt;==&gt;&nbsp;divmod(x,&nbsp;y)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__pow__.html#numpy.ndarray.__pow__" title="numpy.ndarray.__pow__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__pow__</span></tt></a>(y[,&nbsp;z])&nbsp;&lt;==&gt;&nbsp;pow(x,&nbsp;y[,&nbsp;z])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__lshift__.html#numpy.ndarray.__lshift__" title="numpy.ndarray.__lshift__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__lshift__</span></tt></a></td>
+<td>x.__lshift__(y) &lt;==&gt; x&lt;&lt;y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__rshift__.html#numpy.ndarray.__rshift__" title="numpy.ndarray.__rshift__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__rshift__</span></tt></a></td>
+<td>x.__rshift__(y) &lt;==&gt; x&gt;&gt;y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__and__.html#numpy.ndarray.__and__" title="numpy.ndarray.__and__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__and__</span></tt></a></td>
+<td>x.__and__(y) &lt;==&gt; x&amp;y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__or__.html#numpy.ndarray.__or__" title="numpy.ndarray.__or__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__or__</span></tt></a></td>
+<td>x.__or__(y) &lt;==&gt; x|y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__xor__.html#numpy.ndarray.__xor__" title="numpy.ndarray.__xor__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__xor__</span></tt></a></td>
+<td>x.__xor__(y) &lt;==&gt; x^y</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Any third argument to <a class="reference external" href="http://docs.python.org/dev/library/functions.html#pow" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">pow</span></tt></a> is silently ignored,
+as the underlying <a class="reference internal" href="generated/numpy.power.html#numpy.power" title="numpy.power"><tt class="xref py py-func docutils literal"><span class="pre">ufunc</span></tt></a> takes only two arguments.</li>
+<li>The three division operators are all defined; <tt class="xref py py-obj docutils literal"><span class="pre">div</span></tt> is active
+by default, <tt class="xref py py-obj docutils literal"><span class="pre">truediv</span></tt> is active when
+<a class="reference external" href="http://docs.python.org/dev/library/__future__.html#__future__" title="(in Python v3.4)"><tt class="xref py py-obj docutils literal"><span class="pre">__future__</span></tt></a> division is in effect.</li>
+<li>Because <a class="reference internal" href="generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a> is a built-in type (written in C), the
+<tt class="docutils literal"><span class="pre">__r{op}__</span></tt> special methods are not directly defined.</li>
+<li>The functions called to implement many arithmetic special methods
+for arrays can be modified using <tt class="xref py py-func docutils literal"><span class="pre">set_numeric_ops</span></tt>.</li>
+</ul>
+</div>
+<p>Arithmetic, in-place:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__iadd__.html#numpy.ndarray.__iadd__" title="numpy.ndarray.__iadd__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__iadd__</span></tt></a></td>
+<td>x.__iadd__(y) &lt;==&gt; x+=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__isub__.html#numpy.ndarray.__isub__" title="numpy.ndarray.__isub__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__isub__</span></tt></a></td>
+<td>x.__isub__(y) &lt;==&gt; x-=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__imul__.html#numpy.ndarray.__imul__" title="numpy.ndarray.__imul__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__imul__</span></tt></a></td>
+<td>x.__imul__(y) &lt;==&gt; x*=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__idiv__.html#numpy.ndarray.__idiv__" title="numpy.ndarray.__idiv__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__idiv__</span></tt></a></td>
+<td>x.__idiv__(y) &lt;==&gt; x/=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__itruediv__.html#numpy.ndarray.__itruediv__" title="numpy.ndarray.__itruediv__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__itruediv__</span></tt></a></td>
+<td>x.__itruediv__(y) &lt;==&gt; x/y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__ifloordiv__.html#numpy.ndarray.__ifloordiv__" title="numpy.ndarray.__ifloordiv__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__ifloordiv__</span></tt></a></td>
+<td>x.__ifloordiv__(y) &lt;==&gt; x//y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__imod__.html#numpy.ndarray.__imod__" title="numpy.ndarray.__imod__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__imod__</span></tt></a></td>
+<td>x.__imod__(y) &lt;==&gt; x%=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__ipow__.html#numpy.ndarray.__ipow__" title="numpy.ndarray.__ipow__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__ipow__</span></tt></a></td>
+<td>x.__ipow__(y) &lt;==&gt; x**=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__ilshift__.html#numpy.ndarray.__ilshift__" title="numpy.ndarray.__ilshift__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__ilshift__</span></tt></a></td>
+<td>x.__ilshift__(y) &lt;==&gt; x&lt;&lt;=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__irshift__.html#numpy.ndarray.__irshift__" title="numpy.ndarray.__irshift__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__irshift__</span></tt></a></td>
+<td>x.__irshift__(y) &lt;==&gt; x&gt;&gt;=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__iand__.html#numpy.ndarray.__iand__" title="numpy.ndarray.__iand__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__iand__</span></tt></a></td>
+<td>x.__iand__(y) &lt;==&gt; x&amp;=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__ior__.html#numpy.ndarray.__ior__" title="numpy.ndarray.__ior__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__ior__</span></tt></a></td>
+<td>x.__ior__(y) &lt;==&gt; x|=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__ixor__.html#numpy.ndarray.__ixor__" title="numpy.ndarray.__ixor__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__ixor__</span></tt></a></td>
+<td>x.__ixor__(y) &lt;==&gt; x^=y</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">In place operations will perform the calculation using the
+precision decided by the data type of the two operands, but will
+silently downcast the result (if necessary) so it can fit back into
+the array.  Therefore, for mixed precision calculations, <tt class="docutils literal"><span class="pre">A</span> <span class="pre">{op}=</span>
+<span class="pre">B</span></tt> can be different than <tt class="docutils literal"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">{op}</span> <span class="pre">B</span></tt>. For example, suppose
+<tt class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">ones((3,3))</span></tt>. Then, <tt class="docutils literal"><span class="pre">a</span> <span class="pre">+=</span> <span class="pre">3j</span></tt> is different than <tt class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">+</span>
+<span class="pre">3j</span></tt>: while they both perform the same computation, <tt class="docutils literal"><span class="pre">a</span> <span class="pre">+=</span> <span class="pre">3</span></tt>
+casts the result to fit back in <tt class="docutils literal"><span class="pre">a</span></tt>, whereas <tt class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">+</span> <span class="pre">3j</span></tt>
+re-binds the name <tt class="docutils literal"><span class="pre">a</span></tt> to the result.</p>
+</div>
+</div>
+<div class="section" id="special-methods">
+<h2>Special methods<a class="headerlink" href="#special-methods" title="Permalink to this headline">¶</a></h2>
+<p>For standard library functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__copy__.html#numpy.ndarray.__copy__" title="numpy.ndarray.__copy__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__copy__</span></tt></a>([order])</td>
+<td>Return a copy of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__deepcopy__.html#numpy.ndarray.__deepcopy__" title="numpy.ndarray.__deepcopy__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__deepcopy__</span></tt></a>(()&nbsp;-&gt;&nbsp;Deep&nbsp;copy&nbsp;of&nbsp;array.)</td>
+<td>Used if copy.deepcopy is called on an array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__reduce__.html#numpy.ndarray.__reduce__" title="numpy.ndarray.__reduce__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__reduce__</span></tt></a>()</td>
+<td>For pickling.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__setstate__.html#numpy.ndarray.__setstate__" title="numpy.ndarray.__setstate__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__setstate__</span></tt></a>(version,&nbsp;shape,&nbsp;dtype,&nbsp;...)</td>
+<td>For unpickling.</td>
+</tr>
+</tbody>
+</table>
+<p>Basic customization:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__new__.html#numpy.ndarray.__new__" title="numpy.ndarray.__new__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__new__</span></tt></a>((S,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__array__.html#numpy.ndarray.__array__" title="numpy.ndarray.__array__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__array__</span></tt></a>(...)</td>
+<td>Returns either a new reference to self if dtype is not given or a new array</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__array_wrap__.html#numpy.ndarray.__array_wrap__" title="numpy.ndarray.__array_wrap__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__array_wrap__</span></tt></a>(...)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Container customization: (see <a class="reference internal" href="arrays.indexing.html#arrays-indexing"><em>Indexing</em></a>)</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__len__.html#numpy.ndarray.__len__" title="numpy.ndarray.__len__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__len__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;len(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__getitem__.html#numpy.ndarray.__getitem__" title="numpy.ndarray.__getitem__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__getitem__</span></tt></a></td>
+<td>x.__getitem__(y) &lt;==&gt; x[y]</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__setitem__.html#numpy.ndarray.__setitem__" title="numpy.ndarray.__setitem__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__setitem__</span></tt></a></td>
+<td>x.__setitem__(i, y) &lt;==&gt; x[i]=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__getslice__.html#numpy.ndarray.__getslice__" title="numpy.ndarray.__getslice__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__getslice__</span></tt></a></td>
+<td>x.__getslice__(i, j) &lt;==&gt; x[i:j]</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__setslice__.html#numpy.ndarray.__setslice__" title="numpy.ndarray.__setslice__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__setslice__</span></tt></a></td>
+<td>x.__setslice__(i, j, y) &lt;==&gt; x[i:j]=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__contains__.html#numpy.ndarray.__contains__" title="numpy.ndarray.__contains__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__contains__</span></tt></a></td>
+<td>x.__contains__(y) &lt;==&gt; y in x</td>
+</tr>
+</tbody>
+</table>
+<p>Conversion; the operations <a class="reference external" href="http://docs.python.org/dev/library/functions.html#complex" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">complex</span></tt></a>, <a class="reference external" href="http://docs.python.org/dev/library/functions.html#int" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">int</span></tt></a>,
+<tt class="xref py py-func docutils literal"><span class="pre">long</span></tt>, <a class="reference external" href="http://docs.python.org/dev/library/functions.html#float" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">float</span></tt></a>, <a class="reference external" href="http://docs.python.org/dev/library/functions.html#oct" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">oct</span></tt></a>, and
+<a class="reference external" href="http://docs.python.org/dev/library/functions.html#hex" title="(in Python v3.4)"><tt class="xref py py-func docutils literal"><span class="pre">hex</span></tt></a>. They work only on arrays that have one element in them
+and return the appropriate scalar.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__int__.html#numpy.ndarray.__int__" title="numpy.ndarray.__int__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__int__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;int(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__long__.html#numpy.ndarray.__long__" title="numpy.ndarray.__long__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__long__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;long(x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__float__.html#numpy.ndarray.__float__" title="numpy.ndarray.__float__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__float__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;float(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__oct__.html#numpy.ndarray.__oct__" title="numpy.ndarray.__oct__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__oct__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;oct(x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__hex__.html#numpy.ndarray.__hex__" title="numpy.ndarray.__hex__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__hex__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;hex(x)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>String representations:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/numpy.ndarray.__str__.html#numpy.ndarray.__str__" title="numpy.ndarray.__str__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__str__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;str(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/numpy.ndarray.__repr__.html#numpy.ndarray.__repr__" title="numpy.ndarray.__repr__"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray.__repr__</span></tt></a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Nov 10, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,513 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>Label Propagation digits active learning &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="../../_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="../../index.html" />
+    <link rel="up" title="Examples" href="../index.html" />
+    <link rel="next" title="Non-linear SVM" href="../svm/plot_svm_nonlinear.html" />
+    <link rel="prev" title="Label Propagation digits: Demonstrating performance" href="plot_label_propagation_digits.html" />
+  
+   
+       <script type="text/javascript" src="../../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/auto_examples/semi_supervised/plot_label_propagation_digits_active_learning.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="../../index.html">
+            <img src="../../_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../../../stable/index.html">Home</a></li>
+                <li><a href="../../../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="../../documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="../../tutorial/index.html">Tutorials</a></li>
+			<li><a href="../../user_guide.html">User guide</a></li>
+			<li><a href="../../modules/classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="../../documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="../index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="../../_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="plot_label_propagation_digits.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        Label Propagatio...
+        </span>
+            <span class="hiddenrellink">
+            Label Propagation digits: Demonstrating performance
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../svm/plot_svm_nonlinear.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        Non-linear SVM
+        </span>
+            <span class="hiddenrellink">
+            Non-linear SVM
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../../np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../../py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="../index.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        Examples
+        </span>
+            <span class="hiddenrellink">
+            Examples
+            </span>
+            
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">Label Propagation digits active learning</a></li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="label-propagation-digits-active-learning">
+<span id="example-semi-supervised-plot-label-propagation-digits-active-learning-py"></span><h1>Label Propagation digits active learning<a class="headerlink" href="#label-propagation-digits-active-learning" title="Permalink to this headline">¶</a></h1>
+<p>Demonstrates an active learning technique to learn handwritten digits
+using label propagation.</p>
+<p>We start by training a label propagation model with only 10 labeled points,
+then we select the top five most uncertain points to label. Next, we train
+with 15 labeled points (original 10 + 5 new ones). We repeat this process
+four times to have a model trained with 30 labeled examples.</p>
+<p>A plot will appear showing the top 5 most uncertain digits for each iteration
+of training. These may or may not contain mistakes, but we will train the next
+model with their true labels.</p>
+<img alt="../../_images/plot_label_propagation_digits_active_learning_1.png" class="align-center" src="../../_images/plot_label_propagation_digits_active_learning_1.png" />
+<p><strong>Script output</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>Iteration 0 ______________________________________________________________________
+Label Spreading model: 10 labeled &amp; 320 unlabeled (330 total)
+             precision    recall  f1-score   support
+
+          0       0.00      0.00      0.00        24
+          1       0.49      0.90      0.63        29
+          2       0.88      0.97      0.92        31
+          3       0.00      0.00      0.00        28
+          4       0.00      0.00      0.00        27
+          5       0.89      0.49      0.63        35
+          6       0.86      0.95      0.90        40
+          7       0.75      0.92      0.83        36
+          8       0.54      0.79      0.64        33
+          9       0.41      0.86      0.56        37
+
+avg / total       0.52      0.63      0.55       320
+
+Confusion matrix
+[[26  1  0  0  1  0  1]
+ [ 1 30  0  0  0  0  0]
+ [ 0  0 17  6  0  2 10]
+ [ 2  0  0 38  0  0  0]
+ [ 0  3  0  0 33  0  0]
+ [ 7  0  0  0  0 26  0]
+ [ 0  0  2  0  0  3 32]]
+Iteration 1 ______________________________________________________________________
+Label Spreading model: 15 labeled &amp; 315 unlabeled (330 total)
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        23
+          1       0.61      0.59      0.60        29
+          2       0.91      0.97      0.94        31
+          3       1.00      0.56      0.71        27
+          4       0.79      0.88      0.84        26
+          5       0.89      0.46      0.60        35
+          6       0.86      0.95      0.90        40
+          7       0.97      0.92      0.94        36
+          8       0.54      0.84      0.66        31
+          9       0.70      0.81      0.75        37
+
+avg / total       0.82      0.80      0.79       315
+
+Confusion matrix
+[[23  0  0  0  0  0  0  0  0  0]
+ [ 0 17  1  0  2  0  0  1  7  1]
+ [ 0  1 30  0  0  0  0  0  0  0]
+ [ 0  0  0 15  0  0  0  0 10  2]
+ [ 0  3  0  0 23  0  0  0  0  0]
+ [ 0  0  0  0  1 16  6  0  2 10]
+ [ 0  2  0  0  0  0 38  0  0  0]
+ [ 0  0  2  0  1  0  0 33  0  0]
+ [ 0  5  0  0  0  0  0  0 26  0]
+ [ 0  0  0  0  2  2  0  0  3 30]]
+Iteration 2 ______________________________________________________________________
+Label Spreading model: 20 labeled &amp; 310 unlabeled (330 total)
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        23
+          1       0.68      0.59      0.63        29
+          2       0.91      0.97      0.94        31
+          3       0.96      1.00      0.98        23
+          4       0.81      1.00      0.89        25
+          5       0.89      0.46      0.60        35
+          6       0.86      0.95      0.90        40
+          7       0.97      0.92      0.94        36
+          8       0.68      0.84      0.75        31
+          9       0.75      0.81      0.78        37
+
+avg / total       0.85      0.84      0.83       310
+
+Confusion matrix
+[[23  0  0  0  0  0  0  0  0  0]
+ [ 0 17  1  0  2  0  0  1  7  1]
+ [ 0  1 30  0  0  0  0  0  0  0]
+ [ 0  0  0 23  0  0  0  0  0  0]
+ [ 0  0  0  0 25  0  0  0  0  0]
+ [ 0  0  0  1  1 16  6  0  2  9]
+ [ 0  2  0  0  0  0 38  0  0  0]
+ [ 0  0  2  0  1  0  0 33  0  0]
+ [ 0  5  0  0  0  0  0  0 26  0]
+ [ 0  0  0  0  2  2  0  0  3 30]]
+Iteration 3 ______________________________________________________________________
+Label Spreading model: 25 labeled &amp; 305 unlabeled (330 total)
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        23
+          1       0.70      0.85      0.77        27
+          2       1.00      0.90      0.95        31
+          3       1.00      1.00      1.00        23
+          4       1.00      1.00      1.00        25
+          5       0.96      0.74      0.83        34
+          6       1.00      0.95      0.97        40
+          7       0.90      1.00      0.95        35
+          8       0.83      0.81      0.82        31
+          9       0.75      0.83      0.79        36
+
+avg / total       0.91      0.90      0.90       305
+
+Confusion matrix
+[[23  0  0  0  0  0  0  0  0  0]
+ [ 0 23  0  0  0  0  0  0  4  0]
+ [ 0  1 28  0  0  0  0  2  0  0]
+ [ 0  0  0 23  0  0  0  0  0  0]
+ [ 0  0  0  0 25  0  0  0  0  0]
+ [ 0  0  0  0  0 25  0  0  0  9]
+ [ 0  2  0  0  0  0 38  0  0  0]
+ [ 0  0  0  0  0  0  0 35  0  0]
+ [ 0  5  0  0  0  0  0  0 25  1]
+ [ 0  2  0  0  0  1  0  2  1 30]]
+Iteration 4 ______________________________________________________________________
+Label Spreading model: 30 labeled &amp; 300 unlabeled (330 total)
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        23
+          1       0.77      0.88      0.82        26
+          2       1.00      0.90      0.95        31
+          3       1.00      1.00      1.00        23
+          4       1.00      1.00      1.00        25
+          5       0.94      0.97      0.95        32
+          6       1.00      0.97      0.99        39
+          7       0.90      1.00      0.95        35
+          8       0.89      0.81      0.85        31
+          9       0.94      0.89      0.91        35
+
+avg / total       0.94      0.94      0.94       300
+
+Confusion matrix
+[[23  0  0  0  0  0  0  0  0  0]
+ [ 0 23  0  0  0  0  0  0  3  0]
+ [ 0  1 28  0  0  0  0  2  0  0]
+ [ 0  0  0 23  0  0  0  0  0  0]
+ [ 0  0  0  0 25  0  0  0  0  0]
+ [ 0  0  0  0  0 31  0  0  0  1]
+ [ 0  1  0  0  0  0 38  0  0  0]
+ [ 0  0  0  0  0  0  0 35  0  0]
+ [ 0  5  0  0  0  0  0  0 25  1]
+ [ 0  0  0  0  0  2  0  2  0 31]]
+</pre></div>
+</div>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../../_downloads/plot_label_propagation_digits_active_learning.py"><tt class="xref download docutils literal"><span class="pre">plot_label_propagation_digits_active_learning.py</span></tt></a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+<span class="c"># Authors: Clay Woolam &lt;clay@woolam.org&gt;</span>
+<span class="c"># Licence: BSD</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="kn">as</span> <span class="nn">pl</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+<span class="kn">from</span> <span class="nn">sklearn.semi_supervised</span> <span class="kn">import</span> <span class="n">label_propagation</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <a href="../../modules/generated/sklearn.metrics.classification_report.html#sklearn.metrics.classification_report"><span class="n">classification_report</span></a><span class="p">,</span> <a href="../../modules/generated/sklearn.metrics.confusion_matrix.html#sklearn.metrics.confusion_matrix"><span class="n">confusion_matrix</span></a>
+
+<span class="n">digits</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.datasets.load_digits.html#sklearn.datasets.load_digits"><span class="n">datasets</span><span class="o">.</span><span class="n">load_digits</span></a><span class="p">()</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">indices</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.arange.html#numpy.arange"><span class="n">np</span><span class="o">.</span><span class="n">arange</span></a><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+<span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">digits</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">indices</span><span class="p">[:</span><span class="mi">330</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">digits</span><span class="o">.</span><span class="n">target</span><span class="p">[</span><span class="n">indices</span><span class="p">[:</span><span class="mi">330</span><span class="p">]]</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">digits</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">indices</span><span class="p">[:</span><span class="mi">330</span><span class="p">]]</span>
+
+<span class="n">n_total_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">n_labeled_points</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">unlabeled_indices</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.arange.html#numpy.arange"><span class="n">np</span><span class="o">.</span><span class="n">arange</span></a><span class="p">(</span><span class="n">n_total_samples</span><span class="p">)[</span><span class="n">n_labeled_points</span><span class="p">:]</span>
+<a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure"><span class="n">f</span></a> <span class="o">=</span> <a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure"><span class="n">pl</span><span class="o">.</span><span class="n">figure</span></a><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">y_train</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.copy.html#numpy.copy"><span class="n">np</span><span class="o">.</span><span class="n">copy</span></a><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">y_train</span><span class="p">[</span><span class="n">unlabeled_indices</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <a href="../../modules/generated/sklearn.semi_supervised.LabelSpreading.html#sklearn.semi_supervised.LabelSpreading"><span class="n">lp_model</span></a> <span class="o">=</span> <a href="../../modules/generated/sklearn.semi_supervised.LabelSpreading.html#sklearn.semi_supervised.LabelSpreading"><span class="n">label_propagation</span><span class="o">.</span><span class="n">LabelSpreading</span></a><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <a href="../../modules/generated/sklearn.semi_supervised.LabelSpreading.html#sklearn.semi_supervised.LabelSpreading"><span class="n">lp_model</span></a><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+    <span class="n">predicted_labels</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.semi_supervised.LabelSpreading.html#sklearn.semi_supervised.LabelSpreading"><span class="n">lp_model</span></a><span class="o">.</span><span class="n">transduction_</span><span class="p">[</span><span class="n">unlabeled_indices</span><span class="p">]</span>
+    <span class="n">true_labels</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">unlabeled_indices</span><span class="p">]</span>
+
+    <span class="n">cm</span> <span class="o">=</span> <a href="../../modules/generated/sklearn.metrics.confusion_matrix.html#sklearn.metrics.confusion_matrix"><span class="n">confusion_matrix</span></a><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">,</span>
+                          <span class="n">labels</span><span class="o">=</span><a href="../../modules/generated/sklearn.semi_supervised.LabelSpreading.html#sklearn.semi_supervised.LabelSpreading"><span class="n">lp_model</span></a><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Iteration </span><span class="si">%i</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">70</span> <span class="o">*</span> <span class="s">&#39;_&#39;</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Label Spreading model: </span><span class="si">%d</span><span class="s"> labeled &amp; </span><span class="si">%d</span><span class="s"> unlabeled (</span><span class="si">%d</span><span class="s"> total)&quot;</span>
+          <span class="o">%</span> <span class="p">(</span><span class="n">n_labeled_points</span><span class="p">,</span> <span class="n">n_total_samples</span> <span class="o">-</span> <span class="n">n_labeled_points</span><span class="p">,</span> <span class="n">n_total_samples</span><span class="p">))</span>
+
+    <span class="k">print</span><span class="p">(</span><a href="../../modules/generated/sklearn.metrics.classification_report.html#sklearn.metrics.classification_report"><span class="n">classification_report</span></a><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Confusion matrix&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+
+    <span class="c"># compute the entropies of transduced label distributions</span>
+    <span class="n">pred_entropies</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">entropy</span><span class="p">(</span>
+        <a href="../../modules/generated/sklearn.semi_supervised.LabelSpreading.html#sklearn.semi_supervised.LabelSpreading"><span class="n">lp_model</span></a><span class="o">.</span><span class="n">label_distributions_</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+    <span class="c"># select five digit examples that the classifier is most uncertain about</span>
+    <span class="n">uncertainty_index</span> <span class="o">=</span> <span class="n">uncertainty_index</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.argsort.html#numpy.argsort"><span class="n">np</span><span class="o">.</span><span class="n">argsort</span></a><span class="p">(</span><span class="n">pred_entropies</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+
+    <span class="c"># keep track of indices that we get labels for</span>
+    <span class="n">delete_indices</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.array.html#numpy.array"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">([])</span>
+
+    <a href="http://matplotlib.org/api/artist_api.html#matplotlib.text"><a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure"><span class="n">f</span></a><span class="o">.</span><span class="n">text</span></a><span class="p">(</span><span class="o">.</span><span class="mo">05</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="o">.</span><span class="mi">183</span><span class="p">),</span>
+           <span class="s">&quot;model </span><span class="si">%d</span><span class="se">\n\n</span><span class="s">fit with</span><span class="se">\n</span><span class="si">%d</span><span class="s"> labels&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">10</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">image_index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">uncertainty_index</span><span class="p">):</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span>
+
+        <span class="n">sub</span> <span class="o">=</span> <a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure"><span class="n">f</span></a><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">i</span><span class="p">))</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gray_r</span><span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;predict: </span><span class="si">%i</span><span class="se">\n</span><span class="s">true: </span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <a href="../../modules/generated/sklearn.semi_supervised.LabelSpreading.html#sklearn.semi_supervised.LabelSpreading"><span class="n">lp_model</span></a><span class="o">.</span><span class="n">transduction_</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">image_index</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <a href="http://matplotlib.org/api/axis_api.html#matplotlib.axis"><span class="n">sub</span><span class="o">.</span><span class="n">axis</span></a><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
+
+        <span class="c"># labeling 5 points, remote from labeled set</span>
+        <span class="n">delete_index</span><span class="p">,</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.where.html#numpy.where"><span class="n">np</span><span class="o">.</span><span class="n">where</span></a><span class="p">(</span><span class="n">unlabeled_indices</span> <span class="o">==</span> <span class="n">image_index</span><span class="p">)</span>
+        <span class="n">delete_indices</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.concatenate.html#numpy.concatenate"><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span></a><span class="p">((</span><span class="n">delete_indices</span><span class="p">,</span> <span class="n">delete_index</span><span class="p">))</span>
+
+    <span class="n">unlabeled_indices</span> <span class="o">=</span> <a href="http://docs.scipy.org/doc/numpy-1.6.0/reference/generated/numpy.delete.html#numpy.delete"><span class="n">np</span><span class="o">.</span><span class="n">delete</span></a><span class="p">(</span><span class="n">unlabeled_indices</span><span class="p">,</span> <span class="n">delete_indices</span><span class="p">)</span>
+    <span class="n">n_labeled_points</span> <span class="o">+=</span> <span class="mi">5</span>
+
+<a href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure"><span class="n">f</span></a><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s">&quot;Active learning with Label Propagation.</span><span class="se">\n</span><span class="s">Rows show 5 most &quot;</span>
+           <span class="s">&quot;uncertain labels to learn with the next model.&quot;</span><span class="p">)</span>
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.subplots_adjust"><span class="n">pl</span><span class="o">.</span><span class="n">subplots_adjust</span></a><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">)</span>
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.show"><span class="n">pl</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the example:</strong>  1.28 seconds
+( 0 minutes  1.28 seconds)</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../../_sources/auto_examples/semi_supervised/plot_label_propagation_digits_active_learning.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="plot_label_propagation_digits.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../svm/plot_svm_nonlinear.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="../../np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../../py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

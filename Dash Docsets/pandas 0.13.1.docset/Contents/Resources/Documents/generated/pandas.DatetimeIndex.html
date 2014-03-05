@@ -1,0 +1,686 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>pandas.DatetimeIndex — pandas 0.13.1 documentation</title>
+<link href="../_static/nature.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="pandas 0.13.1 documentation"/>
+<link href="../api.html" rel="up" title="API Reference"/>
+<link href="pandas.DatetimeIndex.T.html" rel="next" title="pandas.DatetimeIndex.T"/>
+<link href="pandas.Index.is_numeric.html" rel="prev" title="pandas.Index.is_numeric"/>
+</head>
+<body>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="pandas.DatetimeIndex.T.html" title="pandas.DatetimeIndex.T">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="pandas.Index.is_numeric.html" title="pandas.Index.is_numeric">previous</a> |</li>
+<li><a href="../index.html">pandas 0.13.1 documentation</a> »</li>
+<li><a accesskey="U" href="../api.html">API Reference</a> »</li>
+</ul>
+</div>
+<div class="content-wrapper">
+<div class="content">
+<div class="document">
+<div class="sphinxsidebar">
+<h3>Table Of Contents</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../whatsnew.html">What’s New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Package overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10min.html">10 Minutes to Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dsintro.html">Intro to Data Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basics.html">Essential Basic Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../indexing.html">Indexing and Selecting Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../computation.html">Computational tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../missing_data.html">Working with missing data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../groupby.html">Group By: split-apply-combine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../merging.html">Merge, join, and concatenate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reshaping.html">Reshaping and Pivot Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../timeseries.html">Time Series / Date functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization.html">Plotting with matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rplot.html">Trellis plotting interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../io.html">IO Tools (Text, CSV, HDF5, ...)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../remote_data.html">Remote Data Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../enhancingperf.html">Enhancing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sparse.html">Sparse data structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gotchas.html">Caveats and Gotchas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../r_interface.html">rpy2 / R interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html">Pandas Ecosystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../comparison_with_r.html">Comparison with R / R libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../comparison_with_sql.html">Comparison with SQL</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#input-output">Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#general-functions">General functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#series">Series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#dataframe">DataFrame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#panel">Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#panel4d">Panel4D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#index">Index</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#datetimeindex">DatetimeIndex</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">pandas.DatetimeIndex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#time-date-components">Time/Date Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#id31">Selecting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#id32">Time-specific operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#id33">Conversion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#groupby">GroupBy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Release Notes</a></li>
+</ul>
+<h3 style="margin-top: 1.5em;">Search</h3>
+<form action="../search.html" class="search" method="get">
+<input name="q" size="18" type="text"/>
+<input type="submit" value="Go"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+<p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+<p>
+</p><p>
+<script src="http://www.ohloh.net/p/482908/widgets/project_partner_badge.js" type="text/javascript"></script>
+</p>
+</div>
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="pandas-datetimeindex">
+<h1>pandas.DatetimeIndex<a class="headerlink" href="#pandas-datetimeindex" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pandas.DatetimeIndex"><a name="//apple_ref/cpp/cl/pandas.DatetimeIndex"></a>
+<em class="property">class </em><tt class="descclassname">pandas.</tt><tt class="descname">DatetimeIndex</tt><a class="headerlink" href="#pandas.DatetimeIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Immutable ndarray of datetime64 data, represented internally as int64, and
+which can be boxed to Timestamp objects that are subclasses of datetime and
+carry metadata such as frequency information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : array-like (1-dimensional), optional</p>
+<blockquote>
+<div><p>Optional datetime-like data to construct index with</p>
+</div></blockquote>
+<p><strong>copy</strong> : bool</p>
+<blockquote>
+<div><p>Make a copy of input ndarray</p>
+</div></blockquote>
+<p><strong>freq</strong> : string or pandas offset object, optional</p>
+<blockquote>
+<div><p>One of pandas date offset strings or corresponding objects</p>
+</div></blockquote>
+<p><strong>start</strong> : starting value, datetime-like, optional</p>
+<blockquote>
+<div><p>If data is None, start is used as the start point in generating regular
+timestamp data.</p>
+</div></blockquote>
+<p><strong>periods</strong> : int, optional, &gt; 0</p>
+<blockquote>
+<div><p>Number of periods to generate, if generating index. Takes precedence
+over end argument</p>
+</div></blockquote>
+<p><strong>end</strong> : end time, datetime-like, optional</p>
+<blockquote>
+<div><p>If periods is none, generated index will extend to first conforming
+time on or just past end argument</p>
+</div></blockquote>
+<p><strong>closed</strong> : string or None, default None</p>
+<blockquote>
+<div><p>Make the interval closed with respect to the given frequency to
+the ‘left’, ‘right’, or both sides (None)</p>
+</div></blockquote>
+<p><strong>name</strong> : object</p>
+<blockquote class="last">
+<div><p>Name to be stored in the index</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.T.html#pandas.DatetimeIndex.T" title="pandas.DatetimeIndex.T"><tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt></a></td>
+<td>Same as self.transpose(), except that self is returned if self.ndim &lt; 2.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.asi8.html#pandas.DatetimeIndex.asi8" title="pandas.DatetimeIndex.asi8"><tt class="xref py py-obj docutils literal"><span class="pre">asi8</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.asobject.html#pandas.DatetimeIndex.asobject" title="pandas.DatetimeIndex.asobject"><tt class="xref py py-obj docutils literal"><span class="pre">asobject</span></tt></a></td>
+<td>Convert to Index of datetime objects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.base.html#pandas.DatetimeIndex.base" title="pandas.DatetimeIndex.base"><tt class="xref py py-obj docutils literal"><span class="pre">base</span></tt></a></td>
+<td>Base object if memory is from some other object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.ctypes.html#pandas.DatetimeIndex.ctypes" title="pandas.DatetimeIndex.ctypes"><tt class="xref py py-obj docutils literal"><span class="pre">ctypes</span></tt></a></td>
+<td>An object to simplify the interaction of the array with the ctypes module.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.data.html#pandas.DatetimeIndex.data" title="pandas.DatetimeIndex.data"><tt class="xref py py-obj docutils literal"><span class="pre">data</span></tt></a></td>
+<td>Python buffer object pointing to the start of the array’s data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.date.html#pandas.DatetimeIndex.date" title="pandas.DatetimeIndex.date"><tt class="xref py py-obj docutils literal"><span class="pre">date</span></tt></a></td>
+<td>Returns numpy array of datetime.date.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.day.html#pandas.DatetimeIndex.day" title="pandas.DatetimeIndex.day"><tt class="xref py py-obj docutils literal"><span class="pre">day</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.dayofweek.html#pandas.DatetimeIndex.dayofweek" title="pandas.DatetimeIndex.dayofweek"><tt class="xref py py-obj docutils literal"><span class="pre">dayofweek</span></tt></a></td>
+<td>The day of the week with Monday=0, Sunday=6</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.dayofyear.html#pandas.DatetimeIndex.dayofyear" title="pandas.DatetimeIndex.dayofyear"><tt class="xref py py-obj docutils literal"><span class="pre">dayofyear</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.dtype.html#pandas.DatetimeIndex.dtype" title="pandas.DatetimeIndex.dtype"><tt class="xref py py-obj docutils literal"><span class="pre">dtype</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.flags.html#pandas.DatetimeIndex.flags" title="pandas.DatetimeIndex.flags"><tt class="xref py py-obj docutils literal"><span class="pre">flags</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.flat.html#pandas.DatetimeIndex.flat" title="pandas.DatetimeIndex.flat"><tt class="xref py py-obj docutils literal"><span class="pre">flat</span></tt></a></td>
+<td>A 1-D iterator over the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.freq.html#pandas.DatetimeIndex.freq" title="pandas.DatetimeIndex.freq"><tt class="xref py py-obj docutils literal"><span class="pre">freq</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.freqstr.html#pandas.DatetimeIndex.freqstr" title="pandas.DatetimeIndex.freqstr"><tt class="xref py py-obj docutils literal"><span class="pre">freqstr</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.hour.html#pandas.DatetimeIndex.hour" title="pandas.DatetimeIndex.hour"><tt class="xref py py-obj docutils literal"><span class="pre">hour</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.imag.html#pandas.DatetimeIndex.imag" title="pandas.DatetimeIndex.imag"><tt class="xref py py-obj docutils literal"><span class="pre">imag</span></tt></a></td>
+<td>The imaginary part of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.inferred_type.html#pandas.DatetimeIndex.inferred_type" title="pandas.DatetimeIndex.inferred_type"><tt class="xref py py-obj docutils literal"><span class="pre">inferred_type</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.is_all_dates.html#pandas.DatetimeIndex.is_all_dates" title="pandas.DatetimeIndex.is_all_dates"><tt class="xref py py-obj docutils literal"><span class="pre">is_all_dates</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.is_monotonic.html#pandas.DatetimeIndex.is_monotonic" title="pandas.DatetimeIndex.is_monotonic"><tt class="xref py py-obj docutils literal"><span class="pre">is_monotonic</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.itemsize.html#pandas.DatetimeIndex.itemsize" title="pandas.DatetimeIndex.itemsize"><tt class="xref py py-obj docutils literal"><span class="pre">itemsize</span></tt></a></td>
+<td>Length of one array element in bytes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.microsecond.html#pandas.DatetimeIndex.microsecond" title="pandas.DatetimeIndex.microsecond"><tt class="xref py py-obj docutils literal"><span class="pre">microsecond</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.minute.html#pandas.DatetimeIndex.minute" title="pandas.DatetimeIndex.minute"><tt class="xref py py-obj docutils literal"><span class="pre">minute</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.month.html#pandas.DatetimeIndex.month" title="pandas.DatetimeIndex.month"><tt class="xref py py-obj docutils literal"><span class="pre">month</span></tt></a></td>
+<td>The month as January=1, December=12</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.names.html#pandas.DatetimeIndex.names" title="pandas.DatetimeIndex.names"><tt class="xref py py-obj docutils literal"><span class="pre">names</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.nanosecond.html#pandas.DatetimeIndex.nanosecond" title="pandas.DatetimeIndex.nanosecond"><tt class="xref py py-obj docutils literal"><span class="pre">nanosecond</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.nbytes.html#pandas.DatetimeIndex.nbytes" title="pandas.DatetimeIndex.nbytes"><tt class="xref py py-obj docutils literal"><span class="pre">nbytes</span></tt></a></td>
+<td>Total bytes consumed by the elements of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.ndim.html#pandas.DatetimeIndex.ndim" title="pandas.DatetimeIndex.ndim"><tt class="xref py py-obj docutils literal"><span class="pre">ndim</span></tt></a></td>
+<td>Number of array dimensions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.nlevels.html#pandas.DatetimeIndex.nlevels" title="pandas.DatetimeIndex.nlevels"><tt class="xref py py-obj docutils literal"><span class="pre">nlevels</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.quarter.html#pandas.DatetimeIndex.quarter" title="pandas.DatetimeIndex.quarter"><tt class="xref py py-obj docutils literal"><span class="pre">quarter</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.real.html#pandas.DatetimeIndex.real" title="pandas.DatetimeIndex.real"><tt class="xref py py-obj docutils literal"><span class="pre">real</span></tt></a></td>
+<td>The real part of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.second.html#pandas.DatetimeIndex.second" title="pandas.DatetimeIndex.second"><tt class="xref py py-obj docutils literal"><span class="pre">second</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.shape.html#pandas.DatetimeIndex.shape" title="pandas.DatetimeIndex.shape"><tt class="xref py py-obj docutils literal"><span class="pre">shape</span></tt></a></td>
+<td>Tuple of array dimensions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.size.html#pandas.DatetimeIndex.size" title="pandas.DatetimeIndex.size"><tt class="xref py py-obj docutils literal"><span class="pre">size</span></tt></a></td>
+<td>Number of elements in the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.strides.html#pandas.DatetimeIndex.strides" title="pandas.DatetimeIndex.strides"><tt class="xref py py-obj docutils literal"><span class="pre">strides</span></tt></a></td>
+<td>Tuple of bytes to step in each dimension when traversing an array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.time.html#pandas.DatetimeIndex.time" title="pandas.DatetimeIndex.time"><tt class="xref py py-obj docutils literal"><span class="pre">time</span></tt></a></td>
+<td>Returns numpy array of datetime.time.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.tzinfo.html#pandas.DatetimeIndex.tzinfo" title="pandas.DatetimeIndex.tzinfo"><tt class="xref py py-obj docutils literal"><span class="pre">tzinfo</span></tt></a></td>
+<td>Alias for tz attribute</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.values.html#pandas.DatetimeIndex.values" title="pandas.DatetimeIndex.values"><tt class="xref py py-obj docutils literal"><span class="pre">values</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.week.html#pandas.DatetimeIndex.week" title="pandas.DatetimeIndex.week"><tt class="xref py py-obj docutils literal"><span class="pre">week</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.weekday.html#pandas.DatetimeIndex.weekday" title="pandas.DatetimeIndex.weekday"><tt class="xref py py-obj docutils literal"><span class="pre">weekday</span></tt></a></td>
+<td>The day of the week with Monday=0, Sunday=6</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.weekofyear.html#pandas.DatetimeIndex.weekofyear" title="pandas.DatetimeIndex.weekofyear"><tt class="xref py py-obj docutils literal"><span class="pre">weekofyear</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.year.html#pandas.DatetimeIndex.year" title="pandas.DatetimeIndex.year"><tt class="xref py py-obj docutils literal"><span class="pre">year</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="57%"></col>
+<col width="43%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>inferred_freq</td>
+<td> </td>
+</tr>
+<tr class="row-even"><td>is_normalized</td>
+<td> </td>
+</tr>
+<tr class="row-odd"><td>is_unique</td>
+<td> </td>
+</tr>
+<tr class="row-even"><td>name</td>
+<td> </td>
+</tr>
+<tr class="row-odd"><td>offset</td>
+<td> </td>
+</tr>
+<tr class="row-even"><td>resolution</td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.all.html#pandas.DatetimeIndex.all" title="pandas.DatetimeIndex.all"><tt class="xref py py-obj docutils literal"><span class="pre">all</span></tt></a>([axis, out])</td>
+<td>Returns True if all elements evaluate to True.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.any.html#pandas.DatetimeIndex.any" title="pandas.DatetimeIndex.any"><tt class="xref py py-obj docutils literal"><span class="pre">any</span></tt></a>([axis, out])</td>
+<td>Returns True if any of the elements of <cite>a</cite> evaluate to True.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.append.html#pandas.DatetimeIndex.append" title="pandas.DatetimeIndex.append"><tt class="xref py py-obj docutils literal"><span class="pre">append</span></tt></a>(other)</td>
+<td>Append a collection of Index options together</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.argmax.html#pandas.DatetimeIndex.argmax" title="pandas.DatetimeIndex.argmax"><tt class="xref py py-obj docutils literal"><span class="pre">argmax</span></tt></a>([axis, out])</td>
+<td>Return indices of the maximum values along the given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.argmin.html#pandas.DatetimeIndex.argmin" title="pandas.DatetimeIndex.argmin"><tt class="xref py py-obj docutils literal"><span class="pre">argmin</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.argsort.html#pandas.DatetimeIndex.argsort" title="pandas.DatetimeIndex.argsort"><tt class="xref py py-obj docutils literal"><span class="pre">argsort</span></tt></a>(*args, **kwargs)</td>
+<td>See docstring for ndarray.argsort</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.asof.html#pandas.DatetimeIndex.asof" title="pandas.DatetimeIndex.asof"><tt class="xref py py-obj docutils literal"><span class="pre">asof</span></tt></a>(label)</td>
+<td>For a sorted index, return the most recent label up to and including the passed label.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.asof_locs.html#pandas.DatetimeIndex.asof_locs" title="pandas.DatetimeIndex.asof_locs"><tt class="xref py py-obj docutils literal"><span class="pre">asof_locs</span></tt></a>(where, mask)</td>
+<td>where : array of timestamps</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.astype.html#pandas.DatetimeIndex.astype" title="pandas.DatetimeIndex.astype"><tt class="xref py py-obj docutils literal"><span class="pre">astype</span></tt></a>(dtype)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.byteswap.html#pandas.DatetimeIndex.byteswap" title="pandas.DatetimeIndex.byteswap"><tt class="xref py py-obj docutils literal"><span class="pre">byteswap</span></tt></a>(inplace)</td>
+<td>Swap the bytes of the array elements</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.choose.html#pandas.DatetimeIndex.choose" title="pandas.DatetimeIndex.choose"><tt class="xref py py-obj docutils literal"><span class="pre">choose</span></tt></a>(choices[, out, mode])</td>
+<td>Use an index array to construct a new array from a set of choices.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.clip.html#pandas.DatetimeIndex.clip" title="pandas.DatetimeIndex.clip"><tt class="xref py py-obj docutils literal"><span class="pre">clip</span></tt></a>(a_min, a_max[, out])</td>
+<td>Return an array whose values are limited to <tt class="docutils literal"><span class="pre">[a_min,</span> <span class="pre">a_max]</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.compress.html#pandas.DatetimeIndex.compress" title="pandas.DatetimeIndex.compress"><tt class="xref py py-obj docutils literal"><span class="pre">compress</span></tt></a>(condition[, axis, out])</td>
+<td>Return selected slices of this array along given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.conj.html#pandas.DatetimeIndex.conj" title="pandas.DatetimeIndex.conj"><tt class="xref py py-obj docutils literal"><span class="pre">conj</span></tt></a>()</td>
+<td>Complex-conjugate all elements.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.conjugate.html#pandas.DatetimeIndex.conjugate" title="pandas.DatetimeIndex.conjugate"><tt class="xref py py-obj docutils literal"><span class="pre">conjugate</span></tt></a>()</td>
+<td>Return the complex conjugate, element-wise.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.copy.html#pandas.DatetimeIndex.copy" title="pandas.DatetimeIndex.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>([names, name, dtype, deep])</td>
+<td>Make a copy of this object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.cumprod.html#pandas.DatetimeIndex.cumprod" title="pandas.DatetimeIndex.cumprod"><tt class="xref py py-obj docutils literal"><span class="pre">cumprod</span></tt></a>([axis, dtype, out])</td>
+<td>Return the cumulative product of the elements along the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.cumsum.html#pandas.DatetimeIndex.cumsum" title="pandas.DatetimeIndex.cumsum"><tt class="xref py py-obj docutils literal"><span class="pre">cumsum</span></tt></a>([axis, dtype, out])</td>
+<td>Return the cumulative sum of the elements along the given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.delete.html#pandas.DatetimeIndex.delete" title="pandas.DatetimeIndex.delete"><tt class="xref py py-obj docutils literal"><span class="pre">delete</span></tt></a>(loc)</td>
+<td>Make new DatetimeIndex with passed location deleted</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.diagonal.html#pandas.DatetimeIndex.diagonal" title="pandas.DatetimeIndex.diagonal"><tt class="xref py py-obj docutils literal"><span class="pre">diagonal</span></tt></a>([offset, axis1, axis2])</td>
+<td>Return specified diagonals.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.diff.html#pandas.DatetimeIndex.diff" title="pandas.DatetimeIndex.diff"><tt class="xref py py-obj docutils literal"><span class="pre">diff</span></tt></a>(other)</td>
+<td>Compute sorted set difference of two Index objects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.dot.html#pandas.DatetimeIndex.dot" title="pandas.DatetimeIndex.dot"><tt class="xref py py-obj docutils literal"><span class="pre">dot</span></tt></a>(b[, out])</td>
+<td>Dot product of two arrays.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.drop.html#pandas.DatetimeIndex.drop" title="pandas.DatetimeIndex.drop"><tt class="xref py py-obj docutils literal"><span class="pre">drop</span></tt></a>(labels)</td>
+<td>Make new Index with passed list of labels deleted</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.dump.html#pandas.DatetimeIndex.dump" title="pandas.DatetimeIndex.dump"><tt class="xref py py-obj docutils literal"><span class="pre">dump</span></tt></a>(file)</td>
+<td>Dump a pickle of the array to the specified file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.dumps.html#pandas.DatetimeIndex.dumps" title="pandas.DatetimeIndex.dumps"><tt class="xref py py-obj docutils literal"><span class="pre">dumps</span></tt></a>()</td>
+<td>Returns the pickle of the array as a string.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.equals.html#pandas.DatetimeIndex.equals" title="pandas.DatetimeIndex.equals"><tt class="xref py py-obj docutils literal"><span class="pre">equals</span></tt></a>(other)</td>
+<td>Determines if two Index objects contain the same elements.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.fill.html#pandas.DatetimeIndex.fill" title="pandas.DatetimeIndex.fill"><tt class="xref py py-obj docutils literal"><span class="pre">fill</span></tt></a>(*args, **kwargs)</td>
+<td>This method will not function because object is immutable.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.flatten.html#pandas.DatetimeIndex.flatten" title="pandas.DatetimeIndex.flatten"><tt class="xref py py-obj docutils literal"><span class="pre">flatten</span></tt></a>([order])</td>
+<td>Return a copy of the array collapsed into one dimension.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.format.html#pandas.DatetimeIndex.format" title="pandas.DatetimeIndex.format"><tt class="xref py py-obj docutils literal"><span class="pre">format</span></tt></a>([name, formatter])</td>
+<td>Render a string representation of the Index</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.get_duplicates.html#pandas.DatetimeIndex.get_duplicates" title="pandas.DatetimeIndex.get_duplicates"><tt class="xref py py-obj docutils literal"><span class="pre">get_duplicates</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.get_indexer.html#pandas.DatetimeIndex.get_indexer" title="pandas.DatetimeIndex.get_indexer"><tt class="xref py py-obj docutils literal"><span class="pre">get_indexer</span></tt></a>(target[, method, limit])</td>
+<td>Compute indexer and mask for new index given the current index.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.get_indexer_non_unique.html#pandas.DatetimeIndex.get_indexer_non_unique" title="pandas.DatetimeIndex.get_indexer_non_unique"><tt class="xref py py-obj docutils literal"><span class="pre">get_indexer_non_unique</span></tt></a>(target, **kwargs)</td>
+<td>return an indexer suitable for taking from a non unique index</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.get_level_values.html#pandas.DatetimeIndex.get_level_values" title="pandas.DatetimeIndex.get_level_values"><tt class="xref py py-obj docutils literal"><span class="pre">get_level_values</span></tt></a>(level)</td>
+<td>Return vector of label values for requested level, equal to the length</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.get_loc.html#pandas.DatetimeIndex.get_loc" title="pandas.DatetimeIndex.get_loc"><tt class="xref py py-obj docutils literal"><span class="pre">get_loc</span></tt></a>(key)</td>
+<td>Get integer location for requested label</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.get_value.html#pandas.DatetimeIndex.get_value" title="pandas.DatetimeIndex.get_value"><tt class="xref py py-obj docutils literal"><span class="pre">get_value</span></tt></a>(series, key)</td>
+<td>Fast lookup of value from 1-dimensional ndarray.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.get_value_maybe_box.html#pandas.DatetimeIndex.get_value_maybe_box" title="pandas.DatetimeIndex.get_value_maybe_box"><tt class="xref py py-obj docutils literal"><span class="pre">get_value_maybe_box</span></tt></a>(series, key)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.get_values.html#pandas.DatetimeIndex.get_values" title="pandas.DatetimeIndex.get_values"><tt class="xref py py-obj docutils literal"><span class="pre">get_values</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.getfield.html#pandas.DatetimeIndex.getfield" title="pandas.DatetimeIndex.getfield"><tt class="xref py py-obj docutils literal"><span class="pre">getfield</span></tt></a>(dtype[, offset])</td>
+<td>Returns a field of the given array as a certain type.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.groupby.html#pandas.DatetimeIndex.groupby" title="pandas.DatetimeIndex.groupby"><tt class="xref py py-obj docutils literal"><span class="pre">groupby</span></tt></a>(f)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.holds_integer.html#pandas.DatetimeIndex.holds_integer" title="pandas.DatetimeIndex.holds_integer"><tt class="xref py py-obj docutils literal"><span class="pre">holds_integer</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.identical.html#pandas.DatetimeIndex.identical" title="pandas.DatetimeIndex.identical"><tt class="xref py py-obj docutils literal"><span class="pre">identical</span></tt></a>(other)</td>
+<td>Similar to equals, but check that other comparable attributes are</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.indexer_at_time.html#pandas.DatetimeIndex.indexer_at_time" title="pandas.DatetimeIndex.indexer_at_time"><tt class="xref py py-obj docutils literal"><span class="pre">indexer_at_time</span></tt></a>(time[, asof])</td>
+<td>Select values at particular time of day (e.g.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.indexer_between_time.html#pandas.DatetimeIndex.indexer_between_time" title="pandas.DatetimeIndex.indexer_between_time"><tt class="xref py py-obj docutils literal"><span class="pre">indexer_between_time</span></tt></a>(start_time, end_time[, ...])</td>
+<td>Select values between particular times of day (e.g., 9:00-9:30AM)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.insert.html#pandas.DatetimeIndex.insert" title="pandas.DatetimeIndex.insert"><tt class="xref py py-obj docutils literal"><span class="pre">insert</span></tt></a>(loc, item)</td>
+<td>Make new Index inserting new item at location</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.intersection.html#pandas.DatetimeIndex.intersection" title="pandas.DatetimeIndex.intersection"><tt class="xref py py-obj docutils literal"><span class="pre">intersection</span></tt></a>(other)</td>
+<td>Specialized intersection for DatetimeIndex objects. May be much faster</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.is_.html#pandas.DatetimeIndex.is_" title="pandas.DatetimeIndex.is_"><tt class="xref py py-obj docutils literal"><span class="pre">is_</span></tt></a>(other)</td>
+<td>More flexible, faster check like <tt class="docutils literal"><span class="pre">is</span></tt> but that works through views</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.is_floating.html#pandas.DatetimeIndex.is_floating" title="pandas.DatetimeIndex.is_floating"><tt class="xref py py-obj docutils literal"><span class="pre">is_floating</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.is_integer.html#pandas.DatetimeIndex.is_integer" title="pandas.DatetimeIndex.is_integer"><tt class="xref py py-obj docutils literal"><span class="pre">is_integer</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.is_lexsorted_for_tuple.html#pandas.DatetimeIndex.is_lexsorted_for_tuple" title="pandas.DatetimeIndex.is_lexsorted_for_tuple"><tt class="xref py py-obj docutils literal"><span class="pre">is_lexsorted_for_tuple</span></tt></a>(tup)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.is_mixed.html#pandas.DatetimeIndex.is_mixed" title="pandas.DatetimeIndex.is_mixed"><tt class="xref py py-obj docutils literal"><span class="pre">is_mixed</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.is_numeric.html#pandas.DatetimeIndex.is_numeric" title="pandas.DatetimeIndex.is_numeric"><tt class="xref py py-obj docutils literal"><span class="pre">is_numeric</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.is_type_compatible.html#pandas.DatetimeIndex.is_type_compatible" title="pandas.DatetimeIndex.is_type_compatible"><tt class="xref py py-obj docutils literal"><span class="pre">is_type_compatible</span></tt></a>(typ)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.isin.html#pandas.DatetimeIndex.isin" title="pandas.DatetimeIndex.isin"><tt class="xref py py-obj docutils literal"><span class="pre">isin</span></tt></a>(values)</td>
+<td>Compute boolean array of whether each index value is found in the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.item.html#pandas.DatetimeIndex.item" title="pandas.DatetimeIndex.item"><tt class="xref py py-obj docutils literal"><span class="pre">item</span></tt></a>(*args)</td>
+<td>Copy an element of an array to a standard Python scalar and return it.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.itemset.html#pandas.DatetimeIndex.itemset" title="pandas.DatetimeIndex.itemset"><tt class="xref py py-obj docutils literal"><span class="pre">itemset</span></tt></a>(*args, **kwargs)</td>
+<td>This method will not function because object is immutable.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.join.html#pandas.DatetimeIndex.join" title="pandas.DatetimeIndex.join"><tt class="xref py py-obj docutils literal"><span class="pre">join</span></tt></a>(other[, how, level, return_indexers])</td>
+<td>See Index.join</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.map.html#pandas.DatetimeIndex.map" title="pandas.DatetimeIndex.map"><tt class="xref py py-obj docutils literal"><span class="pre">map</span></tt></a>(f)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.max.html#pandas.DatetimeIndex.max" title="pandas.DatetimeIndex.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a>([axis])</td>
+<td>Overridden ndarray.max to return a Timestamp</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.mean.html#pandas.DatetimeIndex.mean" title="pandas.DatetimeIndex.mean"><tt class="xref py py-obj docutils literal"><span class="pre">mean</span></tt></a>([axis, dtype, out])</td>
+<td>Returns the average of the array elements along given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.min.html#pandas.DatetimeIndex.min" title="pandas.DatetimeIndex.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a>([axis])</td>
+<td>Overridden ndarray.min to return a Timestamp</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.newbyteorder.html#pandas.DatetimeIndex.newbyteorder" title="pandas.DatetimeIndex.newbyteorder"><tt class="xref py py-obj docutils literal"><span class="pre">newbyteorder</span></tt></a>([new_order])</td>
+<td>Return the array with the same data viewed with a different byte order.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.nonzero.html#pandas.DatetimeIndex.nonzero" title="pandas.DatetimeIndex.nonzero"><tt class="xref py py-obj docutils literal"><span class="pre">nonzero</span></tt></a>()</td>
+<td>Return the indices of the elements that are non-zero.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.normalize.html#pandas.DatetimeIndex.normalize" title="pandas.DatetimeIndex.normalize"><tt class="xref py py-obj docutils literal"><span class="pre">normalize</span></tt></a>()</td>
+<td>Return DatetimeIndex with times to midnight. Length is unaltered</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.order.html#pandas.DatetimeIndex.order" title="pandas.DatetimeIndex.order"><tt class="xref py py-obj docutils literal"><span class="pre">order</span></tt></a>([return_indexer, ascending])</td>
+<td>Return sorted copy of Index</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.prod.html#pandas.DatetimeIndex.prod" title="pandas.DatetimeIndex.prod"><tt class="xref py py-obj docutils literal"><span class="pre">prod</span></tt></a>([axis, dtype, out])</td>
+<td>Return the product of the array elements over the given axis</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.ptp.html#pandas.DatetimeIndex.ptp" title="pandas.DatetimeIndex.ptp"><tt class="xref py py-obj docutils literal"><span class="pre">ptp</span></tt></a>([axis, out])</td>
+<td>Peak to peak (maximum - minimum) value along a given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.put.html#pandas.DatetimeIndex.put" title="pandas.DatetimeIndex.put"><tt class="xref py py-obj docutils literal"><span class="pre">put</span></tt></a>(*args, **kwargs)</td>
+<td>This method will not function because object is immutable.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.ravel.html#pandas.DatetimeIndex.ravel" title="pandas.DatetimeIndex.ravel"><tt class="xref py py-obj docutils literal"><span class="pre">ravel</span></tt></a>([order])</td>
+<td>Return a flattened array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.reindex.html#pandas.DatetimeIndex.reindex" title="pandas.DatetimeIndex.reindex"><tt class="xref py py-obj docutils literal"><span class="pre">reindex</span></tt></a>(target[, method, level, limit, ...])</td>
+<td>For Index, simply returns the new index and the results of</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.rename.html#pandas.DatetimeIndex.rename" title="pandas.DatetimeIndex.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(name[, inplace])</td>
+<td>Set new names on index.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.repeat.html#pandas.DatetimeIndex.repeat" title="pandas.DatetimeIndex.repeat"><tt class="xref py py-obj docutils literal"><span class="pre">repeat</span></tt></a>(repeats[, axis])</td>
+<td>Analogous to ndarray.repeat</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.reshape.html#pandas.DatetimeIndex.reshape" title="pandas.DatetimeIndex.reshape"><tt class="xref py py-obj docutils literal"><span class="pre">reshape</span></tt></a>(shape[, order])</td>
+<td>Returns an array containing the same data with a new shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.resize.html#pandas.DatetimeIndex.resize" title="pandas.DatetimeIndex.resize"><tt class="xref py py-obj docutils literal"><span class="pre">resize</span></tt></a>(new_shape[, refcheck])</td>
+<td>Change shape and size of array in-place.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.round.html#pandas.DatetimeIndex.round" title="pandas.DatetimeIndex.round"><tt class="xref py py-obj docutils literal"><span class="pre">round</span></tt></a>([decimals, out])</td>
+<td>Return <cite>a</cite> with each element rounded to the given number of decimals.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.searchsorted.html#pandas.DatetimeIndex.searchsorted" title="pandas.DatetimeIndex.searchsorted"><tt class="xref py py-obj docutils literal"><span class="pre">searchsorted</span></tt></a>(key[, side])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.set_names.html#pandas.DatetimeIndex.set_names" title="pandas.DatetimeIndex.set_names"><tt class="xref py py-obj docutils literal"><span class="pre">set_names</span></tt></a>(names[, inplace])</td>
+<td>Set new names on index.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.set_value.html#pandas.DatetimeIndex.set_value" title="pandas.DatetimeIndex.set_value"><tt class="xref py py-obj docutils literal"><span class="pre">set_value</span></tt></a>(arr, key, value)</td>
+<td>Fast lookup of value from 1-dimensional ndarray.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.setfield.html#pandas.DatetimeIndex.setfield" title="pandas.DatetimeIndex.setfield"><tt class="xref py py-obj docutils literal"><span class="pre">setfield</span></tt></a>(val, dtype[, offset])</td>
+<td>Put a value into a specified place in a field defined by a data-type.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.setflags.html#pandas.DatetimeIndex.setflags" title="pandas.DatetimeIndex.setflags"><tt class="xref py py-obj docutils literal"><span class="pre">setflags</span></tt></a>([write, align, uic])</td>
+<td>Set array flags WRITEABLE, ALIGNED, and UPDATEIFCOPY, respectively.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.shift.html#pandas.DatetimeIndex.shift" title="pandas.DatetimeIndex.shift"><tt class="xref py py-obj docutils literal"><span class="pre">shift</span></tt></a>(n[, freq])</td>
+<td>Specialized shift which produces a DatetimeIndex</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.slice_indexer.html#pandas.DatetimeIndex.slice_indexer" title="pandas.DatetimeIndex.slice_indexer"><tt class="xref py py-obj docutils literal"><span class="pre">slice_indexer</span></tt></a>([start, end, step])</td>
+<td>Index.slice_indexer, customized to handle time slicing</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.slice_locs.html#pandas.DatetimeIndex.slice_locs" title="pandas.DatetimeIndex.slice_locs"><tt class="xref py py-obj docutils literal"><span class="pre">slice_locs</span></tt></a>([start, end])</td>
+<td>Index.slice_locs, customized to handle partial ISO-8601 string slicing</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.snap.html#pandas.DatetimeIndex.snap" title="pandas.DatetimeIndex.snap"><tt class="xref py py-obj docutils literal"><span class="pre">snap</span></tt></a>([freq])</td>
+<td>Snap time stamps to nearest occurring frequency</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.sort.html#pandas.DatetimeIndex.sort" title="pandas.DatetimeIndex.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>(*args, **kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.squeeze.html#pandas.DatetimeIndex.squeeze" title="pandas.DatetimeIndex.squeeze"><tt class="xref py py-obj docutils literal"><span class="pre">squeeze</span></tt></a>([axis])</td>
+<td>Remove single-dimensional entries from the shape of <cite>a</cite>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.std.html#pandas.DatetimeIndex.std" title="pandas.DatetimeIndex.std"><tt class="xref py py-obj docutils literal"><span class="pre">std</span></tt></a>([axis, dtype, out, ddof])</td>
+<td>Returns the standard deviation of the array elements along given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.sum.html#pandas.DatetimeIndex.sum" title="pandas.DatetimeIndex.sum"><tt class="xref py py-obj docutils literal"><span class="pre">sum</span></tt></a>([axis, dtype, out])</td>
+<td>Return the sum of the array elements over the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.summary.html#pandas.DatetimeIndex.summary" title="pandas.DatetimeIndex.summary"><tt class="xref py py-obj docutils literal"><span class="pre">summary</span></tt></a>([name])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.swapaxes.html#pandas.DatetimeIndex.swapaxes" title="pandas.DatetimeIndex.swapaxes"><tt class="xref py py-obj docutils literal"><span class="pre">swapaxes</span></tt></a>(axis1, axis2)</td>
+<td>Return a view of the array with <cite>axis1</cite> and <cite>axis2</cite> interchanged.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.take.html#pandas.DatetimeIndex.take" title="pandas.DatetimeIndex.take"><tt class="xref py py-obj docutils literal"><span class="pre">take</span></tt></a>(indices[, axis])</td>
+<td>Analogous to ndarray.take</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.to_datetime.html#pandas.DatetimeIndex.to_datetime" title="pandas.DatetimeIndex.to_datetime"><tt class="xref py py-obj docutils literal"><span class="pre">to_datetime</span></tt></a>([dayfirst])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.to_native_types.html#pandas.DatetimeIndex.to_native_types" title="pandas.DatetimeIndex.to_native_types"><tt class="xref py py-obj docutils literal"><span class="pre">to_native_types</span></tt></a>([slicer])</td>
+<td>slice and dice then format</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.to_period.html#pandas.DatetimeIndex.to_period" title="pandas.DatetimeIndex.to_period"><tt class="xref py py-obj docutils literal"><span class="pre">to_period</span></tt></a>([freq])</td>
+<td>Cast to PeriodIndex at a particular frequency</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.to_pydatetime.html#pandas.DatetimeIndex.to_pydatetime" title="pandas.DatetimeIndex.to_pydatetime"><tt class="xref py py-obj docutils literal"><span class="pre">to_pydatetime</span></tt></a>()</td>
+<td>Return DatetimeIndex as object ndarray of datetime.datetime objects</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.to_series.html#pandas.DatetimeIndex.to_series" title="pandas.DatetimeIndex.to_series"><tt class="xref py py-obj docutils literal"><span class="pre">to_series</span></tt></a>()</td>
+<td>return a series with both index and values equal to the index keys</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.tofile.html#pandas.DatetimeIndex.tofile" title="pandas.DatetimeIndex.tofile"><tt class="xref py py-obj docutils literal"><span class="pre">tofile</span></tt></a>(fid[, sep, format])</td>
+<td>Write array to a file as text or binary (default).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.tolist.html#pandas.DatetimeIndex.tolist" title="pandas.DatetimeIndex.tolist"><tt class="xref py py-obj docutils literal"><span class="pre">tolist</span></tt></a>()</td>
+<td>See ndarray.tolist</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.tostring.html#pandas.DatetimeIndex.tostring" title="pandas.DatetimeIndex.tostring"><tt class="xref py py-obj docutils literal"><span class="pre">tostring</span></tt></a>([order])</td>
+<td>Construct a Python string containing the raw data bytes in the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.trace.html#pandas.DatetimeIndex.trace" title="pandas.DatetimeIndex.trace"><tt class="xref py py-obj docutils literal"><span class="pre">trace</span></tt></a>([offset, axis1, axis2, dtype, out])</td>
+<td>Return the sum along diagonals of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.transpose.html#pandas.DatetimeIndex.transpose" title="pandas.DatetimeIndex.transpose"><tt class="xref py py-obj docutils literal"><span class="pre">transpose</span></tt></a>(*axes)</td>
+<td>Returns a view of the array with axes transposed.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.tz_convert.html#pandas.DatetimeIndex.tz_convert" title="pandas.DatetimeIndex.tz_convert"><tt class="xref py py-obj docutils literal"><span class="pre">tz_convert</span></tt></a>(tz)</td>
+<td>Convert DatetimeIndex from one time zone to another (using pytz)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.tz_localize.html#pandas.DatetimeIndex.tz_localize" title="pandas.DatetimeIndex.tz_localize"><tt class="xref py py-obj docutils literal"><span class="pre">tz_localize</span></tt></a>(tz[, infer_dst])</td>
+<td>Localize tz-naive DatetimeIndex to given time zone (using pytz)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.union.html#pandas.DatetimeIndex.union" title="pandas.DatetimeIndex.union"><tt class="xref py py-obj docutils literal"><span class="pre">union</span></tt></a>(other)</td>
+<td>Specialized union for DatetimeIndex objects. If combine</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.union_many.html#pandas.DatetimeIndex.union_many" title="pandas.DatetimeIndex.union_many"><tt class="xref py py-obj docutils literal"><span class="pre">union_many</span></tt></a>(others)</td>
+<td>A bit of a hack to accelerate unioning a collection of indexes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.unique.html#pandas.DatetimeIndex.unique" title="pandas.DatetimeIndex.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>()</td>
+<td>Index.unique with handling for DatetimeIndex metadata</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pandas.DatetimeIndex.var.html#pandas.DatetimeIndex.var" title="pandas.DatetimeIndex.var"><tt class="xref py py-obj docutils literal"><span class="pre">var</span></tt></a>([axis, dtype, out, ddof])</td>
+<td>Returns the variance of the array elements, along given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pandas.DatetimeIndex.view.html#pandas.DatetimeIndex.view" title="pandas.DatetimeIndex.view"><tt class="xref py py-obj docutils literal"><span class="pre">view</span></tt></a>(*args, **kwargs)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+</div>
+</div>
+<div class="related">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="pandas.DatetimeIndex.T.html" title="pandas.DatetimeIndex.T">next</a> |</li>
+<li class="right">
+<a href="pandas.Index.is_numeric.html" title="pandas.Index.is_numeric">previous</a> |</li>
+<li><a href="../index.html">pandas 0.13.1 documentation</a> »</li>
+<li><a href="../api.html">API Reference</a> »</li>
+</ul>
+</div>
+<div class="footer">
+        © Copyright 2008-2014, the pandas development team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</body>
+</html>

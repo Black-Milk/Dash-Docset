@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>scipy.optimize.brute — SciPy v0.13.0 Reference Guide</title>
+<link href="../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="../optimize.html" rel="up" title="Optimization and root finding (scipy.optimize)"/>
+<link href="scipy.optimize.minimize_scalar.html" rel="next" title="scipy.optimize.minimize_scalar"/>
+<link href="scipy.optimize.basinhopping.html" rel="prev" title="scipy.optimize.basinhopping"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="../optimize.html">Optimization and root finding (<tt class="docutils literal"><span class="pre">scipy.optimize</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="../py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="scipy.optimize.minimize_scalar.html" title="scipy.optimize.minimize_scalar">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="scipy.optimize.basinhopping.html" title="scipy.optimize.basinhopping">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.optimize.basinhopping.html" title="previous chapter">scipy.optimize.basinhopping</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.optimize.minimize_scalar.html" title="next chapter">scipy.optimize.minimize_scalar</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="scipy-optimize-brute">
+<h1>scipy.optimize.brute<a class="headerlink" href="#scipy-optimize-brute" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.optimize.brute"><a name="//apple_ref/cpp/func/scipy.optimize.brute"></a>
+<tt class="descclassname">scipy.optimize.</tt><tt class="descname">brute</tt><big>(</big><em>func</em>, <em>ranges</em>, <em>args=()</em>, <em>Ns=20</em>, <em>full_output=0</em>, <em>finish=&lt;function fmin at 0x45df5f0&gt;</em>, <em>disp=False</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/optimize/optimize.py#L2374"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.optimize.brute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimize a function over a given range by brute force.</p>
+<p>Uses the “brute force” method, i.e. computes the function’s value
+at each point of a multidimensional grid of points, to find the global
+minimum of the function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>func</strong> : callable</p>
+<blockquote>
+<div><p>The objective function to be minimized. Must be in the
+form <tt class="docutils literal"><span class="pre">f(x,</span> <span class="pre">*args)</span></tt>, where <tt class="docutils literal"><span class="pre">x</span></tt> is the argument in
+the form of a 1-D array and <tt class="docutils literal"><span class="pre">args</span></tt> is a tuple of any
+additional fixed parameters needed to completely specify
+the function.</p>
+</div></blockquote>
+<p><strong>ranges</strong> : tuple</p>
+<blockquote>
+<div><p>Each component of the <em class="xref py py-obj">ranges</em> tuple must be either a
+“slice object” or a range tuple of the form <tt class="docutils literal"><span class="pre">(low,</span> <span class="pre">high)</span></tt>.
+The program uses these to create the grid of points on which
+the objective function will be computed. See <em class="xref py py-obj">Note 2</em> for
+more detail.</p>
+</div></blockquote>
+<p><strong>args</strong> : tuple, optional</p>
+<blockquote>
+<div><p>Any additional fixed parameters needed to completely specify
+the function.</p>
+</div></blockquote>
+<p><strong>Ns</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of grid points along the axes, if not otherwise
+specified. See <em class="xref py py-obj">Note2</em>.</p>
+</div></blockquote>
+<p><strong>full_output</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, return the evaluation grid and the objective function’s
+values on it.</p>
+</div></blockquote>
+<p><strong>finish</strong> : callable, optional</p>
+<blockquote>
+<div><p>An optimization function that is called with the result of brute force
+minimization as initial guess.  <em class="xref py py-obj">finish</em> should take the initial guess
+as positional argument, and take <em class="xref py py-obj">args</em>, <em class="xref py py-obj">full_output</em> and <em class="xref py py-obj">disp</em>
+as keyword arguments.  Use None if no “polishing” function is to be
+used.  See Notes for more details.</p>
+</div></blockquote>
+<p><strong>disp</strong> : bool, optional</p>
+<blockquote>
+<div><p>Set to True to print convergence messages.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>A 1-D array containing the coordinates of a point at which the
+objective function had its minimum value. (See <em class="xref py py-obj">Note 1</em> for
+which point is returned.)</p>
+</div></blockquote>
+<p><strong>fval</strong> : float</p>
+<blockquote>
+<div><p>Function value at the point <em class="xref py py-obj">x0</em>.</p>
+</div></blockquote>
+<p><strong>grid</strong> : tuple</p>
+<blockquote>
+<div><p>Representation of the evaluation grid.  It has the same
+length as <em class="xref py py-obj">x0</em>. (Returned when <em class="xref py py-obj">full_output</em> is True.)</p>
+</div></blockquote>
+<p><strong>Jout</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Function values at each point of the evaluation
+grid, <em class="xref py py-obj">i.e.</em>, <tt class="docutils literal"><span class="pre">Jout</span> <span class="pre">=</span> <span class="pre">func(*grid)</span></tt>. (Returned
+when <em class="xref py py-obj">full_output</em> is True.)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="scipy.optimize.anneal.html#scipy.optimize.anneal" title="scipy.optimize.anneal"><tt class="xref py py-obj docutils literal"><span class="pre">anneal</span></tt></a></dt>
+<dd>Another approach to seeking the global minimum of</dd>
+</dl>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">multivariate</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">multimodal</span></tt></p>
+</div>
+<p class="rubric">Notes</p>
+<p><em>Note 1</em>: The program finds the gridpoint at which the lowest value
+of the objective function occurs.  If <em class="xref py py-obj">finish</em> is None, that is the
+point returned.  When the global minimum occurs within (or not very far
+outside) the grid’s boundaries, and the grid is fine enough, that
+point will be in the neighborhood of the gobal minimum.</p>
+<p>However, users often employ some other optimization program to
+“polish” the gridpoint values, <em class="xref py py-obj">i.e.</em>, to seek a more precise
+(local) minimum near <em class="xref py py-obj">brute’s</em> best gridpoint.
+The <a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a> function’s <em class="xref py py-obj">finish</em> option provides a convenient way to do
+that.  Any polishing program used must take <em class="xref py py-obj">brute’s</em> output as its
+initial guess as a positional argument, and take <em class="xref py py-obj">brute’s</em> input values
+for <em class="xref py py-obj">args</em> and <em class="xref py py-obj">full_output</em> as keyword arguments, otherwise an error
+will be raised.</p>
+<p><a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a> assumes that the <em class="xref py py-obj">finish</em> function returns a tuple in the form:
+<tt class="docutils literal"><span class="pre">(xmin,</span> <span class="pre">Jmin,</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">statuscode)</span></tt>, where <tt class="docutils literal"><span class="pre">xmin</span></tt> is the minimizing value
+of the argument, <tt class="docutils literal"><span class="pre">Jmin</span></tt> is the minimum value of the objective function,
+”...” may be some other returned values (which are not used by <a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a>),
+and <tt class="docutils literal"><span class="pre">statuscode</span></tt> is the status code of the <em class="xref py py-obj">finish</em> program.</p>
+<p>Note that when <em class="xref py py-obj">finish</em> is not None, the values returned are those
+of the <em class="xref py py-obj">finish</em> program, <em>not</em> the gridpoint ones.  Consequently,
+while <a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a> confines its search to the input grid points,
+the <em class="xref py py-obj">finish</em> program’s results usually will not coincide with any
+gridpoint, and may fall outside the grid’s boundary.</p>
+<p><em>Note 2</em>: The grid of points is a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.mgrid.html#numpy.mgrid" title="(in NumPy v1.7)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.mgrid</span></tt></a> object.
+For <a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a> the <em class="xref py py-obj">ranges</em> and <em class="xref py py-obj">Ns</em> inputs have the following effect.
+Each component of the <em class="xref py py-obj">ranges</em> tuple can be either a slice object or a
+two-tuple giving a range of values, such as (0, 5).  If the component is a
+slice object, <a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a> uses it directly.  If the component is a two-tuple
+range, <a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a> internally converts it to a slice object that interpolates
+<em class="xref py py-obj">Ns</em> points from its low-value to its high-value, inclusive.</p>
+<p class="rubric">Examples</p>
+<p>We illustrate the use of <a class="reference internal" href="#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a> to seek the global minimum of a function
+of two variables that is given as the sum of a positive-definite
+quadratic and two deep “Gaussian-shaped” craters.  Specifically, define
+the objective function <em class="xref py py-obj">f</em> as the sum of three other functions,
+<tt class="docutils literal"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">f1</span> <span class="pre">+</span> <span class="pre">f2</span> <span class="pre">+</span> <span class="pre">f3</span></tt>.  We suppose each of these has a signature
+<tt class="docutils literal"><span class="pre">(z,</span> <span class="pre">*params)</span></tt>, where <tt class="docutils literal"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">(x,</span> <span class="pre">y)</span></tt>,  and <tt class="docutils literal"><span class="pre">params</span></tt> and the functions
+are as defined below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">c</span> <span class="o">*</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">e</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">g</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">h</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">i</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f3</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">l</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">f1</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">f2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">f3</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Thus, the objective function may have local minima near the minimum
+of each of the three functions of which it is composed.  To
+use <a class="reference internal" href="scipy.optimize.fmin.html#scipy.optimize.fmin" title="scipy.optimize.fmin"><tt class="xref py py-obj docutils literal"><span class="pre">fmin</span></tt></a> to polish its gridpoint result, we may then continue as
+follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rranges</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resbrute</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">brute</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">rranges</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="go">                              finish=optimize.fmin)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resbrute</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># global minimum</span>
+<span class="go">array([-1.05665192,  1.80834843])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resbrute</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># function value at global minimum</span>
+<span class="go">-3.4085818767</span>
+</pre></div>
+</div>
+<p>Note that if <em class="xref py py-obj">finish</em> had been set to None, we would have gotten the
+gridpoint [-1.0 1.75] where the rounded function value is -2.892.</p>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

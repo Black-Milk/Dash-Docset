@@ -1,0 +1,344 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discrete Fourier transforms (scipy.fftpack) &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="index.html" />
+    <link rel="next" title="scipy.fftpack.fft" href="generated/scipy.fftpack.fft.html" />
+    <link rel="prev" title="scipy.constants.nu2lambda" href="generated/scipy.constants.nu2lambda.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="index.html">SciPy v0.13.0 Reference Guide</a></li>
+	 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="generated/scipy.fftpack.fft.html" title="scipy.fftpack.fft"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="generated/scipy.constants.nu2lambda.html" title="scipy.constants.nu2lambda"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Discrete Fourier transforms (<tt class="docutils literal"><span class="pre">scipy.fftpack</span></tt>)</a><ul>
+<li><a class="reference internal" href="#fast-fourier-transforms-ffts">Fast Fourier Transforms (FFTs)</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#differential-and-pseudo-differential-operators">Differential and pseudo-differential operators</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#helper-functions">Helper functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-scipy.fftpack.convolve">Convolutions (<tt class="docutils literal"><span class="pre">scipy.fftpack.convolve</span></tt>)</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-scipy.fftpack._fftpack">Other (<tt class="docutils literal"><span class="pre">scipy.fftpack._fftpack</span></tt>)</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="generated/scipy.constants.nu2lambda.html"
+                        title="previous chapter">scipy.constants.nu2lambda</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generated/scipy.fftpack.fft.html"
+                        title="next chapter">scipy.fftpack.fft</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <span class="target" id="module-scipy.fftpack"></span><div class="section" id="discrete-fourier-transforms-scipy-fftpack">
+<h1>Discrete Fourier transforms (<a class="reference internal" href="#module-scipy.fftpack" title="scipy.fftpack"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.fftpack</span></tt></a>)<a class="headerlink" href="#discrete-fourier-transforms-scipy-fftpack" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="fast-fourier-transforms-ffts">
+<h2>Fast Fourier Transforms (FFTs)<a class="headerlink" href="#fast-fourier-transforms-ffts" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.fft.html#scipy.fftpack.fft" title="scipy.fftpack.fft"><tt class="xref py py-obj docutils literal"><span class="pre">fft</span></tt></a>(x[,&nbsp;n,&nbsp;axis,&nbsp;overwrite_x])</td>
+<td>Return discrete Fourier transform of real or complex sequence.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.ifft.html#scipy.fftpack.ifft" title="scipy.fftpack.ifft"><tt class="xref py py-obj docutils literal"><span class="pre">ifft</span></tt></a>(x[,&nbsp;n,&nbsp;axis,&nbsp;overwrite_x])</td>
+<td>Return discrete inverse Fourier transform of real or complex sequence.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.fft2.html#scipy.fftpack.fft2" title="scipy.fftpack.fft2"><tt class="xref py py-obj docutils literal"><span class="pre">fft2</span></tt></a>(x[,&nbsp;shape,&nbsp;axes,&nbsp;overwrite_x])</td>
+<td>2-D discrete Fourier transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.ifft2.html#scipy.fftpack.ifft2" title="scipy.fftpack.ifft2"><tt class="xref py py-obj docutils literal"><span class="pre">ifft2</span></tt></a>(x[,&nbsp;shape,&nbsp;axes,&nbsp;overwrite_x])</td>
+<td>2-D discrete inverse Fourier transform of real or complex sequence.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.fftn.html#scipy.fftpack.fftn" title="scipy.fftpack.fftn"><tt class="xref py py-obj docutils literal"><span class="pre">fftn</span></tt></a>(x[,&nbsp;shape,&nbsp;axes,&nbsp;overwrite_x])</td>
+<td>Return multidimensional discrete Fourier transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.ifftn.html#scipy.fftpack.ifftn" title="scipy.fftpack.ifftn"><tt class="xref py py-obj docutils literal"><span class="pre">ifftn</span></tt></a>(x[,&nbsp;shape,&nbsp;axes,&nbsp;overwrite_x])</td>
+<td>Return inverse multi-dimensional discrete Fourier transform of</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.rfft.html#scipy.fftpack.rfft" title="scipy.fftpack.rfft"><tt class="xref py py-obj docutils literal"><span class="pre">rfft</span></tt></a>(x[,&nbsp;n,&nbsp;axis,&nbsp;overwrite_x])</td>
+<td>Discrete Fourier transform of a real sequence.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.irfft.html#scipy.fftpack.irfft" title="scipy.fftpack.irfft"><tt class="xref py py-obj docutils literal"><span class="pre">irfft</span></tt></a>(x[,&nbsp;n,&nbsp;axis,&nbsp;overwrite_x])</td>
+<td>Return inverse discrete Fourier transform of real sequence x.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.dct.html#scipy.fftpack.dct" title="scipy.fftpack.dct"><tt class="xref py py-obj docutils literal"><span class="pre">dct</span></tt></a>(x[,&nbsp;type,&nbsp;n,&nbsp;axis,&nbsp;norm,&nbsp;overwrite_x])</td>
+<td>Return the Discrete Cosine Transform of arbitrary type sequence x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.idct.html#scipy.fftpack.idct" title="scipy.fftpack.idct"><tt class="xref py py-obj docutils literal"><span class="pre">idct</span></tt></a>(x[,&nbsp;type,&nbsp;n,&nbsp;axis,&nbsp;norm,&nbsp;overwrite_x])</td>
+<td>Return the Inverse Discrete Cosine Transform of an arbitrary type sequence.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="differential-and-pseudo-differential-operators">
+<h2>Differential and pseudo-differential operators<a class="headerlink" href="#differential-and-pseudo-differential-operators" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.diff.html#scipy.fftpack.diff" title="scipy.fftpack.diff"><tt class="xref py py-obj docutils literal"><span class="pre">diff</span></tt></a>(x[,&nbsp;order,&nbsp;period,&nbsp;_cache])</td>
+<td>Return k-th derivative (or integral) of a periodic sequence x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.tilbert.html#scipy.fftpack.tilbert" title="scipy.fftpack.tilbert"><tt class="xref py py-obj docutils literal"><span class="pre">tilbert</span></tt></a>(x,&nbsp;h[,&nbsp;period,&nbsp;_cache])</td>
+<td>Return h-Tilbert transform of a periodic sequence x.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.itilbert.html#scipy.fftpack.itilbert" title="scipy.fftpack.itilbert"><tt class="xref py py-obj docutils literal"><span class="pre">itilbert</span></tt></a>(x,&nbsp;h[,&nbsp;period,&nbsp;_cache])</td>
+<td>Return inverse h-Tilbert transform of a periodic sequence x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.hilbert.html#scipy.fftpack.hilbert" title="scipy.fftpack.hilbert"><tt class="xref py py-obj docutils literal"><span class="pre">hilbert</span></tt></a>(x[,&nbsp;_cache])</td>
+<td>Return Hilbert transform of a periodic sequence x.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.ihilbert.html#scipy.fftpack.ihilbert" title="scipy.fftpack.ihilbert"><tt class="xref py py-obj docutils literal"><span class="pre">ihilbert</span></tt></a>(x)</td>
+<td>Return inverse Hilbert transform of a periodic sequence x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.cs_diff.html#scipy.fftpack.cs_diff" title="scipy.fftpack.cs_diff"><tt class="xref py py-obj docutils literal"><span class="pre">cs_diff</span></tt></a>(x,&nbsp;a,&nbsp;b[,&nbsp;period,&nbsp;_cache])</td>
+<td>Return (a,b)-cosh/sinh pseudo-derivative of a periodic sequence.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.sc_diff.html#scipy.fftpack.sc_diff" title="scipy.fftpack.sc_diff"><tt class="xref py py-obj docutils literal"><span class="pre">sc_diff</span></tt></a>(x,&nbsp;a,&nbsp;b[,&nbsp;period,&nbsp;_cache])</td>
+<td>Return (a,b)-sinh/cosh pseudo-derivative of a periodic sequence x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.ss_diff.html#scipy.fftpack.ss_diff" title="scipy.fftpack.ss_diff"><tt class="xref py py-obj docutils literal"><span class="pre">ss_diff</span></tt></a>(x,&nbsp;a,&nbsp;b[,&nbsp;period,&nbsp;_cache])</td>
+<td>Return (a,b)-sinh/sinh pseudo-derivative of a periodic sequence x.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.cc_diff.html#scipy.fftpack.cc_diff" title="scipy.fftpack.cc_diff"><tt class="xref py py-obj docutils literal"><span class="pre">cc_diff</span></tt></a>(x,&nbsp;a,&nbsp;b[,&nbsp;period,&nbsp;_cache])</td>
+<td>Return (a,b)-cosh/cosh pseudo-derivative of a periodic sequence.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.shift.html#scipy.fftpack.shift" title="scipy.fftpack.shift"><tt class="xref py py-obj docutils literal"><span class="pre">shift</span></tt></a>(x,&nbsp;a[,&nbsp;period,&nbsp;_cache])</td>
+<td>Shift periodic sequence x by a: y(u) = x(u+a).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="helper-functions">
+<h2>Helper functions<a class="headerlink" href="#helper-functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.fftshift.html#scipy.fftpack.fftshift" title="scipy.fftpack.fftshift"><tt class="xref py py-obj docutils literal"><span class="pre">fftshift</span></tt></a>(x[,&nbsp;axes])</td>
+<td>Shift the zero-frequency component to the center of the spectrum.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.ifftshift.html#scipy.fftpack.ifftshift" title="scipy.fftpack.ifftshift"><tt class="xref py py-obj docutils literal"><span class="pre">ifftshift</span></tt></a>(x[,&nbsp;axes])</td>
+<td>The inverse of fftshift.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.fftfreq.html#scipy.fftpack.fftfreq" title="scipy.fftpack.fftfreq"><tt class="xref py py-obj docutils literal"><span class="pre">fftfreq</span></tt></a>(n[,&nbsp;d])</td>
+<td>Return the Discrete Fourier Transform sample frequencies.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.rfftfreq.html#scipy.fftpack.rfftfreq" title="scipy.fftpack.rfftfreq"><tt class="xref py py-obj docutils literal"><span class="pre">rfftfreq</span></tt></a>(n[,&nbsp;d])</td>
+<td>DFT sample frequencies (for usage with rfft, irfft).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-scipy.fftpack.convolve">
+<span id="convolutions-scipy-fftpack-convolve"></span><h2>Convolutions (<a class="reference internal" href="#module-scipy.fftpack.convolve" title="scipy.fftpack.convolve"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.fftpack.convolve</span></tt></a>)<a class="headerlink" href="#module-scipy.fftpack.convolve" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.convolve.convolve.html#scipy.fftpack.convolve.convolve" title="scipy.fftpack.convolve.convolve"><tt class="xref py py-obj docutils literal"><span class="pre">convolve</span></tt></a></td>
+<td>convolve - Function signature:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.convolve.convolve_z.html#scipy.fftpack.convolve.convolve_z" title="scipy.fftpack.convolve.convolve_z"><tt class="xref py py-obj docutils literal"><span class="pre">convolve_z</span></tt></a></td>
+<td>convolve_z - Function signature:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack.convolve.init_convolution_kernel.html#scipy.fftpack.convolve.init_convolution_kernel" title="scipy.fftpack.convolve.init_convolution_kernel"><tt class="xref py py-obj docutils literal"><span class="pre">init_convolution_kernel</span></tt></a></td>
+<td>init_convolution_kernel - Function signature:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack.convolve.destroy_convolve_cache.html#scipy.fftpack.convolve.destroy_convolve_cache" title="scipy.fftpack.convolve.destroy_convolve_cache"><tt class="xref py py-obj docutils literal"><span class="pre">destroy_convolve_cache</span></tt></a></td>
+<td>destroy_convolve_cache - Function signature:</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-scipy.fftpack._fftpack">
+<span id="other-scipy-fftpack-fftpack"></span><h2>Other (<a class="reference internal" href="#module-scipy.fftpack._fftpack" title="scipy.fftpack._fftpack"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.fftpack._fftpack</span></tt></a>)<a class="headerlink" href="#module-scipy.fftpack._fftpack" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack._fftpack.drfft.html#scipy.fftpack._fftpack.drfft" title="scipy.fftpack._fftpack.drfft"><tt class="xref py py-obj docutils literal"><span class="pre">drfft</span></tt></a></td>
+<td>drfft - Function signature:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack._fftpack.zfft.html#scipy.fftpack._fftpack.zfft" title="scipy.fftpack._fftpack.zfft"><tt class="xref py py-obj docutils literal"><span class="pre">zfft</span></tt></a></td>
+<td>zfft - Function signature:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack._fftpack.zrfft.html#scipy.fftpack._fftpack.zrfft" title="scipy.fftpack._fftpack.zrfft"><tt class="xref py py-obj docutils literal"><span class="pre">zrfft</span></tt></a></td>
+<td>zrfft - Function signature:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack._fftpack.zfftnd.html#scipy.fftpack._fftpack.zfftnd" title="scipy.fftpack._fftpack.zfftnd"><tt class="xref py py-obj docutils literal"><span class="pre">zfftnd</span></tt></a></td>
+<td>zfftnd - Function signature:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack._fftpack.destroy_drfft_cache.html#scipy.fftpack._fftpack.destroy_drfft_cache" title="scipy.fftpack._fftpack.destroy_drfft_cache"><tt class="xref py py-obj docutils literal"><span class="pre">destroy_drfft_cache</span></tt></a></td>
+<td>destroy_drfft_cache - Function signature:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.fftpack._fftpack.destroy_zfft_cache.html#scipy.fftpack._fftpack.destroy_zfft_cache" title="scipy.fftpack._fftpack.destroy_zfft_cache"><tt class="xref py py-obj docutils literal"><span class="pre">destroy_zfft_cache</span></tt></a></td>
+<td>destroy_zfft_cache - Function signature:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.fftpack._fftpack.destroy_zfftnd_cache.html#scipy.fftpack._fftpack.destroy_zfftnd_cache" title="scipy.fftpack._fftpack.destroy_zfftnd_cache"><tt class="xref py py-obj docutils literal"><span class="pre">destroy_zfftnd_cache</span></tt></a></td>
+<td>destroy_zfftnd_cache - Function signature:</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>

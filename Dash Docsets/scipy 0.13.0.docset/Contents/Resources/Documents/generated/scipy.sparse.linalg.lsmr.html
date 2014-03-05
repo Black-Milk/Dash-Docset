@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>scipy.sparse.linalg.lsmr — SciPy v0.13.0 Reference Guide</title>
+<link href="../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="../sparse.linalg.html" rel="up" title="Sparse linear algebra (scipy.sparse.linalg)"/>
+<link href="scipy.sparse.linalg.eigs.html" rel="next" title="scipy.sparse.linalg.eigs"/>
+<link href="scipy.sparse.linalg.lsqr.html" rel="prev" title="scipy.sparse.linalg.lsqr"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="../sparse.linalg.html">Sparse linear algebra (<tt class="docutils literal"><span class="pre">scipy.sparse.linalg</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="../py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="scipy.sparse.linalg.eigs.html" title="scipy.sparse.linalg.eigs">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="scipy.sparse.linalg.lsqr.html" title="scipy.sparse.linalg.lsqr">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.sparse.linalg.lsqr.html" title="previous chapter">scipy.sparse.linalg.lsqr</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.sparse.linalg.eigs.html" title="next chapter">scipy.sparse.linalg.eigs</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="scipy-sparse-linalg-lsmr">
+<h1>scipy.sparse.linalg.lsmr<a class="headerlink" href="#scipy-sparse-linalg-lsmr" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.sparse.linalg.lsmr"><a name="//apple_ref/cpp/func/scipy.sparse.linalg.lsmr"></a>
+<tt class="descclassname">scipy.sparse.linalg.</tt><tt class="descname">lsmr</tt><big>(</big><em>A</em>, <em>b</em>, <em>damp=0.0</em>, <em>atol=1e-06</em>, <em>btol=1e-06</em>, <em>conlim=100000000.0</em>, <em>maxiter=None</em>, <em>show=False</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/sparse/linalg/isolve/lsmr.py#L31"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.sparse.linalg.lsmr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterative solver for least-squares problems.</p>
+<p>lsmr solves the system of linear equations <tt class="docutils literal"><span class="pre">Ax</span> <span class="pre">=</span> <span class="pre">b</span></tt>. If the system
+is inconsistent, it solves the least-squares problem <tt class="docutils literal"><span class="pre">min</span> <span class="pre">||b</span> <span class="pre">-</span> <span class="pre">Ax||_2</span></tt>.
+A is a rectangular matrix of dimension m-by-n, where all cases are
+allowed: m = n, m &gt; n, or m &lt; n. B is a vector of length m.
+The matrix A may be dense or sparse (usually sparse).</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.11.0.</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>A</strong> : {matrix, sparse matrix, ndarray, LinearOperator}</p>
+<blockquote>
+<div><p>Matrix A in the linear system.</p>
+</div></blockquote>
+<p><strong>b</strong> : (m,) ndarray</p>
+<blockquote>
+<div><p>Vector b in the linear system.</p>
+</div></blockquote>
+<p><strong>damp</strong> : float</p>
+<blockquote>
+<div><p>Damping factor for regularized least-squares. <a class="reference internal" href="#scipy.sparse.linalg.lsmr" title="scipy.sparse.linalg.lsmr"><tt class="xref py py-obj docutils literal"><span class="pre">lsmr</span></tt></a> solves
+the regularized least-squares problem:</p>
+<div class="highlight-python"><pre>min ||(b) - (  A   )x||
+    ||(0)   (damp*I) ||_2</pre>
+</div>
+<p>where damp is a scalar.  If damp is None or 0, the system
+is solved without regularization.</p>
+</div></blockquote>
+<p><strong>atol, btol</strong> : float</p>
+<blockquote>
+<div><p>Stopping tolerances. <a class="reference internal" href="#scipy.sparse.linalg.lsmr" title="scipy.sparse.linalg.lsmr"><tt class="xref py py-obj docutils literal"><span class="pre">lsmr</span></tt></a> continues iterations until a
+certain backward error estimate is smaller than some quantity
+depending on atol and btol.  Let <tt class="docutils literal"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">b</span> <span class="pre">-</span> <span class="pre">Ax</span></tt> be the
+residual vector for the current approximate solution <tt class="docutils literal"><span class="pre">x</span></tt>.
+If <tt class="docutils literal"><span class="pre">Ax</span> <span class="pre">=</span> <span class="pre">b</span></tt> seems to be consistent, <tt class="docutils literal"><span class="pre">lsmr</span></tt> terminates
+when <tt class="docutils literal"><span class="pre">norm(r)</span> <span class="pre">&lt;=</span> <span class="pre">atol</span> <span class="pre">*</span> <span class="pre">norm(A)</span> <span class="pre">*</span> <span class="pre">norm(x)</span> <span class="pre">+</span> <span class="pre">btol</span> <span class="pre">*</span> <span class="pre">norm(b)</span></tt>.
+Otherwise, lsmr terminates when <tt class="docutils literal"><span class="pre">norm(A^{T}</span> <span class="pre">r)</span> <span class="pre">&lt;=</span>
+<span class="pre">atol</span> <span class="pre">*</span> <span class="pre">norm(A)</span> <span class="pre">*</span> <span class="pre">norm(r)</span></tt>.  If both tolerances are 1.0e-6 (say),
+the final <tt class="docutils literal"><span class="pre">norm(r)</span></tt> should be accurate to about 6
+digits. (The final x will usually have fewer correct digits,
+depending on <tt class="docutils literal"><span class="pre">cond(A)</span></tt> and the size of LAMBDA.)  If <em class="xref py py-obj">atol</em>
+or <em class="xref py py-obj">btol</em> is None, a default value of 1.0e-6 will be used.
+Ideally, they should be estimates of the relative error in the
+entries of A and B respectively.  For example, if the entries
+of <em class="xref py py-obj">A</em> have 7 correct digits, set atol = 1e-7. This prevents
+the algorithm from doing unnecessary work beyond the
+uncertainty of the input data.</p>
+</div></blockquote>
+<p><strong>conlim</strong> : float</p>
+<blockquote>
+<div><p><a class="reference internal" href="#scipy.sparse.linalg.lsmr" title="scipy.sparse.linalg.lsmr"><tt class="xref py py-obj docutils literal"><span class="pre">lsmr</span></tt></a> terminates if an estimate of <tt class="docutils literal"><span class="pre">cond(A)</span></tt> exceeds
+<em class="xref py py-obj">conlim</em>.  For compatible systems <tt class="docutils literal"><span class="pre">Ax</span> <span class="pre">=</span> <span class="pre">b</span></tt>, conlim could be
+as large as 1.0e+12 (say).  For least-squares problems,
+<em class="xref py py-obj">conlim</em> should be less than 1.0e+8. If <em class="xref py py-obj">conlim</em> is None, the
+default value is 1e+8.  Maximum precision can be obtained by
+setting <tt class="docutils literal"><span class="pre">atol</span> <span class="pre">=</span> <span class="pre">btol</span> <span class="pre">=</span> <span class="pre">conlim</span> <span class="pre">=</span> <span class="pre">0</span></tt>, but the number of
+iterations may then be excessive.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int</p>
+<blockquote>
+<div><p><a class="reference internal" href="#scipy.sparse.linalg.lsmr" title="scipy.sparse.linalg.lsmr"><tt class="xref py py-obj docutils literal"><span class="pre">lsmr</span></tt></a> terminates if the number of iterations reaches
+<em class="xref py py-obj">maxiter</em>.  The default is <tt class="docutils literal"><span class="pre">maxiter</span> <span class="pre">=</span> <span class="pre">min(m,</span> <span class="pre">n)</span></tt>.  For
+ill-conditioned systems, a larger value of <em class="xref py py-obj">maxiter</em> may be
+needed.</p>
+</div></blockquote>
+<p><strong>show</strong> : bool</p>
+<blockquote>
+<div><p>Print iterations logs if <tt class="docutils literal"><span class="pre">show=True</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>x</strong> : ndarray of float</p>
+<blockquote>
+<div><p>Least-square solution returned.</p>
+</div></blockquote>
+<p><strong>istop</strong> : int</p>
+<blockquote>
+<div><p>istop gives the reason for stopping:</p>
+<div class="highlight-python"><pre>istop   = 0 means x=0 is a solution.
+        = 1 means x is an approximate solution to A*x = B,
+            according to atol and btol.
+        = 2 means x approximately solves the least-squares problem
+            according to atol.
+        = 3 means COND(A) seems to be greater than CONLIM.
+        = 4 is the same as 1 with atol = btol = eps (machine
+            precision)
+        = 5 is the same as 2 with atol = eps.
+        = 6 is the same as 3 with CONLIM = 1/eps.
+        = 7 means ITN reached maxiter before the other stopping
+            conditions were satisfied.</pre>
+</div>
+</div></blockquote>
+<p><strong>itn</strong> : int</p>
+<blockquote>
+<div><p>Number of iterations used.</p>
+</div></blockquote>
+<p><strong>normr</strong> : float</p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">norm(b-Ax)</span></tt></p>
+</div></blockquote>
+<p><strong>normar</strong> : float</p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">norm(A^T</span> <span class="pre">(b</span> <span class="pre">-</span> <span class="pre">Ax))</span></tt></p>
+</div></blockquote>
+<p><strong>norma</strong> : float</p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">norm(A)</span></tt></p>
+</div></blockquote>
+<p><strong>conda</strong> : float</p>
+<blockquote>
+<div><p>Condition number of A.</p>
+</div></blockquote>
+<p><strong>normx</strong> : float</p>
+<blockquote class="last">
+<div><p><tt class="docutils literal"><span class="pre">norm(x)</span></tt></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r176" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R176]</a></td><td>D. C.-L. Fong and M. A. Saunders,
+“LSMR: An iterative algorithm for sparse least-squares problems”,
+SIAM J. Sci. Comput., vol. 33, pp. 2950-2971, 2011.
+<a class="reference external" href="http://arxiv.org/abs/1006.0758">http://arxiv.org/abs/1006.0758</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r177" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[R177]</a></td><td>LSMR Software, <a class="reference external" href="http://www.stanford.edu/~clfong/lsmr.html">http://www.stanford.edu/~clfong/lsmr.html</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

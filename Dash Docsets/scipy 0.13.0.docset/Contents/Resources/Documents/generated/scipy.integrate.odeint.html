@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>scipy.integrate.odeint — SciPy v0.13.0 Reference Guide</title>
+<link href="../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="../integrate.html" rel="up" title="Integration and ODEs (scipy.integrate)"/>
+<link href="scipy.integrate.ode.html" rel="next" title="scipy.integrate.ode"/>
+<link href="scipy.integrate.romb.html" rel="prev" title="scipy.integrate.romb"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="../integrate.html">Integration and ODEs (<tt class="docutils literal"><span class="pre">scipy.integrate</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="../py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="scipy.integrate.ode.html" title="scipy.integrate.ode">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="scipy.integrate.romb.html" title="scipy.integrate.romb">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.integrate.romb.html" title="previous chapter">scipy.integrate.romb</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.integrate.ode.html" title="next chapter">scipy.integrate.ode</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="scipy-integrate-odeint">
+<h1>scipy.integrate.odeint<a class="headerlink" href="#scipy-integrate-odeint" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.integrate.odeint"><a name="//apple_ref/cpp/func/scipy.integrate.odeint"></a>
+<tt class="descclassname">scipy.integrate.</tt><tt class="descname">odeint</tt><big>(</big><em>func</em>, <em>y0</em>, <em>t</em>, <em>args=()</em>, <em>Dfun=None</em>, <em>col_deriv=0</em>, <em>full_output=0</em>, <em>ml=None</em>, <em>mu=None</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>tcrit=None</em>, <em>h0=0.0</em>, <em>hmax=0.0</em>, <em>hmin=0.0</em>, <em>ixpr=0</em>, <em>mxstep=0</em>, <em>mxhnil=0</em>, <em>mxordn=12</em>, <em>mxords=5</em>, <em>printmessg=0</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/integrate/odepack.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.integrate.odeint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrate a system of ordinary differential equations.</p>
+<p>Solve a system of ordinary differential equations using lsoda from the
+FORTRAN library odepack.</p>
+<p>Solves the initial value problem for stiff or non-stiff systems
+of first order ode-s:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dy</span><span class="o">/</span><span class="n">dt</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">t0</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where y can be a vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>func</strong> : callable(y, t0, ...)</p>
+<blockquote>
+<div><p>Computes the derivative of y at t0.</p>
+</div></blockquote>
+<p><strong>y0</strong> : array</p>
+<blockquote>
+<div><p>Initial condition on y (can be a vector).</p>
+</div></blockquote>
+<p><strong>t</strong> : array</p>
+<blockquote>
+<div><p>A sequence of time points for which to solve for y.  The initial
+value point should be the first element of this sequence.</p>
+</div></blockquote>
+<p><strong>args</strong> : tuple, optional</p>
+<blockquote>
+<div><p>Extra arguments to pass to function.</p>
+</div></blockquote>
+<p><strong>Dfun</strong> : callable(y, t0, ...)</p>
+<blockquote>
+<div><p>Gradient (Jacobian) of <em class="xref py py-obj">func</em>.</p>
+</div></blockquote>
+<p><strong>col_deriv</strong> : bool, optional</p>
+<blockquote>
+<div><p>True if <em class="xref py py-obj">Dfun</em> defines derivatives down columns (faster),
+otherwise <em class="xref py py-obj">Dfun</em> should define derivatives across rows.</p>
+</div></blockquote>
+<p><strong>full_output</strong> : bool, optional</p>
+<blockquote>
+<div><p>True if to return a dictionary of optional outputs as the second output</p>
+</div></blockquote>
+<p><strong>printmessg</strong> : bool, optional</p>
+<blockquote>
+<div><p>Whether to print the convergence message</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y</strong> : array, shape (len(t), len(y0))</p>
+<blockquote>
+<div><p>Array containing the value of y for each desired time in t,
+with the initial value <em class="xref py py-obj">y0</em> in the first row.</p>
+</div></blockquote>
+<p><strong>infodict</strong> : dict, only returned if full_output == True</p>
+<blockquote>
+<div><p>Dictionary containing additional output information</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>‘hu’</td>
+<td>vector of step sizes successfully used for each time step.</td>
+</tr>
+<tr class="row-odd"><td>‘tcur’</td>
+<td>vector with the value of t reached for each time step.
+(will always be at least as large as the input times).</td>
+</tr>
+<tr class="row-even"><td>‘tolsf’</td>
+<td>vector of tolerance scale factors, greater than 1.0,
+computed when a request for too much accuracy was detected.</td>
+</tr>
+<tr class="row-odd"><td>‘tsw’</td>
+<td>value of t at the time of the last method switch
+(given for each time step)</td>
+</tr>
+<tr class="row-even"><td>‘nst’</td>
+<td>cumulative number of time steps</td>
+</tr>
+<tr class="row-odd"><td>‘nfe’</td>
+<td>cumulative number of function evaluations for each time step</td>
+</tr>
+<tr class="row-even"><td>‘nje’</td>
+<td>cumulative number of jacobian evaluations for each time step</td>
+</tr>
+<tr class="row-odd"><td>‘nqu’</td>
+<td>a vector of method orders for each successful step.</td>
+</tr>
+<tr class="row-even"><td>‘imxer’</td>
+<td>index of the component of largest magnitude in the
+weighted local error vector (e / ewt) on an error return, -1
+otherwise.</td>
+</tr>
+<tr class="row-odd"><td>‘lenrw’</td>
+<td>the length of the double work array required.</td>
+</tr>
+<tr class="row-even"><td>‘leniw’</td>
+<td>the length of integer work array required.</td>
+</tr>
+<tr class="row-odd"><td>‘mused’</td>
+<td>a vector of method indicators for each successful time step:
+1: adams (nonstiff), 2: bdf (stiff)</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td> </td><td class="field-body"><p class="first"><strong>ml, mu</strong> : int, optional</p>
+<blockquote>
+<div><p>If either of these are not None or non-negative, then the
+Jacobian is assumed to be banded.  These give the number of
+lower and upper non-zero diagonals in this banded matrix.
+For the banded case, <em class="xref py py-obj">Dfun</em> should return a matrix whose
+columns contain the non-zero bands (starting with the
+lowest diagonal).  Thus, the return matrix from <em class="xref py py-obj">Dfun</em> should
+have shape <tt class="docutils literal"><span class="pre">len(y0)</span> <span class="pre">*</span> <span class="pre">(ml</span> <span class="pre">+</span> <span class="pre">mu</span> <span class="pre">+</span> <span class="pre">1)</span></tt> when <tt class="docutils literal"><span class="pre">ml</span> <span class="pre">&gt;=0</span></tt> or <tt class="docutils literal"><span class="pre">mu</span> <span class="pre">&gt;=0</span></tt>.</p>
+</div></blockquote>
+<p><strong>rtol, atol</strong> : float, optional</p>
+<blockquote>
+<div><p>The input parameters <em class="xref py py-obj">rtol</em> and <em class="xref py py-obj">atol</em> determine the error
+control performed by the solver.  The solver will control the
+vector, e, of estimated local errors in y, according to an
+inequality of the form <tt class="docutils literal"><span class="pre">max-norm</span> <span class="pre">of</span> <span class="pre">(e</span> <span class="pre">/</span> <span class="pre">ewt)</span> <span class="pre">&lt;=</span> <span class="pre">1</span></tt>,
+where ewt is a vector of positive error weights computed as
+<tt class="docutils literal"><span class="pre">ewt</span> <span class="pre">=</span> <span class="pre">rtol</span> <span class="pre">*</span> <span class="pre">abs(y)</span> <span class="pre">+</span> <span class="pre">atol</span></tt>.
+rtol and atol can be either vectors the same length as y or scalars.
+Defaults to 1.49012e-8.</p>
+</div></blockquote>
+<p><strong>tcrit</strong> : ndarray, optional</p>
+<blockquote>
+<div><p>Vector of critical points (e.g. singularities) where integration
+care should be taken.</p>
+</div></blockquote>
+<p><strong>h0</strong> : float, (0: solver-determined), optional</p>
+<blockquote>
+<div><p>The step size to be attempted on the first step.</p>
+</div></blockquote>
+<p><strong>hmax</strong> : float, (0: solver-determined), optional</p>
+<blockquote>
+<div><p>The maximum absolute step size allowed.</p>
+</div></blockquote>
+<p><strong>hmin</strong> : float, (0: solver-determined), optional</p>
+<blockquote>
+<div><p>The minimum absolute step size allowed.</p>
+</div></blockquote>
+<p><strong>ixpr</strong> : bool, optional</p>
+<blockquote>
+<div><p>Whether to generate extra printing at method switches.</p>
+</div></blockquote>
+<p><strong>mxstep</strong> : int, (0: solver-determined), optional</p>
+<blockquote>
+<div><p>Maximum number of (internally defined) steps allowed for each
+integration point in t.</p>
+</div></blockquote>
+<p><strong>mxhnil</strong> : int, (0: solver-determined), optional</p>
+<blockquote>
+<div><p>Maximum number of messages printed.</p>
+</div></blockquote>
+<p><strong>mxordn</strong> : int, (0: solver-determined), optional</p>
+<blockquote>
+<div><p>Maximum order to be allowed for the non-stiff (Adams) method.</p>
+</div></blockquote>
+<p><strong>mxords</strong> : int, (0: solver-determined), optional</p>
+<blockquote class="last">
+<div><p>Maximum order to be allowed for the stiff (BDF) method.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.integrate.ode.html#scipy.integrate.ode" title="scipy.integrate.ode"><tt class="xref py py-obj docutils literal"><span class="pre">ode</span></tt></a></dt>
+<dd>a more object-oriented integrator based on VODE.</dd>
+<dt><a class="reference internal" href="scipy.integrate.quad.html#scipy.integrate.quad" title="scipy.integrate.quad"><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt></a></dt>
+<dd>for finding the area under a curve.</dd>
+</dl>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

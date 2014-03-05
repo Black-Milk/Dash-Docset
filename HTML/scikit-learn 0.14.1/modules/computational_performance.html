@@ -1,0 +1,558 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>7. Computational Performance &mdash; scikit-learn 0.14.1 documentation</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+  <link rel="stylesheet" href="../_static/css/bootstrap-responsive.css"/>
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/copybutton.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="scikit-learn 0.14.1 documentation" href="../index.html" />
+    <link rel="up" title="&lt;no title&gt;" href="../user_guide.html" />
+    <link rel="next" title="Examples" href="../auto_examples/index.html" />
+    <link rel="prev" title="6. Scaling Strategies" href="scaling_strategies.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+  <link rel="canonical" href="http://scikit-learn.org/stable/modules/computational_performance.html" />
+
+  <script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+
+  </head>
+  <body>
+
+<div class="header-wrapper">
+    <div class="header">
+        <p class="logo"><a href="../index.html">
+            <img src="../_static/scikit-learn-logo-small.png" alt="Logo"/>
+        </a>
+        </p><div class="navbar">
+            <ul>
+                <li><a href="../../stable/index.html">Home</a></li>
+                <li><a href="../../stable/install.html">Installation</a></li>
+                <li class="btn-li"><div class="btn-group">
+		      <a href="../documentation.html">Documentation</a>
+		      <a class="btn dropdown-toggle" data-toggle="dropdown">
+			     <span class="caret"></span>
+		      </a>
+		      <ul class="dropdown-menu">
+			<li class="link-title">Scikit-learn 0.14 (stable)</li>
+			<li><a href="../tutorial/index.html">Tutorials</a></li>
+			<li><a href="../user_guide.html">User guide</a></li>
+			<li><a href="classes.html">API</a></li>
+			<li class="divider"></li>
+		        <li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+		        <li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+		        <li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+		        <li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+		        <li><a href="../documentation.html">More versions...</a></li>
+		      </ul>
+		    </div>
+		</li>
+            <li><a href="../auto_examples/index.html">Examples</a></li>
+            </ul>
+
+            <div class="search_form">
+                <div id="cse" style="width: 100%;"></div>
+            </div>
+        </div> <!-- end navbar --></div>
+</div>
+
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+  <img class="fork-me"
+       style="position: absolute; top: 0; right: 0; border: 0;"
+       src="../_static/img/forkme.png"
+       alt="Fork me on GitHub" />
+</a>
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+        <div class="rel">
+    
+
+  <!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+        <div class="rellink">
+        <a href="scaling_strategies.html"
+        accesskey="P">Previous
+        <br/>
+        <span class="smallrellink">
+        6. Scaling Strat...
+        </span>
+            <span class="hiddenrellink">
+            6. Scaling Strategies
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../auto_examples/index.html"
+        accesskey="N">Next
+        <br/>
+        <span class="smallrellink">
+        Examples
+        </span>
+            <span class="hiddenrellink">
+            Examples
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../np-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+            <div class="spacer">
+            &nbsp;
+            </div>
+        <div class="rellink">
+        <a href="../py-modindex.html"
+        >Modules
+        <br/>
+        <span class="smallrellink">
+        Python Module In...
+        </span>
+            <span class="hiddenrellink">
+            Python Module Index
+            </span>
+        </a>
+        </div>
+
+    <!-- Ad a link to the 'up' page -->
+        <div class="spacer">
+        &nbsp;
+        </div>
+        <div class="rellink">
+        <a href="../user_guide.html">
+        Up
+        <br/>
+        <span class="smallrellink">
+        <no title>
+        </span>
+        </a>
+        </div>
+    </div>
+    
+      <p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> &mdash; <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+    <p class="citing">If you use the software, please consider <a href="../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+    <ul>
+<li><a class="reference internal" href="#">7. Computational Performance</a><ul>
+<li><a class="reference internal" href="#prediction-latency">7.1. Prediction Latency</a><ul>
+<li><a class="reference internal" href="#bulk-versus-atomic-mode">7.1.1. Bulk versus Atomic mode</a></li>
+<li><a class="reference internal" href="#influence-of-the-number-of-features">7.1.2. Influence of the Number of Features</a></li>
+<li><a class="reference internal" href="#influence-of-the-input-data-representation">7.1.3. Influence of the Input Data Representation</a></li>
+<li><a class="reference internal" href="#influence-of-the-model-complexity">7.1.4. Influence of the Model Complexity</a></li>
+<li><a class="reference internal" href="#feature-extraction-latency">7.1.5. Feature Extraction Latency</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#prediction-throughput">7.2. Prediction Throughput</a></li>
+<li><a class="reference internal" href="#tips-and-tricks">7.3. Tips and Tricks</a><ul>
+<li><a class="reference internal" href="#linear-algebra-libraries">7.3.1. Linear algebra libraries</a></li>
+<li><a class="reference internal" href="#model-compression">7.3.2. Model Compression</a></li>
+<li><a class="reference internal" href="#model-reshaping">7.3.3. Model Reshaping</a></li>
+<li><a class="reference internal" href="#links">7.3.4. Links</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</div>
+
+
+
+      <div class="content">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="computational-performance">
+<span id="id1"></span><h1>7. Computational Performance<a class="headerlink" href="#computational-performance" title="Permalink to this headline">¶</a></h1>
+<p>For some applications the performance (mainly latency and throughput at
+prediction time) of estimators is crucial. It may also be of interest to
+consider the training throughput but this is often less important in a
+production setup (where it often takes place offline).</p>
+<p>We will review here the orders of magnitude you can expect from a number of
+scikit-learn estimators in different contexts and provide some tips and
+tricks for overcoming performance bottlenecks.</p>
+<p>Prediction latency is measured as the elapsed time necessary to make a
+prediction (e.g. in micro-seconds). Latency is often viewed as a distribution
+and operations engineers often focus on the latency at a given percentile of
+this distribution (e.g. the 90 percentile).</p>
+<p>Prediction throughput is defined as the number of predictions the software can
+deliver in a given amount of time (e.g. in predictions per second).</p>
+<p>An important aspect of performance optimization is also that it can hurt
+prediction accuracy. Indeed, simpler models (e.g. linear instead of
+non-linear, or with fewer parameters) often run faster but are not always able
+to take into account the same exact properties of the data as more complex ones.</p>
+<div class="section" id="prediction-latency">
+<h2>7.1. Prediction Latency<a class="headerlink" href="#prediction-latency" title="Permalink to this headline">¶</a></h2>
+<p>One of the most straight-forward concerns one may have when using/choosing a
+machine learning toolkit is the latency at which predictions can be made in a
+production environment.</p>
+<dl class="docutils">
+<dt>The main factors that influence the prediction latency are</dt>
+<dd><ol class="first last arabic simple">
+<li>Number of features</li>
+<li>Input data representation and sparsity</li>
+<li>Model complexity</li>
+<li>Feature extraction</li>
+</ol>
+</dd>
+</dl>
+<p>A last major parameter is also the possibility to do predictions in bulk or
+one-at-a-time mode.</p>
+<div class="section" id="bulk-versus-atomic-mode">
+<h3>7.1.1. Bulk versus Atomic mode<a class="headerlink" href="#bulk-versus-atomic-mode" title="Permalink to this headline">¶</a></h3>
+<p>In general doing predictions in bulk (many instances at the same time) is
+more efficient for a number of reasons (branching predictability, CPU cache,
+linear algebra libraries optimizations etc.). Here we see on a setting
+with few features that independently of estimator choice the bulk mode is
+always faster, and for some of them by 1 to 2 orders of magnitude:</p>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_prediction_latency.html"><img alt="atomic_prediction_latency" src="../_images/plot_prediction_latency_11.png" style="width: 800.0px; height: 480.0px;" /></a>
+</strong></p><p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_prediction_latency.html"><img alt="bulk_prediction_latency" src="../_images/plot_prediction_latency_21.png" style="width: 800.0px; height: 480.0px;" /></a>
+</strong></p><p>To benchmark different estimators for your case you can simply change the
+<tt class="docutils literal"><span class="pre">n_features</span></tt> parameter in this example:
+<em class="xref std std-ref">example_applications_plot_predictiaccordon_latency.py</em>. This should give
+you an estimate of the order of magnitude of the prediction latency.</p>
+</div>
+<div class="section" id="influence-of-the-number-of-features">
+<h3>7.1.2. Influence of the Number of Features<a class="headerlink" href="#influence-of-the-number-of-features" title="Permalink to this headline">¶</a></h3>
+<p>Obviously when the number of features increases so does the memory
+consumption of each example. Indeed, for a matrix of <cite>M</cite> instances with <cite>N</cite>
+features, the space complexity is in <cite>O(N.M)</cite>. From a computing perspective
+it also means that the number of basic operations (e.g. multiplications for
+vector-matrix products in linear models) increases too. Here is a graph of
+the evolution of the prediction latency with the number of features:</p>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_prediction_latency.html"><img alt="influence_of_n_features_on_latency" src="../_images/plot_prediction_latency_31.png" style="width: 800.0px; height: 480.0px;" /></a>
+</strong></p><p>Overall you can expect the prediction time to increase at least linearly with
+the number of features (non-linear cases can happen depending on the global
+memory footprint and estimator).</p>
+</div>
+<div class="section" id="influence-of-the-input-data-representation">
+<h3>7.1.3. Influence of the Input Data Representation<a class="headerlink" href="#influence-of-the-input-data-representation" title="Permalink to this headline">¶</a></h3>
+<p>Scipy provides sparse matrix datastructures which are optimized for storing
+sparse data. The main feature of sparse formats is that you don&#8217;t store zeros
+so if your data is sparse then you use much less memory. A non-zero value in
+a sparse (<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/sparse.html">CSR or CSC</a>)
+representation will only take on average one 32bit integer position + the 64
+bit floating point value + an additional 32bit per row or column in the matrix.
+Using sparse input on a dense (or sparse) linear model can speedup prediction
+by quite a bit as only the non zero valued features impact the dot product
+and thus the model predictions. Hence if you have 100 non zeros in 1e6
+dimensional space, you only need 100 multiply and add operation instead of 1e6.</p>
+<p>Calculation over a dense representation, however, may leverage highly optimised
+vector operations and multithreading in BLAS, and tends to result in fewer CPU
+cache misses. So the sparsity should typically be quite high (10% non-zeros
+max, to be checked depending on the hardware) for the sparse input
+representation to be faster than the dense input representation on a machine
+with many CPUs and an optimized BLAS implementation.</p>
+<p>Here is sample code to test the sparsity of your input:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sparsity_ratio</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;input sparsity ratio:&quot;</span><span class="p">,</span> <span class="n">sparsity_ratio</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>As a rule of thumb you can consider that if the sparsity ratio is greater
+than 90% you can probably benefit from sparse formats. Check Scipy&#8217;s sparse
+matrix formats <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/sparse.html">documentation</a>
+for more information on how to build (or convert your data to) sparse matrix
+formats. Most of the time the <tt class="docutils literal"><span class="pre">CSR</span></tt> and <tt class="docutils literal"><span class="pre">CSC</span></tt> formats work best.</p>
+</div>
+<div class="section" id="influence-of-the-model-complexity">
+<h3>7.1.4. Influence of the Model Complexity<a class="headerlink" href="#influence-of-the-model-complexity" title="Permalink to this headline">¶</a></h3>
+<p>Generally speaking, when model complexity increases, predictive power and
+latency are supposed to increase. Increasing predictive power is usually
+interesting, but for many applications we would better not increase
+prediction latency too much. We will now review this idea for different
+families of supervised models.</p>
+<p>For <a class="reference internal" href="classes.html#module-sklearn.linear_model" title="sklearn.linear_model"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.linear_model</span></tt></a> (e.g. Lasso, ElasticNet,
+SGDClassifier/Regressor, Ridge &amp; RidgeClassifier,
+PassiveAgressiveClassifier/Regressor, LinearSVC, LogisticRegression...) the
+decision function that is applied at prediction time is the same (a dot product)
+, so latency should be equivalent.</p>
+<p>Here is an example using
+<tt class="xref py py-class docutils literal"><span class="pre">sklearn.linear_model.stochastic_gradient.SGDClassifier</span></tt> with the
+<tt class="docutils literal"><span class="pre">elasticnet</span></tt> penalty. The regularization strength is globally controlled by
+the <tt class="docutils literal"><span class="pre">alpha</span></tt> parameter. With a sufficiently high <tt class="docutils literal"><span class="pre">alpha</span></tt>,
+one can then increase the <tt class="docutils literal"><span class="pre">l1_ratio</span></tt> parameter of <tt class="docutils literal"><span class="pre">elasticnet</span></tt> to
+enforce various levels of sparsity in the model coefficients. Higher sparsity
+here is interpreted as less model complexity as we need fewer coefficients to
+describe it fully. Of course sparsity influences in turn the prediction time
+as the sparse dot-product takes time roughly proportional to the number of
+non-zero coefficients.</p>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_model_complexity_influence.html"><img alt="en_model_complexity" src="../_images/plot_model_complexity_influence_11.png" style="width: 960.0px; height: 480.0px;" /></a>
+</strong></p><p>For the <a class="reference internal" href="classes.html#module-sklearn.svm" title="sklearn.svm"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.svm</span></tt></a> family of algorithms with a non-linear kernel,
+the latency is tied to the number of support vectors (the fewer the faster).
+Latency and throughput should (asymptotically) grow linearly with the number
+of support vectors in a SVC or SVR model. The kernel will also influence the
+latency as it is used to compute the projection of the input vector once per
+support vector. In the following graph the <tt class="docutils literal"><span class="pre">nu</span></tt> parameter of
+<tt class="xref py py-class docutils literal"><span class="pre">sklearn.svm.classes.NuSVR</span></tt> was used to influence the number of
+support vectors.</p>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_model_complexity_influence.html"><img alt="nusvr_model_complexity" src="../_images/plot_model_complexity_influence_21.png" style="width: 960.0px; height: 480.0px;" /></a>
+</strong></p><p>For <a class="reference internal" href="classes.html#module-sklearn.ensemble" title="sklearn.ensemble"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.ensemble</span></tt></a> of trees (e.g. RandomForest, GBT,
+ExternalTrees etc) the number of trees and their depth play the most
+important role. Latency and throughput should scale linearly with the number
+of trees. In this case we used directly the <tt class="docutils literal"><span class="pre">n_estimators</span></tt> parameter of
+<tt class="xref py py-class docutils literal"><span class="pre">sklearn.ensemble.gradient_boosting.GradientBoostingRegressor</span></tt>.</p>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_model_complexity_influence.html"><img alt="gbt_model_complexity" src="../_images/plot_model_complexity_influence_31.png" style="width: 960.0px; height: 480.0px;" /></a>
+</strong></p><p>In any case be warned that decreasing model complexity can hurt accuracy as
+mentioned above. For instance a non-linearly separable problem can be handled
+with a speedy linear model but prediction power will very likely suffer in
+the process.</p>
+</div>
+<div class="section" id="feature-extraction-latency">
+<h3>7.1.5. Feature Extraction Latency<a class="headerlink" href="#feature-extraction-latency" title="Permalink to this headline">¶</a></h3>
+<p>Most scikit-learn models are usually pretty fast as they are implemented
+either with compiled Cython extensions or optimized computing libraries.
+On the other hand, in many real world applications the feature extraction
+process (i.e. turning raw data like database rows or network packets into
+numpy arrays) governs the overall prediction time. For example on the Reuters
+text classification task the whole preparation (reading and parsing SGML
+files, tokenizing the text and hashing it into a common vector space) is
+taking 100 to 500 times more time than the actual prediction code, depending on
+the chosen model.</p>
+<blockquote>
+<div></div></blockquote>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_out_of_core_classification.html"><img alt="prediction_time" src="../_images/plot_out_of_core_classification_41.png" style="width: 640.0px; height: 480.0px;" /></a>
+</strong></p><p>In many cases it is thus recommended to carefully time and profile your
+feature extraction code as it may be a good place to start optimizing when
+your overall latency is too slow for your application.</p>
+</div>
+</div>
+<div class="section" id="prediction-throughput">
+<h2>7.2. Prediction Throughput<a class="headerlink" href="#prediction-throughput" title="Permalink to this headline">¶</a></h2>
+<p>Another important metric to care about when sizing production systems is the
+throughput i.e. the number of predictions you can make in a given amount of
+time. Here is a benchmark from the
+<a class="reference internal" href="../auto_examples/applications/plot_prediction_latency.html#example-applications-plot-prediction-latency-py"><em>Prediction Latency</em></a> example that measures
+this quantity for a number of estimators on synthetic data:</p>
+<p class="centered">
+<strong><a class="reference external image-reference" href="../auto_examples/applications/plot_prediction_latency.html"><img alt="throughput_benchmark" src="../_images/plot_prediction_latency_41.png" style="width: 800.0px; height: 480.0px;" /></a>
+</strong></p><p>These throughputs are achieved on a single process. An obvious way to
+increase the throughput of your application is to spawn additional instances
+(usually processes in Python because of the
+<a class="reference external" href="https://wiki.python.org/moin/GlobalInterpreterLock">GIL</a>) that share the
+same model. One might also add machines to spread the load. A detailed
+explanation on how to achieve this is beyond the scope of this documentation
+though.</p>
+</div>
+<div class="section" id="tips-and-tricks">
+<h2>7.3. Tips and Tricks<a class="headerlink" href="#tips-and-tricks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="linear-algebra-libraries">
+<h3>7.3.1. Linear algebra libraries<a class="headerlink" href="#linear-algebra-libraries" title="Permalink to this headline">¶</a></h3>
+<p>As scikit-learn relies heavily on Numpy/Scipy and linear algebra in general it
+makes sense to take explicit care of the versions of these libraries.
+Basically, you ought to make sure that Numpy is built using an optimized <a class="reference external" href="http://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms">BLAS</a> /
+<a class="reference external" href="http://en.wikipedia.org/wiki/LAPACK">LAPACK</a> library.</p>
+<p>Not all models benefit from optimized BLAS and Lapack implementations. For
+instance models based on (randomized) decision trees typically do not rely on
+BLAS calls in their inner loops. Nor do models implemented in third party C++
+library (like <tt class="docutils literal"><span class="pre">LinearSVC</span></tt>, <tt class="docutils literal"><span class="pre">LogisticRegression</span></tt> from <tt class="docutils literal"><span class="pre">liblinear</span></tt> and SVC /
+SVR from <tt class="docutils literal"><span class="pre">libsvm</span></tt>). On the other hand a linear model implemented with a BLAS
+DGEMM call (via <tt class="docutils literal"><span class="pre">numpy.dot</span></tt>) will typically benefit hugely from a tuned BLAS
+implementation and lead to orders of magnitude speedup over a non-optimized
+BLAS.</p>
+<p>You can display the BLAS / LAPACK implementation used by your NumPy / SciPy /
+scikit-learn install with the following commands:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">numpy.distutils.system_info</span> <span class="kn">import</span> <span class="n">get_info</span>
+<span class="k">print</span><span class="p">(</span><span class="n">get_info</span><span class="p">(</span><span class="s">&#39;blas_opt&#39;</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">get_info</span><span class="p">(</span><span class="s">&#39;lapack_opt&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Optimized BLAS / LAPACK implementations include:</dt>
+<dd><ul class="first last simple">
+<li>Atlas (need hardware specific tuning by rebuilding on the target machine)</li>
+<li>OpenBLAS</li>
+<li>MKL</li>
+<li>Apple Accelerate and vecLib frameworks (OSX only)</li>
+</ul>
+</dd>
+</dl>
+<p>More information can be found on the <a class="reference external" href="http://docs.scipy.org/doc/numpy/user/install.html">Scipy install page</a>
+and in this
+<a class="reference external" href="http://danielnouri.org/notes/2012/12/19/libblas-and-liblapack-issues-and-speed,-with-scipy-and-ubuntu/">blog post</a>
+from Daniel Nouri which has some nice step by step install instructions for
+Debian / Ubuntu.</p>
+</div>
+<div class="section" id="model-compression">
+<h3>7.3.2. Model Compression<a class="headerlink" href="#model-compression" title="Permalink to this headline">¶</a></h3>
+<p>Model compression in scikit-learn only concerns linear models for the moment.
+In this context it means that we want to control the model sparsity (i.e. the
+number of non-zero coordinates in the model vectors). It is generally a good
+idea to combine model sparsity with sparse input data representation.</p>
+<p>Here is sample code that illustrates the use of the <tt class="docutils literal"><span class="pre">sparsify()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">clf</span> <span class="o">=</span> <span class="n">SGDRegressor</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s">&#39;elasticnet&#39;</span><span class="p">,</span> <span class="n">l1_ratio</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">sparsify</span><span class="p">()</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example we prefer the <tt class="docutils literal"><span class="pre">elasticnet</span></tt> penalty as it is often a good
+compromise between model compactness and prediction power. One can also
+further tune the <tt class="docutils literal"><span class="pre">l1_ratio</span></tt> parameter (in combination with the
+regularization strength <tt class="docutils literal"><span class="pre">alpha</span></tt>) to control this tradeoff.</p>
+<p>A typical <a class="reference external" href="https://github.com/scikit-learn/scikit-learn/tree/master/benchmarks/bench_sparsify.py">benchmark</a>
+on synthetic data yields a &gt;30% decrease in latency when both the model and
+input are sparse (with 0.000024 and 0.027400 non-zero coefficients ratio
+respectively). Your mileage may vary depending on the sparsity and size of
+your data and model.
+Furthermore, sparsifying can be very useful to reduce the memory usage of
+predictive models deployed on production servers.</p>
+</div>
+<div class="section" id="model-reshaping">
+<h3>7.3.3. Model Reshaping<a class="headerlink" href="#model-reshaping" title="Permalink to this headline">¶</a></h3>
+<p>Model reshaping consists in selecting only a portion of the available features
+to fit a model. In other words, if a model discards features during the
+learning phase we can then strip those from the input. This has several
+benefits. Firstly it reduces memory (and therefore time) overhead of the
+model itself. It also allows to discard explicit
+feature selection components in a pipeline once we know which features to
+keep from a previous run. Finally, it can help reduce processing time and I/O
+usage upstream in the data access and feature extraction layers by not
+collecting and building features that are discarded by the model. For instance
+if the raw data come from a database, it can make it possible to write simpler
+and faster queries or reduce I/O usage by making the queries return lighter
+records.
+At the moment, reshaping needs to be performed manually in scikit-learn.
+In the case of sparse input (particularly in <tt class="docutils literal"><span class="pre">CSR</span></tt> format), it is generally
+sufficient to not generate the relevant features, leaving their columns empty.</p>
+</div>
+<div class="section" id="links">
+<h3>7.3.4. Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="../developers/performance.html">scikit-learn developer performance documentation</a></li>
+<li><a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/sparse.html">Scipy sparse matrix formats documentation</a></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../_sources/modules/computational_performance.txt" rel="nofollow">Show this page source</a>
+    </div>
+     <div class="rel">
+    
+    <div class="buttonPrevious">
+      <a href="scaling_strategies.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../auto_examples/index.html">Next
+      </a>
+    </div>
+    <div class="buttonPrevious">
+      <a href="../np-modindex.html">Previous
+      </a>
+    </div>
+    <div class="buttonNext">
+      <a href="../py-modindex.html">Next
+      </a>
+    </div>
+    
+     </div>
+
+    
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    
+
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+  </body>
+</html>

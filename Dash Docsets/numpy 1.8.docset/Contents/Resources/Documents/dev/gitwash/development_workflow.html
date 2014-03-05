@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Development workflow &mdash; NumPy v1.8 Manual</title>
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" >
+    <link rel="top" title="NumPy v1.8 Manual" href="../../index.html" >
+    <link rel="up" title="Git for development" href="git_development.html" >
+    <link rel="next" title="git resources" href="git_resources.html" >
+    <link rel="prev" title="Git configuration" href="configure_git.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+        
+        <li class="active"><a href="../../index.html">NumPy v1.8 Manual</a></li>
+        
+
+          <li class="active"><a href="../index.html" >Contributing to Numpy</a></li>
+          <li class="active"><a href="index.html" >Working with <em>NumPy</em> source code</a></li>
+          <li class="active"><a href="git_development.html" accesskey="U">Git for development</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="git_resources.html" title="git resources"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="configure_git.html" title="Git configuration"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Development workflow</a><ul>
+<li><a class="reference internal" href="#basic-workflow">Basic workflow</a><ul>
+<li><a class="reference internal" href="#making-a-new-feature-branch">Making a new feature branch</a></li>
+<li><a class="reference internal" href="#the-editing-workflow">The editing workflow</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#in-more-detail">In more detail</a></li>
+<li><a class="reference internal" href="#writing-the-commit-message">Writing the commit message</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rebasing-on-master">Rebasing on master</a><ul>
+<li><a class="reference internal" href="#recovering-from-mess-ups">Recovering from mess-ups</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#asking-for-your-changes-to-be-merged-with-the-main-repo">Asking for your changes to be merged with the main repo</a><ul>
+<li><a class="reference internal" href="#asking-for-code-review">Asking for code review</a></li>
+<li><a class="reference internal" href="#filing-a-pull-request">Filing a pull request</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pushing-changes-to-the-main-repo">Pushing changes to the main repo</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-things-you-might-want-to-do">Additional things you might want to do</a><ul>
+<li><a class="reference internal" href="#rewriting-commit-history">Rewriting commit history</a></li>
+<li><a class="reference internal" href="#deleting-a-branch-on-github">Deleting a branch on github</a></li>
+<li><a class="reference internal" href="#several-people-sharing-a-single-repository">Several people sharing a single repository</a></li>
+<li><a class="reference internal" href="#exploring-your-repository">Exploring your repository</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="configure_git.html"
+                        title="previous chapter">Git configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="git_resources.html"
+                        title="next chapter">git resources</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="development-workflow">
+<span id="id1"></span><h1>Development workflow<a class="headerlink" href="#development-workflow" title="Permalink to this headline">¶</a></h1>
+<p>You already have your own forked copy of the <a class="reference external" href="http://www.numpy.org">NumPy</a> repository, by
+following <a class="reference internal" href="development_setup.html#forking"><em>Making your own copy (fork) of NumPy</em></a>, <a class="reference internal" href="development_setup.html#set-up-fork"><em>Set up your fork</em></a>, you have configured <a class="reference external" href="http://git-scm.com/">git</a>
+by following <a class="reference internal" href="configure_git.html#configure-git"><em>Git configuration</em></a>, and have linked the upstream
+repository as explained in <a class="reference internal" href="development_setup.html#linking-to-upstream"><em>Linking your repository to the upstream repo</em></a>.</p>
+<p>What is described below is a recommended workflow with Git.</p>
+<div class="section" id="basic-workflow">
+<h2>Basic workflow<a class="headerlink" href="#basic-workflow" title="Permalink to this headline">¶</a></h2>
+<p>In short:</p>
+<ol class="arabic">
+<li><p class="first">Update your <tt class="docutils literal"><span class="pre">master</span></tt> branch if it&#8217;s not up to date.
+Then start a new <em>feature branch</em> for each set of edits that you do.
+See <a class="reference internal" href="#making-a-new-feature-branch"><em>below</em></a>.</p>
+<p>Avoid putting new commits in your <tt class="docutils literal"><span class="pre">master</span></tt> branch.</p>
+</li>
+<li><p class="first">Hack away! See <a class="reference internal" href="#editing-workflow"><em>below</em></a></p>
+</li>
+<li><p class="first">Avoid merging other branches into your feature branch while you are
+working.</p>
+<p>You can optionally rebase if really needed,
+see <a class="reference internal" href="#rebasing-on-master"><em>below</em></a>.</p>
+</li>
+<li><p class="first">When finished:</p>
+<ul>
+<li><p class="first"><em>Contributors</em>: push your feature branch to your own Github repo, and
+<a class="reference internal" href="#asking-for-merging"><em>ask for code review or make a pull request</em></a>.</p>
+</li>
+<li><p class="first"><em>Core developers</em> (if you want to push changes without
+further review):</p>
+<div class="highlight-python"><pre># First, either (i) rebase on upstream -- if you have only few commits
+git fetch upstream
+git rebase upstream/master
+
+# or, (ii) merge to upstream -- if you have many related commits
+git fetch upstream
+git merge --no-ff upstream/master
+
+# Recheck that what is there is sensible
+git log --oneline --graph
+git log -p upstream/master..
+
+# Finally, push branch to upstream master
+git push upstream my-new-feature:master</pre>
+</div>
+<p>See <a class="reference internal" href="#pushing-to-main"><em>below</em></a>.</p>
+</li>
+</ul>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It&#8217;s usually a good idea to use the <tt class="docutils literal"><span class="pre">-n</span></tt> flag to <tt class="docutils literal"><span class="pre">git</span> <span class="pre">push</span></tt>
+to check first that you&#8217;re about to push the changes you want to
+the place you want.</p>
+</div>
+<p>This way of working helps to keep work well organized and the history
+as clear as possible.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Do not use <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></tt> &#8212; this avoids common mistakes if you are
+new to Git. Instead, always do <tt class="docutils literal"><span class="pre">git</span> <span class="pre">fetch</span></tt> followed by <tt class="docutils literal"><span class="pre">git</span>
+<span class="pre">rebase</span></tt>, <tt class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span> <span class="pre">--ff-only</span></tt> or <tt class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span> <span class="pre">--no-ff</span></tt>,
+depending on what you intend.</p>
+</div>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">See discussions on <a class="reference external" href="http://www.mail-archive.com/dri-devel&#64;lists.sourceforge.net/msg39091.html">linux git workflow</a>,
+and <a class="reference external" href="http://mail.scipy.org/pipermail/ipython-dev/2010-October/006746.html">ipython git workflow</a>.</p>
+</div>
+<div class="section" id="making-a-new-feature-branch">
+<span id="id2"></span><h3>Making a new feature branch<a class="headerlink" href="#making-a-new-feature-branch" title="Permalink to this headline">¶</a></h3>
+<p>To update your master branch, use:</p>
+<div class="highlight-python"><pre>git fetch upstream
+git merge upstream/master --ff-only</pre>
+</div>
+<p>To create a new branch and check it out, use:</p>
+<div class="highlight-python"><pre>git checkout -b my-new-feature upstream/master</pre>
+</div>
+<p>Generally, you will want to keep this branch also on your public <a class="reference external" href="http://github.com">github</a> fork
+of <a class="reference external" href="http://www.numpy.org">NumPy</a>.  To do this, you <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-push.html">git push</a> this new branch up to your <a class="reference external" href="http://github.com">github</a>
+repo.  Generally (if you followed the instructions in these pages, and
+by default), git will have a link to your <a class="reference external" href="http://github.com">github</a> repo, called
+<tt class="docutils literal"><span class="pre">origin</span></tt>.  You push up to your own repo on <a class="reference external" href="http://github.com">github</a> with:</p>
+<div class="highlight-python"><pre>git push origin my-new-feature</pre>
+</div>
+<p>In git &gt;= 1.7 you can ensure that the link is correctly set by using the
+<tt class="docutils literal"><span class="pre">--set-upstream</span></tt> option:</p>
+<div class="highlight-python"><pre>git push --set-upstream origin my-new-feature</pre>
+</div>
+<p>From now on <a class="reference external" href="http://git-scm.com/">git</a> will know that <tt class="docutils literal"><span class="pre">my-new-feature</span></tt> is related to the
+<tt class="docutils literal"><span class="pre">my-new-feature</span></tt> branch in your own <a class="reference external" href="http://github.com">github</a> repo.</p>
+</div>
+<div class="section" id="the-editing-workflow">
+<span id="editing-workflow"></span><h3>The editing workflow<a class="headerlink" href="#the-editing-workflow" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="overview">
+<h4>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python"><pre># hack hack
+git add my_new_file
+git commit -am 'ENH: some message'
+
+# push the branch to your own Github repo
+git push</pre>
+</div>
+</div>
+<div class="section" id="in-more-detail">
+<h4>In more detail<a class="headerlink" href="#in-more-detail" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic">
+<li><p class="first">Make some changes</p>
+</li>
+<li><p class="first">See which files have changed with <tt class="docutils literal"><span class="pre">git</span> <span class="pre">status</span></tt> (see <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-status.html">git status</a>).
+You&#8217;ll see a listing like this one:</p>
+<div class="highlight-python"><pre># On branch my-new-feature
+# Changed but not updated:
+#   (use "git add &lt;file&gt;..." to update what will be committed)
+#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+#
+#  modified:   README
+#
+# Untracked files:
+#   (use "git add &lt;file&gt;..." to include in what will be committed)
+#
+#  INSTALL
+no changes added to commit (use "git add" and/or "git commit -a")</pre>
+</div>
+</li>
+<li><p class="first">Check what the actual changes are with <tt class="docutils literal"><span class="pre">git</span> <span class="pre">diff</span></tt> (<a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-diff.html">git diff</a>).</p>
+</li>
+<li><p class="first">Add any new files to version control <tt class="docutils literal"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">new_file_name</span></tt> (see
+<a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-add.html">git add</a>).</p>
+</li>
+<li><p class="first">To commit all modified files into the local copy of your repo,, do
+<tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-am</span> <span class="pre">'A</span> <span class="pre">commit</span> <span class="pre">message'</span></tt>.  Note the <tt class="docutils literal"><span class="pre">-am</span></tt> options to
+<tt class="docutils literal"><span class="pre">commit</span></tt>. The <tt class="docutils literal"><span class="pre">m</span></tt> flag just signals that you&#8217;re going to type a
+message on the command line.   If you leave it out, an editor will open in
+which you can compose your commit message.  For non-trivial commits this is
+often the better choice.  The <tt class="docutils literal"><span class="pre">a</span></tt> flag - you can just take on faith - or
+see <a class="reference external" href="http://www.gitready.com/beginner/2009/01/18/the-staging-area.html">why the -a flag?</a> - and the helpful use-case description in the
+<a class="reference external" href="http://tomayko.com/writings/the-thing-about-git">tangled working copy problem</a>. The section on
+<a class="reference internal" href="#writing-the-commit-message"><em>commit messages</em></a> below might also be useful.</p>
+</li>
+<li><p class="first">To push the changes up to your forked repo on <a class="reference external" href="http://github.com">github</a>, do a <tt class="docutils literal"><span class="pre">git</span>
+<span class="pre">push</span></tt> (see <em class="xref py py-obj">git push</em>).</p>
+</li>
+</ol>
+</div>
+<div class="section" id="writing-the-commit-message">
+<span id="id3"></span><h4>Writing the commit message<a class="headerlink" href="#writing-the-commit-message" title="Permalink to this headline">¶</a></h4>
+<p>Commit messages should be clear and follow a few basic rules.  Example:</p>
+<div class="highlight-python"><pre>ENH: add functionality X to numpy.&lt;submodule&gt;.
+
+The first line of the commit message starts with a capitalized acronym
+(options listed below) indicating what type of commit this is.  Then a blank
+line, then more text if needed.  Lines shouldn't be longer than 80
+characters.  If the commit is related to a ticket, indicate that with
+"See #3456", "See ticket 3456", "Closes #3456" or similar.</pre>
+</div>
+<p>Describing the motivation for a change, the nature of a bug for bug fixes or
+some details on what an enhancement does are also good to include in a commit
+message.  Messages should be understandable without looking at the code
+changes.  A commit message like <tt class="docutils literal"><span class="pre">MAINT:</span> <span class="pre">fixed</span> <span class="pre">another</span> <span class="pre">one</span></tt> is an example of
+what not to do; the reader has to go look for context elsewhere.</p>
+<p>Standard acronyms to start the commit message with are:</p>
+<div class="highlight-python"><pre>API: an (incompatible) API change
+BLD: change related to building numpy
+BUG: bug fix
+DEP: deprecate something, or remove a deprecated object
+DEV: development tool or utility
+DOC: documentation
+ENH: enhancement
+MAINT: maintenance commit (refactoring, typos, etc.)
+REV: revert an earlier commit
+STY: style fix (whitespace, PEP8)
+TST: addition or modification of tests
+REL: related to releasing numpy</pre>
+</div>
+</div>
+</div>
+<div class="section" id="rebasing-on-master">
+<span id="id4"></span><h3>Rebasing on master<a class="headerlink" href="#rebasing-on-master" title="Permalink to this headline">¶</a></h3>
+<p>This updates your feature branch with changes from the upstream <a class="reference external" href="http://github.com/numpy/numpy">NumPy
+github</a> repo. If you do not absolutely need to do this, try to avoid
+doing it, except perhaps when you are finished.</p>
+<p>First, it can be useful to update your master branch:</p>
+<div class="highlight-python"><pre># go to the master branch
+git checkout master
+# pull changes from github
+git fetch upstream
+# update the master branch
+git rebase upstream/master
+# push it to your Github repo
+git push</pre>
+</div>
+<p>Then, the feature branch:</p>
+<div class="highlight-python"><pre># go to the feature branch
+git checkout my-new-feature
+# make a backup in case you mess up
+git branch tmp my-new-feature
+# rebase on master
+git rebase master</pre>
+</div>
+<p>If you have made changes to files that have changed also upstream,
+this may generate merge conflicts that you need to resolve.
+Finally, remove the backup branch once the rebase succeeded:</p>
+<div class="highlight-python"><pre>git branch -D tmp</pre>
+</div>
+<div class="section" id="recovering-from-mess-ups">
+<span id="recovering-from-mess-up"></span><h4>Recovering from mess-ups<a class="headerlink" href="#recovering-from-mess-ups" title="Permalink to this headline">¶</a></h4>
+<p>Sometimes, you mess up merges or rebases. Luckily, in Git it is
+relatively straightforward to recover from such mistakes.</p>
+<p>If you mess up during a rebase:</p>
+<div class="highlight-python"><pre>git rebase --abort</pre>
+</div>
+<p>If you notice you messed up after the rebase:</p>
+<div class="highlight-python"><pre># reset branch back to the saved point
+git reset --hard tmp</pre>
+</div>
+<p>If you forgot to make a backup branch:</p>
+<div class="highlight-python"><pre># look at the reflog of the branch
+git reflog show my-feature-branch
+
+8630830 my-feature-branch@{0}: commit: BUG: io: close file handles immediately
+278dd2a my-feature-branch@{1}: rebase finished: refs/heads/my-feature-branch onto 11ee694744f2552d
+26aa21a my-feature-branch@{2}: commit: BUG: lib: make seek_gzip_factory not leak gzip obj
+...
+
+# reset the branch to where it was before the botched rebase
+git reset --hard my-feature-branch@{2}</pre>
+</div>
+<p>If you didn&#8217;t actually mess up but there are merge conflicts, you need to
+resolve those.  This can be one of the trickier things to get right.  For a
+good description of how to do this, see
+<a class="reference external" href="http://git-scm.com/book/en/Git-Branching-Basic-Branching-and-Merging#Basic-Merge-Conflicts">http://git-scm.com/book/en/Git-Branching-Basic-Branching-and-Merging#Basic-Merge-Conflicts</a></p>
+</div>
+</div>
+<div class="section" id="asking-for-your-changes-to-be-merged-with-the-main-repo">
+<span id="asking-for-merging"></span><h3>Asking for your changes to be merged with the main repo<a class="headerlink" href="#asking-for-your-changes-to-be-merged-with-the-main-repo" title="Permalink to this headline">¶</a></h3>
+<p>When you feel your work is finished, you can ask for code review, or
+directly file a pull request.</p>
+<div class="section" id="asking-for-code-review">
+<h4>Asking for code review<a class="headerlink" href="#asking-for-code-review" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic">
+<li><p class="first">Go to your repo URL - e.g. <tt class="docutils literal"><span class="pre">http://github.com/your-user-name/numpy</span></tt>.</p>
+</li>
+<li><p class="first">Click on the <em>Branch list</em> button:</p>
+<img alt="../../_images/branch_list.png" src="../../_images/branch_list.png" />
+</li>
+<li><p class="first">Click on the <em>Compare</em> button for your feature branch - here <tt class="docutils literal"><span class="pre">my-new-feature</span></tt>:</p>
+<img alt="../../_images/branch_list_compare.png" src="../../_images/branch_list_compare.png" />
+</li>
+<li><p class="first">If asked, select the <em>base</em> and <em>comparison</em> branch names you want to
+compare.  Usually these will be <tt class="docutils literal"><span class="pre">master</span></tt> and <tt class="docutils literal"><span class="pre">my-new-feature</span></tt>
+(where that is your feature branch name).</p>
+</li>
+<li><p class="first">At this point you should get a nice summary of the changes.  Copy the
+URL for this, and post it to the <a class="reference external" href="http://scipy.org/Mailing_Lists">NumPy mailing list</a>, asking for
+review.  The URL will look something like:
+<tt class="docutils literal"><span class="pre">http://github.com/your-user-name/numpy/compare/master...my-new-feature</span></tt>.
+There&#8217;s an example at
+<a class="reference external" href="http://github.com/matthew-brett/nipy/compare/master...find-install-data">http://github.com/matthew-brett/nipy/compare/master...find-install-data</a>
+See: <a class="reference external" href="http://github.com/blog/612-introducing-github-compare-view">http://github.com/blog/612-introducing-github-compare-view</a> for
+more detail.</p>
+</li>
+</ol>
+<p>The generated comparison, is between your feature branch
+<tt class="docutils literal"><span class="pre">my-new-feature</span></tt>, and the place in <tt class="docutils literal"><span class="pre">master</span></tt> from which you branched
+<tt class="docutils literal"><span class="pre">my-new-feature</span></tt>.  In other words, you can keep updating <tt class="docutils literal"><span class="pre">master</span></tt>
+without interfering with the output from the comparison.  More detail?
+Note the three dots in the URL above (<tt class="docutils literal"><span class="pre">master...my-new-feature</span></tt>) and
+see <a class="reference internal" href="dot2_dot3.html#dot2-dot3"><em>Two and three dots in difference specs</em></a>.</p>
+</div>
+<div class="section" id="filing-a-pull-request">
+<h4>Filing a pull request<a class="headerlink" href="#filing-a-pull-request" title="Permalink to this headline">¶</a></h4>
+<p>When you are ready to ask for the merge of your code:</p>
+<ol class="arabic">
+<li><p class="first">Go to the URL of your forked repo, say
+<tt class="docutils literal"><span class="pre">http://github.com/your-user-name/numpy.git</span></tt>.</p>
+</li>
+<li><p class="first">Click on the &#8216;Pull request&#8217; button:</p>
+<img alt="../../_images/pull_button.png" src="../../_images/pull_button.png" />
+<p>Enter a message; we suggest you select only <tt class="docutils literal"><span class="pre">NumPy</span></tt> as the
+recipient.  The message will go to the NumPy core developers.  Please
+feel free to add others from the list as you like.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="pushing-changes-to-the-main-repo">
+<span id="pushing-to-main"></span><h3>Pushing changes to the main repo<a class="headerlink" href="#pushing-changes-to-the-main-repo" title="Permalink to this headline">¶</a></h3>
+<p>When you have a set of &#8220;ready&#8221; changes in a feature branch ready for
+Numpy&#8217;s <tt class="docutils literal"><span class="pre">master</span></tt> or <tt class="docutils literal"><span class="pre">maintenance/1.5.x</span></tt> branches, you can push
+them to <tt class="docutils literal"><span class="pre">upstream</span></tt> as follows:</p>
+<ol class="arabic">
+<li><p class="first">First, merge or rebase on the target branch.</p>
+<ol class="loweralpha">
+<li><p class="first">Only a few commits: prefer rebasing:</p>
+<div class="highlight-python"><pre>git fetch upstream
+git rebase upstream/master</pre>
+</div>
+<p>See <a class="reference internal" href="#rebasing-on-master"><em>above</em></a>.</p>
+</li>
+<li><p class="first">Many related commits: consider creating a merge commit:</p>
+<div class="highlight-python"><pre>git fetch upstream
+git merge --no-ff upstream/master</pre>
+</div>
+</li>
+</ol>
+</li>
+<li><p class="first">Check that what you are going to push looks sensible:</p>
+<div class="highlight-python"><pre>git log -p upstream/master..
+git log --oneline --graph</pre>
+</div>
+</li>
+<li><p class="first">Push to upstream:</p>
+<div class="highlight-python"><pre>git push upstream my-feature-branch:master</pre>
+</div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Avoid using <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></tt> here.</p>
+</div>
+</div>
+</div>
+<div class="section" id="additional-things-you-might-want-to-do">
+<h2>Additional things you might want to do<a class="headerlink" href="#additional-things-you-might-want-to-do" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="rewriting-commit-history">
+<span id="id5"></span><h3>Rewriting commit history<a class="headerlink" href="#rewriting-commit-history" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Do this only for your own feature branches.</p>
+</div>
+<p>There&#8217;s an embarassing typo in a commit you made? Or perhaps the you
+made several false starts you would like the posterity not to see.</p>
+<p>This can be done via <em>interactive rebasing</em>.</p>
+<p>Suppose that the commit history looks like this:</p>
+<div class="highlight-python"><pre>git log --oneline
+eadc391 Fix some remaining bugs
+a815645 Modify it so that it works
+2dec1ac Fix a few bugs + disable
+13d7934 First implementation
+6ad92e5 * masked is now an instance of a new object, MaskedConstant
+29001ed Add pre-nep for a copule of structured_array_extensions.
+...</pre>
+</div>
+<p>and <tt class="docutils literal"><span class="pre">6ad92e5</span></tt> is the last commit in the <tt class="docutils literal"><span class="pre">master</span></tt> branch. Suppose we
+want to make the following changes:</p>
+<ul class="simple">
+<li>Rewrite the commit message for <tt class="docutils literal"><span class="pre">13d7934</span></tt> to something more sensible.</li>
+<li>Combine the commits <tt class="docutils literal"><span class="pre">2dec1ac</span></tt>, <tt class="docutils literal"><span class="pre">a815645</span></tt>, <tt class="docutils literal"><span class="pre">eadc391</span></tt> into a single one.</li>
+</ul>
+<p>We do as follows:</p>
+<div class="highlight-python"><pre># make a backup of the current state
+git branch tmp HEAD
+# interactive rebase
+git rebase -i 6ad92e5</pre>
+</div>
+<p>This will open an editor with the following text in it:</p>
+<div class="highlight-python"><pre>pick 13d7934 First implementation
+pick 2dec1ac Fix a few bugs + disable
+pick a815645 Modify it so that it works
+pick eadc391 Fix some remaining bugs
+
+# Rebase 6ad92e5..eadc391 onto 6ad92e5
+#
+# Commands:
+#  p, pick = use commit
+#  r, reword = use commit, but edit the commit message
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#  f, fixup = like "squash", but discard this commit's log message
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+# However, if you remove everything, the rebase will be aborted.
+#</pre>
+</div>
+<p>To achieve what we want, we will make the following changes to it:</p>
+<div class="highlight-python"><pre>r 13d7934 First implementation
+pick 2dec1ac Fix a few bugs + disable
+f a815645 Modify it so that it works
+f eadc391 Fix some remaining bugs</pre>
+</div>
+<p>This means that (i) we want to edit the commit message for
+<tt class="docutils literal"><span class="pre">13d7934</span></tt>, and (ii) collapse the last three commits into one. Now we
+save and quit the editor.</p>
+<p>Git will then immediately bring up an editor for editing the commit
+message. After revising it, we get the output:</p>
+<div class="highlight-python"><pre>[detached HEAD 721fc64] FOO: First implementation
+ 2 files changed, 199 insertions(+), 66 deletions(-)
+[detached HEAD 0f22701] Fix a few bugs + disable
+ 1 files changed, 79 insertions(+), 61 deletions(-)
+Successfully rebased and updated refs/heads/my-feature-branch.</pre>
+</div>
+<p>and the history looks now like this:</p>
+<div class="highlight-python"><pre>0f22701 Fix a few bugs + disable
+721fc64 ENH: Sophisticated feature
+6ad92e5 * masked is now an instance of a new object, MaskedConstant</pre>
+</div>
+<p>If it went wrong, recovery is again possible as explained <a class="reference internal" href="#recovering-from-mess-up"><em>above</em></a>.</p>
+</div>
+<div class="section" id="deleting-a-branch-on-github">
+<h3>Deleting a branch on <a class="reference external" href="http://github.com">github</a><a class="headerlink" href="#deleting-a-branch-on-github" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>git checkout master
+# delete branch locally
+git branch -D my-unwanted-branch
+# delete branch on github
+git push origin :my-unwanted-branch</pre>
+</div>
+<p>(Note the colon <tt class="docutils literal"><span class="pre">:</span></tt> before <tt class="docutils literal"><span class="pre">test-branch</span></tt>.  See also:
+<a class="reference external" href="http://github.com/guides/remove-a-remote-branch">http://github.com/guides/remove-a-remote-branch</a></p>
+</div>
+<div class="section" id="several-people-sharing-a-single-repository">
+<h3>Several people sharing a single repository<a class="headerlink" href="#several-people-sharing-a-single-repository" title="Permalink to this headline">¶</a></h3>
+<p>If you want to work on some stuff with other people, where you are all
+committing into the same repository, or even the same branch, then just
+share it via <a class="reference external" href="http://github.com">github</a>.</p>
+<p>First fork NumPy into your account, as from <a class="reference internal" href="development_setup.html#forking"><em>Making your own copy (fork) of NumPy</em></a>.</p>
+<p>Then, go to your forked repository github page, say
+<tt class="docutils literal"><span class="pre">http://github.com/your-user-name/numpy</span></tt></p>
+<p>Click on the &#8216;Admin&#8217; button, and add anyone else to the repo as a
+collaborator:</p>
+<blockquote>
+<div><img alt="../../_images/pull_button.png" src="../../_images/pull_button.png" />
+</div></blockquote>
+<p>Now all those people can do:</p>
+<div class="highlight-python"><pre>git clone git@githhub.com:your-user-name/numpy.git</pre>
+</div>
+<p>Remember that links starting with <tt class="docutils literal"><span class="pre">git&#64;</span></tt> use the ssh protocol and are
+read-write; links starting with <tt class="docutils literal"><span class="pre">git://</span></tt> are read-only.</p>
+<p>Your collaborators can then commit directly into that repo with the
+usual:</p>
+<div class="highlight-python"><pre>git commit -am 'ENH - much better code'
+git push origin master # pushes directly into your repo</pre>
+</div>
+</div>
+<div class="section" id="exploring-your-repository">
+<h3>Exploring your repository<a class="headerlink" href="#exploring-your-repository" title="Permalink to this headline">¶</a></h3>
+<p>To see a graphical representation of the repository branches and
+commits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">gitk</span> <span class="o">--</span><span class="nb">all</span>
+</pre></div>
+</div>
+<p>To see a linear list of commits for this branch:</p>
+<div class="highlight-python"><pre>git log</pre>
+</div>
+<p>You can also look at the <a class="reference external" href="http://github.com/blog/39-say-hello-to-the-network-graph-visualizer">network graph visualizer</a> for your <a class="reference external" href="http://github.com">github</a>
+repo.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Nov 10, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

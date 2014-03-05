@@ -1,0 +1,1334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>Special functions (scipy.special) — SciPy v0.13.0 Reference Guide</title>
+<link href="_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="_static/jquery.js" type="text/javascript"></script>
+<script src="_static/underscore.js" type="text/javascript"></script>
+<script src="_static/doctools.js" type="text/javascript"></script>
+<link href="index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="generated/scipy.special.errprint.html" rel="next" title="scipy.special.errprint"/>
+<link href="generated/scipy.spatial.minkowski_distance_p.html" rel="prev" title="scipy.spatial.minkowski_distance_p"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="index.html">SciPy v0.13.0 Reference Guide</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="generated/scipy.special.errprint.html" title="scipy.special.errprint">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="generated/scipy.spatial.minkowski_distance_p.html" title="scipy.spatial.minkowski_distance_p">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="index.html">
+<img alt="Logo" class="logo" src="_static/scipyshiny_small.png"/>
+</a></p>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li><a class="reference internal" href="#">Special functions (<tt class="docutils literal"><span class="pre">scipy.special</span></tt>)</a><ul>
+<li><a class="reference internal" href="#error-handling">Error handling</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#available-functions">Available functions</a><ul>
+<li><a class="reference internal" href="#airy-functions">Airy functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#elliptic-functions-and-integrals">Elliptic Functions and Integrals</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#bessel-functions">Bessel Functions</a><ul>
+<li><a class="reference internal" href="#zeros-of-bessel-functions">Zeros of Bessel Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#faster-versions-of-common-bessel-functions">Faster versions of common Bessel Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#integrals-of-bessel-functions">Integrals of Bessel Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#derivatives-of-bessel-functions">Derivatives of Bessel Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#spherical-bessel-functions">Spherical Bessel Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#riccati-bessel-functions">Riccati-Bessel Functions</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#struve-functions">Struve Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#raw-statistical-functions">Raw Statistical Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#gamma-and-related-functions">Gamma and Related Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#error-function-and-fresnel-integrals">Error Function and Fresnel Integrals</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#legendre-functions">Legendre Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#orthogonal-polynomials">Orthogonal polynomials</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#hypergeometric-functions">Hypergeometric Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#parabolic-cylinder-functions">Parabolic Cylinder Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#mathieu-and-related-functions">Mathieu and Related Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#spheroidal-wave-functions">Spheroidal Wave Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#kelvin-functions">Kelvin Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-special-functions">Other Special Functions</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#convenience-functions">Convenience Functions</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4>Previous topic</h4>
+<p class="topless"><a href="generated/scipy.spatial.minkowski_distance_p.html" title="previous chapter">scipy.spatial.minkowski_distance_p</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="generated/scipy.special.errprint.html" title="next chapter">scipy.special.errprint</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<span class="target" id="module-scipy.special"></span><div class="section" id="module-scipy.special">
+<span id="special-functions-scipy-special"></span><h1><a name="//apple_ref/cpp/Module/scipy.special"></a>Special functions (<a class="reference internal" href="#module-scipy.special" title="scipy.special"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.special</span></tt></a>)<a class="headerlink" href="#module-scipy.special" title="Permalink to this headline">¶</a></h1>
+<p>Nearly all of the functions below are universal functions and follow
+broadcasting and automatic array-looping rules. Exceptions are noted.</p>
+<div class="section" id="error-handling">
+<h2>Error handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
+<p>Errors are handled by returning nans, or other appropriate values.
+Some of the special function routines will emit warnings when an error
+occurs.  By default this is disabled.  To enable such messages use
+<tt class="docutils literal"><span class="pre">errprint(1)</span></tt>, and to disable such messages use <tt class="docutils literal"><span class="pre">errprint(0)</span></tt>.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">bdtr</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">errprint</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">bdtr</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.errprint.html#scipy.special.errprint" title="scipy.special.errprint"><tt class="xref py py-obj docutils literal"><span class="pre">errprint</span></tt></a>([inflag])</td>
+<td>Sets or returns the error printing flag for special functions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="available-functions">
+<h2>Available functions<a class="headerlink" href="#available-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="airy-functions">
+<h3>Airy functions<a class="headerlink" href="#airy-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.airy.html#scipy.special.airy" title="scipy.special.airy"><tt class="xref py py-obj docutils literal"><span class="pre">airy</span></tt></a>(x[, out1, out2, out3, out4])</td>
+<td>(Ai,Aip,Bi,Bip)=airy(z) calculates the Airy functions and their derivatives</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.airye.html#scipy.special.airye" title="scipy.special.airye"><tt class="xref py py-obj docutils literal"><span class="pre">airye</span></tt></a>(x[, out1, out2, out3, out4])</td>
+<td>(Aie,Aipe,Bie,Bipe)=airye(z) calculates the exponentially scaled Airy functions and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ai_zeros.html#scipy.special.ai_zeros" title="scipy.special.ai_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">ai_zeros</span></tt></a>(nt)</td>
+<td>Compute the zeros of Airy Functions Ai(x) and Ai’(x), a and a’</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.bi_zeros.html#scipy.special.bi_zeros" title="scipy.special.bi_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">bi_zeros</span></tt></a>(nt)</td>
+<td>Compute the zeros of Airy Functions Bi(x) and Bi’(x), b and b’</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="elliptic-functions-and-integrals">
+<h3>Elliptic Functions and Integrals<a class="headerlink" href="#elliptic-functions-and-integrals" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ellipj.html#scipy.special.ellipj" title="scipy.special.ellipj"><tt class="xref py py-obj docutils literal"><span class="pre">ellipj</span></tt></a>(x1, x2[, out1, out2, out3, out4])</td>
+<td>(sn,cn,dn,ph)=ellipj(u,m) calculates the Jacobian elliptic functions of</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.ellipk.html#scipy.special.ellipk" title="scipy.special.ellipk"><tt class="xref py py-obj docutils literal"><span class="pre">ellipk</span></tt></a>(m)</td>
+<td>Computes the complete elliptic integral of the first kind.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ellipkm1.html#scipy.special.ellipkm1" title="scipy.special.ellipkm1"><tt class="xref py py-obj docutils literal"><span class="pre">ellipkm1</span></tt></a>(p)</td>
+<td>The complete elliptic integral of the first kind around m=1.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.ellipkinc.html#scipy.special.ellipkinc" title="scipy.special.ellipkinc"><tt class="xref py py-obj docutils literal"><span class="pre">ellipkinc</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ellipe.html#scipy.special.ellipe" title="scipy.special.ellipe"><tt class="xref py py-obj docutils literal"><span class="pre">ellipe</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.ellipeinc.html#scipy.special.ellipeinc" title="scipy.special.ellipeinc"><tt class="xref py py-obj docutils literal"><span class="pre">ellipeinc</span></tt></a>(...)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bessel-functions">
+<h3>Bessel Functions<a class="headerlink" href="#bessel-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.jn.html#scipy.special.jn" title="scipy.special.jn"><tt class="xref py py-obj docutils literal"><span class="pre">jn</span></tt></a>(x1, x2[, out])</td>
+<td>y=jv(v,z) returns the Bessel function of real order v at complex z.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.jv.html#scipy.special.jv" title="scipy.special.jv"><tt class="xref py py-obj docutils literal"><span class="pre">jv</span></tt></a>(x1, x2[, out])</td>
+<td>y=jv(v,z) returns the Bessel function of real order v at complex z.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.jve.html#scipy.special.jve" title="scipy.special.jve"><tt class="xref py py-obj docutils literal"><span class="pre">jve</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.yn.html#scipy.special.yn" title="scipy.special.yn"><tt class="xref py py-obj docutils literal"><span class="pre">yn</span></tt></a>(x1, x2[, out])</td>
+<td>y=yn(n,x) returns the Bessel function of the second kind of integer</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.yv.html#scipy.special.yv" title="scipy.special.yv"><tt class="xref py py-obj docutils literal"><span class="pre">yv</span></tt></a>(x1, x2[, out])</td>
+<td>y=yv(v,z) returns the Bessel function of the second kind of real</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.yve.html#scipy.special.yve" title="scipy.special.yve"><tt class="xref py py-obj docutils literal"><span class="pre">yve</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.kn.html#scipy.special.kn" title="scipy.special.kn"><tt class="xref py py-obj docutils literal"><span class="pre">kn</span></tt></a>(x1, x2[, out])</td>
+<td>y=kn(n,x) returns the modified Bessel function of the second kind (sometimes called the third kind) for</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.kv.html#scipy.special.kv" title="scipy.special.kv"><tt class="xref py py-obj docutils literal"><span class="pre">kv</span></tt></a>(x1, x2[, out])</td>
+<td>y=kv(v,z) returns the modified Bessel function of the second kind (sometimes called the third kind) for</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.kve.html#scipy.special.kve" title="scipy.special.kve"><tt class="xref py py-obj docutils literal"><span class="pre">kve</span></tt></a>(v,z) returns the exponentially scaled, ...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.iv.html#scipy.special.iv" title="scipy.special.iv"><tt class="xref py py-obj docutils literal"><span class="pre">iv</span></tt></a>(x1, x2[, out])</td>
+<td>y=iv(v,z) returns the modified Bessel function of real order v of</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ive.html#scipy.special.ive" title="scipy.special.ive"><tt class="xref py py-obj docutils literal"><span class="pre">ive</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.hankel1.html#scipy.special.hankel1" title="scipy.special.hankel1"><tt class="xref py py-obj docutils literal"><span class="pre">hankel1</span></tt></a>(x1, x2[, out])</td>
+<td>y=hankel1(v,z) returns the Hankel function of the first kind for real order v and complex argument z.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.hankel1e.html#scipy.special.hankel1e" title="scipy.special.hankel1e"><tt class="xref py py-obj docutils literal"><span class="pre">hankel1e</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.hankel2.html#scipy.special.hankel2" title="scipy.special.hankel2"><tt class="xref py py-obj docutils literal"><span class="pre">hankel2</span></tt></a>(x1, x2[, out])</td>
+<td>y=hankel2(v,z) returns the Hankel function of the second kind for real order v and complex argument z.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.hankel2e.html#scipy.special.hankel2e" title="scipy.special.hankel2e"><tt class="xref py py-obj docutils literal"><span class="pre">hankel2e</span></tt></a>(...)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The following is not an universal function:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.lmbda.html#scipy.special.lmbda" title="scipy.special.lmbda"><tt class="xref py py-obj docutils literal"><span class="pre">lmbda</span></tt></a>(v, x)</td>
+<td>Compute sequence of lambda functions with arbitrary order v and their derivatives.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="zeros-of-bessel-functions">
+<h4>Zeros of Bessel Functions<a class="headerlink" href="#zeros-of-bessel-functions" title="Permalink to this headline">¶</a></h4>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.jnjnp_zeros.html#scipy.special.jnjnp_zeros" title="scipy.special.jnjnp_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">jnjnp_zeros</span></tt></a>(nt)</td>
+<td>Compute nt (&lt;=1200) zeros of the Bessel functions Jn and Jn’</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.jnyn_zeros.html#scipy.special.jnyn_zeros" title="scipy.special.jnyn_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">jnyn_zeros</span></tt></a>(n, nt)</td>
+<td>Compute nt zeros of the Bessel functions Jn(x), Jn’(x), Yn(x), and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.jn_zeros.html#scipy.special.jn_zeros" title="scipy.special.jn_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">jn_zeros</span></tt></a>(n, nt)</td>
+<td>Compute nt zeros of the Bessel function Jn(x).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.jnp_zeros.html#scipy.special.jnp_zeros" title="scipy.special.jnp_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">jnp_zeros</span></tt></a>(n, nt)</td>
+<td>Compute nt zeros of the Bessel function Jn’(x).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.yn_zeros.html#scipy.special.yn_zeros" title="scipy.special.yn_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">yn_zeros</span></tt></a>(n, nt)</td>
+<td>Compute nt zeros of the Bessel function Yn(x).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.ynp_zeros.html#scipy.special.ynp_zeros" title="scipy.special.ynp_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">ynp_zeros</span></tt></a>(n, nt)</td>
+<td>Compute nt zeros of the Bessel function Yn’(x).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.y0_zeros.html#scipy.special.y0_zeros" title="scipy.special.y0_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">y0_zeros</span></tt></a>(nt[, complex])</td>
+<td>Returns nt (complex or real) zeros of Y0(z), z0, and the value</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.y1_zeros.html#scipy.special.y1_zeros" title="scipy.special.y1_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">y1_zeros</span></tt></a>(nt[, complex])</td>
+<td>Returns nt (complex or real) zeros of Y1(z), z1, and the value</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.y1p_zeros.html#scipy.special.y1p_zeros" title="scipy.special.y1p_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">y1p_zeros</span></tt></a>(nt[, complex])</td>
+<td>Returns nt (complex or real) zeros of Y1’(z), z1’, and the value</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="faster-versions-of-common-bessel-functions">
+<h4>Faster versions of common Bessel Functions<a class="headerlink" href="#faster-versions-of-common-bessel-functions" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.j0.html#scipy.special.j0" title="scipy.special.j0"><tt class="xref py py-obj docutils literal"><span class="pre">j0</span></tt></a>(x[, out])</td>
+<td>y=j0(x) returns the Bessel function of order 0 at x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.j1.html#scipy.special.j1" title="scipy.special.j1"><tt class="xref py py-obj docutils literal"><span class="pre">j1</span></tt></a>(x[, out])</td>
+<td>y=j1(x) returns the Bessel function of order 1 at x.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.y0.html#scipy.special.y0" title="scipy.special.y0"><tt class="xref py py-obj docutils literal"><span class="pre">y0</span></tt></a>(x[, out])</td>
+<td>y=y0(x) returns the Bessel function of the second kind of order 0 at x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.y1.html#scipy.special.y1" title="scipy.special.y1"><tt class="xref py py-obj docutils literal"><span class="pre">y1</span></tt></a>(x[, out])</td>
+<td>y=y1(x) returns the Bessel function of the second kind of order 1 at x.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.i0.html#scipy.special.i0" title="scipy.special.i0"><tt class="xref py py-obj docutils literal"><span class="pre">i0</span></tt></a>(x[, out])</td>
+<td>y=i0(x) returns the modified Bessel function of order 0 at x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.i0e.html#scipy.special.i0e" title="scipy.special.i0e"><tt class="xref py py-obj docutils literal"><span class="pre">i0e</span></tt></a>(x[, out])</td>
+<td>y=i0e(x) returns the exponentially scaled modified Bessel function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.i1.html#scipy.special.i1" title="scipy.special.i1"><tt class="xref py py-obj docutils literal"><span class="pre">i1</span></tt></a>(x[, out])</td>
+<td>y=i1(x) returns the modified Bessel function of order 1 at x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.i1e.html#scipy.special.i1e" title="scipy.special.i1e"><tt class="xref py py-obj docutils literal"><span class="pre">i1e</span></tt></a>(x[, out])</td>
+<td>y=i1e(x) returns the exponentially scaled modified Bessel function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.k0.html#scipy.special.k0" title="scipy.special.k0"><tt class="xref py py-obj docutils literal"><span class="pre">k0</span></tt></a>(x[, out])</td>
+<td>y=k0(x) returns the modified Bessel function of the second kind (sometimes called the third kind) of</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.k0e.html#scipy.special.k0e" title="scipy.special.k0e"><tt class="xref py py-obj docutils literal"><span class="pre">k0e</span></tt></a>(x[, out])</td>
+<td>y=k0e(x) returns the exponentially scaled modified Bessel function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.k1.html#scipy.special.k1" title="scipy.special.k1"><tt class="xref py py-obj docutils literal"><span class="pre">k1</span></tt></a>(x[, out])</td>
+<td>y=i1(x) returns the modified Bessel function of the second kind (sometimes called the third kind) of</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.k1e.html#scipy.special.k1e" title="scipy.special.k1e"><tt class="xref py py-obj docutils literal"><span class="pre">k1e</span></tt></a>(...)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="integrals-of-bessel-functions">
+<h4>Integrals of Bessel Functions<a class="headerlink" href="#integrals-of-bessel-functions" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.itj0y0.html#scipy.special.itj0y0" title="scipy.special.itj0y0"><tt class="xref py py-obj docutils literal"><span class="pre">itj0y0</span></tt></a>(x[, out1, out2])</td>
+<td>(ij0,iy0)=itj0y0(x) returns simple integrals from 0 to x of the zeroth order</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.it2j0y0.html#scipy.special.it2j0y0" title="scipy.special.it2j0y0"><tt class="xref py py-obj docutils literal"><span class="pre">it2j0y0</span></tt></a>(x[, out1, out2])</td>
+<td>(ij0,iy0)=it2j0y0(x) returns the integrals int((1-j0(t))/t,t=0..x) and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.iti0k0.html#scipy.special.iti0k0" title="scipy.special.iti0k0"><tt class="xref py py-obj docutils literal"><span class="pre">iti0k0</span></tt></a>(x[, out1, out2])</td>
+<td>(ii0,ik0)=iti0k0(x) returns simple integrals from 0 to x of the zeroth order</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.it2i0k0.html#scipy.special.it2i0k0" title="scipy.special.it2i0k0"><tt class="xref py py-obj docutils literal"><span class="pre">it2i0k0</span></tt></a>(x[, out1, out2])</td>
+<td>(ii0,ik0)=it2i0k0(x) returns the integrals int((i0(t)-1)/t,t=0..x) and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.besselpoly.html#scipy.special.besselpoly" title="scipy.special.besselpoly"><tt class="xref py py-obj docutils literal"><span class="pre">besselpoly</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=besselpoly(a,lam,nu) returns the value of the integral:</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="derivatives-of-bessel-functions">
+<h4>Derivatives of Bessel Functions<a class="headerlink" href="#derivatives-of-bessel-functions" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.jvp.html#scipy.special.jvp" title="scipy.special.jvp"><tt class="xref py py-obj docutils literal"><span class="pre">jvp</span></tt></a>(v, z[, n])</td>
+<td>Return the nth derivative of Jv(z) with respect to z.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.yvp.html#scipy.special.yvp" title="scipy.special.yvp"><tt class="xref py py-obj docutils literal"><span class="pre">yvp</span></tt></a>(v, z[, n])</td>
+<td>Return the nth derivative of Yv(z) with respect to z.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.kvp.html#scipy.special.kvp" title="scipy.special.kvp"><tt class="xref py py-obj docutils literal"><span class="pre">kvp</span></tt></a>(v, z[, n])</td>
+<td>Return the nth derivative of Kv(z) with respect to z.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.ivp.html#scipy.special.ivp" title="scipy.special.ivp"><tt class="xref py py-obj docutils literal"><span class="pre">ivp</span></tt></a>(v, z[, n])</td>
+<td>Return the nth derivative of Iv(z) with respect to z.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.h1vp.html#scipy.special.h1vp" title="scipy.special.h1vp"><tt class="xref py py-obj docutils literal"><span class="pre">h1vp</span></tt></a>(v, z[, n])</td>
+<td>Return the nth derivative of H1v(z) with respect to z.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.h2vp.html#scipy.special.h2vp" title="scipy.special.h2vp"><tt class="xref py py-obj docutils literal"><span class="pre">h2vp</span></tt></a>(v, z[, n])</td>
+<td>Return the nth derivative of H2v(z) with respect to z.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="spherical-bessel-functions">
+<h4>Spherical Bessel Functions<a class="headerlink" href="#spherical-bessel-functions" title="Permalink to this headline">¶</a></h4>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.sph_jn.html#scipy.special.sph_jn" title="scipy.special.sph_jn"><tt class="xref py py-obj docutils literal"><span class="pre">sph_jn</span></tt></a>(n, z)</td>
+<td>Compute the spherical Bessel function jn(z) and its derivative for</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sph_yn.html#scipy.special.sph_yn" title="scipy.special.sph_yn"><tt class="xref py py-obj docutils literal"><span class="pre">sph_yn</span></tt></a>(n, z)</td>
+<td>Compute the spherical Bessel function yn(z) and its derivative for</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.sph_jnyn.html#scipy.special.sph_jnyn" title="scipy.special.sph_jnyn"><tt class="xref py py-obj docutils literal"><span class="pre">sph_jnyn</span></tt></a>(n, z)</td>
+<td>Compute the spherical Bessel functions, jn(z) and yn(z) and their</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sph_in.html#scipy.special.sph_in" title="scipy.special.sph_in"><tt class="xref py py-obj docutils literal"><span class="pre">sph_in</span></tt></a>(n, z)</td>
+<td>Compute the spherical Bessel function in(z) and its derivative for</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.sph_kn.html#scipy.special.sph_kn" title="scipy.special.sph_kn"><tt class="xref py py-obj docutils literal"><span class="pre">sph_kn</span></tt></a>(n, z)</td>
+<td>Compute the spherical Bessel function kn(z) and its derivative for</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sph_inkn.html#scipy.special.sph_inkn" title="scipy.special.sph_inkn"><tt class="xref py py-obj docutils literal"><span class="pre">sph_inkn</span></tt></a>(n, z)</td>
+<td>Compute the spherical Bessel functions, in(z) and kn(z) and their</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="riccati-bessel-functions">
+<h4>Riccati-Bessel Functions<a class="headerlink" href="#riccati-bessel-functions" title="Permalink to this headline">¶</a></h4>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.riccati_jn.html#scipy.special.riccati_jn" title="scipy.special.riccati_jn"><tt class="xref py py-obj docutils literal"><span class="pre">riccati_jn</span></tt></a>(n, x)</td>
+<td>Compute the Ricatti-Bessel function of the first kind and its</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.riccati_yn.html#scipy.special.riccati_yn" title="scipy.special.riccati_yn"><tt class="xref py py-obj docutils literal"><span class="pre">riccati_yn</span></tt></a>(n, x)</td>
+<td>Compute the Ricatti-Bessel function of the second kind and its</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="struve-functions">
+<h3>Struve Functions<a class="headerlink" href="#struve-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.struve.html#scipy.special.struve" title="scipy.special.struve"><tt class="xref py py-obj docutils literal"><span class="pre">struve</span></tt></a>(x1, x2[, out])</td>
+<td>y=struve(v,x) returns the Struve function Hv(x) of order v at x, x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.modstruve.html#scipy.special.modstruve" title="scipy.special.modstruve"><tt class="xref py py-obj docutils literal"><span class="pre">modstruve</span></tt></a>(x1, x2[, out])</td>
+<td>y=modstruve(v,x) returns the modified Struve function Lv(x) of order</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.itstruve0.html#scipy.special.itstruve0" title="scipy.special.itstruve0"><tt class="xref py py-obj docutils literal"><span class="pre">itstruve0</span></tt></a>(x[, out])</td>
+<td>y=itstruve0(x) returns the integral of the Struve function of order 0</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.it2struve0.html#scipy.special.it2struve0" title="scipy.special.it2struve0"><tt class="xref py py-obj docutils literal"><span class="pre">it2struve0</span></tt></a>(x[, out])</td>
+<td>y=it2struve0(x) returns the integral of the Struve function of order 0</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.itmodstruve0.html#scipy.special.itmodstruve0" title="scipy.special.itmodstruve0"><tt class="xref py py-obj docutils literal"><span class="pre">itmodstruve0</span></tt></a>(x[, out])</td>
+<td>y=itmodstruve0(x) returns the integral of the modified Struve function</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="raw-statistical-functions">
+<h3>Raw Statistical Functions<a class="headerlink" href="#raw-statistical-functions" title="Permalink to this headline">¶</a></h3>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="stats.html#module-scipy.stats" title="scipy.stats"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.stats</span></tt></a>: Friendly versions of these functions.</p>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.bdtr.html#scipy.special.bdtr" title="scipy.special.bdtr"><tt class="xref py py-obj docutils literal"><span class="pre">bdtr</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.bdtrc.html#scipy.special.bdtrc" title="scipy.special.bdtrc"><tt class="xref py py-obj docutils literal"><span class="pre">bdtrc</span></tt></a>(...[, j])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.bdtri.html#scipy.special.bdtri" title="scipy.special.bdtri"><tt class="xref py py-obj docutils literal"><span class="pre">bdtri</span></tt></a>(x1, x2, x3[, out])</td>
+<td>p=bdtri(k,n,y) finds the probability p such that the sum of the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.btdtr.html#scipy.special.btdtr" title="scipy.special.btdtr"><tt class="xref py py-obj docutils literal"><span class="pre">btdtr</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=btdtr(a,b,x) returns the area from zero to x under the beta</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.btdtri.html#scipy.special.btdtri" title="scipy.special.btdtri"><tt class="xref py py-obj docutils literal"><span class="pre">btdtri</span></tt></a>(x1, x2, x3[, out])</td>
+<td>x=btdtri(a,b,p) returns the pth quantile of the beta distribution.  It is</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.fdtr.html#scipy.special.fdtr" title="scipy.special.fdtr"><tt class="xref py py-obj docutils literal"><span class="pre">fdtr</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=fdtr(dfn,dfd,x) returns the area from zero to x under the F density</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.fdtrc.html#scipy.special.fdtrc" title="scipy.special.fdtrc"><tt class="xref py py-obj docutils literal"><span class="pre">fdtrc</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=fdtrc(dfn,dfd,x) returns the complemented F distribution function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.fdtri.html#scipy.special.fdtri" title="scipy.special.fdtri"><tt class="xref py py-obj docutils literal"><span class="pre">fdtri</span></tt></a>(x1, x2, x3[, out])</td>
+<td>x=fdtri(dfn,dfd,p) finds the F density argument x such that</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gdtr.html#scipy.special.gdtr" title="scipy.special.gdtr"><tt class="xref py py-obj docutils literal"><span class="pre">gdtr</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=gdtr(a,b,x) returns the integral from zero to x of the gamma</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.gdtrc.html#scipy.special.gdtrc" title="scipy.special.gdtrc"><tt class="xref py py-obj docutils literal"><span class="pre">gdtrc</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=gdtrc(a,b,x) returns the integral from x to infinity of the gamma</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gdtria.html#scipy.special.gdtria" title="scipy.special.gdtria"><tt class="xref py py-obj docutils literal"><span class="pre">gdtria</span></tt></a>(p, b, x[, out])</td>
+<td>Inverse with respect to <em class="xref py py-obj">a</em> of <em class="xref py py-obj">gdtr(a, b, x)</em>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.gdtrib.html#scipy.special.gdtrib" title="scipy.special.gdtrib"><tt class="xref py py-obj docutils literal"><span class="pre">gdtrib</span></tt></a>(a, p, x[, out])</td>
+<td>Inverse with respect to <em class="xref py py-obj">b</em> of <em class="xref py py-obj">gdtr(a, b, x)</em>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gdtrix.html#scipy.special.gdtrix" title="scipy.special.gdtrix"><tt class="xref py py-obj docutils literal"><span class="pre">gdtrix</span></tt></a>(a, b, p[, out])</td>
+<td>Inverse with respect to <em class="xref py py-obj">x</em> of <em class="xref py py-obj">gdtr(a, b, x)</em>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.nbdtr.html#scipy.special.nbdtr" title="scipy.special.nbdtr"><tt class="xref py py-obj docutils literal"><span class="pre">nbdtr</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=nbdtr(k,n,p) returns the sum of the terms 0 through k of the</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.nbdtrc.html#scipy.special.nbdtrc" title="scipy.special.nbdtrc"><tt class="xref py py-obj docutils literal"><span class="pre">nbdtrc</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=nbdtrc(k,n,p) returns the sum of the terms k+1 to infinity of the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.nbdtri.html#scipy.special.nbdtri" title="scipy.special.nbdtri"><tt class="xref py py-obj docutils literal"><span class="pre">nbdtri</span></tt></a>(x1, x2, x3[, out])</td>
+<td>p=nbdtri(k,n,y) finds the argument p such that nbdtr(k,n,p)=y.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pdtr.html#scipy.special.pdtr" title="scipy.special.pdtr"><tt class="xref py py-obj docutils literal"><span class="pre">pdtr</span></tt></a>(x1, x2[, out])</td>
+<td>y=pdtr(k,m) returns the sum of the first k terms of the Poisson</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.pdtrc.html#scipy.special.pdtrc" title="scipy.special.pdtrc"><tt class="xref py py-obj docutils literal"><span class="pre">pdtrc</span></tt></a>(x1, x2[, out])</td>
+<td>y=pdtrc(k,m) returns the sum of the terms from k+1 to infinity of the</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pdtri.html#scipy.special.pdtri" title="scipy.special.pdtri"><tt class="xref py py-obj docutils literal"><span class="pre">pdtri</span></tt></a>(x1, x2[, out])</td>
+<td>m=pdtri(k,y) returns the Poisson variable m such that the sum</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.stdtr.html#scipy.special.stdtr" title="scipy.special.stdtr"><tt class="xref py py-obj docutils literal"><span class="pre">stdtr</span></tt></a>(...[, x])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.stdtridf.html#scipy.special.stdtridf" title="scipy.special.stdtridf"><tt class="xref py py-obj docutils literal"><span class="pre">stdtridf</span></tt></a>(x1, x2[, out])</td>
+<td>t=stdtridf(p,t) returns the argument df such that stdtr(df,t) is equal to p.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.stdtrit.html#scipy.special.stdtrit" title="scipy.special.stdtrit"><tt class="xref py py-obj docutils literal"><span class="pre">stdtrit</span></tt></a>(x1, x2[, out])</td>
+<td>t=stdtrit(df,p) returns the argument t such that stdtr(df,t) is equal to p.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.chdtr.html#scipy.special.chdtr" title="scipy.special.chdtr"><tt class="xref py py-obj docutils literal"><span class="pre">chdtr</span></tt></a>(...[, t])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.chdtrc.html#scipy.special.chdtrc" title="scipy.special.chdtrc"><tt class="xref py py-obj docutils literal"><span class="pre">chdtrc</span></tt></a>(...[, t])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.chdtri.html#scipy.special.chdtri" title="scipy.special.chdtri"><tt class="xref py py-obj docutils literal"><span class="pre">chdtri</span></tt></a>(x1, x2[, out])</td>
+<td>x=chdtri(v,p) returns the argument x such that chdtrc(v,x) is equal</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.ndtr.html#scipy.special.ndtr" title="scipy.special.ndtr"><tt class="xref py py-obj docutils literal"><span class="pre">ndtr</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ndtri.html#scipy.special.ndtri" title="scipy.special.ndtri"><tt class="xref py py-obj docutils literal"><span class="pre">ndtri</span></tt></a>(x[, out])</td>
+<td>x=ndtri(y) returns the argument x for which the area udnder the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.smirnov.html#scipy.special.smirnov" title="scipy.special.smirnov"><tt class="xref py py-obj docutils literal"><span class="pre">smirnov</span></tt></a>(x1, x2[, out])</td>
+<td>y=smirnov(n,e) returns the exact Kolmogorov-Smirnov complementary</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.smirnovi.html#scipy.special.smirnovi" title="scipy.special.smirnovi"><tt class="xref py py-obj docutils literal"><span class="pre">smirnovi</span></tt></a>(x1, x2[, out])</td>
+<td>e=smirnovi(n,y) returns e such that smirnov(n,e) = y.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.kolmogorov.html#scipy.special.kolmogorov" title="scipy.special.kolmogorov"><tt class="xref py py-obj docutils literal"><span class="pre">kolmogorov</span></tt></a>(x[, out])</td>
+<td>p=kolmogorov(y) returns the complementary cumulative distribution</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.kolmogi.html#scipy.special.kolmogi" title="scipy.special.kolmogi"><tt class="xref py py-obj docutils literal"><span class="pre">kolmogi</span></tt></a>(x[, out])</td>
+<td>y=kolmogi(p) returns y such that kolmogorov(y) = p</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.tklmbda.html#scipy.special.tklmbda" title="scipy.special.tklmbda"><tt class="xref py py-obj docutils literal"><span class="pre">tklmbda</span></tt></a>(x1, x2[, out])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.logit.html#scipy.special.logit" title="scipy.special.logit"><tt class="xref py py-obj docutils literal"><span class="pre">logit</span></tt></a>(x[, out])</td>
+<td>Logit ufunc for ndarrays.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.expit.html#scipy.special.expit" title="scipy.special.expit"><tt class="xref py py-obj docutils literal"><span class="pre">expit</span></tt></a>(x[, out])</td>
+<td>Expit ufunc for ndarrays.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="gamma-and-related-functions">
+<h3>Gamma and Related Functions<a class="headerlink" href="#gamma-and-related-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gamma.html#scipy.special.gamma" title="scipy.special.gamma"><tt class="xref py py-obj docutils literal"><span class="pre">gamma</span></tt></a>(x[, out])</td>
+<td>y=gamma(z) returns the gamma function of the argument.  The gamma</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.gammaln.html#scipy.special.gammaln" title="scipy.special.gammaln"><tt class="xref py py-obj docutils literal"><span class="pre">gammaln</span></tt></a>(...)</td>
+<td>y=gammaln(z) returns the base e logarithm of the absolute value of the</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gammasgn.html#scipy.special.gammasgn" title="scipy.special.gammasgn"><tt class="xref py py-obj docutils literal"><span class="pre">gammasgn</span></tt></a>(x[, out])</td>
+<td>y=gammasgn(x) returns the sign of the gamma function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.gammainc.html#scipy.special.gammainc" title="scipy.special.gammainc"><tt class="xref py py-obj docutils literal"><span class="pre">gammainc</span></tt></a>(x1, x2[, out])</td>
+<td>y=gammainc(a,x) returns the incomplete gamma integral defined as</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gammaincinv.html#scipy.special.gammaincinv" title="scipy.special.gammaincinv"><tt class="xref py py-obj docutils literal"><span class="pre">gammaincinv</span></tt></a>(x1, x2[, out])</td>
+<td>gammaincinv(a, y) returns x such that gammainc(a, x) = y.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.gammaincc.html#scipy.special.gammaincc" title="scipy.special.gammaincc"><tt class="xref py py-obj docutils literal"><span class="pre">gammaincc</span></tt></a>(x1, x2[, out])</td>
+<td>y=gammaincc(a,x) returns the complemented incomplete gamma integral</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gammainccinv.html#scipy.special.gammainccinv" title="scipy.special.gammainccinv"><tt class="xref py py-obj docutils literal"><span class="pre">gammainccinv</span></tt></a>(x1, x2[, out])</td>
+<td>x=gammainccinv(a,y) returns x such that gammaincc(a,x) = y.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.beta.html#scipy.special.beta" title="scipy.special.beta"><tt class="xref py py-obj docutils literal"><span class="pre">beta</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.betaln.html#scipy.special.betaln" title="scipy.special.betaln"><tt class="xref py py-obj docutils literal"><span class="pre">betaln</span></tt></a>(x1, x2[, out])</td>
+<td>y=betaln(a,b) returns the natural logarithm of the absolute value of</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.betainc.html#scipy.special.betainc" title="scipy.special.betainc"><tt class="xref py py-obj docutils literal"><span class="pre">betainc</span></tt></a>(a, b, x)</td>
+<td>Compute the incomplete beta integral of the arguments, evaluated from zero to x::      gamma(a+b) / (gamma(a)*gamma(b)) * integral(t**(a-1) (1-t)**(b-1), t=0..x).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.betaincinv.html#scipy.special.betaincinv" title="scipy.special.betaincinv"><tt class="xref py py-obj docutils literal"><span class="pre">betaincinv</span></tt></a>(a,b,y)</td>
+<td>Compute x such that betainc(a,b,x) = y.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.psi.html#scipy.special.psi" title="scipy.special.psi"><tt class="xref py py-obj docutils literal"><span class="pre">psi</span></tt></a>(x[, out])</td>
+<td>y=psi(z) is the derivative of the logarithm of the gamma function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.rgamma.html#scipy.special.rgamma" title="scipy.special.rgamma"><tt class="xref py py-obj docutils literal"><span class="pre">rgamma</span></tt></a>(x[, out])</td>
+<td>y=rgamma(z) returns one divided by the gamma function of x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.polygamma.html#scipy.special.polygamma" title="scipy.special.polygamma"><tt class="xref py py-obj docutils literal"><span class="pre">polygamma</span></tt></a>(n, x)</td>
+<td>Polygamma function which is the nth derivative of the digamma (psi) function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.multigammaln.html#scipy.special.multigammaln" title="scipy.special.multigammaln"><tt class="xref py py-obj docutils literal"><span class="pre">multigammaln</span></tt></a>(a, d)</td>
+<td>Returns the log of multivariate gamma, also sometimes called the generalized gamma.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="error-function-and-fresnel-integrals">
+<h3>Error Function and Fresnel Integrals<a class="headerlink" href="#error-function-and-fresnel-integrals" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.erf.html#scipy.special.erf" title="scipy.special.erf"><tt class="xref py py-obj docutils literal"><span class="pre">erf</span></tt></a>(z)</td>
+<td>Returns the error function of complex argument.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.erfc.html#scipy.special.erfc" title="scipy.special.erfc"><tt class="xref py py-obj docutils literal"><span class="pre">erfc</span></tt></a>(x[, out])</td>
+<td>y=erfc(x) returns 1 - erf(x).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.erfcx.html#scipy.special.erfcx" title="scipy.special.erfcx"><tt class="xref py py-obj docutils literal"><span class="pre">erfcx</span></tt></a>(x[, out])</td>
+<td>Scaled complementary error function, exp(x^2) erfc(x)  ..</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.erfi.html#scipy.special.erfi" title="scipy.special.erfi"><tt class="xref py py-obj docutils literal"><span class="pre">erfi</span></tt></a>(x[, out])</td>
+<td>Imaginary error function, -i erf(i z)  ..</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.erfinv.html#scipy.special.erfinv" title="scipy.special.erfinv"><tt class="xref py py-obj docutils literal"><span class="pre">erfinv</span></tt></a>(y)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.erfcinv.html#scipy.special.erfcinv" title="scipy.special.erfcinv"><tt class="xref py py-obj docutils literal"><span class="pre">erfcinv</span></tt></a>(y)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.wofz.html#scipy.special.wofz" title="scipy.special.wofz"><tt class="xref py py-obj docutils literal"><span class="pre">wofz</span></tt></a>(...)</td>
+<td>y=wofz(z) returns the value of the fadeeva function for complex argument</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.dawsn.html#scipy.special.dawsn" title="scipy.special.dawsn"><tt class="xref py py-obj docutils literal"><span class="pre">dawsn</span></tt></a>(x[, out])</td>
+<td>y=dawsn(x) returns dawson’s integral: exp(-x**2) *</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.fresnel.html#scipy.special.fresnel" title="scipy.special.fresnel"><tt class="xref py py-obj docutils literal"><span class="pre">fresnel</span></tt></a>(x[, out1, out2])</td>
+<td>(ssa,cca)=fresnel(z) returns the Fresnel sin and cos integrals: integral(sin(pi/2</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.fresnel_zeros.html#scipy.special.fresnel_zeros" title="scipy.special.fresnel_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">fresnel_zeros</span></tt></a>(nt)</td>
+<td>Compute nt complex zeros of the sine and cosine Fresnel integrals</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.modfresnelp.html#scipy.special.modfresnelp" title="scipy.special.modfresnelp"><tt class="xref py py-obj docutils literal"><span class="pre">modfresnelp</span></tt></a>(x[, out1, out2])</td>
+<td>(fp,kp)=modfresnelp(x) returns the modified Fresnel integrals F_+(x) and K_+(x)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.modfresnelm.html#scipy.special.modfresnelm" title="scipy.special.modfresnelm"><tt class="xref py py-obj docutils literal"><span class="pre">modfresnelm</span></tt></a>(x[, out1, out2])</td>
+<td>(fm,km)=modfresnelp(x) returns the modified Fresnel integrals <tt class="docutils literal"><span class="pre">F_-(x)</span></tt> and <tt class="docutils literal"><span class="pre">K_-(x)</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.erf_zeros.html#scipy.special.erf_zeros" title="scipy.special.erf_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">erf_zeros</span></tt></a>(nt)</td>
+<td>Compute nt complex zeros of the error function erf(z).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.fresnelc_zeros.html#scipy.special.fresnelc_zeros" title="scipy.special.fresnelc_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">fresnelc_zeros</span></tt></a>(nt)</td>
+<td>Compute nt complex zeros of the cosine Fresnel integral C(z).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.fresnels_zeros.html#scipy.special.fresnels_zeros" title="scipy.special.fresnels_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">fresnels_zeros</span></tt></a>(nt)</td>
+<td>Compute nt complex zeros of the sine Fresnel integral S(z).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="legendre-functions">
+<h3>Legendre Functions<a class="headerlink" href="#legendre-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.lpmv.html#scipy.special.lpmv" title="scipy.special.lpmv"><tt class="xref py py-obj docutils literal"><span class="pre">lpmv</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=lpmv(m,v,x) returns the associated legendre function of integer order</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sph_harm.html#scipy.special.sph_harm" title="scipy.special.sph_harm"><tt class="xref py py-obj docutils literal"><span class="pre">sph_harm</span></tt></a></td>
+<td>Compute spherical harmonics.</td>
+</tr>
+</tbody>
+</table>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.lpn.html#scipy.special.lpn" title="scipy.special.lpn"><tt class="xref py py-obj docutils literal"><span class="pre">lpn</span></tt></a>(n, z)</td>
+<td>Compute sequence of Legendre functions of the first kind (polynomials),</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.lqn.html#scipy.special.lqn" title="scipy.special.lqn"><tt class="xref py py-obj docutils literal"><span class="pre">lqn</span></tt></a>(n, z)</td>
+<td>Compute sequence of Legendre functions of the second kind,</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.lpmn.html#scipy.special.lpmn" title="scipy.special.lpmn"><tt class="xref py py-obj docutils literal"><span class="pre">lpmn</span></tt></a>(m, n, z)</td>
+<td>Associated Legendre functions of the first kind, Pmn(z) and its</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.lqmn.html#scipy.special.lqmn" title="scipy.special.lqmn"><tt class="xref py py-obj docutils literal"><span class="pre">lqmn</span></tt></a>(m, n, z)</td>
+<td>Associated Legendre functions of the second kind, Qmn(z) and its</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="orthogonal-polynomials">
+<h3>Orthogonal polynomials<a class="headerlink" href="#orthogonal-polynomials" title="Permalink to this headline">¶</a></h3>
+<p>The following functions evaluate values of orthogonal polynomials:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_legendre.html#scipy.special.eval_legendre" title="scipy.special.eval_legendre"><tt class="xref py py-obj docutils literal"><span class="pre">eval_legendre</span></tt></a>(n, x[, out])</td>
+<td>Evaluate Legendre polynomial at a point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.eval_chebyt.html#scipy.special.eval_chebyt" title="scipy.special.eval_chebyt"><tt class="xref py py-obj docutils literal"><span class="pre">eval_chebyt</span></tt></a>(n, x[, out])</td>
+<td>Evaluate Chebyshev T polynomial at a point.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_chebyu.html#scipy.special.eval_chebyu" title="scipy.special.eval_chebyu"><tt class="xref py py-obj docutils literal"><span class="pre">eval_chebyu</span></tt></a>(n, x[, out])</td>
+<td>Evaluate Chebyshev U polynomial at a point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.eval_chebyc.html#scipy.special.eval_chebyc" title="scipy.special.eval_chebyc"><tt class="xref py py-obj docutils literal"><span class="pre">eval_chebyc</span></tt></a>(n, x[, out])</td>
+<td>Evaluate Chebyshev C polynomial at a point.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_chebys.html#scipy.special.eval_chebys" title="scipy.special.eval_chebys"><tt class="xref py py-obj docutils literal"><span class="pre">eval_chebys</span></tt></a>(n, x[, out])</td>
+<td>Evaluate Chebyshev S polynomial at a point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.eval_jacobi.html#scipy.special.eval_jacobi" title="scipy.special.eval_jacobi"><tt class="xref py py-obj docutils literal"><span class="pre">eval_jacobi</span></tt></a>(n, alpha, beta, x[, out])</td>
+<td>Evaluate Jacobi polynomial at a point.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_laguerre.html#scipy.special.eval_laguerre" title="scipy.special.eval_laguerre"><tt class="xref py py-obj docutils literal"><span class="pre">eval_laguerre</span></tt></a>(n, x[, out])</td>
+<td>Evaluate Laguerre polynomial at a point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.eval_genlaguerre.html#scipy.special.eval_genlaguerre" title="scipy.special.eval_genlaguerre"><tt class="xref py py-obj docutils literal"><span class="pre">eval_genlaguerre</span></tt></a>(n, alpha, x[, out])</td>
+<td>Evaluate generalized Laguerre polynomial at a point.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_hermite.html#scipy.special.eval_hermite" title="scipy.special.eval_hermite"><tt class="xref py py-obj docutils literal"><span class="pre">eval_hermite</span></tt></a>(n, x[, out])</td>
+<td>Evaluate Hermite polynomial at a point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.eval_hermitenorm.html#scipy.special.eval_hermitenorm" title="scipy.special.eval_hermitenorm"><tt class="xref py py-obj docutils literal"><span class="pre">eval_hermitenorm</span></tt></a>(n, x[, out])</td>
+<td>Evaluate normalized Hermite polynomial at a point.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_gegenbauer.html#scipy.special.eval_gegenbauer" title="scipy.special.eval_gegenbauer"><tt class="xref py py-obj docutils literal"><span class="pre">eval_gegenbauer</span></tt></a>(n, alpha, x[, out])</td>
+<td>Evaluate Gegenbauer polynomial at a point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.eval_sh_legendre.html#scipy.special.eval_sh_legendre" title="scipy.special.eval_sh_legendre"><tt class="xref py py-obj docutils literal"><span class="pre">eval_sh_legendre</span></tt></a>(n, x[, out])</td>
+<td>Evaluate shifted Legendre polynomial at a point.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_sh_chebyt.html#scipy.special.eval_sh_chebyt" title="scipy.special.eval_sh_chebyt"><tt class="xref py py-obj docutils literal"><span class="pre">eval_sh_chebyt</span></tt></a>(n, x[, out])</td>
+<td>Evaluate shifted Chebyshev T polynomial at a point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.eval_sh_chebyu.html#scipy.special.eval_sh_chebyu" title="scipy.special.eval_sh_chebyu"><tt class="xref py py-obj docutils literal"><span class="pre">eval_sh_chebyu</span></tt></a>(n, x[, out])</td>
+<td>Evaluate shifted Chebyshev U polynomial at a point.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.eval_sh_jacobi.html#scipy.special.eval_sh_jacobi" title="scipy.special.eval_sh_jacobi"><tt class="xref py py-obj docutils literal"><span class="pre">eval_sh_jacobi</span></tt></a>(n, p, q, x[, out])</td>
+<td>Evaluate shifted Jacobi polynomial at a point.</td>
+</tr>
+</tbody>
+</table>
+<p>The functions below, in turn, return <em class="xref std std-ref">orthopoly1d</em> objects, which
+functions similarly as <em class="xref std std-ref">numpy.poly1d</em>.  The <em class="xref std std-ref">orthopoly1d</em>
+class also has an attribute <tt class="docutils literal"><span class="pre">weights</span></tt> which returns the roots, weights,
+and total weights for the appropriate form of Gaussian quadrature.
+These are returned in an <tt class="docutils literal"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">3</span></tt> array with roots in the first column,
+weights in the second column, and total weights in the final column.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.legendre.html#scipy.special.legendre" title="scipy.special.legendre"><tt class="xref py py-obj docutils literal"><span class="pre">legendre</span></tt></a>(n[, monic])</td>
+<td>Returns the nth order Legendre polynomial, P_n(x), orthogonal over</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.chebyt.html#scipy.special.chebyt" title="scipy.special.chebyt"><tt class="xref py py-obj docutils literal"><span class="pre">chebyt</span></tt></a>(n[, monic])</td>
+<td>Return nth order Chebyshev polynomial of first kind, Tn(x).  Orthogonal</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.chebyu.html#scipy.special.chebyu" title="scipy.special.chebyu"><tt class="xref py py-obj docutils literal"><span class="pre">chebyu</span></tt></a>(n[, monic])</td>
+<td>Return nth order Chebyshev polynomial of second kind, Un(x).  Orthogonal</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.chebyc.html#scipy.special.chebyc" title="scipy.special.chebyc"><tt class="xref py py-obj docutils literal"><span class="pre">chebyc</span></tt></a>(n[, monic])</td>
+<td>Return nth order Chebyshev polynomial of first kind, Cn(x).  Orthogonal</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.chebys.html#scipy.special.chebys" title="scipy.special.chebys"><tt class="xref py py-obj docutils literal"><span class="pre">chebys</span></tt></a>(n[, monic])</td>
+<td>Return nth order Chebyshev polynomial of second kind, Sn(x).  Orthogonal</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.jacobi.html#scipy.special.jacobi" title="scipy.special.jacobi"><tt class="xref py py-obj docutils literal"><span class="pre">jacobi</span></tt></a>(n, alpha, beta[, monic])</td>
+<td>Returns the nth order Jacobi polynomial, P^(alpha,beta)_n(x)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.laguerre.html#scipy.special.laguerre" title="scipy.special.laguerre"><tt class="xref py py-obj docutils literal"><span class="pre">laguerre</span></tt></a>(n[, monic])</td>
+<td>Return the nth order Laguerre polynoimal, L_n(x), orthogonal over</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.genlaguerre.html#scipy.special.genlaguerre" title="scipy.special.genlaguerre"><tt class="xref py py-obj docutils literal"><span class="pre">genlaguerre</span></tt></a>(n, alpha[, monic])</td>
+<td>Returns the nth order generalized (associated) Laguerre polynomial,</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.hermite.html#scipy.special.hermite" title="scipy.special.hermite"><tt class="xref py py-obj docutils literal"><span class="pre">hermite</span></tt></a>(n[, monic])</td>
+<td>Return the nth order Hermite polynomial, H_n(x), orthogonal over</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.hermitenorm.html#scipy.special.hermitenorm" title="scipy.special.hermitenorm"><tt class="xref py py-obj docutils literal"><span class="pre">hermitenorm</span></tt></a>(n[, monic])</td>
+<td>Return the nth order normalized Hermite polynomial, He_n(x), orthogonal</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.gegenbauer.html#scipy.special.gegenbauer" title="scipy.special.gegenbauer"><tt class="xref py py-obj docutils literal"><span class="pre">gegenbauer</span></tt></a>(n, alpha[, monic])</td>
+<td>Return the nth order Gegenbauer (ultraspherical) polynomial,</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sh_legendre.html#scipy.special.sh_legendre" title="scipy.special.sh_legendre"><tt class="xref py py-obj docutils literal"><span class="pre">sh_legendre</span></tt></a>(n[, monic])</td>
+<td>Returns the nth order shifted Legendre polynomial, P^*_n(x), orthogonal</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.sh_chebyt.html#scipy.special.sh_chebyt" title="scipy.special.sh_chebyt"><tt class="xref py py-obj docutils literal"><span class="pre">sh_chebyt</span></tt></a>(n[, monic])</td>
+<td>Return nth order shifted Chebyshev polynomial of first kind, Tn(x).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sh_chebyu.html#scipy.special.sh_chebyu" title="scipy.special.sh_chebyu"><tt class="xref py py-obj docutils literal"><span class="pre">sh_chebyu</span></tt></a>(n[, monic])</td>
+<td>Return nth order shifted Chebyshev polynomial of second kind, Un(x).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.sh_jacobi.html#scipy.special.sh_jacobi" title="scipy.special.sh_jacobi"><tt class="xref py py-obj docutils literal"><span class="pre">sh_jacobi</span></tt></a>(n, p, q[, monic])</td>
+<td>Returns the nth order Jacobi polynomial, G_n(p,q,x)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Large-order polynomials obtained from these functions
+are numerically unstable.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">orthopoly1d</span></tt> objects are converted to <tt class="docutils literal"><span class="pre">poly1d</span></tt>, when doing
+arithmetic.  <tt class="docutils literal"><span class="pre">numpy.poly1d</span></tt> works in power basis and cannot
+represent high-order polynomials accurately, which can cause
+significant inaccuracy.</p>
+</div>
+</div>
+<div class="section" id="hypergeometric-functions">
+<h3>Hypergeometric Functions<a class="headerlink" href="#hypergeometric-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.hyp2f1.html#scipy.special.hyp2f1" title="scipy.special.hyp2f1"><tt class="xref py py-obj docutils literal"><span class="pre">hyp2f1</span></tt></a>(x1, x2, x3, x4[, out])</td>
+<td>y=hyp2f1(a,b,c,z) returns the Gauss hypergeometric function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.hyp1f1.html#scipy.special.hyp1f1" title="scipy.special.hyp1f1"><tt class="xref py py-obj docutils literal"><span class="pre">hyp1f1</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=hyp1f1(a,b,x) returns the confluent hypergeometeric function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.hyperu.html#scipy.special.hyperu" title="scipy.special.hyperu"><tt class="xref py py-obj docutils literal"><span class="pre">hyperu</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=hyperu(a,b,x) returns the confluent hypergeometric function of the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.hyp0f1.html#scipy.special.hyp0f1" title="scipy.special.hyp0f1"><tt class="xref py py-obj docutils literal"><span class="pre">hyp0f1</span></tt></a>(v, z)</td>
+<td>Confluent hypergeometric limit function 0F1.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.hyp2f0.html#scipy.special.hyp2f0" title="scipy.special.hyp2f0"><tt class="xref py py-obj docutils literal"><span class="pre">hyp2f0</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(y,err)=hyp2f0(a,b,x,type) returns (y,err) with the hypergeometric function 2F0 in y and an error estimate in err.  The input type determines a convergence factor and</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.hyp1f2.html#scipy.special.hyp1f2" title="scipy.special.hyp1f2"><tt class="xref py py-obj docutils literal"><span class="pre">hyp1f2</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(y,err)=hyp1f2(a,b,c,x) returns (y,err) with the hypergeometric function 1F2 in y and an error estimate in err.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.hyp3f0.html#scipy.special.hyp3f0" title="scipy.special.hyp3f0"><tt class="xref py py-obj docutils literal"><span class="pre">hyp3f0</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(y,err)=hyp3f0(a,b,c,x) returns (y,err) with the hypergeometric function 3F0 in y and an error estimate in err.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parabolic-cylinder-functions">
+<h3>Parabolic Cylinder Functions<a class="headerlink" href="#parabolic-cylinder-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pbdv.html#scipy.special.pbdv" title="scipy.special.pbdv"><tt class="xref py py-obj docutils literal"><span class="pre">pbdv</span></tt></a>(x1, x2[, out1, out2])</td>
+<td>(d,dp)=pbdv(v,x) returns (d,dp) with the parabolic cylinder function Dv(x) in</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.pbvv.html#scipy.special.pbvv" title="scipy.special.pbvv"><tt class="xref py py-obj docutils literal"><span class="pre">pbvv</span></tt></a>(x1, x2[, out1, out2])</td>
+<td>(v,vp)=pbvv(v,x) returns (v,vp) with the parabolic cylinder function Vv(x) in</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pbwa.html#scipy.special.pbwa" title="scipy.special.pbwa"><tt class="xref py py-obj docutils literal"><span class="pre">pbwa</span></tt></a>(x1, x2[, out1, out2])</td>
+<td>(w,wp)=pbwa(a,x) returns (w,wp) with the parabolic cylinder function W(a,x) in</td>
+</tr>
+</tbody>
+</table>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pbdv_seq.html#scipy.special.pbdv_seq" title="scipy.special.pbdv_seq"><tt class="xref py py-obj docutils literal"><span class="pre">pbdv_seq</span></tt></a>(v, x)</td>
+<td>Compute sequence of parabolic cylinder functions Dv(x) and</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.pbvv_seq.html#scipy.special.pbvv_seq" title="scipy.special.pbvv_seq"><tt class="xref py py-obj docutils literal"><span class="pre">pbvv_seq</span></tt></a>(v, x)</td>
+<td>Compute sequence of parabolic cylinder functions Dv(x) and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pbdn_seq.html#scipy.special.pbdn_seq" title="scipy.special.pbdn_seq"><tt class="xref py py-obj docutils literal"><span class="pre">pbdn_seq</span></tt></a>(n, z)</td>
+<td>Compute sequence of parabolic cylinder functions Dn(z) and</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="mathieu-and-related-functions">
+<h3>Mathieu and Related Functions<a class="headerlink" href="#mathieu-and-related-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.mathieu_a.html#scipy.special.mathieu_a" title="scipy.special.mathieu_a"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_a</span></tt></a>(x1, x2[, out])</td>
+<td>lmbda=mathieu_a(m,q) returns the characteristic value for the even solution,</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.mathieu_b.html#scipy.special.mathieu_b" title="scipy.special.mathieu_b"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_b</span></tt></a>(x1, x2[, out])</td>
+<td>lmbda=mathieu_b(m,q) returns the characteristic value for the odd solution,</td>
+</tr>
+</tbody>
+</table>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.mathieu_even_coef.html#scipy.special.mathieu_even_coef" title="scipy.special.mathieu_even_coef"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_even_coef</span></tt></a>(m, q)</td>
+<td>Compute expansion coefficients for even Mathieu functions and</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.mathieu_odd_coef.html#scipy.special.mathieu_odd_coef" title="scipy.special.mathieu_odd_coef"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_odd_coef</span></tt></a>(m, q)</td>
+<td>Compute expansion coefficients for even Mathieu functions and</td>
+</tr>
+</tbody>
+</table>
+<p>The following return both function and first derivative:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.mathieu_cem.html#scipy.special.mathieu_cem" title="scipy.special.mathieu_cem"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_cem</span></tt></a>(x1, x2, x3[, out1, out2])</td>
+<td>(y,yp)=mathieu_cem(m,q,x) returns the even Mathieu function, ce_m(x,q),</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.mathieu_sem.html#scipy.special.mathieu_sem" title="scipy.special.mathieu_sem"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_sem</span></tt></a>(x1, x2, x3[, out1, out2])</td>
+<td>(y,yp)=mathieu_sem(m,q,x) returns the odd Mathieu function, se_m(x,q),</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.mathieu_modcem1.html#scipy.special.mathieu_modcem1" title="scipy.special.mathieu_modcem1"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_modcem1</span></tt></a>(x1, x2, x3[, out1, out2])</td>
+<td>(y,yp)=mathieu_modcem1(m,q,x) evaluates the even modified Mathieu function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.mathieu_modcem2.html#scipy.special.mathieu_modcem2" title="scipy.special.mathieu_modcem2"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_modcem2</span></tt></a>(x1, x2, x3[, out1, out2])</td>
+<td>(y,yp)=mathieu_modcem2(m,q,x) evaluates the even modified Mathieu function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.mathieu_modsem1.html#scipy.special.mathieu_modsem1" title="scipy.special.mathieu_modsem1"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_modsem1</span></tt></a>(x1, x2, x3[, out1, out2])</td>
+<td>(y,yp)=mathieu_modsem1(m,q,x) evaluates the odd modified Mathieu function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.mathieu_modsem2.html#scipy.special.mathieu_modsem2" title="scipy.special.mathieu_modsem2"><tt class="xref py py-obj docutils literal"><span class="pre">mathieu_modsem2</span></tt></a>(x1, x2, x3[, out1, out2])</td>
+<td>(y,yp)=mathieu_modsem2(m,q,x) evaluates the odd modified Mathieu function</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="spheroidal-wave-functions">
+<h3>Spheroidal Wave Functions<a class="headerlink" href="#spheroidal-wave-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pro_ang1.html#scipy.special.pro_ang1" title="scipy.special.pro_ang1"><tt class="xref py py-obj docutils literal"><span class="pre">pro_ang1</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(s,sp)=pro_ang1(m,n,c,x) computes the prolate sheroidal angular function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.pro_rad1.html#scipy.special.pro_rad1" title="scipy.special.pro_rad1"><tt class="xref py py-obj docutils literal"><span class="pre">pro_rad1</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(s,sp)=pro_rad1(m,n,c,x) computes the prolate sheroidal radial function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pro_rad2.html#scipy.special.pro_rad2" title="scipy.special.pro_rad2"><tt class="xref py py-obj docutils literal"><span class="pre">pro_rad2</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(s,sp)=pro_rad2(m,n,c,x) computes the prolate sheroidal radial function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.obl_ang1.html#scipy.special.obl_ang1" title="scipy.special.obl_ang1"><tt class="xref py py-obj docutils literal"><span class="pre">obl_ang1</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(s,sp)=obl_ang1(m,n,c,x) computes the oblate sheroidal angular function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.obl_rad1.html#scipy.special.obl_rad1" title="scipy.special.obl_rad1"><tt class="xref py py-obj docutils literal"><span class="pre">obl_rad1</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(s,sp)=obl_rad1(m,n,c,x) computes the oblate sheroidal radial function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.obl_rad2.html#scipy.special.obl_rad2" title="scipy.special.obl_rad2"><tt class="xref py py-obj docutils literal"><span class="pre">obl_rad2</span></tt></a>(x1, x2, x3, x4[, out1, out2])</td>
+<td>(s,sp)=obl_rad2(m,n,c,x) computes the oblate sheroidal radial function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pro_cv.html#scipy.special.pro_cv" title="scipy.special.pro_cv"><tt class="xref py py-obj docutils literal"><span class="pre">pro_cv</span></tt></a>(x1, x2, x3[, out])</td>
+<td>cv=pro_cv(m,n,c) computes the characteristic value of prolate spheroidal</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.obl_cv.html#scipy.special.obl_cv" title="scipy.special.obl_cv"><tt class="xref py py-obj docutils literal"><span class="pre">obl_cv</span></tt></a>(x1, x2, x3[, out])</td>
+<td>cv=obl_cv(m,n,c) computes the characteristic value of oblate spheroidal</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pro_cv_seq.html#scipy.special.pro_cv_seq" title="scipy.special.pro_cv_seq"><tt class="xref py py-obj docutils literal"><span class="pre">pro_cv_seq</span></tt></a>(m, n, c)</td>
+<td>Compute a sequence of characteristic values for the prolate</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.obl_cv_seq.html#scipy.special.obl_cv_seq" title="scipy.special.obl_cv_seq"><tt class="xref py py-obj docutils literal"><span class="pre">obl_cv_seq</span></tt></a>(m, n, c)</td>
+<td>Compute a sequence of characteristic values for the oblate</td>
+</tr>
+</tbody>
+</table>
+<p>The following functions require pre-computed characteristic value:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pro_ang1_cv.html#scipy.special.pro_ang1_cv" title="scipy.special.pro_ang1_cv"><tt class="xref py py-obj docutils literal"><span class="pre">pro_ang1_cv</span></tt></a>(x1, x2, x3, x4, x5[, out1, out2])</td>
+<td>(s,sp)=pro_ang1_cv(m,n,c,cv,x) computes the prolate sheroidal angular function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.pro_rad1_cv.html#scipy.special.pro_rad1_cv" title="scipy.special.pro_rad1_cv"><tt class="xref py py-obj docutils literal"><span class="pre">pro_rad1_cv</span></tt></a>(x1, x2, x3, x4, x5[, out1, out2])</td>
+<td>(s,sp)=pro_rad1_cv(m,n,c,cv,x) computes the prolate sheroidal radial function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.pro_rad2_cv.html#scipy.special.pro_rad2_cv" title="scipy.special.pro_rad2_cv"><tt class="xref py py-obj docutils literal"><span class="pre">pro_rad2_cv</span></tt></a>(x1, x2, x3, x4, x5[, out1, out2])</td>
+<td>(s,sp)=pro_rad2_cv(m,n,c,cv,x) computes the prolate sheroidal radial function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.obl_ang1_cv.html#scipy.special.obl_ang1_cv" title="scipy.special.obl_ang1_cv"><tt class="xref py py-obj docutils literal"><span class="pre">obl_ang1_cv</span></tt></a>(x1, x2, x3, x4, x5[, out1, out2])</td>
+<td>(s,sp)=obl_ang1_cv(m,n,c,cv,x) computes the oblate sheroidal angular function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.obl_rad1_cv.html#scipy.special.obl_rad1_cv" title="scipy.special.obl_rad1_cv"><tt class="xref py py-obj docutils literal"><span class="pre">obl_rad1_cv</span></tt></a>(x1, x2, x3, x4, x5[, out1, out2])</td>
+<td>(s,sp)=obl_rad1_cv(m,n,c,cv,x) computes the oblate sheroidal radial function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.obl_rad2_cv.html#scipy.special.obl_rad2_cv" title="scipy.special.obl_rad2_cv"><tt class="xref py py-obj docutils literal"><span class="pre">obl_rad2_cv</span></tt></a>(x1, x2, x3, x4, x5[, out1, out2])</td>
+<td>(s,sp)=obl_rad2_cv(m,n,c,cv,x) computes the oblate sheroidal radial function</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="kelvin-functions">
+<h3>Kelvin Functions<a class="headerlink" href="#kelvin-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.kelvin.html#scipy.special.kelvin" title="scipy.special.kelvin"><tt class="xref py py-obj docutils literal"><span class="pre">kelvin</span></tt></a>(x[, out1, out2, out3, out4])</td>
+<td>(Be, Ke, Bep, Kep)=kelvin(x) returns the tuple (Be, Ke, Bep, Kep) which contains</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.kelvin_zeros.html#scipy.special.kelvin_zeros" title="scipy.special.kelvin_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">kelvin_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of all the Kelvin functions returned in a</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ber.html#scipy.special.ber" title="scipy.special.ber"><tt class="xref py py-obj docutils literal"><span class="pre">ber</span></tt></a>(x[, out])</td>
+<td>y=ber(x) returns the Kelvin function ber x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.bei.html#scipy.special.bei" title="scipy.special.bei"><tt class="xref py py-obj docutils literal"><span class="pre">bei</span></tt></a>(x[, out])</td>
+<td>y=bei(x) returns the Kelvin function bei x</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.berp.html#scipy.special.berp" title="scipy.special.berp"><tt class="xref py py-obj docutils literal"><span class="pre">berp</span></tt></a>(x[, out])</td>
+<td>y=berp(x) returns the derivative of the Kelvin function ber x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.beip.html#scipy.special.beip" title="scipy.special.beip"><tt class="xref py py-obj docutils literal"><span class="pre">beip</span></tt></a>(x[, out])</td>
+<td>y=beip(x) returns the derivative of the Kelvin function bei x</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ker.html#scipy.special.ker" title="scipy.special.ker"><tt class="xref py py-obj docutils literal"><span class="pre">ker</span></tt></a>(x[, out])</td>
+<td>y=ker(x) returns the Kelvin function ker x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.kei.html#scipy.special.kei" title="scipy.special.kei"><tt class="xref py py-obj docutils literal"><span class="pre">kei</span></tt></a>(x[, out])</td>
+<td>y=kei(x) returns the Kelvin function ker x</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.kerp.html#scipy.special.kerp" title="scipy.special.kerp"><tt class="xref py py-obj docutils literal"><span class="pre">kerp</span></tt></a>(x[, out])</td>
+<td>y=kerp(x) returns the derivative of the Kelvin function ker x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.keip.html#scipy.special.keip" title="scipy.special.keip"><tt class="xref py py-obj docutils literal"><span class="pre">keip</span></tt></a>(x[, out])</td>
+<td>y=keip(x) returns the derivative of the Kelvin function kei x</td>
+</tr>
+</tbody>
+</table>
+<p>These are not universal functions:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ber_zeros.html#scipy.special.ber_zeros" title="scipy.special.ber_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">ber_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function ber x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.bei_zeros.html#scipy.special.bei_zeros" title="scipy.special.bei_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">bei_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function bei x</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.berp_zeros.html#scipy.special.berp_zeros" title="scipy.special.berp_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">berp_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function ber’ x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.beip_zeros.html#scipy.special.beip_zeros" title="scipy.special.beip_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">beip_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function bei’ x</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.ker_zeros.html#scipy.special.ker_zeros" title="scipy.special.ker_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">ker_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function ker x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.kei_zeros.html#scipy.special.kei_zeros" title="scipy.special.kei_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">kei_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function kei x</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.kerp_zeros.html#scipy.special.kerp_zeros" title="scipy.special.kerp_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">kerp_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function ker’ x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.keip_zeros.html#scipy.special.keip_zeros" title="scipy.special.keip_zeros"><tt class="xref py py-obj docutils literal"><span class="pre">keip_zeros</span></tt></a>(nt)</td>
+<td>Compute nt zeros of the Kelvin function kei’ x</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="other-special-functions">
+<h3>Other Special Functions<a class="headerlink" href="#other-special-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.binom.html#scipy.special.binom" title="scipy.special.binom"><tt class="xref py py-obj docutils literal"><span class="pre">binom</span></tt></a>(n, k)</td>
+<td>Binomial coefficient</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.expn.html#scipy.special.expn" title="scipy.special.expn"><tt class="xref py py-obj docutils literal"><span class="pre">expn</span></tt></a>(x1, x2[, out])</td>
+<td>y=expn(n,x) returns the exponential integral for integer n and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.exp1.html#scipy.special.exp1" title="scipy.special.exp1"><tt class="xref py py-obj docutils literal"><span class="pre">exp1</span></tt></a>(x[, out])</td>
+<td>y=exp1(z) returns the exponential integral (n=1) of complex argument</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.expi.html#scipy.special.expi" title="scipy.special.expi"><tt class="xref py py-obj docutils literal"><span class="pre">expi</span></tt></a>(x[, out])</td>
+<td>y=expi(x) returns an exponential integral of argument x defined as</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.shichi.html#scipy.special.shichi" title="scipy.special.shichi"><tt class="xref py py-obj docutils literal"><span class="pre">shichi</span></tt></a>(x[, out1, out2])</td>
+<td>(shi,chi)=shichi(x) returns the hyperbolic sine and cosine integrals:</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sici.html#scipy.special.sici" title="scipy.special.sici"><tt class="xref py py-obj docutils literal"><span class="pre">sici</span></tt></a>(x[, out1, out2])</td>
+<td>(si,ci)=sici(x) returns in si the integral of the sinc function from 0 to x:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.spence.html#scipy.special.spence" title="scipy.special.spence"><tt class="xref py py-obj docutils literal"><span class="pre">spence</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.lambertw.html#scipy.special.lambertw" title="scipy.special.lambertw"><tt class="xref py py-obj docutils literal"><span class="pre">lambertw</span></tt></a>(z[, k, tol])</td>
+<td>Lambert W function [R393].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.zeta.html#scipy.special.zeta" title="scipy.special.zeta"><tt class="xref py py-obj docutils literal"><span class="pre">zeta</span></tt></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.zetac.html#scipy.special.zetac" title="scipy.special.zetac"><tt class="xref py py-obj docutils literal"><span class="pre">zetac</span></tt></a>(...[, k])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="convenience-functions">
+<h3>Convenience Functions<a class="headerlink" href="#convenience-functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.cbrt.html#scipy.special.cbrt" title="scipy.special.cbrt"><tt class="xref py py-obj docutils literal"><span class="pre">cbrt</span></tt></a>(x[, out])</td>
+<td>y=cbrt(x) returns the real cube root of x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.exp10.html#scipy.special.exp10" title="scipy.special.exp10"><tt class="xref py py-obj docutils literal"><span class="pre">exp10</span></tt></a>(x[, out])</td>
+<td>y=exp10(x) returns 10 raised to the x power.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.exp2.html#scipy.special.exp2" title="scipy.special.exp2"><tt class="xref py py-obj docutils literal"><span class="pre">exp2</span></tt></a>(x[, out])</td>
+<td>y=exp2(x) returns 2 raised to the x power.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.radian.html#scipy.special.radian" title="scipy.special.radian"><tt class="xref py py-obj docutils literal"><span class="pre">radian</span></tt></a>(x1, x2, x3[, out])</td>
+<td>y=radian(d,m,s) returns the angle given in (d)egrees, (m)inutes, and</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.cosdg.html#scipy.special.cosdg" title="scipy.special.cosdg"><tt class="xref py py-obj docutils literal"><span class="pre">cosdg</span></tt></a>(x[, out])</td>
+<td>y=cosdg(x) calculates the cosine of the angle x given in degrees.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.sindg.html#scipy.special.sindg" title="scipy.special.sindg"><tt class="xref py py-obj docutils literal"><span class="pre">sindg</span></tt></a>(x[, out])</td>
+<td>y=sindg(x) calculates the sine of the angle x given in degrees.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.tandg.html#scipy.special.tandg" title="scipy.special.tandg"><tt class="xref py py-obj docutils literal"><span class="pre">tandg</span></tt></a>(x[, out])</td>
+<td>y=tandg(x) calculates the tangent of the angle x given in degrees.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.cotdg.html#scipy.special.cotdg" title="scipy.special.cotdg"><tt class="xref py py-obj docutils literal"><span class="pre">cotdg</span></tt></a>(x[, out])</td>
+<td>y=cotdg(x) calculates the cotangent of the angle x given in degrees.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.log1p.html#scipy.special.log1p" title="scipy.special.log1p"><tt class="xref py py-obj docutils literal"><span class="pre">log1p</span></tt></a>(x[, out])</td>
+<td>y=log1p(x) calculates log(1+x) for use when x is near zero.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.expm1.html#scipy.special.expm1" title="scipy.special.expm1"><tt class="xref py py-obj docutils literal"><span class="pre">expm1</span></tt></a>(x[, out])</td>
+<td>y=expm1(x) calculates exp(x) - 1 for use when x is near zero.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.cosm1.html#scipy.special.cosm1" title="scipy.special.cosm1"><tt class="xref py py-obj docutils literal"><span class="pre">cosm1</span></tt></a>(x[, out])</td>
+<td>y=calculates cos(x) - 1 for use when x is near zero.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.round.html#scipy.special.round" title="scipy.special.round"><tt class="xref py py-obj docutils literal"><span class="pre">round</span></tt></a>(x[, out])</td>
+<td>y=Returns the nearest integer to x as a double precision</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/scipy.special.xlogy.html#scipy.special.xlogy" title="scipy.special.xlogy"><tt class="xref py py-obj docutils literal"><span class="pre">xlogy</span></tt></a>(x, y)</td>
+<td>Compute <tt class="docutils literal"><span class="pre">x*log(y)</span></tt> so that the result is 0 if <em class="xref py py-obj">x = 0</em>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/scipy.special.xlog1py.html#scipy.special.xlog1py" title="scipy.special.xlog1py"><tt class="xref py py-obj docutils literal"><span class="pre">xlog1py</span></tt></a>(x, y)</td>
+<td>Compute <tt class="docutils literal"><span class="pre">x*log1p(y)</span></tt> so that the result is 0 if <em class="xref py py-obj">x = 0</em>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

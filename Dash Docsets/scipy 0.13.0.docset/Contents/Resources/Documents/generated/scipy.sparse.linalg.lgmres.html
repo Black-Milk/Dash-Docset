@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>scipy.sparse.linalg.lgmres — SciPy v0.13.0 Reference Guide</title>
+<link href="../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="../sparse.linalg.html" rel="up" title="Sparse linear algebra (scipy.sparse.linalg)"/>
+<link href="scipy.sparse.linalg.minres.html" rel="next" title="scipy.sparse.linalg.minres"/>
+<link href="scipy.sparse.linalg.gmres.html" rel="prev" title="scipy.sparse.linalg.gmres"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="../sparse.linalg.html">Sparse linear algebra (<tt class="docutils literal"><span class="pre">scipy.sparse.linalg</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="../py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="scipy.sparse.linalg.minres.html" title="scipy.sparse.linalg.minres">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="scipy.sparse.linalg.gmres.html" title="scipy.sparse.linalg.gmres">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.sparse.linalg.gmres.html" title="previous chapter">scipy.sparse.linalg.gmres</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.sparse.linalg.minres.html" title="next chapter">scipy.sparse.linalg.minres</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="scipy-sparse-linalg-lgmres">
+<h1>scipy.sparse.linalg.lgmres<a class="headerlink" href="#scipy-sparse-linalg-lgmres" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.sparse.linalg.lgmres"><a name="//apple_ref/cpp/func/scipy.sparse.linalg.lgmres"></a>
+<tt class="descclassname">scipy.sparse.linalg.</tt><tt class="descname">lgmres</tt><big>(</big><em>A</em>, <em>b</em>, <em>x0=None</em>, <em>tol=1e-05</em>, <em>maxiter=1000</em>, <em>M=None</em>, <em>callback=None</em>, <em>inner_m=30</em>, <em>outer_k=3</em>, <em>outer_v=None</em>, <em>store_outer_Av=True</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/sparse/linalg/isolve/lgmres.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.sparse.linalg.lgmres" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve a matrix equation using the LGMRES algorithm.</p>
+<p>The LGMRES algorithm <a class="reference internal" href="#bjm">[BJM]</a> <a class="reference internal" href="#bph">[BPh]</a> is designed to avoid some problems
+in the convergence in restarted GMRES, and often converges in fewer
+iterations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>A</strong> : {sparse matrix, dense matrix, LinearOperator}</p>
+<blockquote>
+<div><p>The real or complex N-by-N matrix of the linear system.</p>
+</div></blockquote>
+<p><strong>b</strong> : {array, matrix}</p>
+<blockquote>
+<div><p>Right hand side of the linear system. Has shape (N,) or (N,1).</p>
+</div></blockquote>
+<p><strong>x0</strong> : {array, matrix}</p>
+<blockquote>
+<div><p>Starting guess for the solution.</p>
+</div></blockquote>
+<p><strong>tol</strong> : float</p>
+<blockquote>
+<div><p>Tolerance to achieve. The algorithm terminates when either the relative
+or the absolute residual is below <em class="xref py py-obj">tol</em>.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of iterations.  Iteration will stop after maxiter
+steps even if the specified tolerance has not been achieved.</p>
+</div></blockquote>
+<p><strong>M</strong> : {sparse matrix, dense matrix, LinearOperator}</p>
+<blockquote>
+<div><p>Preconditioner for A.  The preconditioner should approximate the
+inverse of A.  Effective preconditioning dramatically improves the
+rate of convergence, which implies that fewer iterations are needed
+to reach a given error tolerance.</p>
+</div></blockquote>
+<p><strong>callback</strong> : function</p>
+<blockquote>
+<div><p>User-supplied function to call after each iteration.  It is called
+as callback(xk), where xk is the current solution vector.</p>
+</div></blockquote>
+<p><strong>inner_m</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of inner GMRES iterations per each outer iteration.</p>
+</div></blockquote>
+<p><strong>outer_k</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of vectors to carry between inner GMRES iterations.
+According to <a class="reference internal" href="#bjm">[BJM]</a>, good values are in the range of 1...3.
+However, note that if you want to use the additional vectors to
+accelerate solving multiple similar problems, larger values may
+be beneficial.</p>
+</div></blockquote>
+<p><strong>outer_v</strong> : list of tuples, optional</p>
+<blockquote>
+<div><p>List containing tuples <tt class="docutils literal"><span class="pre">(v,</span> <span class="pre">Av)</span></tt> of vectors and corresponding
+matrix-vector products, used to augment the Krylov subspace, and
+carried between inner GMRES iterations. The element <tt class="docutils literal"><span class="pre">Av</span></tt> can
+be <em class="xref py py-obj">None</em> if the matrix-vector product should be re-evaluated.
+This parameter is modified in-place by <a class="reference internal" href="#scipy.sparse.linalg.lgmres" title="scipy.sparse.linalg.lgmres"><tt class="xref py py-obj docutils literal"><span class="pre">lgmres</span></tt></a>, and can be used
+to pass “guess” vectors in and out of the algorithm when solving
+similar problems.</p>
+</div></blockquote>
+<p><strong>store_outer_Av</strong> : bool, optional</p>
+<blockquote>
+<div><p>Whether LGMRES should store also A*v in addition to vectors <em class="xref py py-obj">v</em>
+in the <em class="xref py py-obj">outer_v</em> list. Default is True.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>x</strong> : array or matrix</p>
+<blockquote>
+<div><p>The converged solution.</p>
+</div></blockquote>
+<p><strong>info</strong> : int</p>
+<blockquote class="last">
+<div><p>Provides convergence information:</p>
+<blockquote>
+<div><ul class="simple">
+<li>0  : successful exit</li>
+<li>&gt;0 : convergence to tolerance not achieved, number of iterations</li>
+<li>&lt;0 : illegal input or breakdown</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The LGMRES algorithm <a class="reference internal" href="#bjm">[BJM]</a> <a class="reference internal" href="#bph">[BPh]</a> is designed to avoid the
+slowing of convergence in restarted GMRES, due to alternating
+residual vectors. Typically, it often outperforms GMRES(m) of
+comparable memory requirements by some measure, or at least is not
+much worse.</p>
+<p>Another advantage in this algorithm is that you can supply it with
+‘guess’ vectors in the <em class="xref py py-obj">outer_v</em> argument that augment the Krylov
+subspace. If the solution lies close to the span of these vectors,
+the algorithm converges faster. This can be useful if several very
+similar matrices need to be inverted one after another, such as in
+Newton-Krylov iteration where the Jacobian matrix often changes
+little in the nonlinear steps.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="bjm" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label">[BJM]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>, <a class="fn-backref" href="#id4">3</a>, <a class="fn-backref" href="#id6">4</a>)</em> A.H. Baker and E.R. Jessup and T. Manteuffel,
+SIAM J. Matrix Anal. Appl. 26, 962 (2005).</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="bph" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label">[BPh]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id5">2</a>, <a class="fn-backref" href="#id7">3</a>)</em> A.H. Baker, PhD thesis, University of Colorado (2003).
+<a class="reference external" href="http://amath.colorado.edu/activities/thesis/allisonb/Thesis.ps">http://amath.colorado.edu/activities/thesis/allisonb/Thesis.ps</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

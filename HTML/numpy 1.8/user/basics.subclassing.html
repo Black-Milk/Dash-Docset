@@ -1,0 +1,660 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Subclassing ndarray &mdash; NumPy v1.8 Manual</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" >
+    <link rel="top" title="NumPy v1.8 Manual" href="../index.html" >
+    <link rel="up" title="Numpy basics" href="basics.html" >
+    <link rel="next" title="Performance" href="performance.html" >
+    <link rel="prev" title="Structured arrays (aka “Record arrays”)" href="basics.rec.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+        
+        <li class="active"><a href="../index.html">NumPy v1.8 Manual</a></li>
+        
+
+          <li class="active"><a href="index.html" >NumPy User Guide</a></li>
+          <li class="active"><a href="basics.html" accesskey="U">Numpy basics</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="performance.html" title="Performance"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="basics.rec.html" title="Structured arrays (aka “Record arrays”)"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Subclassing ndarray</a><ul>
+<li><a class="reference internal" href="#credits">Credits</a></li>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#ndarrays-and-object-creation">ndarrays and object creation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#view-casting">View casting</a></li>
+<li><a class="reference internal" href="#creating-new-from-template">Creating new from template</a></li>
+<li><a class="reference internal" href="#relationship-of-view-casting-and-new-from-template">Relationship of view casting and new-from-template</a></li>
+<li><a class="reference internal" href="#implications-for-subclassing">Implications for subclassing</a><ul>
+<li><a class="reference internal" href="#a-brief-python-primer-on-new-and-init">A brief Python primer on <tt class="docutils literal"><span class="pre">__new__</span></tt> and <tt class="docutils literal"><span class="pre">__init__</span></tt></a></li>
+<li><a class="reference internal" href="#the-role-of-array-finalize">The role of <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-example-adding-an-extra-attribute-to-ndarray">Simple example - adding an extra attribute to ndarray</a></li>
+<li><a class="reference internal" href="#slightly-more-realistic-example-attribute-added-to-existing-array">Slightly more realistic example - attribute added to existing array</a></li>
+<li><a class="reference internal" href="#array-wrap-for-ufuncs"><tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> for ufuncs</a></li>
+<li><a class="reference internal" href="#extra-gotchas-custom-del-methods-and-ndarray-base">Extra gotchas - custom <tt class="docutils literal"><span class="pre">__del__</span></tt> methods and ndarray.base</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="basics.rec.html"
+                        title="previous chapter">Structured arrays (aka &#8220;Record arrays&#8221;)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="performance.html"
+                        title="next chapter">Performance</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="module-numpy.doc.subclassing">
+<span id="subclassing-ndarray"></span><span id="basics-subclassing"></span><h1>Subclassing ndarray<a class="headerlink" href="#module-numpy.doc.subclassing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this headline">¶</a></h2>
+<p>This page is based with thanks on the wiki page on subclassing by Pierre
+Gerard-Marchant - <a class="reference external" href="http://www.scipy.org/Subclasses">http://www.scipy.org/Subclasses</a>.</p>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Subclassing ndarray is relatively simple, but it has some complications
+compared to other Python objects.  On this page we explain the machinery
+that allows you to subclass ndarray, and the implications for
+implementing a subclass.</p>
+<div class="section" id="ndarrays-and-object-creation">
+<h3>ndarrays and object creation<a class="headerlink" href="#ndarrays-and-object-creation" title="Permalink to this headline">¶</a></h3>
+<p>Subclassing ndarray is complicated by the fact that new instances of
+ndarray classes can come about in three different ways.  These are:</p>
+<ol class="arabic simple">
+<li>Explicit constructor call - as in <tt class="docutils literal"><span class="pre">MySubClass(params)</span></tt>.  This is
+the usual route to Python instance creation.</li>
+<li>View casting - casting an existing ndarray as a given subclass</li>
+<li>New from template - creating a new instance from a template
+instance. Examples include returning slices from a subclassed array,
+creating return types from ufuncs, and copying arrays.  See
+<a class="reference internal" href="#new-from-template"><em>Creating new from template</em></a> for more details</li>
+</ol>
+<p>The last two are characteristics of ndarrays - in order to support
+things like array slicing.  The complications of subclassing ndarray are
+due to the mechanisms numpy has to support these latter two routes of
+instance creation.</p>
+</div>
+</div>
+<div class="section" id="view-casting">
+<span id="id1"></span><h2>View casting<a class="headerlink" href="#view-casting" title="Permalink to this headline">¶</a></h2>
+<p><em>View casting</em> is the standard ndarray mechanism by which you take an
+ndarray of any subclass, and return a view of the array as another
+(specified) subclass:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># create a completely useless ndarray subclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># create a standard ndarray</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># take a view of it, as our useless subclass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c_arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">c_arr</span><span class="p">)</span>
+<span class="go">&lt;class &#39;C&#39;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-new-from-template">
+<span id="new-from-template"></span><h2>Creating new from template<a class="headerlink" href="#creating-new-from-template" title="Permalink to this headline">¶</a></h2>
+<p>New instances of an ndarray subclass can also come about by a very
+similar mechanism to <a class="reference internal" href="#view-casting"><em>View casting</em></a>, when numpy finds it needs to
+create a new instance from a template instance.  The most obvious place
+this has to happen is when you are taking slices of subclassed arrays.
+For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">c_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="c"># the view is of type &#39;C&#39;</span>
+<span class="go">&lt;class &#39;C&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="ow">is</span> <span class="n">c_arr</span> <span class="c"># but it&#39;s a new instance</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>The slice is a <em>view</em> onto the original <tt class="docutils literal"><span class="pre">c_arr</span></tt> data.  So, when we
+take a view from the ndarray, we return a new ndarray, of the same
+class, that points to the data in the original.</p>
+<p>There are other points in the use of ndarrays where we need such views,
+such as copying arrays (<tt class="docutils literal"><span class="pre">c_arr.copy()</span></tt>), creating ufunc output arrays
+(see also <a class="reference internal" href="#array-wrap"><em>__array_wrap__ for ufuncs</em></a>), and reducing methods (like
+<tt class="docutils literal"><span class="pre">c_arr.mean()</span></tt>.</p>
+</div>
+<div class="section" id="relationship-of-view-casting-and-new-from-template">
+<h2>Relationship of view casting and new-from-template<a class="headerlink" href="#relationship-of-view-casting-and-new-from-template" title="Permalink to this headline">¶</a></h2>
+<p>These paths both use the same machinery.  We make the distinction here,
+because they result in different input to your methods.  Specifically,
+<a class="reference internal" href="#view-casting"><em>View casting</em></a> means you have created a new instance of your array
+type from any potential subclass of ndarray.  <a class="reference internal" href="#new-from-template"><em>Creating new from template</em></a>
+means you have created a new instance of your class from a pre-existing
+instance, allowing you - for example - to copy across attributes that
+are particular to your subclass.</p>
+</div>
+<div class="section" id="implications-for-subclassing">
+<h2>Implications for subclassing<a class="headerlink" href="#implications-for-subclassing" title="Permalink to this headline">¶</a></h2>
+<p>If we subclass ndarray, we need to deal not only with explicit
+construction of our array type, but also <a class="reference internal" href="#view-casting"><em>View casting</em></a> or
+<a class="reference internal" href="#new-from-template"><em>Creating new from template</em></a>.  Numpy has the machinery to do this, and this
+machinery that makes subclassing slightly non-standard.</p>
+<p>There are two aspects to the machinery that ndarray uses to support
+views and new-from-template in subclasses.</p>
+<p>The first is the use of the <tt class="docutils literal"><span class="pre">ndarray.__new__</span></tt> method for the main work
+of object initialization, rather then the more usual <tt class="docutils literal"><span class="pre">__init__</span></tt>
+method.  The second is the use of the <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt> method to
+allow subclasses to clean up after the creation of views and new
+instances from templates.</p>
+<div class="section" id="a-brief-python-primer-on-new-and-init">
+<h3>A brief Python primer on <tt class="docutils literal"><span class="pre">__new__</span></tt> and <tt class="docutils literal"><span class="pre">__init__</span></tt><a class="headerlink" href="#a-brief-python-primer-on-new-and-init" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">__new__</span></tt> is a standard Python method, and, if present, is called
+before <tt class="docutils literal"><span class="pre">__init__</span></tt> when we create a class instance. See the <a class="reference external" href="http://docs.python.org/reference/datamodel.html#object.__new__">python
+__new__ documentation</a> for more detail.</p>
+<p>For example, consider the following Python code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;Cls in __new__:&#39;</span><span class="p">,</span> <span class="n">cls</span>
+        <span class="k">print</span> <span class="s">&#39;Args in __new__:&#39;</span><span class="p">,</span> <span class="n">args</span>
+        <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;type(self) in __init__:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&#39;Args in __init__:&#39;</span><span class="p">,</span> <span class="n">args</span>
+</pre></div>
+</div>
+<p>meaning that we get:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">(</span><span class="s">&#39;hello&#39;</span><span class="p">)</span>
+<span class="go">Cls in __new__: &lt;class &#39;C&#39;&gt;</span>
+<span class="go">Args in __new__: (&#39;hello&#39;,)</span>
+<span class="go">type(self) in __init__: &lt;class &#39;C&#39;&gt;</span>
+<span class="go">Args in __init__: (&#39;hello&#39;,)</span>
+</pre></div>
+</div>
+<p>When we call <tt class="docutils literal"><span class="pre">C('hello')</span></tt>, the <tt class="docutils literal"><span class="pre">__new__</span></tt> method gets its own class
+as first argument, and the passed argument, which is the string
+<tt class="docutils literal"><span class="pre">'hello'</span></tt>.  After python calls <tt class="docutils literal"><span class="pre">__new__</span></tt>, it usually (see below)
+calls our <tt class="docutils literal"><span class="pre">__init__</span></tt> method, with the output of <tt class="docutils literal"><span class="pre">__new__</span></tt> as the
+first argument (now a class instance), and the passed arguments
+following.</p>
+<p>As you can see, the object can be initialized in the <tt class="docutils literal"><span class="pre">__new__</span></tt>
+method or the <tt class="docutils literal"><span class="pre">__init__</span></tt> method, or both, and in fact ndarray does
+not have an <tt class="docutils literal"><span class="pre">__init__</span></tt> method, because all the initialization is
+done in the <tt class="docutils literal"><span class="pre">__new__</span></tt> method.</p>
+<p>Why use <tt class="docutils literal"><span class="pre">__new__</span></tt> rather than just the usual <tt class="docutils literal"><span class="pre">__init__</span></tt>?  Because
+in some cases, as for ndarray, we want to be able to return an object
+of some other class.  Consider the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="n">C</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;D cls is:&#39;</span><span class="p">,</span> <span class="n">cls</span>
+        <span class="k">print</span> <span class="s">&#39;D args in __new__:&#39;</span><span class="p">,</span> <span class="n">args</span>
+        <span class="k">return</span> <span class="n">C</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="c"># we never get here</span>
+        <span class="k">print</span> <span class="s">&#39;In D __init__&#39;</span>
+</pre></div>
+</div>
+<p>meaning that:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">D</span><span class="p">(</span><span class="s">&#39;hello&#39;</span><span class="p">)</span>
+<span class="go">D cls is: &lt;class &#39;D&#39;&gt;</span>
+<span class="go">D args in __new__: (&#39;hello&#39;,)</span>
+<span class="go">Cls in __new__: &lt;class &#39;C&#39;&gt;</span>
+<span class="go">Args in __new__: (&#39;hello&#39;,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="go">&lt;class &#39;C&#39;&gt;</span>
+</pre></div>
+</div>
+<p>The definition of <tt class="docutils literal"><span class="pre">C</span></tt> is the same as before, but for <tt class="docutils literal"><span class="pre">D</span></tt>, the
+<tt class="docutils literal"><span class="pre">__new__</span></tt> method returns an instance of class <tt class="docutils literal"><span class="pre">C</span></tt> rather than
+<tt class="docutils literal"><span class="pre">D</span></tt>.  Note that the <tt class="docutils literal"><span class="pre">__init__</span></tt> method of <tt class="docutils literal"><span class="pre">D</span></tt> does not get
+called.  In general, when the <tt class="docutils literal"><span class="pre">__new__</span></tt> method returns an object of
+class other than the class in which it is defined, the <tt class="docutils literal"><span class="pre">__init__</span></tt>
+method of that class is not called.</p>
+<p>This is how subclasses of the ndarray class are able to return views
+that preserve the class type.  When taking a view, the standard
+ndarray machinery creates the new ndarray object with something
+like:</p>
+<div class="highlight-python"><pre>obj = ndarray.__new__(subtype, shape, ...</pre>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">subdtype</span></tt> is the subclass.  Thus the returned view is of the
+same class as the subclass, rather than being of class <tt class="docutils literal"><span class="pre">ndarray</span></tt>.</p>
+<p>That solves the problem of returning views of the same type, but now
+we have a new problem.  The machinery of ndarray can set the class
+this way, in its standard methods for taking views, but the ndarray
+<tt class="docutils literal"><span class="pre">__new__</span></tt> method knows nothing of what we have done in our own
+<tt class="docutils literal"><span class="pre">__new__</span></tt> method in order to set attributes, and so on.  (Aside -
+why not call <tt class="docutils literal"><span class="pre">obj</span> <span class="pre">=</span> <span class="pre">subdtype.__new__(...</span></tt> then?  Because we may not
+have a <tt class="docutils literal"><span class="pre">__new__</span></tt> method with the same call signature).</p>
+</div>
+<div class="section" id="the-role-of-array-finalize">
+<h3>The role of <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt><a class="headerlink" href="#the-role-of-array-finalize" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">__array_finalize__</span></tt> is the mechanism that numpy provides to allow
+subclasses to handle the various ways that new instances get created.</p>
+<p>Remember that subclass instances can come about in these three ways:</p>
+<ol class="arabic simple">
+<li>explicit constructor call (<tt class="docutils literal"><span class="pre">obj</span> <span class="pre">=</span> <span class="pre">MySubClass(params)</span></tt>).  This will
+call the usual sequence of <tt class="docutils literal"><span class="pre">MySubClass.__new__</span></tt> then (if it exists)
+<tt class="docutils literal"><span class="pre">MySubClass.__init__</span></tt>.</li>
+<li><a class="reference internal" href="#view-casting"><em>View casting</em></a></li>
+<li><a class="reference internal" href="#new-from-template"><em>Creating new from template</em></a></li>
+</ol>
+<p>Our <tt class="docutils literal"><span class="pre">MySubClass.__new__</span></tt> method only gets called in the case of the
+explicit constructor call, so we can&#8217;t rely on <tt class="docutils literal"><span class="pre">MySubClass.__new__</span></tt> or
+<tt class="docutils literal"><span class="pre">MySubClass.__init__</span></tt> to deal with the view casting and
+new-from-template.  It turns out that <tt class="docutils literal"><span class="pre">MySubClass.__array_finalize__</span></tt>
+<em>does</em> get called for all three methods of object creation, so this is
+where our object creation housekeeping usually goes.</p>
+<ul class="simple">
+<li>For the explicit constructor call, our subclass will need to create a
+new ndarray instance of its own class.  In practice this means that
+we, the authors of the code, will need to make a call to
+<tt class="docutils literal"><span class="pre">ndarray.__new__(MySubClass,...)</span></tt>, or do view casting of an existing
+array (see below)</li>
+<li>For view casting and new-from-template, the equivalent of
+<tt class="docutils literal"><span class="pre">ndarray.__new__(MySubClass,...</span></tt> is called, at the C level.</li>
+</ul>
+<p>The arguments that <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt> recieves differ for the three
+methods of instance creation above.</p>
+<p>The following code allows us to look at the call sequences and arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;In __new__ with class </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">cls</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c"># in practice you probably will not need or want an __init__</span>
+        <span class="c"># method for your subclass</span>
+        <span class="k">print</span> <span class="s">&#39;In __init__ with class </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span>
+
+    <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;In array_finalize:&#39;</span>
+        <span class="k">print</span> <span class="s">&#39;   self type is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&#39;   obj type is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># Explicit constructor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">((</span><span class="mi">10</span><span class="p">,))</span>
+<span class="go">In __new__ with class &lt;class &#39;C&#39;&gt;</span>
+<span class="go">In array_finalize:</span>
+<span class="go">   self type is &lt;class &#39;C&#39;&gt;</span>
+<span class="go">   obj type is &lt;type &#39;NoneType&#39;&gt;</span>
+<span class="go">In __init__ with class &lt;class &#39;C&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># View casting</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="go">In array_finalize:</span>
+<span class="go">   self type is &lt;class &#39;C&#39;&gt;</span>
+<span class="go">   obj type is &lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Slicing (example of new-from-template)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cv</span> <span class="o">=</span> <span class="n">c</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">In array_finalize:</span>
+<span class="go">   self type is &lt;class &#39;C&#39;&gt;</span>
+<span class="go">   obj type is &lt;class &#39;C&#39;&gt;</span>
+</pre></div>
+</div>
+<p>The signature of <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt> is:</p>
+<div class="highlight-python"><pre>def __array_finalize__(self, obj):</pre>
+</div>
+<p><tt class="docutils literal"><span class="pre">ndarray.__new__</span></tt> passes <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt> the new object, of our
+own class (<tt class="docutils literal"><span class="pre">self</span></tt>) as well as the object from which the view has been
+taken (<tt class="docutils literal"><span class="pre">obj</span></tt>).  As you can see from the output above, the <tt class="docutils literal"><span class="pre">self</span></tt> is
+always a newly created instance of our subclass, and the type of <tt class="docutils literal"><span class="pre">obj</span></tt>
+differs for the three instance creation methods:</p>
+<ul class="simple">
+<li>When called from the explicit constructor, <tt class="docutils literal"><span class="pre">obj</span></tt> is <tt class="docutils literal"><span class="pre">None</span></tt></li>
+<li>When called from view casting, <tt class="docutils literal"><span class="pre">obj</span></tt> can be an instance of any
+subclass of ndarray, including our own.</li>
+<li>When called in new-from-template, <tt class="docutils literal"><span class="pre">obj</span></tt> is another instance of our
+own subclass, that we might use to update the new <tt class="docutils literal"><span class="pre">self</span></tt> instance.</li>
+</ul>
+<p>Because <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt> is the only method that always sees new
+instances being created, it is the sensible place to fill in instance
+defaults for new object attributes, among other tasks.</p>
+<p>This may be clearer with an example.</p>
+</div>
+</div>
+<div class="section" id="simple-example-adding-an-extra-attribute-to-ndarray">
+<h2>Simple example - adding an extra attribute to ndarray<a class="headerlink" href="#simple-example-adding-an-extra-attribute-to-ndarray" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">InfoArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">subtype</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="nb">buffer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+          <span class="n">strides</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c"># Create the ndarray instance of our type, given the usual</span>
+        <span class="c"># ndarray input arguments.  This will call the standard</span>
+        <span class="c"># ndarray constructor, but return an object of our type.</span>
+        <span class="c"># It also triggers a call to InfoArray.__array_finalize__</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">subtype</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">strides</span><span class="p">,</span>
+                         <span class="n">order</span><span class="p">)</span>
+        <span class="c"># set the new &#39;info&#39; attribute to the value passed</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info</span>
+        <span class="c"># Finally, we must return the newly created object:</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="c"># ``self`` is a new object resulting from</span>
+        <span class="c"># ndarray.__new__(InfoArray, ...), therefore it only has</span>
+        <span class="c"># attributes that the ndarray.__new__ constructor gave it -</span>
+        <span class="c"># i.e. those of a standard ndarray.</span>
+        <span class="c">#</span>
+        <span class="c"># We could have got to the ndarray.__new__ call in 3 ways:</span>
+        <span class="c"># From an explicit constructor - e.g. InfoArray():</span>
+        <span class="c">#    obj is None</span>
+        <span class="c">#    (we&#39;re in the middle of the InfoArray.__new__</span>
+        <span class="c">#    constructor, and self.info will be set when we return to</span>
+        <span class="c">#    InfoArray.__new__)</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span>
+        <span class="c"># From view casting - e.g arr.view(InfoArray):</span>
+        <span class="c">#    obj is arr</span>
+        <span class="c">#    (type(obj) can be InfoArray)</span>
+        <span class="c"># From new-from-template - e.g infoarr[:3]</span>
+        <span class="c">#    type(obj) is InfoArray</span>
+        <span class="c">#</span>
+        <span class="c"># Note that it is here, rather than in the __new__ method,</span>
+        <span class="c"># that we set the default value for &#39;info&#39;, because this</span>
+        <span class="c"># method sees all creation of default objects - with the</span>
+        <span class="c"># InfoArray.__new__ constructor, but also with</span>
+        <span class="c"># arr.view(InfoArray).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;info&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="c"># We do not need to return anything</span>
+</pre></div>
+</div>
+<p>Using the object looks like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">InfoArray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,))</span> <span class="c"># explicit constructor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="go">&lt;class &#39;InfoArray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">info</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">InfoArray</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">info</span><span class="o">=</span><span class="s">&#39;information&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">info</span>
+<span class="go">&#39;information&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="c"># new-from-template - here - slicing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">&lt;class &#39;InfoArray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">info</span>
+<span class="go">&#39;information&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">InfoArray</span><span class="p">)</span> <span class="c"># view casting</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">cast_arr</span><span class="p">)</span>
+<span class="go">&lt;class &#39;InfoArray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cast_arr</span><span class="o">.</span><span class="n">info</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>This class isn&#8217;t very useful, because it has the same constructor as the
+bare ndarray object, including passing in buffers and shapes and so on.
+We would probably prefer the constructor to be able to take an already
+formed ndarray from the usual numpy calls to <tt class="docutils literal"><span class="pre">np.array</span></tt> and return an
+object.</p>
+</div>
+<div class="section" id="slightly-more-realistic-example-attribute-added-to-existing-array">
+<h2>Slightly more realistic example - attribute added to existing array<a class="headerlink" href="#slightly-more-realistic-example-attribute-added-to-existing-array" title="Permalink to this headline">¶</a></h2>
+<p>Here is a class that takes a standard ndarray that already exists, casts
+as our type, and adds an extra attribute.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">RealisticInfoArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c"># Input array is an already formed ndarray instance</span>
+        <span class="c"># We first cast to be our class type</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="c"># add the new attribute to the created instance</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info</span>
+        <span class="c"># Finally, we must return the newly created object:</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="c"># see InfoArray.__array_finalize__ for comments</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;info&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">RealisticInfoArray</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="s">&#39;information&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="go">&lt;class &#39;RealisticInfoArray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">info</span>
+<span class="go">&#39;information&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">&lt;class &#39;RealisticInfoArray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">info</span>
+<span class="go">&#39;information&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-wrap-for-ufuncs">
+<span id="array-wrap"></span><h2><tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> for ufuncs<a class="headerlink" href="#array-wrap-for-ufuncs" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> gets called at the end of numpy ufuncs and other numpy
+functions, to allow a subclass to set the type of the return value
+and update attributes and metadata. Let&#8217;s show how this works with an example.
+First we make the same subclass as above, but with a different name and
+some print statements:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">class</span> <span class="nc">MySubClass</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;In __array_finalize__:&#39;</span>
+        <span class="k">print</span> <span class="s">&#39;   self is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&#39;   obj is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">repr</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;info&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;In __array_wrap__:&#39;</span>
+        <span class="k">print</span> <span class="s">&#39;   self is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&#39;   arr is </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">repr</span><span class="p">(</span><span class="n">out_arr</span><span class="p">)</span>
+        <span class="c"># then just call the parent</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We run a ufunc on an instance of our new array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">MySubClass</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">info</span><span class="o">=</span><span class="s">&#39;spam&#39;</span><span class="p">)</span>
+<span class="go">In __array_finalize__:</span>
+<span class="go">   self is MySubClass([0, 1, 2, 3, 4])</span>
+<span class="go">   obj is array([0, 1, 2, 3, 4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">arr2</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+<span class="go">In __array_wrap__:</span>
+<span class="go">   self is MySubClass([0, 1, 2, 3, 4])</span>
+<span class="go">   arr is array([1, 3, 5, 7, 9])</span>
+<span class="go">In __array_finalize__:</span>
+<span class="go">   self is MySubClass([1, 3, 5, 7, 9])</span>
+<span class="go">   obj is MySubClass([0, 1, 2, 3, 4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span>
+<span class="go">MySubClass([1, 3, 5, 7, 9])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span><span class="o">.</span><span class="n">info</span>
+<span class="go">&#39;spam&#39;</span>
+</pre></div>
+</div>
+<p>Note that the ufunc (<tt class="docutils literal"><span class="pre">np.add</span></tt>) has called the <tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> method of the
+input with the highest <tt class="docutils literal"><span class="pre">__array_priority__</span></tt> value, in this case
+<tt class="docutils literal"><span class="pre">MySubClass.__array_wrap__</span></tt>, with arguments <tt class="docutils literal"><span class="pre">self</span></tt> as <tt class="docutils literal"><span class="pre">obj</span></tt>, and
+<tt class="docutils literal"><span class="pre">out_arr</span></tt> as the (ndarray) result of the addition.  In turn, the
+default <tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> (<tt class="docutils literal"><span class="pre">ndarray.__array_wrap__</span></tt>) has cast the
+result to class <tt class="docutils literal"><span class="pre">MySubClass</span></tt>, and called <tt class="docutils literal"><span class="pre">__array_finalize__</span></tt> -
+hence the copying of the <tt class="docutils literal"><span class="pre">info</span></tt> attribute.  This has all happened at the C level.</p>
+<p>But, we could do anything we wanted:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SillySubClass</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;I lost your data&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arr1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">arr1</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">SillySubClass</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">arr2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span>
+<span class="go">&#39;I lost your data&#39;</span>
+</pre></div>
+</div>
+<p>So, by defining a specific <tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> method for our subclass,
+we can tweak the output from ufuncs. The <tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> method
+requires <tt class="docutils literal"><span class="pre">self</span></tt>, then an argument - which is the result of the ufunc -
+and an optional parameter <em>context</em>. This parameter is returned by some
+ufuncs as a 3-element tuple: (name of the ufunc, argument of the ufunc,
+domain of the ufunc). <tt class="docutils literal"><span class="pre">__array_wrap__</span></tt> should return an instance of
+its containing class.  See the masked array subclass for an
+implementation.</p>
+<p>In addition to <tt class="docutils literal"><span class="pre">__array_wrap__</span></tt>, which is called on the way out of the
+ufunc, there is also an <tt class="docutils literal"><span class="pre">__array_prepare__</span></tt> method which is called on
+the way into the ufunc, after the output arrays are created but before any
+computation has been performed. The default implementation does nothing
+but pass through the array. <tt class="docutils literal"><span class="pre">__array_prepare__</span></tt> should not attempt to
+access the array data or resize the array, it is intended for setting the
+output array type, updating attributes and metadata, and performing any
+checks based on the input that may be desired before computation begins.
+Like <tt class="docutils literal"><span class="pre">__array_wrap__</span></tt>, <tt class="docutils literal"><span class="pre">__array_prepare__</span></tt> must return an ndarray or
+subclass thereof or raise an error.</p>
+</div>
+<div class="section" id="extra-gotchas-custom-del-methods-and-ndarray-base">
+<h2>Extra gotchas - custom <tt class="docutils literal"><span class="pre">__del__</span></tt> methods and ndarray.base<a class="headerlink" href="#extra-gotchas-custom-del-methods-and-ndarray-base" title="Permalink to this headline">¶</a></h2>
+<p>One of the problems that ndarray solves is keeping track of memory
+ownership of ndarrays and their views.  Consider the case where we have
+created an ndarray, <tt class="docutils literal"><span class="pre">arr</span></tt> and have taken a slice with <tt class="docutils literal"><span class="pre">v</span> <span class="pre">=</span> <span class="pre">arr[1:]</span></tt>.
+The two objects are looking at the same memory.  Numpy keeps track of
+where the data came from for a particular array or view, with the
+<tt class="docutils literal"><span class="pre">base</span></tt> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># A normal ndarray, that owns its own data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># In this case, base is None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span><span class="o">.</span><span class="n">base</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># We take a view</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v1</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># base now points to the array that it derived from</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v1</span><span class="o">.</span><span class="n">base</span> <span class="ow">is</span> <span class="n">arr</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Take a view of a view</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v2</span> <span class="o">=</span> <span class="n">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># base points to the view it derived from</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v2</span><span class="o">.</span><span class="n">base</span> <span class="ow">is</span> <span class="n">v1</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>In general, if the array owns its own memory, as for <tt class="docutils literal"><span class="pre">arr</span></tt> in this
+case, then <tt class="docutils literal"><span class="pre">arr.base</span></tt> will be None - there are some exceptions to this
+- see the numpy book for more details.</p>
+<p>The <tt class="docutils literal"><span class="pre">base</span></tt> attribute is useful in being able to tell whether we have
+a view or the original array.  This in turn can be useful if we need
+to know whether or not to do some specific cleanup when the subclassed
+array is deleted.  For example, we may only want to do the cleanup if
+the original array is deleted, but not the views.  For an example of
+how this can work, have a look at the <tt class="docutils literal"><span class="pre">memmap</span></tt> class in
+<tt class="docutils literal"><span class="pre">numpy.core</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Nov 10, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>numpy.ma.masked_array.torecords — NumPy v1.8 Manual</title>
+<link href="../../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../../_static/jquery.js" type="text/javascript"></script>
+<script src="../../_static/underscore.js" type="text/javascript"></script>
+<script src="../../_static/doctools.js" type="text/javascript"></script>
+<link href="../../about.html" rel="author" title="About these documents"/>
+<link href="../../index.html" rel="top" title="NumPy v1.8 Manual"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../../index.html">NumPy v1.8 Manual</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="numpy-ma-masked-array-torecords">
+<h1>numpy.ma.masked_array.torecords<a class="headerlink" href="#numpy-ma-masked-array-torecords" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="numpy.ma.masked_array.torecords"><a name="//apple_ref/cpp/clm/numpy.ma.masked_array.torecords"></a>
+<tt class="descclassname">masked_array.</tt><tt class="descname">torecords</tt><big>(</big><big>)</big><a class="reference external" href="http://github.com/numpy/numpy/blob/v1.8.0/numpy/ma/core.py#L5441"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#numpy.ma.masked_array.torecords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a masked array into a flexible-type array.</p>
+<p>The flexible type array that is returned will have two fields:</p>
+<ul class="simple">
+<li>the <tt class="docutils literal"><span class="pre">_data</span></tt> field stores the <tt class="docutils literal"><span class="pre">_data</span></tt> part of the array.</li>
+<li>the <tt class="docutils literal"><span class="pre">_mask</span></tt> field stores the <tt class="docutils literal"><span class="pre">_mask</span></tt> part of the array.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>None</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>record</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>A new flexible-type <em class="xref py py-obj">ndarray</em> with two fields: the first element
+containing a value, the second element containing the corresponding
+mask boolean. The returned record shape matches self.shape.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>A side-effect of transforming a masked array into a flexible <em class="xref py py-obj">ndarray</em> is
+that meta information (<tt class="docutils literal"><span class="pre">fill_value</span></tt>, ...) will be lost.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span>
+<span class="go">[[1 -- 3]</span>
+<span class="go"> [-- 5 --]</span>
+<span class="go"> [7 -- 9]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">toflex</span><span class="p">()</span>
+<span class="go">[[(1, False) (2, True) (3, False)]</span>
+<span class="go"> [(4, True) (5, False) (6, True)]</span>
+<span class="go"> [(7, False) (8, True) (9, False)]]</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Nov 10, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>

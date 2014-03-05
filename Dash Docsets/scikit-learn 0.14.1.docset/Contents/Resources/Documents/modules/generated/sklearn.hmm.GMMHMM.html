@@ -1,0 +1,633 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>sklearn.hmm.GMMHMM — scikit-learn 0.14.1 documentation</title>
+<!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../_static/css/bootstrap.min.css" media="screen" rel="stylesheet"/>
+<link href="../../_static/css/bootstrap-responsive.css" rel="stylesheet"/>
+<link href="../../_static/nature.css" rel="stylesheet" type="text/css"/>
+<link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.14.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+<script src="../../_static/jquery.js" type="text/javascript"></script>
+<script src="../../_static/underscore.js" type="text/javascript"></script>
+<script src="../../_static/doctools.js" type="text/javascript"></script>
+<script src="../../_static/js/copybutton.js" type="text/javascript"></script>
+<link href="../../_static/favicon.ico" rel="shortcut icon"/>
+<link href="../../about.html" rel="author" title="About these documents"/>
+<link href="../../index.html" rel="top" title="scikit-learn 0.14.1 documentation"/>
+<link href="../classes.html" rel="up" title="Reference"/>
+<link href="sklearn.isotonic.IsotonicRegression.html" rel="next" title="sklearn.isotonic.IsotonicRegression"/>
+<link href="sklearn.hmm.MultinomialHMM.html" rel="prev" title="sklearn.hmm.MultinomialHMM"/>
+<script src="../../_static/sidebar.js" type="text/javascript"></script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<link href="http://scikit-learn.org/stable/modules/generated/sklearn.hmm.GMMHMM.html" rel="canonical"/>
+<script type="text/javascript">
+    $("div.buttonNext, div.buttonPrevious").hover(
+       function () {
+           $(this).css('background-color', '#FF9C34');
+       },
+       function () {
+           $(this).css('background-color', '#A7D6E2');
+       }
+    );
+    var bodywrapper = $('.bodywrapper');
+    var sidebarbutton = $('#sidebarbutton');
+    sidebarbutton.css({'height': '900px'});
+  </script>
+</head>
+<body>
+<div class="header-wrapper">
+<div class="header">
+<p class="logo"><a href="../../index.html">
+<img alt="Logo" src="../../_static/scikit-learn-logo-small.png"/>
+</a>
+</p><div class="navbar">
+<ul>
+<li><a href="../../../stable/index.html">Home</a></li>
+<li><a href="../../../stable/install.html">Installation</a></li>
+<li class="btn-li"><div class="btn-group">
+<a href="../../documentation.html">Documentation</a>
+<a class="btn dropdown-toggle" data-toggle="dropdown">
+<span class="caret"></span>
+</a>
+<ul class="dropdown-menu">
+<li class="link-title">Scikit-learn 0.14 (stable)</li>
+<li><a href="../../tutorial/index.html">Tutorials</a></li>
+<li><a href="../../user_guide.html">User guide</a></li>
+<li><a href="../classes.html">API</a></li>
+<li class="divider"></li>
+<li><a href="http://scikit-learn.org/dev/documentation.html">Development</a></li>
+<li><a href="http://scikit-learn.org/0.13/">Scikit-learn 0.13</a></li>
+<li><a href="http://scikit-learn.org/0.12/">Scikit-learn 0.12</a></li>
+<li><a href="http://scikit-learn.org/0.11/">Scikit-learn 0.11</a></li>
+<li><a href="../../documentation.html">More versions...</a></li>
+</ul>
+</div>
+</li>
+<li><a href="../../auto_examples/index.html">Examples</a></li>
+</ul>
+<div class="search_form">
+<div id="cse" style="width: 100%;"></div>
+</div>
+</div> <!-- end navbar --></div>
+</div>
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/scikit-learn/scikit-learn">
+<img alt="Fork me on GitHub" class="fork-me" src="../../_static/img/forkme.png" style="position: absolute; top: 0; right: 0; border: 0;"/>
+</a>
+<div class="content-wrapper">
+<div class="sphinxsidebar">
+<div class="sphinxsidebarwrapper">
+<div class="rel">
+<!-- rellinks[1:] is an ugly hack to avoid link to module
+  index -->
+<div class="rellink">
+<a accesskey="P" href="sklearn.hmm.MultinomialHMM.html">Previous
+        <br/>
+<span class="smallrellink">
+        sklearn.hmm.Mult...
+        </span>
+<span class="hiddenrellink">
+            sklearn.hmm.MultinomialHMM
+            </span>
+</a>
+</div>
+<div class="spacer">
+             
+            </div>
+<div class="rellink">
+<a accesskey="N" href="sklearn.isotonic.IsotonicRegression.html">Next
+        <br/>
+<span class="smallrellink">
+        sklearn.isotonic...
+        </span>
+<span class="hiddenrellink">
+            sklearn.isotonic.IsotonicRegression
+            </span>
+</a>
+</div>
+<div class="spacer">
+             
+            </div>
+<div class="rellink">
+<a href="../../np-modindex.html">Modules
+        <br/>
+<span class="smallrellink">
+        Python Module In...
+        </span>
+<span class="hiddenrellink">
+            Python Module Index
+            </span>
+</a>
+</div>
+<div class="spacer">
+             
+            </div>
+<div class="rellink">
+<a href="../../py-modindex.html">Modules
+        <br/>
+<span class="smallrellink">
+        Python Module In...
+        </span>
+<span class="hiddenrellink">
+            Python Module Index
+            </span>
+</a>
+</div>
+<!-- Ad a link to the 'up' page -->
+<div class="spacer">
+         
+        </div>
+<div class="rellink">
+<a href="../classes.html">
+        Up
+        <br/>
+<span class="smallrellink">
+        Reference
+        </span>
+<span class="hiddenrellink">
+            Reference
+            </span>
+</a>
+</div>
+</div>
+<p class="doc-version">This documentation is for scikit-learn <strong>version 0.14.1</strong> — <a href="http://scikit-learn.org/stable/support.html#documentation-resources">Other versions</a></p>
+<p class="citing">If you use the software, please consider <a href="../../about.html#citing-scikit-learn">citing scikit-learn</a>.</p>
+<ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">sklearn.hmm</span></tt>.GMMHMM</a></li>
+</ul>
+</div>
+</div>
+<div class="content">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body">
+<div class="section" id="sklearn-hmm-gmmhmm">
+<h1><a class="reference internal" href="../classes.html#module-sklearn.hmm" title="sklearn.hmm"><tt class="xref py py-mod docutils literal"><span class="pre">sklearn.hmm</span></tt></a>.GMMHMM<a class="headerlink" href="#sklearn-hmm-gmmhmm" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="sklearn.hmm.GMMHMM"><a name="//apple_ref/cpp/cl/sklearn.hmm.GMMHMM"></a>
+<em class="property">class </em><tt class="descclassname">sklearn.hmm.</tt><tt class="descname">GMMHMM</tt><big>(</big><em>n_components=1</em>, <em>n_mix=1</em>, <em>startprob=None</em>, <em>transmat=None</em>, <em>startprob_prior=None</em>, <em>transmat_prior=None</em>, <em>algorithm='viterbi'</em>, <em>gmms=None</em>, <em>covariance_type='diag'</em>, <em>covars_prior=0.01</em>, <em>random_state=None</em>, <em>n_iter=10</em>, <em>thresh=0.01</em>, <em>params='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'</em>, <em>init_params='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hidden Markov Model with Gaussin mixture emissions</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="sklearn.hmm.GaussianHMM.html#sklearn.hmm.GaussianHMM" title="sklearn.hmm.GaussianHMM"><tt class="xref py py-obj docutils literal"><span class="pre">GaussianHMM</span></tt></a></dt>
+<dd>HMM with Gaussian emissions</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.hmm</span> <span class="kn">import</span> <span class="n">GMMHMM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GMMHMM</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_mix</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">covariance_type</span><span class="o">=</span><span class="s">'diag'</span><span class="p">)</span>
+<span class="gp">... </span>
+<span class="go">GMMHMM(algorithm='viterbi', covariance_type='diag',...</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%"></col>
+<col width="17%"></col>
+<col width="79%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>init_params</td>
+<td>string, optional</td>
+<td>Controls which parameters are initialized prior to training. Can         contain any combination of ‘s’ for startprob, ‘t’ for transmat, ‘m’         for means, and ‘c’ for covars, etc.  Defaults to all parameters.</td>
+</tr>
+<tr class="row-even"><td>params</td>
+<td>string, optional</td>
+<td>Controls which parameters are updated in the training process.  Can
+contain any combination of ‘s’ for startprob, ‘t’ for transmat,’m’ for
+means, and ‘c’ for covars, etc.  Defaults to all parameters.</td>
+</tr>
+<tr class="row-odd"><td>n_components</td>
+<td>int</td>
+<td>Number of states in the model.</td>
+</tr>
+<tr class="row-even"><td>transmat</td>
+<td>array, shape (<cite>n_components</cite>, <cite>n_components</cite>)</td>
+<td>Matrix of transition probabilities between states.</td>
+</tr>
+<tr class="row-odd"><td>startprob</td>
+<td>array, shape (‘n_components`,)</td>
+<td>Initial state occupation distribution.</td>
+</tr>
+<tr class="row-even"><td>gmms</td>
+<td>array of GMM objects, length <cite>n_components</cite></td>
+<td>GMM emission distributions for each state.</td>
+</tr>
+<tr class="row-odd"><td>random_state</td>
+<td>RandomState or an int seed (0 by default)</td>
+<td>A random number generator instance</td>
+</tr>
+<tr class="row-even"><td>n_iter</td>
+<td>int, optional</td>
+<td>Number of iterations to perform.</td>
+</tr>
+<tr class="row-odd"><td>thresh</td>
+<td>float, optional</td>
+<td>Convergence threshold.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.decode" title="sklearn.hmm.GMMHMM.decode"><tt class="xref py py-obj docutils literal"><span class="pre">decode</span></tt></a>(obs[, algorithm])</td>
+<td>Find most likely state sequence corresponding to <tt class="docutils literal"><span class="pre">obs</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.eval" title="sklearn.hmm.GMMHMM.eval"><tt class="xref py py-obj docutils literal"><span class="pre">eval</span></tt></a>(*args, **kwargs)</td>
+<td>DEPRECATED: HMM.eval was renamed to HMM.score_samples in 0.14 and will be removed in 0.16.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.fit" title="sklearn.hmm.GMMHMM.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(obs)</td>
+<td>Estimate model parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.get_params" title="sklearn.hmm.GMMHMM.get_params"><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt></a>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.predict" title="sklearn.hmm.GMMHMM.predict"><tt class="xref py py-obj docutils literal"><span class="pre">predict</span></tt></a>(obs[, algorithm])</td>
+<td>Find most likely state sequence corresponding to <cite>obs</cite>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.predict_proba" title="sklearn.hmm.GMMHMM.predict_proba"><tt class="xref py py-obj docutils literal"><span class="pre">predict_proba</span></tt></a>(obs)</td>
+<td>Compute the posterior probability for each state in the model   :Parameters:      <strong>obs</strong> : array_like, shape (n, n_features)          List of n_features-dimensional data points.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.sample" title="sklearn.hmm.GMMHMM.sample"><tt class="xref py py-obj docutils literal"><span class="pre">sample</span></tt></a>([n, random_state])</td>
+<td>Generate random samples from the model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.score" title="sklearn.hmm.GMMHMM.score"><tt class="xref py py-obj docutils literal"><span class="pre">score</span></tt></a>(obs)</td>
+<td>Compute the log probability under the model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.score_samples" title="sklearn.hmm.GMMHMM.score_samples"><tt class="xref py py-obj docutils literal"><span class="pre">score_samples</span></tt></a>(obs)</td>
+<td>Compute the log probability under the model and compute posteriors.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#sklearn.hmm.GMMHMM.set_params" title="sklearn.hmm.GMMHMM.set_params"><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt></a>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.__init__"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><em>n_components=1</em>, <em>n_mix=1</em>, <em>startprob=None</em>, <em>transmat=None</em>, <em>startprob_prior=None</em>, <em>transmat_prior=None</em>, <em>algorithm='viterbi'</em>, <em>gmms=None</em>, <em>covariance_type='diag'</em>, <em>covars_prior=0.01</em>, <em>random_state=None</em>, <em>n_iter=10</em>, <em>thresh=0.01</em>, <em>params='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'</em>, <em>init_params='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a hidden Markov model with GMM emissions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>n_components</strong> : int</p>
+<blockquote class="last">
+<div><p>Number of states.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="attribute">
+<dt id="sklearn.hmm.GMMHMM.algorithm"><a name="//apple_ref/cpp/Attribute/sklearn.hmm.GMMHMM.algorithm"></a>
+<tt class="descname">algorithm</tt><a class="headerlink" href="#sklearn.hmm.GMMHMM.algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>decoder algorithm</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="sklearn.hmm.GMMHMM.covariance_type"><a name="//apple_ref/cpp/Attribute/sklearn.hmm.GMMHMM.covariance_type"></a>
+<tt class="descname">covariance_type</tt><a class="headerlink" href="#sklearn.hmm.GMMHMM.covariance_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Covariance type of the model.</p>
+<p>Must be one of ‘spherical’, ‘tied’, ‘diag’, ‘full’.</p>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.decode"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.decode"></a>
+<tt class="descname">decode</tt><big>(</big><em>obs</em>, <em>algorithm='viterbi'</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find most likely state sequence corresponding to <tt class="docutils literal"><span class="pre">obs</span></tt>.
+Uses the selected algorithm for decoding.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>obs</strong> : array_like, shape (n, n_features)</p>
+<blockquote>
+<div><p>List of n_features-dimensional data points.  Each row
+corresponds to a single data point.</p>
+</div></blockquote>
+<p><strong>algorithm</strong> : string, one of the <cite>decoder_algorithms</cite></p>
+<blockquote>
+<div><p>decoder algorithm to be used</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>logprob</strong> : float</p>
+<blockquote>
+<div><p>Log probability of the maximum likelihood path through the HMM</p>
+</div></blockquote>
+<p><strong>state_sequence</strong> : array_like, shape (n,)</p>
+<blockquote class="last">
+<div><p>Index of the most likely states for each observation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#sklearn.hmm.GMMHMM.score_samples" title="sklearn.hmm.GMMHMM.score_samples"><tt class="xref py py-obj docutils literal"><span class="pre">score_samples</span></tt></a></dt>
+<dd>Compute the log probability under the model and posteriors.</dd>
+<dt><a class="reference internal" href="#sklearn.hmm.GMMHMM.score" title="sklearn.hmm.GMMHMM.score"><tt class="xref py py-obj docutils literal"><span class="pre">score</span></tt></a></dt>
+<dd>Compute the log probability under the model.</dd>
+</dl>
+</div>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.eval"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.eval"></a>
+<tt class="descname">eval</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEPRECATED: HMM.eval was renamed to HMM.score_samples in 0.14 and will be removed in 0.16.</p>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.fit"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.fit"></a>
+<tt class="descname">fit</tt><big>(</big><em>obs</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate model parameters.</p>
+<p>An initialization step is performed before entering the EM
+algorithm. If you want to avoid this step, pass proper
+<tt class="docutils literal"><span class="pre">init_params</span></tt> keyword argument to estimator’s constructor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>obs</strong> : list</p>
+<blockquote class="last">
+<div><p>List of array-like observation sequences (shape (n_i, n_features)).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>In general, <cite>logprob</cite> should be non-decreasing unless
+aggressive pruning is used.  Decreasing <cite>logprob</cite> is generally
+a sign of overfitting (e.g. a covariance parameter getting too
+small).  You can fix this by getting more training data, or
+decreasing <cite>covars_prior</cite>.</p>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.get_params"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.get_params"></a>
+<tt class="descname">get_params</tt><big>(</big><em>deep=True</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>deep: boolean, optional</strong> :</p>
+<blockquote>
+<div><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>params</strong> : mapping of string to any</p>
+<blockquote class="last">
+<div><p>Parameter names mapped to their values.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.predict"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.predict"></a>
+<tt class="descname">predict</tt><big>(</big><em>obs</em>, <em>algorithm='viterbi'</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find most likely state sequence corresponding to <cite>obs</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>obs</strong> : array_like, shape (n, n_features)</p>
+<blockquote>
+<div><p>List of n_features-dimensional data points.  Each row
+corresponds to a single data point.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>state_sequence</strong> : array_like, shape (n,)</p>
+<blockquote class="last">
+<div><p>Index of the most likely states for each observation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.predict_proba"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.predict_proba"></a>
+<tt class="descname">predict_proba</tt><big>(</big><em>obs</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the posterior probability for each state in the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>obs</strong> : array_like, shape (n, n_features)</p>
+<blockquote>
+<div><p>List of n_features-dimensional data points.  Each row
+corresponds to a single data point.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>T</strong> : array-like, shape (n, n_components)</p>
+<blockquote class="last">
+<div><p>Returns the probability of the sample for each state in the model.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.sample"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.sample"></a>
+<tt class="descname">sample</tt><big>(</big><em>n=1</em>, <em>random_state=None</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate random samples from the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>n</strong> : int</p>
+<blockquote>
+<div><p>Number of samples to generate.</p>
+</div></blockquote>
+<p><strong>random_state: RandomState or an int seed (0 by default)</strong> :</p>
+<blockquote>
+<div><p>A random number generator instance. If None is given, the
+object’s random_state is used</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>(obs, hidden_states)</strong> :</p>
+<p><strong>obs</strong> : array_like, length <cite>n</cite> List of samples</p>
+<p class="last"><strong>hidden_states</strong> : array_like, length <cite>n</cite> List of hidden states</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.score"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.score"></a>
+<tt class="descname">score</tt><big>(</big><em>obs</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the log probability under the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>obs</strong> : array_like, shape (n, n_features)</p>
+<blockquote>
+<div><p>Sequence of n_features-dimensional data points.  Each row
+corresponds to a single data point.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>logprob</strong> : float</p>
+<blockquote class="last">
+<div><p>Log likelihood of the <tt class="docutils literal"><span class="pre">obs</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#sklearn.hmm.GMMHMM.score_samples" title="sklearn.hmm.GMMHMM.score_samples"><tt class="xref py py-obj docutils literal"><span class="pre">score_samples</span></tt></a></dt>
+<dd>Compute the log probability under the model and posteriors</dd>
+<dt><a class="reference internal" href="#sklearn.hmm.GMMHMM.decode" title="sklearn.hmm.GMMHMM.decode"><tt class="xref py py-obj docutils literal"><span class="pre">decode</span></tt></a></dt>
+<dd>Find most likely state sequence corresponding to a <cite>obs</cite></dd>
+</dl>
+</div>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.score_samples"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.score_samples"></a>
+<tt class="descname">score_samples</tt><big>(</big><em>obs</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.score_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the log probability under the model and compute posteriors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>obs</strong> : array_like, shape (n, n_features)</p>
+<blockquote>
+<div><p>Sequence of n_features-dimensional data points. Each row
+corresponds to a single point in the sequence.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>logprob</strong> : float</p>
+<blockquote>
+<div><p>Log likelihood of the sequence <tt class="docutils literal"><span class="pre">obs</span></tt>.</p>
+</div></blockquote>
+<p><strong>posteriors</strong> : array_like, shape (n, n_components)</p>
+<blockquote class="last">
+<div><p>Posterior probabilities of each state for each
+observation</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#sklearn.hmm.GMMHMM.score" title="sklearn.hmm.GMMHMM.score"><tt class="xref py py-obj docutils literal"><span class="pre">score</span></tt></a></dt>
+<dd>Compute the log probability under the model</dd>
+<dt><a class="reference internal" href="#sklearn.hmm.GMMHMM.decode" title="sklearn.hmm.GMMHMM.decode"><tt class="xref py py-obj docutils literal"><span class="pre">decode</span></tt></a></dt>
+<dd>Find most likely state sequence corresponding to a <cite>obs</cite></dd>
+</dl>
+</div>
+</dd></dl>
+<dl class="method">
+<dt id="sklearn.hmm.GMMHMM.set_params"><a name="//apple_ref/cpp/clm/sklearn.hmm.GMMHMM.set_params"></a>
+<tt class="descname">set_params</tt><big>(</big><em>**params</em><big>)</big><a class="headerlink" href="#sklearn.hmm.GMMHMM.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The former have parameters of the form
+<tt class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></tt> so that it’s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> :</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="attribute">
+<dt id="sklearn.hmm.GMMHMM.startprob_"><a name="//apple_ref/cpp/Attribute/sklearn.hmm.GMMHMM.startprob_"></a>
+<tt class="descname">startprob_</tt><a class="headerlink" href="#sklearn.hmm.GMMHMM.startprob_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixing startprob for each state.</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="sklearn.hmm.GMMHMM.transmat_"><a name="//apple_ref/cpp/Attribute/sklearn.hmm.GMMHMM.transmat_"></a>
+<tt class="descname">transmat_</tt><a class="headerlink" href="#sklearn.hmm.GMMHMM.transmat_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Matrix of transition probabilities.</p>
+</dd></dl>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+</div>
+<div class="footer">
+        © 2010 - 2014, scikit-learn developers (BSD License).
+      <a href="../../_sources/modules/generated/sklearn.hmm.GMMHMM.txt" rel="nofollow">Show this page source</a>
+</div>
+<div class="rel">
+<div class="buttonPrevious">
+<a href="sklearn.hmm.MultinomialHMM.html">Previous
+      </a>
+</div>
+<div class="buttonNext">
+<a href="sklearn.isotonic.IsotonicRegression.html">Next
+      </a>
+</div>
+<div class="buttonPrevious">
+<a href="../../np-modindex.html">Previous
+      </a>
+</div>
+<div class="buttonNext">
+<a href="../../py-modindex.html">Next
+      </a>
+</div>
+</div>
+<script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22606712-2']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> google.load('search', '1',
+        {language : 'en'}); google.setOnLoadCallback(function() {
+            var customSearchControl = new
+            google.search.CustomSearchControl('016639176250731907682:tjtqbvtvij0');
+            customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+            var options = new google.search.DrawOptions();
+            options.setAutoComplete(true);
+            customSearchControl.draw('cse', options); }, true);
+    </script>
+</body>
+</html>

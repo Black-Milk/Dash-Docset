@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>numpy.seterrcall — NumPy v1.8 Manual</title>
+<link href="../../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../../_static/jquery.js" type="text/javascript"></script>
+<script src="../../_static/underscore.js" type="text/javascript"></script>
+<script src="../../_static/doctools.js" type="text/javascript"></script>
+<link href="../../about.html" rel="author" title="About these documents"/>
+<link href="../../index.html" rel="top" title="NumPy v1.8 Manual"/>
+<link href="../routines.err.html" rel="up" title="Floating point error handling"/>
+<link href="numpy.geterrcall.html" rel="next" title="numpy.geterrcall"/>
+<link href="numpy.geterr.html" rel="prev" title="numpy.geterr"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../../index.html">NumPy v1.8 Manual</a></li>
+<li class="active"><a href="../index.html">NumPy Reference</a></li>
+<li class="active"><a href="../routines.html">Routines</a></li>
+<li class="active"><a accesskey="U" href="../routines.err.html">Floating point error handling</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a accesskey="N" href="numpy.geterrcall.html" title="numpy.geterrcall">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="numpy.geterr.html" title="numpy.geterr">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<h4>Previous topic</h4>
+<p class="topless"><a href="numpy.geterr.html" title="previous chapter">numpy.geterr</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="numpy.geterrcall.html" title="next chapter">numpy.geterrcall</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="numpy-seterrcall">
+<h1>numpy.seterrcall<a class="headerlink" href="#numpy-seterrcall" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="numpy.seterrcall"><a name="//apple_ref/cpp/func/numpy.seterrcall"></a>
+<tt class="descclassname">numpy.</tt><tt class="descname">seterrcall</tt><big>(</big><em>func</em><big>)</big><a class="reference external" href="http://github.com/numpy/numpy/blob/v1.8.0/numpy/core/numeric.py#L2501"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#numpy.seterrcall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the floating-point error callback function or log object.</p>
+<p>There are two ways to capture floating-point error messages.  The first
+is to set the error-handler to ‘call’, using <a class="reference internal" href="numpy.seterr.html#numpy.seterr" title="numpy.seterr"><tt class="xref py py-obj docutils literal"><span class="pre">seterr</span></tt></a>.  Then, set
+the function to call using this function.</p>
+<p>The second is to set the error-handler to ‘log’, using <a class="reference internal" href="numpy.seterr.html#numpy.seterr" title="numpy.seterr"><tt class="xref py py-obj docutils literal"><span class="pre">seterr</span></tt></a>.
+Floating-point errors then trigger a call to the ‘write’ method of
+the provided object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>func</strong> : callable f(err, flag) or object with write method</p>
+<blockquote>
+<div><p>Function to call upon floating-point errors (‘call’-mode) or
+object whose ‘write’ method is used to log such message (‘log’-mode).</p>
+<p>The call function takes two arguments. The first is the
+type of error (one of “divide”, “over”, “under”, or “invalid”),
+and the second is the status flag.  The flag is a byte, whose
+least-significant bits indicate the status:</p>
+<div class="highlight-python"><pre>[0 0 0 0 invalid over under invalid]</pre>
+</div>
+<p>In other words, <tt class="docutils literal"><span class="pre">flags</span> <span class="pre">=</span> <span class="pre">divide</span> <span class="pre">+</span> <span class="pre">2*over</span> <span class="pre">+</span> <span class="pre">4*under</span> <span class="pre">+</span> <span class="pre">8*invalid</span></tt>.</p>
+<p>If an object is provided, its write method should take one argument,
+a string.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>h</strong> : callable, log instance or None</p>
+<blockquote class="last">
+<div><p>The old error handler.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="numpy.seterr.html#numpy.seterr" title="numpy.seterr"><tt class="xref py py-obj docutils literal"><span class="pre">seterr</span></tt></a>, <a class="reference internal" href="numpy.geterr.html#numpy.geterr" title="numpy.geterr"><tt class="xref py py-obj docutils literal"><span class="pre">geterr</span></tt></a>, <a class="reference internal" href="numpy.geterrcall.html#numpy.geterrcall" title="numpy.geterrcall"><tt class="xref py py-obj docutils literal"><span class="pre">geterrcall</span></tt></a></p>
+</div>
+<p class="rubric">Examples</p>
+<p>Callback upon error:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">err_handler</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">flag</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">"Floating point error (</span><span class="si">%s</span><span class="s">), with flag </span><span class="si">%s</span><span class="s">"</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">flag</span><span class="p">)</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">saved_handler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterrcall</span><span class="p">(</span><span class="n">err_handler</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">save_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s">'call'</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mf">0.0</span>
+<span class="go">Floating point error (divide by zero), with flag 1</span>
+<span class="go">array([ Inf,  Inf,  Inf])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">seterrcall</span><span class="p">(</span><span class="n">saved_handler</span><span class="p">)</span>
+<span class="go">&lt;function err_handler at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">save_err</span><span class="p">)</span>
+<span class="go">{'over': 'call', 'divide': 'call', 'invalid': 'call', 'under': 'call'}</span>
+</pre></div>
+</div>
+<p>Log error message:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Log</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">"LOG: </span><span class="si">%s</span><span class="s">"</span> <span class="o">%</span> <span class="n">msg</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">log</span> <span class="o">=</span> <span class="n">Log</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">saved_handler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterrcall</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">save_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s">'log'</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mf">0.0</span>
+<span class="go">LOG: Warning: divide by zero encountered in divide</span>
+
+<span class="go">array([ Inf,  Inf,  Inf])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">seterrcall</span><span class="p">(</span><span class="n">saved_handler</span><span class="p">)</span>
+<span class="go">&lt;__main__.Log object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">save_err</span><span class="p">)</span>
+<span class="go">{'over': 'log', 'divide': 'log', 'invalid': 'log', 'under': 'log'}</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Nov 10, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>

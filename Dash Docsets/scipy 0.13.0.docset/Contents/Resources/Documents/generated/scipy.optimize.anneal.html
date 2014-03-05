@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>scipy.optimize.anneal — SciPy v0.13.0 Reference Guide</title>
+<link href="../_static/css/spc-bootstrap.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/spc-extend.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/scipy.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+<script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery.min.js" type="text/javascript"></script>
+<script src="../_static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="SciPy v0.13.0 Reference Guide"/>
+<link href="../optimize.html" rel="up" title="Optimization and root finding (scipy.optimize)"/>
+<link href="scipy.optimize.basinhopping.html" rel="next" title="scipy.optimize.basinhopping"/>
+<link href="scipy.optimize.nnls.html" rel="prev" title="scipy.optimize.nnls"/>
+</head>
+<body>
+<div class="container">
+<div class="header">
+</div>
+</div>
+<div class="container">
+<div class="main">
+<div class="row-fluid">
+<div class="span12">
+<div class="spc-navbar">
+<ul class="nav nav-pills pull-left">
+<li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+<li class="active"><a accesskey="U" href="../optimize.html">Optimization and root finding (<tt class="docutils literal"><span class="pre">scipy.optimize</span></tt>)</a></li>
+</ul>
+<ul class="nav nav-pills pull-right">
+<li class="active">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a>
+</li>
+<li class="active">
+<a href="../py-modindex.html" title="Python Module Index">modules</a>
+</li>
+<li class="active">
+<a accesskey="N" href="scipy.optimize.basinhopping.html" title="scipy.optimize.basinhopping">next</a>
+</li>
+<li class="active">
+<a accesskey="P" href="scipy.optimize.nnls.html" title="scipy.optimize.nnls">previous</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row-fluid">
+<div class="spc-rightsidebar span3">
+<div class="sphinxsidebarwrapper">
+<p class="logo"><a href="../index.html">
+<img alt="Logo" class="logo" src="../_static/scipyshiny_small.png"/>
+</a></p>
+<h4>Previous topic</h4>
+<p class="topless"><a href="scipy.optimize.nnls.html" title="previous chapter">scipy.optimize.nnls</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="scipy.optimize.basinhopping.html" title="next chapter">scipy.optimize.basinhopping</a></p>
+</div>
+</div>
+<div class="span9">
+<div class="bodywrapper">
+<div class="body" id="spc-section-body">
+<div class="section" id="scipy-optimize-anneal">
+<h1>scipy.optimize.anneal<a class="headerlink" href="#scipy-optimize-anneal" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.optimize.anneal"><a name="//apple_ref/cpp/func/scipy.optimize.anneal"></a>
+<tt class="descclassname">scipy.optimize.</tt><tt class="descname">anneal</tt><big>(</big><em>func</em>, <em>x0</em>, <em>args=()</em>, <em>schedule='fast'</em>, <em>full_output=0</em>, <em>T0=None</em>, <em>Tf=1e-12</em>, <em>maxeval=None</em>, <em>maxaccept=None</em>, <em>maxiter=400</em>, <em>boltzmann=1.0</em>, <em>learn_rate=0.5</em>, <em>feps=1e-06</em>, <em>quench=1.0</em>, <em>m=1.0</em>, <em>n=1.0</em>, <em>lower=-100</em>, <em>upper=100</em>, <em>dwell=50</em>, <em>disp=True</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/optimize/anneal.py#L163"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.optimize.anneal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimize a function using simulated annealing.</p>
+<p>Uses simulated annealing, a random algorithm that uses no derivative
+information from the function being optimized. Other names for this
+family of approaches include: “Monte Carlo”, “Metropolis”,
+“Metropolis-Hastings”, <em class="xref py py-obj">etc</em>. They all involve (a) evaluating the
+objective function on a random set of points, (b) keeping those that
+pass their randomized evaluation critera, (c) cooling (<em class="xref py py-obj">i.e.</em>,
+tightening) the evaluation critera, and (d) repeating until their
+termination critera are met.  In practice they have been used mainly in
+discrete rather than in continuous optimization.</p>
+<p>Available annealing schedules are ‘fast’, ‘cauchy’ and ‘boltzmann’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>func</strong> : callable</p>
+<blockquote>
+<div><p>The objective function to be minimized.  Must be in the form
+<em class="xref py py-obj">f(x, *args)</em>, where <em class="xref py py-obj">x</em> is the argument in the form of a 1-D array
+and <em class="xref py py-obj">args</em> is a  tuple of any additional fixed parameters needed to
+completely specify the function.</p>
+</div></blockquote>
+<p><strong>x0: 1-D array</strong></p>
+<blockquote>
+<div><p>An initial guess at the optimizing argument of <em class="xref py py-obj">func</em>.</p>
+</div></blockquote>
+<p><strong>args</strong> : tuple, optional</p>
+<blockquote>
+<div><p>Any additional fixed parameters needed to completely
+specify the objective function.</p>
+</div></blockquote>
+<p><strong>schedule</strong> : str, optional</p>
+<blockquote>
+<div><p>The annealing schedule to use.  Must be one of ‘fast’, ‘cauchy’ or
+‘boltzmann’.  See <em class="xref py py-obj">Notes</em>.</p>
+</div></blockquote>
+<p><strong>full_output</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <em class="xref py py-obj">full_output</em>, then return all values listed in the Returns
+section. Otherwise, return just the <em class="xref py py-obj">xmin</em> and <em class="xref py py-obj">status</em> values.</p>
+</div></blockquote>
+<p><strong>T0</strong> : float, optional</p>
+<blockquote>
+<div><p>The initial “temperature”.  If None, then estimate it as 1.2 times
+the largest cost-function deviation over random points in the
+box-shaped region specified by the <em class="xref py py-obj">lower, upper</em> input parameters.</p>
+</div></blockquote>
+<p><strong>Tf</strong> : float, optional</p>
+<blockquote>
+<div><p>Final goal temperature.  Cease iterations if the temperature
+falls below <em class="xref py py-obj">Tf</em>.</p>
+</div></blockquote>
+<p><strong>maxeval</strong> : int, optional</p>
+<blockquote>
+<div><p>Cease iterations if the number of function evaluations exceeds
+<em class="xref py py-obj">maxeval</em>.</p>
+</div></blockquote>
+<p><strong>maxaccept</strong> : int, optional</p>
+<blockquote>
+<div><p>Cease iterations if the number of points accepted exceeds <em class="xref py py-obj">maxaccept</em>.
+See <em class="xref py py-obj">Notes</em> for the probabilistic acceptance criteria used.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int, optional</p>
+<blockquote>
+<div><p>Cease iterations if the number of cooling iterations exceeds <em class="xref py py-obj">maxiter</em>.</p>
+</div></blockquote>
+<p><strong>learn_rate</strong> : float, optional</p>
+<blockquote>
+<div><p>Scale constant for tuning the probabilistc acceptance criteria.</p>
+</div></blockquote>
+<p><strong>boltzmann</strong> : float, optional</p>
+<blockquote>
+<div><p>Boltzmann constant in the probabilistic acceptance criteria
+(increase for less stringent criteria at each temperature).</p>
+</div></blockquote>
+<p><strong>feps</strong> : float, optional</p>
+<blockquote>
+<div><p>Cease iterations if the relative errors in the function value over the
+last four coolings is below <em class="xref py py-obj">feps</em>.</p>
+</div></blockquote>
+<p><strong>quench, m, n</strong> : floats, optional</p>
+<blockquote>
+<div><p>Parameters to alter the <em class="xref py py-obj">fast</em> simulated annealing schedule.
+See <em class="xref py py-obj">Notes</em>.</p>
+</div></blockquote>
+<p><strong>lower, upper</strong> : floats or 1-D arrays, optional</p>
+<blockquote>
+<div><p>Lower and upper bounds on the argument <em class="xref py py-obj">x</em>.  If floats are provided,
+they apply to all components of <em class="xref py py-obj">x</em>.</p>
+</div></blockquote>
+<p><strong>dwell</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of times to execute the inner loop at each value of the
+temperature.  See <em class="xref py py-obj">Notes</em>.</p>
+</div></blockquote>
+<p><strong>disp</strong> : bool, optional</p>
+<blockquote>
+<div><p>Print a descriptive convergence message if True.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>xmin</strong> : ndarray</p>
+<blockquote>
+<div><p>The point where the lowest function value was found.</p>
+</div></blockquote>
+<p><strong>Jmin</strong> : float</p>
+<blockquote>
+<div><p>The objective function value at <em class="xref py py-obj">xmin</em>.</p>
+</div></blockquote>
+<p><strong>T</strong> : float</p>
+<blockquote>
+<div><p>The temperature at termination of the iterations.</p>
+</div></blockquote>
+<p><strong>feval</strong> : int</p>
+<blockquote>
+<div><p>Number of function evaluations used.</p>
+</div></blockquote>
+<p><strong>iters</strong> : int</p>
+<blockquote>
+<div><p>Number of cooling iterations used.</p>
+</div></blockquote>
+<p><strong>accept</strong> : int</p>
+<blockquote>
+<div><p>Number of tests accepted.</p>
+</div></blockquote>
+<p><strong>status</strong> : int</p>
+<blockquote class="last">
+<div><p>A code indicating the reason for termination:</p>
+<ul class="simple">
+<li>0 : Points no longer changing.</li>
+<li>1 : Cooled to final temperature.</li>
+<li>2 : Maximum function evaluations reached.</li>
+<li>3 : Maximum cooling iterations reached.</li>
+<li>4 : Maximum accepted query locations reached.</li>
+<li>5 : Final point not the minimum amongst encountered points.</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.optimize.basinhopping.html#scipy.optimize.basinhopping" title="scipy.optimize.basinhopping"><tt class="xref py py-obj docutils literal"><span class="pre">basinhopping</span></tt></a></dt>
+<dd>another (more performant) global optimizer</dd>
+<dt><a class="reference internal" href="scipy.optimize.brute.html#scipy.optimize.brute" title="scipy.optimize.brute"><tt class="xref py py-obj docutils literal"><span class="pre">brute</span></tt></a></dt>
+<dd>brute-force global optimizer</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>Simulated annealing is a random algorithm which uses no derivative
+information from the function being optimized. In practice it has
+been more useful in discrete optimization than continuous
+optimization, as there are usually better algorithms for continuous
+optimization problems.</p>
+<p>Some experimentation by trying the different temperature
+schedules and altering their parameters is likely required to
+obtain good performance.</p>
+<p>The randomness in the algorithm comes from random sampling in numpy.
+To obtain the same results you can call <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.random.seed.html#numpy.random.seed" title="(in NumPy v1.7)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.random.seed</span></tt></a> with the
+same seed immediately before calling <a class="reference internal" href="#scipy.optimize.anneal" title="scipy.optimize.anneal"><tt class="xref py py-obj docutils literal"><span class="pre">anneal</span></tt></a>.</p>
+<p>We give a brief description of how the three temperature schedules
+generate new points and vary their temperature.  Temperatures are
+only updated with iterations in the outer loop.  The inner loop is
+over loop over <tt class="docutils literal"><span class="pre">xrange(dwell)</span></tt>, and new points are generated for
+every iteration in the inner loop.  Whether the proposed new points
+are accepted is probabilistic.</p>
+<p>For readability, let <tt class="docutils literal"><span class="pre">d</span></tt> denote the dimension of the inputs to func.
+Also, let <tt class="docutils literal"><span class="pre">x_old</span></tt> denote the previous state, and <tt class="docutils literal"><span class="pre">k</span></tt> denote the
+iteration number of the outer loop.  All other variables not
+defined below are input variables to <a class="reference internal" href="#scipy.optimize.anneal" title="scipy.optimize.anneal"><tt class="xref py py-obj docutils literal"><span class="pre">anneal</span></tt></a> itself.</p>
+<p>In the ‘fast’ schedule the updates are:</p>
+<div class="highlight-python"><pre>u ~ Uniform(0, 1, size = d)
+y = sgn(u - 0.5) * T * ((1 + 1/T)**abs(2*u - 1) - 1.0)
+
+xc = y * (upper - lower)
+x_new = x_old + xc
+
+c = n * exp(-n * quench)
+T_new = T0 * exp(-c * k**quench)</pre>
+</div>
+<p>In the ‘cauchy’ schedule the updates are:</p>
+<div class="highlight-python"><pre>u ~ Uniform(-pi/2, pi/2, size=d)
+xc = learn_rate * T * tan(u)
+x_new = x_old + xc
+
+T_new = T0 / (1 + k)</pre>
+</div>
+<p>In the ‘boltzmann’ schedule the updates are:</p>
+<div class="highlight-python"><pre>std = minimum(sqrt(T) * ones(d), (upper - lower) / (3*learn_rate))
+y ~ Normal(0, std, size = d)
+x_new = x_old + learn_rate * y
+
+T_new = T0 / log(1 + k)</pre>
+</div>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>[1] P. J. M. van Laarhoven and E. H. L. Aarts, “Simulated Annealing: Theory</dt>
+<dd>and Applications”, Kluwer Academic Publishers, 1987.</dd>
+<dt>[2] W.H. Press et al., “Numerical Recipies: The Art of Scientific Computing”,</dt>
+<dd>Cambridge U. Press, 1987.</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p><em>Example 1.</em> We illustrate the use of <a class="reference internal" href="#scipy.optimize.anneal" title="scipy.optimize.anneal"><tt class="xref py py-obj docutils literal"><span class="pre">anneal</span></tt></a> to seek the global minimum
+of a function of two variables that is equal to the sum of a positive-
+definite quadratic and two deep “Gaussian-shaped” craters.  Specifically,
+define the objective function <em class="xref py py-obj">f</em> as the sum of three other functions,
+<tt class="docutils literal"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">f1</span> <span class="pre">+</span> <span class="pre">f2</span> <span class="pre">+</span> <span class="pre">f3</span></tt>.  We suppose each of these has a signature
+<tt class="docutils literal"><span class="pre">(z,</span> <span class="pre">*params)</span></tt>, where <tt class="docutils literal"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">(x,</span> <span class="pre">y)</span></tt>, <tt class="docutils literal"><span class="pre">params</span></tt>, and the functions are
+as defined below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">c</span> <span class="o">*</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">e</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">g</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">h</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">i</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f3</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">l</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">f1</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">f2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">f3</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">])</span>     <span class="c"># Initial guess.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">555</span><span class="p">)</span>   <span class="c"># Seeded to allow replication.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">anneal</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">schedule</span><span class="o">=</span><span class="s">'boltzmann'</span><span class="p">,</span>
+<span class="go">                          full_output=True, maxiter=500, lower=-10,</span>
+<span class="go">                          upper=10, dwell=250, disp=True)</span>
+<span class="go">Warning: Maximum number of iterations exceeded.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># obtained minimum</span>
+<span class="go">array([-1.03914194,  1.81330654])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># function value at minimum</span>
+<span class="go">-3.3817...</span>
+</pre></div>
+</div>
+<p>So this run settled on the point [-1.039, 1.813] with a minimum function
+value of about -3.382.  The final temperature was about 212. The run used
+125301 function evaluations, 501 iterations (including the initial guess as
+a iteration), and accepted 61162 points. The status flag of 3 also
+indicates that <em class="xref py py-obj">maxiter</em> was reached.</p>
+<p>This problem’s true global minimum lies near the point [-1.057, 1.808]
+and has a value of about -3.409.  So these <a class="reference internal" href="#scipy.optimize.anneal" title="scipy.optimize.anneal"><tt class="xref py py-obj docutils literal"><span class="pre">anneal</span></tt></a> results are pretty
+good and could be used as the starting guess in a local optimizer to
+seek a more exact local minimum.</p>
+<p><em>Example 2.</em> To minimize the same objective function using
+the <a class="reference internal" href="scipy.optimize.minimize.html#scipy.optimize.minimize" title="scipy.optimize.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a> approach, we need to (a) convert the options to an
+“options dictionary” using the keys prescribed for this method,
+(b) call the <a class="reference internal" href="scipy.optimize.minimize.html#scipy.optimize.minimize" title="scipy.optimize.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a> function with the name of the method (which
+in this case is ‘Anneal’), and (c) take account of the fact that
+the returned value will be a <tt class="xref py py-obj docutils literal"><span class="pre">Result</span></tt> object (<em class="xref py py-obj">i.e.</em>, a dictionary,
+as defined in <em class="xref py py-obj">optimize.py</em>).</p>
+<p>All of the allowable options for ‘Anneal’ when using the <a class="reference internal" href="scipy.optimize.minimize.html#scipy.optimize.minimize" title="scipy.optimize.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a>
+approach are listed in the <tt class="docutils literal"><span class="pre">myopts</span></tt> dictionary given below, although
+in practice only the non-default values would be needed.  Some of their
+names differ from those used in the <a class="reference internal" href="#scipy.optimize.anneal" title="scipy.optimize.anneal"><tt class="xref py py-obj docutils literal"><span class="pre">anneal</span></tt></a> approach.  We can proceed
+as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">myopts</span> <span class="o">=</span> <span class="p">{</span>
+<span class="go">        'schedule'     : 'boltzmann',   # Non-default value.</span>
+<span class="go">        'maxfev'       : None,  # Default, formerly `maxeval`.</span>
+<span class="go">        'maxiter'      : 500,   # Non-default value.</span>
+<span class="go">        'maxaccept'    : None,  # Default value.</span>
+<span class="go">        'ftol'         : 1e-6,  # Default, formerly `feps`.</span>
+<span class="go">        'T0'           : None,  # Default value.</span>
+<span class="go">        'Tf'           : 1e-12, # Default value.</span>
+<span class="go">        'boltzmann'    : 1.0,   # Default value.</span>
+<span class="go">        'learn_rate'   : 0.5,   # Default value.</span>
+<span class="go">        'quench'       : 1.0,   # Default value.</span>
+<span class="go">        'm'            : 1.0,   # Default value.</span>
+<span class="go">        'n'            : 1.0,   # Default value.</span>
+<span class="go">        'lower'        : -10,   # Non-default value.</span>
+<span class="go">        'upper'        : +10,   # Non-default value.</span>
+<span class="go">        'dwell'        : 250,   # Non-default value.</span>
+<span class="go">        'disp'         : True   # Default value.</span>
+<span class="go">        }</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">777</span><span class="p">)</span>  <span class="c"># Seeded to allow replication.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res2</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">'Anneal'</span><span class="p">,</span>
+<span class="go">                             options=myopts)</span>
+<span class="go">Warning: Maximum number of iterations exceeded.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res2</span>
+<span class="go">  status: 3</span>
+<span class="go"> success: False</span>
+<span class="go">  accept: 61742</span>
+<span class="go">    nfev: 125301</span>
+<span class="go">       T: 214.20624873839623</span>
+<span class="go">     fun: -3.4084065576676053</span>
+<span class="go">       x: array([-1.05757366,  1.8071427 ])</span>
+<span class="go"> message: 'Maximum cooling iterations reached'</span>
+<span class="go"> nit: 501</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container container-navbar-bottom">
+<div class="spc-navbar">
+</div>
+</div>
+<div class="container">
+<div class="footer">
+<div class="row-fluid">
+<ul class="inline pull-left">
+<li>
+        © Copyright 2008-2009, The Scipy community.
+      </li>
+<li>
+      Last updated on Oct 21, 2013.
+      </li>
+<li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+</body>
+</html>

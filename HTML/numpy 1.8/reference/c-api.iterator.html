@@ -1,0 +1,1530 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Array Iterator API &mdash; NumPy v1.8 Manual</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" >
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" >
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" >
+    <link rel="top" title="NumPy v1.8 Manual" href="../index.html" >
+    <link rel="up" title="Numpy C-API" href="c-api.html" >
+    <link rel="next" title="UFunc API" href="c-api.ufunc.html" >
+    <link rel="prev" title="Array API" href="c-api.array.html" > 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+        
+        <li class="active"><a href="../index.html">NumPy v1.8 Manual</a></li>
+        
+
+          <li class="active"><a href="index.html" >NumPy Reference</a></li>
+          <li class="active"><a href="c-api.html" accesskey="U">Numpy C-API</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="c-api.ufunc.html" title="UFunc API"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="c-api.array.html" title="Array API"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Array Iterator API</a><ul>
+<li><a class="reference internal" href="#array-iterator">Array Iterator</a></li>
+<li><a class="reference internal" href="#converting-from-previous-numpy-iterators">Converting from Previous NumPy Iterators</a></li>
+<li><a class="reference internal" href="#simple-iteration-example">Simple Iteration Example</a></li>
+<li><a class="reference internal" href="#simple-multi-iteration-example">Simple Multi-Iteration Example</a></li>
+<li><a class="reference internal" href="#iterator-data-types">Iterator Data Types</a></li>
+<li><a class="reference internal" href="#construction-and-destruction">Construction and Destruction</a></li>
+<li><a class="reference internal" href="#functions-for-iteration">Functions For Iteration</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="c-api.array.html"
+                        title="previous chapter">Array API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="c-api.ufunc.html"
+                        title="next chapter">UFunc API</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="array-iterator-api">
+<h1>Array Iterator API<a class="headerlink" href="#array-iterator-api" title="Permalink to this headline">¶</a></h1>
+<p class="versionadded" id="index-0">
+<span class="versionmodified">New in version 1.6.</span></p>
+<div class="section" id="array-iterator">
+<h2>Array Iterator<a class="headerlink" href="#array-iterator" title="Permalink to this headline">¶</a></h2>
+<p>The array iterator encapsulates many of the key features in ufuncs,
+allowing user code to support features like output parameters,
+preservation of memory layouts, and buffering of data with the wrong
+alignment or type, without requiring difficult coding.</p>
+<p>This page documents the API for the iterator.
+The C-API naming convention chosen is based on the one in the numpy-refactor
+branch, so will integrate naturally into the refactored code base.
+The iterator is named <tt class="docutils literal"><span class="pre">NpyIter</span></tt> and functions are
+named <tt class="docutils literal"><span class="pre">NpyIter_*</span></tt>.</p>
+<p>There is an <a class="reference internal" href="arrays.nditer.html#arrays-nditer"><em>introductory guide to array iteration</em></a>
+which may be of interest for those using this C API. In many instances,
+testing out ideas by creating the iterator in Python is a good idea
+before writing the C iteration code.</p>
+</div>
+<div class="section" id="converting-from-previous-numpy-iterators">
+<h2>Converting from Previous NumPy Iterators<a class="headerlink" href="#converting-from-previous-numpy-iterators" title="Permalink to this headline">¶</a></h2>
+<p>The existing iterator API includes functions like PyArrayIter_Check,
+PyArray_Iter* and PyArray_ITER_*.  The multi-iterator array includes
+PyArray_MultiIter*, PyArray_Broadcast, and PyArray_RemoveSmallest.  The
+new iterator design replaces all of this functionality with a single object
+and associated API.  One goal of the new API is that all uses of the
+existing iterator should be replaceable with the new iterator without
+significant effort. In 1.6, the major exception to this is the neighborhood
+iterator, which does not have corresponding features in this iterator.</p>
+<p>Here is a conversion table for which functions to use with the new iterator:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><em>Iterator Functions</em></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_IterNew" title="PyArray_IterNew"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_IterNew</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_New" title="NpyIter_New"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_New</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_IterAllButAxis" title="PyArray_IterAllButAxis"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_IterAllButAxis</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_New" title="NpyIter_New"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_New</span></tt></a> + <tt class="docutils literal"><span class="pre">axes</span></tt> parameter <strong>or</strong>
+Iterator flag <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_BroadcastToShape" title="PyArray_BroadcastToShape"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_BroadcastToShape</span></tt></a></td>
+<td><strong>NOT SUPPORTED</strong> (Use the support for
+multiple operands instead.)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArrayIter_Check" title="PyArrayIter_Check"><tt class="xref c c-func docutils literal"><span class="pre">PyArrayIter_Check</span></tt></a></td>
+<td>Will need to add this in Python exposure</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_ITER_RESET" title="PyArray_ITER_RESET"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_RESET</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_Reset" title="NpyIter_Reset"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_Reset</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_ITER_NEXT" title="PyArray_ITER_NEXT"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_NEXT</span></tt></a></td>
+<td>Function pointer from <a class="reference internal" href="#NpyIter_GetIterNext" title="NpyIter_GetIterNext"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetIterNext</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_ITER_DATA" title="PyArray_ITER_DATA"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_DATA</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_GetDataPtrArray" title="NpyIter_GetDataPtrArray"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetDataPtrArray</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_ITER_GOTO" title="PyArray_ITER_GOTO"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_GOTO</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_GotoMultiIndex" title="NpyIter_GotoMultiIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GotoMultiIndex</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_ITER_GOTO1D" title="PyArray_ITER_GOTO1D"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_GOTO1D</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_GotoIndex" title="NpyIter_GotoIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GotoIndex</span></tt></a> or
+<a class="reference internal" href="#NpyIter_GotoIterIndex" title="NpyIter_GotoIterIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GotoIterIndex</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_ITER_NOTDONE" title="PyArray_ITER_NOTDONE"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ITER_NOTDONE</span></tt></a></td>
+<td>Return value of <tt class="docutils literal"><span class="pre">iternext</span></tt> function pointer</td>
+</tr>
+<tr class="row-even"><td><em>Multi-iterator Functions</em></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIterNew" title="PyArray_MultiIterNew"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIterNew</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_MultiNew" title="NpyIter_MultiNew"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_MultiNew</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIter_RESET" title="PyArray_MultiIter_RESET"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIter_RESET</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_Reset" title="NpyIter_Reset"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_Reset</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIter_NEXT" title="PyArray_MultiIter_NEXT"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIter_NEXT</span></tt></a></td>
+<td>Function pointer from <a class="reference internal" href="#NpyIter_GetIterNext" title="NpyIter_GetIterNext"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetIterNext</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIter_DATA" title="PyArray_MultiIter_DATA"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIter_DATA</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_GetDataPtrArray" title="NpyIter_GetDataPtrArray"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetDataPtrArray</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIter_NEXTi" title="PyArray_MultiIter_NEXTi"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIter_NEXTi</span></tt></a></td>
+<td><strong>NOT SUPPORTED</strong> (always lock-step iteration)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIter_GOTO" title="PyArray_MultiIter_GOTO"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIter_GOTO</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_GotoMultiIndex" title="NpyIter_GotoMultiIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GotoMultiIndex</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIter_GOTO1D" title="PyArray_MultiIter_GOTO1D"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIter_GOTO1D</span></tt></a></td>
+<td><a class="reference internal" href="#NpyIter_GotoIndex" title="NpyIter_GotoIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GotoIndex</span></tt></a> or
+<a class="reference internal" href="#NpyIter_GotoIterIndex" title="NpyIter_GotoIterIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GotoIterIndex</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_MultiIter_NOTDONE" title="PyArray_MultiIter_NOTDONE"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_MultiIter_NOTDONE</span></tt></a></td>
+<td>Return value of <tt class="docutils literal"><span class="pre">iternext</span></tt> function pointer</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="c-api.array.html#PyArray_Broadcast" title="PyArray_Broadcast"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_Broadcast</span></tt></a></td>
+<td>Handled by <a class="reference internal" href="#NpyIter_MultiNew" title="NpyIter_MultiNew"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_MultiNew</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_RemoveSmallest" title="PyArray_RemoveSmallest"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_RemoveSmallest</span></tt></a></td>
+<td>Iterator flag <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><em>Other Functions</em></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="c-api.array.html#PyArray_ConvertToCommonType" title="PyArray_ConvertToCommonType"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_ConvertToCommonType</span></tt></a></td>
+<td>Iterator flag <a class="reference internal" href="#NPY_ITER_COMMON_DTYPE" title="NPY_ITER_COMMON_DTYPE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_COMMON_DTYPE</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="simple-iteration-example">
+<h2>Simple Iteration Example<a class="headerlink" href="#simple-iteration-example" title="Permalink to this headline">¶</a></h2>
+<p>The best way to become familiar with the iterator is to look at its
+usage within the NumPy codebase itself. For example, here is a slightly
+tweaked version of the code for <a class="reference internal" href="c-api.array.html#PyArray_CountNonzero" title="PyArray_CountNonzero"><tt class="xref c c-func docutils literal"><span class="pre">PyArray_CountNonzero</span></tt></a>, which counts the
+number of non-zero elements in an array.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">npy_intp</span> <span class="nf">PyArray_CountNonzero</span><span class="p">(</span><span class="n">PyArrayObject</span><span class="o">*</span> <span class="n">self</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="cm">/* Nonzero boolean function */</span>
+    <span class="n">PyArray_NonzeroFunc</span><span class="o">*</span> <span class="n">nonzero</span> <span class="o">=</span> <span class="n">PyArray_DESCR</span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">f</span><span class="o">-&gt;</span><span class="n">nonzero</span><span class="p">;</span>
+
+    <span class="n">NpyIter</span><span class="o">*</span> <span class="n">iter</span><span class="p">;</span>
+    <span class="n">NpyIter_IterNextFunc</span> <span class="o">*</span><span class="n">iternext</span><span class="p">;</span>
+    <span class="kt">char</span><span class="o">**</span> <span class="n">dataptr</span><span class="p">;</span>
+    <span class="n">npy_intp</span><span class="o">*</span> <span class="n">strideptr</span><span class="p">,</span><span class="o">*</span> <span class="n">innersizeptr</span><span class="p">;</span>
+
+    <span class="cm">/* Handle zero-sized arrays specially */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">PyArray_SIZE</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Create and use an iterator to count the nonzeros.</span>
+<span class="cm">     *   flag NPY_ITER_READONLY</span>
+<span class="cm">     *     - The array is never written to.</span>
+<span class="cm">     *   flag NPY_ITER_EXTERNAL_LOOP</span>
+<span class="cm">     *     - Inner loop is done outside the iterator for efficiency.</span>
+<span class="cm">     *   flag NPY_ITER_NPY_ITER_REFS_OK</span>
+<span class="cm">     *     - Reference types are acceptable.</span>
+<span class="cm">     *   order NPY_KEEPORDER</span>
+<span class="cm">     *     - Visit elements in memory order, regardless of strides.</span>
+<span class="cm">     *       This is good for performance when the specific order</span>
+<span class="cm">     *       elements are visited is unimportant.</span>
+<span class="cm">     *   casting NPY_NO_CASTING</span>
+<span class="cm">     *     - No casting is required for this operation.</span>
+<span class="cm">     */</span>
+    <span class="n">iter</span> <span class="o">=</span> <span class="n">NpyIter_New</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">NPY_ITER_READONLY</span><span class="o">|</span>
+                             <span class="n">NPY_ITER_EXTERNAL_LOOP</span><span class="o">|</span>
+                             <span class="n">NPY_ITER_REFS_OK</span><span class="p">,</span>
+                        <span class="n">NPY_KEEPORDER</span><span class="p">,</span> <span class="n">NPY_NO_CASTING</span><span class="p">,</span>
+                        <span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * The iternext function gets stored in a local variable</span>
+<span class="cm">     * so it can be called repeatedly in an efficient manner.</span>
+<span class="cm">     */</span>
+    <span class="n">iternext</span> <span class="o">=</span> <span class="n">NpyIter_GetIterNext</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">iternext</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">NpyIter_Deallocate</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="cm">/* The location of the data pointer which the iterator may update */</span>
+    <span class="n">dataptr</span> <span class="o">=</span> <span class="n">NpyIter_GetDataPtrArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+    <span class="cm">/* The location of the stride which the iterator may update */</span>
+    <span class="n">strideptr</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerStrideArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+    <span class="cm">/* The location of the inner loop size which the iterator may update */</span>
+    <span class="n">innersizeptr</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerLoopSizePtr</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+
+    <span class="cm">/* The iteration loop */</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="cm">/* Get the inner loop data/stride/count values */</span>
+        <span class="kt">char</span><span class="o">*</span> <span class="n">data</span> <span class="o">=</span> <span class="o">*</span><span class="n">dataptr</span><span class="p">;</span>
+        <span class="n">npy_intp</span> <span class="n">stride</span> <span class="o">=</span> <span class="o">*</span><span class="n">strideptr</span><span class="p">;</span>
+        <span class="n">npy_intp</span> <span class="n">count</span> <span class="o">=</span> <span class="o">*</span><span class="n">innersizeptr</span><span class="p">;</span>
+
+        <span class="cm">/* This is a typical inner loop for NPY_ITER_EXTERNAL_LOOP */</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">count</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">nonzero</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">self</span><span class="p">))</span> <span class="p">{</span>
+                <span class="o">++</span><span class="n">nonzero_count</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">stride</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="cm">/* Increment the iterator to the next inner loop */</span>
+    <span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="n">iternext</span><span class="p">(</span><span class="n">iter</span><span class="p">));</span>
+
+    <span class="n">NpyIter_Deallocate</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">nonzero_count</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-multi-iteration-example">
+<h2>Simple Multi-Iteration Example<a class="headerlink" href="#simple-multi-iteration-example" title="Permalink to this headline">¶</a></h2>
+<p>Here is a simple copy function using the iterator.  The <tt class="docutils literal"><span class="pre">order</span></tt> parameter
+is used to control the memory layout of the allocated result, typically
+<a class="reference internal" href="c-api.array.html#NPY_KEEPORDER" title="NPY_KEEPORDER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_KEEPORDER</span></tt></a> is desired.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">CopyArray</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">arr</span><span class="p">,</span> <span class="n">NPY_ORDER</span> <span class="n">order</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NpyIter</span> <span class="o">*</span><span class="n">iter</span><span class="p">;</span>
+    <span class="n">NpyIter_IterNextFunc</span> <span class="o">*</span><span class="n">iternext</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">op</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">*</span><span class="n">ret</span><span class="p">;</span>
+    <span class="n">npy_uint32</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="n">npy_uint32</span> <span class="n">op_flags</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="n">npy_intp</span> <span class="n">itemsize</span><span class="p">,</span> <span class="o">*</span><span class="n">innersizeptr</span><span class="p">,</span> <span class="n">innerstride</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">**</span><span class="n">dataptrarray</span><span class="p">;</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * No inner iteration - inner loop is handled by CopyArray code</span>
+<span class="cm">     */</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">NPY_ITER_EXTERNAL_LOOP</span><span class="p">;</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Tell the constructor to automatically allocate the output.</span>
+<span class="cm">     * The data type of the output will match that of the input.</span>
+<span class="cm">     */</span>
+    <span class="n">op</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span><span class="p">;</span>
+    <span class="n">op</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">op_flags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">NPY_ITER_READONLY</span><span class="p">;</span>
+    <span class="n">op_flags</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">NPY_ITER_WRITEONLY</span> <span class="o">|</span> <span class="n">NPY_ITER_ALLOCATE</span><span class="p">;</span>
+
+    <span class="cm">/* Construct the iterator */</span>
+    <span class="n">iter</span> <span class="o">=</span> <span class="n">NpyIter_MultiNew</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">NPY_NO_CASTING</span><span class="p">,</span>
+                            <span class="n">op_flags</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Make a copy of the iternext function pointer and</span>
+<span class="cm">     * a few other variables the inner loop needs.</span>
+<span class="cm">     */</span>
+    <span class="n">iternext</span> <span class="o">=</span> <span class="n">NpyIter_GetIterNext</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="n">innerstride</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerStrideArray</span><span class="p">(</span><span class="n">iter</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="n">itemsize</span> <span class="o">=</span> <span class="n">NpyIter_GetDescrArray</span><span class="p">(</span><span class="n">iter</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">elsize</span><span class="p">;</span>
+    <span class="cm">/*</span>
+<span class="cm">     * The inner loop size and data pointers may change during the</span>
+<span class="cm">     * loop, so just cache the addresses.</span>
+<span class="cm">     */</span>
+    <span class="n">innersizeptr</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerLoopSizePtr</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+    <span class="n">dataptrarray</span> <span class="o">=</span> <span class="n">NpyIter_GetDataPtrArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Note that because the iterator allocated the output,</span>
+<span class="cm">     * it matches the iteration order and is packed tightly,</span>
+<span class="cm">     * so we don&#39;t need to check it like the input.</span>
+<span class="cm">     */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">innerstride</span> <span class="o">==</span> <span class="n">itemsize</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">do</span> <span class="p">{</span>
+            <span class="n">memcpy</span><span class="p">(</span><span class="n">dataptrarray</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dataptrarray</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="n">itemsize</span> <span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">innersizeptr</span><span class="p">));</span>
+        <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">iternext</span><span class="p">(</span><span class="n">iter</span><span class="p">));</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="cm">/* For efficiency, should specialize this based on item size... */</span>
+        <span class="n">npy_intp</span> <span class="n">i</span><span class="p">;</span>
+        <span class="k">do</span> <span class="p">{</span>
+            <span class="n">npy_intp</span> <span class="n">size</span> <span class="o">=</span> <span class="o">*</span><span class="n">innersizeptr</span><span class="p">;</span>
+            <span class="kt">char</span> <span class="o">*</span><span class="n">src</span> <span class="o">=</span> <span class="n">dataaddr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">*</span><span class="n">dst</span> <span class="o">=</span> <span class="n">dataaddr</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">,</span> <span class="n">src</span> <span class="o">+=</span> <span class="n">innerstride</span><span class="p">,</span> <span class="n">dst</span> <span class="o">+=</span> <span class="n">itemsize</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">memcpy</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">itemsize</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">iternext</span><span class="p">(</span><span class="n">iter</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* Get the result from the iterator object array */</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">NpyIter_GetOperandArray</span><span class="p">(</span><span class="n">iter</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">Py_INCREF</span><span class="p">(</span><span class="n">ret</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">NpyIter_Deallocate</span><span class="p">(</span><span class="n">iter</span><span class="p">)</span> <span class="o">!=</span> <span class="n">NPY_SUCCEED</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">ret</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="iterator-data-types">
+<h2>Iterator Data Types<a class="headerlink" href="#iterator-data-types" title="Permalink to this headline">¶</a></h2>
+<p>The iterator layout is an internal detail, and user code only sees
+an incomplete struct.</p>
+<dl class="type">
+<dt id="NpyIter">
+<tt class="descname">NpyIter</tt><a class="headerlink" href="#NpyIter" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an opaque pointer type for the iterator. Access to its contents
+can only be done through the iterator API.</p>
+</dd></dl>
+
+<dl class="type">
+<dt id="NpyIter_Type">
+<tt class="descname">NpyIter_Type</tt><a class="headerlink" href="#NpyIter_Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the type which exposes the iterator to Python. Currently, no
+API is exposed which provides access to the values of a Python-created
+iterator. If an iterator is created in Python, it must be used in Python
+and vice versa. Such an API will likely be created in a future version.</p>
+</dd></dl>
+
+<dl class="type">
+<dt id="NpyIter_IterNextFunc">
+<tt class="descname">NpyIter_IterNextFunc</tt><a class="headerlink" href="#NpyIter_IterNextFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a function pointer for the iteration loop, returned by
+<a class="reference internal" href="#NpyIter_GetIterNext" title="NpyIter_GetIterNext"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetIterNext</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="type">
+<dt id="NpyIter_GetMultiIndexFunc">
+<tt class="descname">NpyIter_GetMultiIndexFunc</tt><a class="headerlink" href="#NpyIter_GetMultiIndexFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a function pointer for getting the current iterator multi-index,
+returned by <a class="reference internal" href="#NpyIter_GetGetMultiIndex" title="NpyIter_GetGetMultiIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetGetMultiIndex</span></tt></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="construction-and-destruction">
+<h2>Construction and Destruction<a class="headerlink" href="#construction-and-destruction" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="NpyIter_New">
+<a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>* <tt class="descname">NpyIter_New</tt><big>(</big><a class="reference internal" href="c-api.types-and-structures.html#PyArrayObject" title="PyArrayObject">PyArrayObject</a>*<em>&nbsp;op</em>, npy_uint32<em>&nbsp;flags</em>, <a class="reference internal" href="c-api.array.html#NPY_ORDER" title="NPY_ORDER">NPY_ORDER</a><em>&nbsp;order</em>, <a class="reference internal" href="c-api.array.html#NPY_CASTING" title="NPY_CASTING">NPY_CASTING</a><em>&nbsp;casting</em>, <a class="reference internal" href="c-api.types-and-structures.html#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a>*<em>&nbsp;dtype</em><big>)</big><a class="headerlink" href="#NpyIter_New" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an iterator for the given numpy array object <tt class="docutils literal"><span class="pre">op</span></tt>.</p>
+<p>Flags that may be passed in <tt class="docutils literal"><span class="pre">flags</span></tt> are any combination
+of the global and per-operand flags documented in
+<a class="reference internal" href="#NpyIter_MultiNew" title="NpyIter_MultiNew"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_MultiNew</span></tt></a>, except for <a class="reference internal" href="#NPY_ITER_ALLOCATE" title="NPY_ITER_ALLOCATE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_ALLOCATE</span></tt></a>.</p>
+<p>Any of the <a class="reference internal" href="c-api.array.html#NPY_ORDER" title="NPY_ORDER"><tt class="xref c c-type docutils literal"><span class="pre">NPY_ORDER</span></tt></a> enum values may be passed to <tt class="docutils literal"><span class="pre">order</span></tt>.  For
+efficient iteration, <a class="reference internal" href="c-api.array.html#NPY_KEEPORDER" title="NPY_KEEPORDER"><tt class="xref c c-type docutils literal"><span class="pre">NPY_KEEPORDER</span></tt></a> is the best option, and
+the other orders enforce the particular iteration pattern.</p>
+<p>Any of the <a class="reference internal" href="c-api.array.html#NPY_CASTING" title="NPY_CASTING"><tt class="xref c c-type docutils literal"><span class="pre">NPY_CASTING</span></tt></a> enum values may be passed to <tt class="docutils literal"><span class="pre">casting</span></tt>.
+The values include <a class="reference internal" href="c-api.array.html#NPY_NO_CASTING" title="NPY_NO_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NO_CASTING</span></tt></a>, <a class="reference internal" href="c-api.array.html#NPY_EQUIV_CASTING" title="NPY_EQUIV_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_EQUIV_CASTING</span></tt></a>,
+<a class="reference internal" href="c-api.array.html#NPY_SAFE_CASTING" title="NPY_SAFE_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_SAFE_CASTING</span></tt></a>, <a class="reference internal" href="c-api.array.html#NPY_SAME_KIND_CASTING" title="NPY_SAME_KIND_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_SAME_KIND_CASTING</span></tt></a>, and
+<a class="reference internal" href="c-api.array.html#NPY_UNSAFE_CASTING" title="NPY_UNSAFE_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UNSAFE_CASTING</span></tt></a>.  To allow the casts to occur, copying or
+buffering must also be enabled.</p>
+<p>If <tt class="docutils literal"><span class="pre">dtype</span></tt> isn&#8217;t <tt class="docutils literal"><span class="pre">NULL</span></tt>, then it requires that data type.
+If copying is allowed, it will make a temporary copy if the data
+is castable.  If <a class="reference internal" href="#NPY_ITER_UPDATEIFCOPY" title="NPY_ITER_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_UPDATEIFCOPY</span></tt></a> is enabled, it will
+also copy the data back with another cast upon iterator destruction.</p>
+<p>Returns NULL if there is an error, otherwise returns the allocated
+iterator.</p>
+<p>To make an iterator similar to the old iterator, this should work.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">iter</span> <span class="o">=</span> <span class="n">NpyIter_New</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">NPY_ITER_READWRITE</span><span class="p">,</span>
+                    <span class="n">NPY_CORDER</span><span class="p">,</span> <span class="n">NPY_NO_CASTING</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you want to edit an array with aligned <tt class="docutils literal"><span class="pre">double</span></tt> code,
+but the order doesn&#8217;t matter, you would use this.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">dtype</span> <span class="o">=</span> <span class="n">PyArray_DescrFromType</span><span class="p">(</span><span class="n">NPY_DOUBLE</span><span class="p">);</span>
+<span class="n">iter</span> <span class="o">=</span> <span class="n">NpyIter_New</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">NPY_ITER_READWRITE</span><span class="o">|</span>
+                    <span class="n">NPY_ITER_BUFFERED</span><span class="o">|</span>
+                    <span class="n">NPY_ITER_NBO</span><span class="o">|</span>
+                    <span class="n">NPY_ITER_ALIGNED</span><span class="p">,</span>
+                    <span class="n">NPY_KEEPORDER</span><span class="p">,</span>
+                    <span class="n">NPY_SAME_KIND_CASTING</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="p">);</span>
+<span class="n">Py_DECREF</span><span class="p">(</span><span class="n">dtype</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_MultiNew">
+<a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>* <tt class="descname">NpyIter_MultiNew</tt><big>(</big>npy_intp<em>&nbsp;nop</em>, <a class="reference internal" href="c-api.types-and-structures.html#PyArrayObject" title="PyArrayObject">PyArrayObject</a>**<em>&nbsp;op</em>, npy_uint32<em>&nbsp;flags</em>, <a class="reference internal" href="c-api.array.html#NPY_ORDER" title="NPY_ORDER">NPY_ORDER</a><em>&nbsp;order</em>, <a class="reference internal" href="c-api.array.html#NPY_CASTING" title="NPY_CASTING">NPY_CASTING</a><em>&nbsp;casting</em>, npy_uint32*<em>&nbsp;op_flags</em>, <a class="reference internal" href="c-api.types-and-structures.html#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a>**<em>&nbsp;op_dtypes</em><big>)</big><a class="headerlink" href="#NpyIter_MultiNew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an iterator for broadcasting the <tt class="docutils literal"><span class="pre">nop</span></tt> array objects provided
+in <tt class="docutils literal"><span class="pre">op</span></tt>, using regular NumPy broadcasting rules.</p>
+<p>Any of the <a class="reference internal" href="c-api.array.html#NPY_ORDER" title="NPY_ORDER"><tt class="xref c c-type docutils literal"><span class="pre">NPY_ORDER</span></tt></a> enum values may be passed to <tt class="docutils literal"><span class="pre">order</span></tt>.  For
+efficient iteration, <a class="reference internal" href="c-api.array.html#NPY_KEEPORDER" title="NPY_KEEPORDER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_KEEPORDER</span></tt></a> is the best option, and the
+other orders enforce the particular iteration pattern.  When using
+<a class="reference internal" href="c-api.array.html#NPY_KEEPORDER" title="NPY_KEEPORDER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_KEEPORDER</span></tt></a>, if you also want to ensure that the iteration is
+not reversed along an axis, you should pass the flag
+<a class="reference internal" href="#NPY_ITER_DONT_NEGATE_STRIDES" title="NPY_ITER_DONT_NEGATE_STRIDES"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_DONT_NEGATE_STRIDES</span></tt></a>.</p>
+<p>Any of the <a class="reference internal" href="c-api.array.html#NPY_CASTING" title="NPY_CASTING"><tt class="xref c c-type docutils literal"><span class="pre">NPY_CASTING</span></tt></a> enum values may be passed to <tt class="docutils literal"><span class="pre">casting</span></tt>.
+The values include <a class="reference internal" href="c-api.array.html#NPY_NO_CASTING" title="NPY_NO_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_NO_CASTING</span></tt></a>, <a class="reference internal" href="c-api.array.html#NPY_EQUIV_CASTING" title="NPY_EQUIV_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_EQUIV_CASTING</span></tt></a>,
+<a class="reference internal" href="c-api.array.html#NPY_SAFE_CASTING" title="NPY_SAFE_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_SAFE_CASTING</span></tt></a>, <a class="reference internal" href="c-api.array.html#NPY_SAME_KIND_CASTING" title="NPY_SAME_KIND_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_SAME_KIND_CASTING</span></tt></a>, and
+<a class="reference internal" href="c-api.array.html#NPY_UNSAFE_CASTING" title="NPY_UNSAFE_CASTING"><tt class="xref c c-data docutils literal"><span class="pre">NPY_UNSAFE_CASTING</span></tt></a>.  To allow the casts to occur, copying or
+buffering must also be enabled.</p>
+<p>If <tt class="docutils literal"><span class="pre">op_dtypes</span></tt> isn&#8217;t <tt class="docutils literal"><span class="pre">NULL</span></tt>, it specifies a data type or <tt class="docutils literal"><span class="pre">NULL</span></tt>
+for each <tt class="docutils literal"><span class="pre">op[i]</span></tt>.</p>
+<p>Returns NULL if there is an error, otherwise returns the allocated
+iterator.</p>
+<p>Flags that may be passed in <tt class="docutils literal"><span class="pre">flags</span></tt>, applying to the whole
+iterator, are:</p>
+<blockquote>
+<div><dl class="var">
+<dt id="NPY_ITER_C_INDEX">
+<tt class="descname">NPY_ITER_C_INDEX</tt><a class="headerlink" href="#NPY_ITER_C_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes the iterator to track a raveled flat index matching C
+order. This option cannot be used with <a class="reference internal" href="#NPY_ITER_F_INDEX" title="NPY_ITER_F_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_F_INDEX</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_F_INDEX">
+<tt class="descname">NPY_ITER_F_INDEX</tt><a class="headerlink" href="#NPY_ITER_F_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes the iterator to track a raveled flat index matching Fortran
+order. This option cannot be used with <a class="reference internal" href="#NPY_ITER_C_INDEX" title="NPY_ITER_C_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_C_INDEX</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_MULTI_INDEX">
+<tt class="descname">NPY_ITER_MULTI_INDEX</tt><a class="headerlink" href="#NPY_ITER_MULTI_INDEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes the iterator to track a multi-index.
+This prevents the iterator from coalescing axes to
+produce bigger inner loops.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_EXTERNAL_LOOP">
+<tt class="descname">NPY_ITER_EXTERNAL_LOOP</tt><a class="headerlink" href="#NPY_ITER_EXTERNAL_LOOP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes the iterator to skip iteration of the innermost
+loop, requiring the user of the iterator to handle it.</p>
+<p>This flag is incompatible with <a class="reference internal" href="#NPY_ITER_C_INDEX" title="NPY_ITER_C_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_C_INDEX</span></tt></a>,
+<a class="reference internal" href="#NPY_ITER_F_INDEX" title="NPY_ITER_F_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_F_INDEX</span></tt></a>, and <a class="reference internal" href="#NPY_ITER_MULTI_INDEX" title="NPY_ITER_MULTI_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_MULTI_INDEX</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_DONT_NEGATE_STRIDES">
+<tt class="descname">NPY_ITER_DONT_NEGATE_STRIDES</tt><a class="headerlink" href="#NPY_ITER_DONT_NEGATE_STRIDES" title="Permalink to this definition">¶</a></dt>
+<dd><p>This only affects the iterator when <a class="reference internal" href="c-api.array.html#NPY_KEEPORDER" title="NPY_KEEPORDER"><tt class="xref c c-type docutils literal"><span class="pre">NPY_KEEPORDER</span></tt></a> is
+specified for the order parameter.  By default with
+<a class="reference internal" href="c-api.array.html#NPY_KEEPORDER" title="NPY_KEEPORDER"><tt class="xref c c-type docutils literal"><span class="pre">NPY_KEEPORDER</span></tt></a>, the iterator reverses axes which have
+negative strides, so that memory is traversed in a forward
+direction.  This disables this step.  Use this flag if you
+want to use the underlying memory-ordering of the axes,
+but don&#8217;t want an axis reversed. This is the behavior of
+<tt class="docutils literal"><span class="pre">numpy.ravel(a,</span> <span class="pre">order='K')</span></tt>, for instance.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_COMMON_DTYPE">
+<tt class="descname">NPY_ITER_COMMON_DTYPE</tt><a class="headerlink" href="#NPY_ITER_COMMON_DTYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes the iterator to convert all the operands to a common
+data type, calculated based on the ufunc type promotion rules.
+Copying or buffering must be enabled.</p>
+<p>If the common data type is known ahead of time, don&#8217;t use this
+flag.  Instead, set the requested dtype for all the operands.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_REFS_OK">
+<tt class="descname">NPY_ITER_REFS_OK</tt><a class="headerlink" href="#NPY_ITER_REFS_OK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates that arrays with reference types (object
+arrays or structured arrays containing an object type)
+may be accepted and used in the iterator.  If this flag
+is enabled, the caller must be sure to check whether
+:cfunc:<a href="#id1"><span class="problematic" id="id2">`</span></a>NpyIter_IterationNeedsAPI`(iter) is true, in which case
+it may not release the GIL during iteration.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_ZEROSIZE_OK">
+<tt class="descname">NPY_ITER_ZEROSIZE_OK</tt><a class="headerlink" href="#NPY_ITER_ZEROSIZE_OK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates that arrays with a size of zero should be permitted.
+Since the typical iteration loop does not naturally work with
+zero-sized arrays, you must check that the IterSize is non-zero
+before entering the iteration loop.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_REDUCE_OK">
+<tt class="descname">NPY_ITER_REDUCE_OK</tt><a class="headerlink" href="#NPY_ITER_REDUCE_OK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permits writeable operands with a dimension with zero
+stride and size greater than one.  Note that such operands
+must be read/write.</p>
+<p>When buffering is enabled, this also switches to a special
+buffering mode which reduces the loop length as necessary to
+not trample on values being reduced.</p>
+<p>Note that if you want to do a reduction on an automatically
+allocated output, you must use <a class="reference internal" href="#NpyIter_GetOperandArray" title="NpyIter_GetOperandArray"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetOperandArray</span></tt></a>
+to get its reference, then set every value to the reduction
+unit before doing the iteration loop.  In the case of a
+buffered reduction, this means you must also specify the
+flag <a class="reference internal" href="#NPY_ITER_DELAY_BUFALLOC" title="NPY_ITER_DELAY_BUFALLOC"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_DELAY_BUFALLOC</span></tt></a>, then reset the iterator
+after initializing the allocated operand to prepare the
+buffers.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_RANGED">
+<tt class="descname">NPY_ITER_RANGED</tt><a class="headerlink" href="#NPY_ITER_RANGED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables support for iteration of sub-ranges of the full
+<tt class="docutils literal"><span class="pre">iterindex</span></tt> range <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">NpyIter_IterSize(iter))</span></tt>.  Use
+the function <a class="reference internal" href="#NpyIter_ResetToIterIndexRange" title="NpyIter_ResetToIterIndexRange"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_ResetToIterIndexRange</span></tt></a> to specify
+a range for iteration.</p>
+<p>This flag can only be used with <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a>
+when <a class="reference internal" href="#NPY_ITER_BUFFERED" title="NPY_ITER_BUFFERED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_BUFFERED</span></tt></a> is enabled.  This is because
+without buffering, the inner loop is always the size of the
+innermost iteration dimension, and allowing it to get cut up
+would require special handling, effectively making it more
+like the buffered version.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_BUFFERED">
+<tt class="descname">NPY_ITER_BUFFERED</tt><a class="headerlink" href="#NPY_ITER_BUFFERED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes the iterator to store buffering data, and use buffering
+to satisfy data type, alignment, and byte-order requirements.
+To buffer an operand, do not specify the <a class="reference internal" href="#NPY_ITER_COPY" title="NPY_ITER_COPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_COPY</span></tt></a>
+or <a class="reference internal" href="#NPY_ITER_UPDATEIFCOPY" title="NPY_ITER_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_UPDATEIFCOPY</span></tt></a> flags, because they will
+override buffering.  Buffering is especially useful for Python
+code using the iterator, allowing for larger chunks
+of data at once to amortize the Python interpreter overhead.</p>
+<p>If used with <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a>, the inner loop
+for the caller may get larger chunks than would be possible
+without buffering, because of how the strides are laid out.</p>
+<p>Note that if an operand is given the flag <a class="reference internal" href="#NPY_ITER_COPY" title="NPY_ITER_COPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_COPY</span></tt></a>
+or <a class="reference internal" href="#NPY_ITER_UPDATEIFCOPY" title="NPY_ITER_UPDATEIFCOPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_UPDATEIFCOPY</span></tt></a>, a copy will be made in preference
+to buffering.  Buffering will still occur when the array was
+broadcast so elements need to be duplicated to get a constant
+stride.</p>
+<p>In normal buffering, the size of each inner loop is equal
+to the buffer size, or possibly larger if
+<a class="reference internal" href="#NPY_ITER_GROWINNER" title="NPY_ITER_GROWINNER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_GROWINNER</span></tt></a> is specified.  If
+<a class="reference internal" href="#NPY_ITER_REDUCE_OK" title="NPY_ITER_REDUCE_OK"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_REDUCE_OK</span></tt></a> is enabled and a reduction occurs,
+the inner loops may become smaller depending
+on the structure of the reduction.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_GROWINNER">
+<tt class="descname">NPY_ITER_GROWINNER</tt><a class="headerlink" href="#NPY_ITER_GROWINNER" title="Permalink to this definition">¶</a></dt>
+<dd><p>When buffering is enabled, this allows the size of the inner
+loop to grow when buffering isn&#8217;t necessary.  This option
+is best used if you&#8217;re doing a straight pass through all the
+data, rather than anything with small cache-friendly arrays
+of temporary values for each inner loop.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_DELAY_BUFALLOC">
+<tt class="descname">NPY_ITER_DELAY_BUFALLOC</tt><a class="headerlink" href="#NPY_ITER_DELAY_BUFALLOC" title="Permalink to this definition">¶</a></dt>
+<dd><p>When buffering is enabled, this delays allocation of the
+buffers until <a class="reference internal" href="#NpyIter_Reset" title="NpyIter_Reset"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_Reset</span></tt></a> or another reset function is
+called.  This flag exists to avoid wasteful copying of
+buffer data when making multiple copies of a buffered
+iterator for multi-threaded iteration.</p>
+<p>Another use of this flag is for setting up reduction operations.
+After the iterator is created, and a reduction output
+is allocated automatically by the iterator (be sure to use
+READWRITE access), its value may be initialized to the reduction
+unit.  Use <a class="reference internal" href="#NpyIter_GetOperandArray" title="NpyIter_GetOperandArray"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetOperandArray</span></tt></a> to get the object.
+Then, call <a class="reference internal" href="#NpyIter_Reset" title="NpyIter_Reset"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_Reset</span></tt></a> to allocate and fill the buffers
+with their initial values.</p>
+</dd></dl>
+
+</div></blockquote>
+<p>Flags that may be passed in <tt class="docutils literal"><span class="pre">op_flags[i]</span></tt>, where <tt class="docutils literal"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">nop</span></tt>:</p>
+<blockquote>
+<div><dl class="var">
+<dt id="NPY_ITER_READWRITE">
+<tt class="descname">NPY_ITER_READWRITE</tt><a class="headerlink" href="#NPY_ITER_READWRITE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_READONLY">
+<tt class="descname">NPY_ITER_READONLY</tt><a class="headerlink" href="#NPY_ITER_READONLY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_WRITEONLY">
+<tt class="descname">NPY_ITER_WRITEONLY</tt><a class="headerlink" href="#NPY_ITER_WRITEONLY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate how the user of the iterator will read or write
+to <tt class="docutils literal"><span class="pre">op[i]</span></tt>.  Exactly one of these flags must be specified
+per operand.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_COPY">
+<tt class="descname">NPY_ITER_COPY</tt><a class="headerlink" href="#NPY_ITER_COPY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow a copy of <tt class="docutils literal"><span class="pre">op[i]</span></tt> to be made if it does not
+meet the data type or alignment requirements as specified
+by the constructor flags and parameters.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_UPDATEIFCOPY">
+<tt class="descname">NPY_ITER_UPDATEIFCOPY</tt><a class="headerlink" href="#NPY_ITER_UPDATEIFCOPY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggers <a class="reference internal" href="#NPY_ITER_COPY" title="NPY_ITER_COPY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_COPY</span></tt></a>, and when an array operand
+is flagged for writing and is copied, causes the data
+in a copy to be copied back to <tt class="docutils literal"><span class="pre">op[i]</span></tt> when the iterator
+is destroyed.</p>
+<p>If the operand is flagged as write-only and a copy is needed,
+an uninitialized temporary array will be created and then copied
+to back to <tt class="docutils literal"><span class="pre">op[i]</span></tt> on destruction, instead of doing
+the unecessary copy operation.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_NBO">
+<tt class="descname">NPY_ITER_NBO</tt><a class="headerlink" href="#NPY_ITER_NBO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_ALIGNED">
+<tt class="descname">NPY_ITER_ALIGNED</tt><a class="headerlink" href="#NPY_ITER_ALIGNED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_CONTIG">
+<tt class="descname">NPY_ITER_CONTIG</tt><a class="headerlink" href="#NPY_ITER_CONTIG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Causes the iterator to provide data for <tt class="docutils literal"><span class="pre">op[i]</span></tt>
+that is in native byte order, aligned according to
+the dtype requirements, contiguous, or any combination.</p>
+<p>By default, the iterator produces pointers into the
+arrays provided, which may be aligned or unaligned, and
+with any byte order.  If copying or buffering is not
+enabled and the operand data doesn&#8217;t satisfy the constraints,
+an error will be raised.</p>
+<p>The contiguous constraint applies only to the inner loop,
+successive inner loops may have arbitrary pointer changes.</p>
+<p>If the requested data type is in non-native byte order,
+the NBO flag overrides it and the requested data type is
+converted to be in native byte order.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_ALLOCATE">
+<tt class="descname">NPY_ITER_ALLOCATE</tt><a class="headerlink" href="#NPY_ITER_ALLOCATE" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is for output arrays, and requires that the flag
+<a class="reference internal" href="#NPY_ITER_WRITEONLY" title="NPY_ITER_WRITEONLY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_WRITEONLY</span></tt></a> or <a class="reference internal" href="#NPY_ITER_READWRITE" title="NPY_ITER_READWRITE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_READWRITE</span></tt></a>
+be set.  If <tt class="docutils literal"><span class="pre">op[i]</span></tt> is NULL, creates a new array with
+the final broadcast dimensions, and a layout matching
+the iteration order of the iterator.</p>
+<p>When <tt class="docutils literal"><span class="pre">op[i]</span></tt> is NULL, the requested data type
+<tt class="docutils literal"><span class="pre">op_dtypes[i]</span></tt> may be NULL as well, in which case it is
+automatically generated from the dtypes of the arrays which
+are flagged as readable.  The rules for generating the dtype
+are the same is for UFuncs.  Of special note is handling
+of byte order in the selected dtype.  If there is exactly
+one input, the input&#8217;s dtype is used as is.  Otherwise,
+if more than one input dtypes are combined together, the
+output will be in native byte order.</p>
+<p>After being allocated with this flag, the caller may retrieve
+the new array by calling <a class="reference internal" href="#NpyIter_GetOperandArray" title="NpyIter_GetOperandArray"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetOperandArray</span></tt></a> and
+getting the i-th object in the returned C array.  The caller
+must call Py_INCREF on it to claim a reference to the array.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_NO_SUBTYPE">
+<tt class="descname">NPY_ITER_NO_SUBTYPE</tt><a class="headerlink" href="#NPY_ITER_NO_SUBTYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>For use with <a class="reference internal" href="#NPY_ITER_ALLOCATE" title="NPY_ITER_ALLOCATE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_ALLOCATE</span></tt></a>, this flag disables
+allocating an array subtype for the output, forcing
+it to be a straight ndarray.</p>
+<p>TODO: Maybe it would be better to introduce a function
+<tt class="docutils literal"><span class="pre">NpyIter_GetWrappedOutput</span></tt> and remove this flag?</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_NO_BROADCAST">
+<tt class="descname">NPY_ITER_NO_BROADCAST</tt><a class="headerlink" href="#NPY_ITER_NO_BROADCAST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures that the input or output matches the iteration
+dimensions exactly.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_ARRAYMASK">
+<tt class="descname">NPY_ITER_ARRAYMASK</tt><a class="headerlink" href="#NPY_ITER_ARRAYMASK" title="Permalink to this definition">¶</a></dt>
+<dd><p class="versionadded">
+<span class="versionmodified">New in version 1.7.</span></p>
+<p>Indicates that this operand is the mask to use for
+selecting elements when writing to operands which have
+the <a class="reference internal" href="#NPY_ITER_WRITEMASKED" title="NPY_ITER_WRITEMASKED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_WRITEMASKED</span></tt></a> flag applied to them.
+Only one operand may have <a class="reference internal" href="#NPY_ITER_ARRAYMASK" title="NPY_ITER_ARRAYMASK"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_ARRAYMASK</span></tt></a> flag
+applied to it.</p>
+<p>The data type of an operand with this flag should be either
+<a class="reference internal" href="c-api.dtype.html#NPY_BOOL" title="NPY_BOOL"><tt class="xref c c-data docutils literal"><span class="pre">NPY_BOOL</span></tt></a>, <a class="reference internal" href="c-api.dtype.html#NPY_MASK" title="NPY_MASK"><tt class="xref c c-data docutils literal"><span class="pre">NPY_MASK</span></tt></a>, or a struct dtype
+whose fields are all valid mask dtypes. In the latter case,
+it must match up with a struct operand being WRITEMASKED,
+as it is specifying a mask for each field of that array.</p>
+<p>This flag only affects writing from the buffer back to
+the array. This means that if the operand is also
+<a class="reference internal" href="#NPY_ITER_READWRITE" title="NPY_ITER_READWRITE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_READWRITE</span></tt></a> or <a class="reference internal" href="#NPY_ITER_WRITEONLY" title="NPY_ITER_WRITEONLY"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_WRITEONLY</span></tt></a>,
+code doing iteration can write to this operand to
+control which elements will be untouched and which ones will be
+modified. This is useful when the mask should be a combination
+of input masks, for example. Mask values can be created
+with the <tt class="xref c c-func docutils literal"><span class="pre">NpyMask_Create</span></tt> function.</p>
+</dd></dl>
+
+<dl class="var">
+<dt id="NPY_ITER_WRITEMASKED">
+<tt class="descname">NPY_ITER_WRITEMASKED</tt><a class="headerlink" href="#NPY_ITER_WRITEMASKED" title="Permalink to this definition">¶</a></dt>
+<dd><p class="versionadded">
+<span class="versionmodified">New in version 1.7.</span></p>
+<p>Indicates that only elements which the operand with
+the ARRAYMASK flag indicates are intended to be modified
+by the iteration. In general, the iterator does not enforce
+this, it is up to the code doing the iteration to follow
+that promise. Code can use the <tt class="xref c c-func docutils literal"><span class="pre">NpyMask_IsExposed</span></tt>
+inline function to test whether the mask at a particular
+element allows writing.</p>
+<p>When this flag is used, and this operand is buffered, this
+changes how data is copied from the buffer into the array.
+A masked copying routine is used, which only copies the
+elements in the buffer for which <tt class="xref c c-func docutils literal"><span class="pre">NpyMask_IsExposed</span></tt>
+returns true from the corresponding element in the ARRAYMASK
+operand.</p>
+</dd></dl>
+
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_AdvancedNew">
+<a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>* <tt class="descname">NpyIter_AdvancedNew</tt><big>(</big>npy_intp<em>&nbsp;nop</em>, <a class="reference internal" href="c-api.types-and-structures.html#PyArrayObject" title="PyArrayObject">PyArrayObject</a>**<em>&nbsp;op</em>, npy_uint32<em>&nbsp;flags</em>, <a class="reference internal" href="c-api.array.html#NPY_ORDER" title="NPY_ORDER">NPY_ORDER</a><em>&nbsp;order</em>, <a class="reference internal" href="c-api.array.html#NPY_CASTING" title="NPY_CASTING">NPY_CASTING</a><em>&nbsp;casting</em>, npy_uint32*<em>&nbsp;op_flags</em>, <a class="reference internal" href="c-api.types-and-structures.html#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a>**<em>&nbsp;op_dtypes</em>, int<em>&nbsp;oa_ndim</em>, int**<em>&nbsp;op_axes</em>, npy_intp*<em>&nbsp;itershape</em>, npy_intp<em>&nbsp;buffersize</em><big>)</big><a class="headerlink" href="#NpyIter_AdvancedNew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends <a class="reference internal" href="#NpyIter_MultiNew" title="NpyIter_MultiNew"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_MultiNew</span></tt></a> with several advanced options providing
+more control over broadcasting and buffering.</p>
+<p>If -1/NULL values are passed to <tt class="docutils literal"><span class="pre">oa_ndim</span></tt>, <tt class="docutils literal"><span class="pre">op_axes</span></tt>, <tt class="docutils literal"><span class="pre">itershape</span></tt>,
+and <tt class="docutils literal"><span class="pre">buffersize</span></tt>, it is equivalent to <a class="reference internal" href="#NpyIter_MultiNew" title="NpyIter_MultiNew"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_MultiNew</span></tt></a>.</p>
+<p>The parameter <tt class="docutils literal"><span class="pre">oa_ndim</span></tt>, when not zero or -1, specifies the number of
+dimensions that will be iterated with customized broadcasting.
+If it is provided, <tt class="docutils literal"><span class="pre">op_axes</span></tt> must and <tt class="docutils literal"><span class="pre">itershape</span></tt> can also be provided.
+The <tt class="docutils literal"><span class="pre">op_axes</span></tt> parameter let you control in detail how the
+axes of the operand arrays get matched together and iterated.
+In <tt class="docutils literal"><span class="pre">op_axes</span></tt>, you must provide an array of <tt class="docutils literal"><span class="pre">nop</span></tt> pointers
+to <tt class="docutils literal"><span class="pre">oa_ndim</span></tt>-sized arrays of type <tt class="docutils literal"><span class="pre">npy_intp</span></tt>.  If an entry
+in <tt class="docutils literal"><span class="pre">op_axes</span></tt> is NULL, normal broadcasting rules will apply.
+In <tt class="docutils literal"><span class="pre">op_axes[j][i]</span></tt> is stored either a valid axis of <tt class="docutils literal"><span class="pre">op[j]</span></tt>, or
+-1 which means <tt class="docutils literal"><span class="pre">newaxis</span></tt>.  Within each <tt class="docutils literal"><span class="pre">op_axes[j]</span></tt> array, axes
+may not be repeated.  The following example is how normal broadcasting
+applies to a 3-D array, a 2-D array, a 1-D array and a scalar.</p>
+<p><strong>Note</strong>: Before NumPy 1.8 <tt class="docutils literal"><span class="pre">oa_ndim</span> <span class="pre">==</span> <span class="pre">0`</span> <span class="pre">was</span> <span class="pre">used</span> <span class="pre">for</span> <span class="pre">signalling</span> <span class="pre">that</span>
+<span class="pre">that</span> <span class="pre">``op_axes</span></tt> and <tt class="docutils literal"><span class="pre">itershape</span></tt> are unused. This is deprecated and
+should be replaced with -1. Better backward compatibility may be
+achieved by using <a class="reference internal" href="#NpyIter_MultiNew" title="NpyIter_MultiNew"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_MultiNew</span></tt></a> for this case.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">int</span> <span class="n">oa_ndim</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>               <span class="cm">/* # iteration axes */</span>
+<span class="kt">int</span> <span class="n">op0_axes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">};</span>    <span class="cm">/* 3-D operand */</span>
+<span class="kt">int</span> <span class="n">op1_axes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">};</span>   <span class="cm">/* 2-D operand */</span>
+<span class="kt">int</span> <span class="n">op2_axes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>  <span class="cm">/* 1-D operand */</span>
+<span class="kt">int</span> <span class="n">op3_axes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>  <span class="cm">/* 0-D (scalar) operand */</span>
+<span class="kt">int</span><span class="o">*</span> <span class="n">op_axes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="n">op0_axes</span><span class="p">,</span> <span class="n">op1_axes</span><span class="p">,</span> <span class="n">op2_axes</span><span class="p">,</span> <span class="n">op3_axes</span><span class="p">};</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">itershape</span></tt> parameter allows you to force the iterator
+to have a specific iteration shape. It is an array of length
+<tt class="docutils literal"><span class="pre">oa_ndim</span></tt>. When an entry is negative, its value is determined
+from the operands. This parameter allows automatically allocated
+outputs to get additional dimensions which don&#8217;t match up with
+any dimension of an input.</p>
+<p>If <tt class="docutils literal"><span class="pre">buffersize</span></tt> is zero, a default buffer size is used,
+otherwise it specifies how big of a buffer to use.  Buffers
+which are powers of 2 such as 4096 or 8192 are recommended.</p>
+<p>Returns NULL if there is an error, otherwise returns the allocated
+iterator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_Copy">
+<a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>* <tt class="descname">NpyIter_Copy</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_Copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a copy of the given iterator.  This function is provided
+primarily to enable multi-threaded iteration of the data.</p>
+<p><em>TODO</em>: Move this to a section about multithreaded iteration.</p>
+<p>The recommended approach to multithreaded iteration is to
+first create an iterator with the flags
+<a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a>, <a class="reference internal" href="#NPY_ITER_RANGED" title="NPY_ITER_RANGED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_RANGED</span></tt></a>,
+<a class="reference internal" href="#NPY_ITER_BUFFERED" title="NPY_ITER_BUFFERED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_BUFFERED</span></tt></a>, <a class="reference internal" href="#NPY_ITER_DELAY_BUFALLOC" title="NPY_ITER_DELAY_BUFALLOC"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_DELAY_BUFALLOC</span></tt></a>, and
+possibly <a class="reference internal" href="#NPY_ITER_GROWINNER" title="NPY_ITER_GROWINNER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_GROWINNER</span></tt></a>.  Create a copy of this iterator
+for each thread (minus one for the first iterator).  Then, take
+the iteration index range <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">NpyIter_GetIterSize(iter))</span></tt> and
+split it up into tasks, for example using a TBB parallel_for loop.
+When a thread gets a task to execute, it then uses its copy of
+the iterator by calling <a class="reference internal" href="#NpyIter_ResetToIterIndexRange" title="NpyIter_ResetToIterIndexRange"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_ResetToIterIndexRange</span></tt></a> and
+iterating over the full range.</p>
+<p>When using the iterator in multi-threaded code or in code not
+holding the Python GIL, care must be taken to only call functions
+which are safe in that context.  <a class="reference internal" href="#NpyIter_Copy" title="NpyIter_Copy"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_Copy</span></tt></a> cannot be safely
+called without the Python GIL, because it increments Python
+references.  The <tt class="docutils literal"><span class="pre">Reset*</span></tt> and some other functions may be safely
+called by passing in the <tt class="docutils literal"><span class="pre">errmsg</span></tt> parameter as non-NULL, so that
+the functions will pass back errors through it instead of setting
+a Python exception.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">int NpyIter_RemoveAxis(NpyIter* iter, int axis)``</tt></dt>
+<dd><p>Removes an axis from iteration.  This requires that
+<a class="reference internal" href="#NPY_ITER_MULTI_INDEX" title="NPY_ITER_MULTI_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_MULTI_INDEX</span></tt></a> was set for iterator creation, and does
+not work if buffering is enabled or an index is being tracked. This
+function also resets the iterator to its initial state.</p>
+<p>This is useful for setting up an accumulation loop, for example.
+The iterator can first be created with all the dimensions, including
+the accumulation axis, so that the output gets created correctly.
+Then, the accumulation axis can be removed, and the calculation
+done in a nested fashion.</p>
+<p><strong>WARNING</strong>: This function may change the internal memory layout of
+the iterator.  Any cached functions or pointers from the iterator
+must be retrieved again!</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_RemoveMultiIndex">
+int <tt class="descname">NpyIter_RemoveMultiIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_RemoveMultiIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the iterator is tracking a multi-index, this strips support for them,
+and does further iterator optimizations that are possible if multi-indices
+are not needed.  This function also resets the iterator to its initial
+state.</p>
+<p><strong>WARNING</strong>: This function may change the internal memory layout of
+the iterator.  Any cached functions or pointers from the iterator
+must be retrieved again!</p>
+<p>After calling this function, :cfunc:<a href="#id3"><span class="problematic" id="id4">`</span></a>NpyIter_HasMultiIndex`(iter) will
+return false.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_EnableExternalLoop">
+int <tt class="descname">NpyIter_EnableExternalLoop</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_EnableExternalLoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <a class="reference internal" href="#NpyIter_RemoveMultiIndex" title="NpyIter_RemoveMultiIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_RemoveMultiIndex</span></tt></a> was called, you may want to enable the
+flag <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a>.  This flag is not permitted
+together with <a class="reference internal" href="#NPY_ITER_MULTI_INDEX" title="NPY_ITER_MULTI_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_MULTI_INDEX</span></tt></a>, so this function is provided
+to enable the feature after <a class="reference internal" href="#NpyIter_RemoveMultiIndex" title="NpyIter_RemoveMultiIndex"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_RemoveMultiIndex</span></tt></a> is called.
+This function also resets the iterator to its initial state.</p>
+<p><strong>WARNING</strong>: This function changes the internal logic of the iterator.
+Any cached functions or pointers from the iterator must be retrieved
+again!</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_Deallocate">
+int <tt class="descname">NpyIter_Deallocate</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_Deallocate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deallocates the iterator object.  This additionally frees any
+copies made, triggering UPDATEIFCOPY behavior where necessary.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_Reset">
+int <tt class="descname">NpyIter_Reset</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, char**<em>&nbsp;errmsg</em><big>)</big><a class="headerlink" href="#NpyIter_Reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the iterator back to its initial state, at the beginning
+of the iteration range.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.  If errmsg is non-NULL,
+no Python exception is set when <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt> is returned.
+Instead, *errmsg is set to an error message.  When errmsg is
+non-NULL, the function may be safely called without holding
+the Python GIL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_ResetToIterIndexRange">
+int <tt class="descname">NpyIter_ResetToIterIndexRange</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp<em>&nbsp;istart</em>, npy_intp<em>&nbsp;iend</em>, char**<em>&nbsp;errmsg</em><big>)</big><a class="headerlink" href="#NpyIter_ResetToIterIndexRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the iterator and restricts it to the <tt class="docutils literal"><span class="pre">iterindex</span></tt> range
+<tt class="docutils literal"><span class="pre">[istart,</span> <span class="pre">iend)</span></tt>.  See <a class="reference internal" href="#NpyIter_Copy" title="NpyIter_Copy"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_Copy</span></tt></a> for an explanation of
+how to use this for multi-threaded iteration.  This requires that
+the flag <a class="reference internal" href="#NPY_ITER_RANGED" title="NPY_ITER_RANGED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_RANGED</span></tt></a> was passed to the iterator constructor.</p>
+<p>If you want to reset both the <tt class="docutils literal"><span class="pre">iterindex</span></tt> range and the base
+pointers at the same time, you can do the following to avoid
+extra buffer copying (be sure to add the return code error checks
+when you copy this code).</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* Set to a trivial empty range */</span>
+<span class="n">NpyIter_ResetToIterIndexRange</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="cm">/* Set the base pointers */</span>
+<span class="n">NpyIter_ResetBasePointers</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="n">baseptrs</span><span class="p">);</span>
+<span class="cm">/* Set to the desired range */</span>
+<span class="n">NpyIter_ResetToIterIndexRange</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="n">istart</span><span class="p">,</span> <span class="n">iend</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.  If errmsg is non-NULL,
+no Python exception is set when <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt> is returned.
+Instead, *errmsg is set to an error message.  When errmsg is
+non-NULL, the function may be safely called without holding
+the Python GIL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_ResetBasePointers">
+int <tt class="descname">NpyIter_ResetBasePointers</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a><em>&nbsp;*iter</em>, char**<em>&nbsp;baseptrs</em>, char**<em>&nbsp;errmsg</em><big>)</big><a class="headerlink" href="#NpyIter_ResetBasePointers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the iterator back to its initial state, but using the values
+in <tt class="docutils literal"><span class="pre">baseptrs</span></tt> for the data instead of the pointers from the arrays
+being iterated.  This functions is intended to be used, together with
+the <tt class="docutils literal"><span class="pre">op_axes</span></tt> parameter, by nested iteration code with two or more
+iterators.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.  If errmsg is non-NULL,
+no Python exception is set when <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt> is returned.
+Instead, *errmsg is set to an error message.  When errmsg is
+non-NULL, the function may be safely called without holding
+the Python GIL.</p>
+<p><em>TODO</em>: Move the following into a special section on nested iterators.</p>
+<p>Creating iterators for nested iteration requires some care.  All
+the iterator operands must match exactly, or the calls to
+<a class="reference internal" href="#NpyIter_ResetBasePointers" title="NpyIter_ResetBasePointers"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_ResetBasePointers</span></tt></a> will be invalid.  This means that
+automatic copies and output allocation should not be used haphazardly.
+It is possible to still use the automatic data conversion and casting
+features of the iterator by creating one of the iterators with
+all the conversion parameters enabled, then grabbing the allocated
+operands with the <a class="reference internal" href="#NpyIter_GetOperandArray" title="NpyIter_GetOperandArray"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetOperandArray</span></tt></a> function and passing
+them into the constructors for the rest of the iterators.</p>
+<p><strong>WARNING</strong>: When creating iterators for nested iteration,
+the code must not use a dimension more than once in the different
+iterators.  If this is done, nested iteration will produce
+out-of-bounds pointers during iteration.</p>
+<p><strong>WARNING</strong>: When creating iterators for nested iteration, buffering
+can only be applied to the innermost iterator.  If a buffered iterator
+is used as the source for <tt class="docutils literal"><span class="pre">baseptrs</span></tt>, it will point into a small buffer
+instead of the array and the inner iteration will be invalid.</p>
+<p>The pattern for using nested iterators is as follows.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">NpyIter</span> <span class="o">*</span><span class="n">iter1</span><span class="p">,</span> <span class="o">*</span><span class="n">iter1</span><span class="p">;</span>
+<span class="n">NpyIter_IterNextFunc</span> <span class="o">*</span><span class="n">iternext1</span><span class="p">,</span> <span class="o">*</span><span class="n">iternext2</span><span class="p">;</span>
+<span class="kt">char</span> <span class="o">**</span><span class="n">dataptrs1</span><span class="p">;</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * With the exact same operands, no copies allowed, and</span>
+<span class="cm"> * no axis in op_axes used both in iter1 and iter2.</span>
+<span class="cm"> * Buffering may be enabled for iter2, but not for iter1.</span>
+<span class="cm"> */</span>
+<span class="n">iter1</span> <span class="o">=</span> <span class="p">...;</span> <span class="n">iter2</span> <span class="o">=</span> <span class="p">...;</span>
+
+<span class="n">iternext1</span> <span class="o">=</span> <span class="n">NpyIter_GetIterNext</span><span class="p">(</span><span class="n">iter1</span><span class="p">);</span>
+<span class="n">iternext2</span> <span class="o">=</span> <span class="n">NpyIter_GetIterNext</span><span class="p">(</span><span class="n">iter2</span><span class="p">);</span>
+<span class="n">dataptrs1</span> <span class="o">=</span> <span class="n">NpyIter_GetDataPtrArray</span><span class="p">(</span><span class="n">iter1</span><span class="p">);</span>
+
+<span class="k">do</span> <span class="p">{</span>
+    <span class="n">NpyIter_ResetBasePointers</span><span class="p">(</span><span class="n">iter2</span><span class="p">,</span> <span class="n">dataptrs1</span><span class="p">);</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="cm">/* Use the iter2 values */</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">iternext2</span><span class="p">(</span><span class="n">iter2</span><span class="p">));</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">iternext1</span><span class="p">(</span><span class="n">iter1</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GotoMultiIndex">
+int <tt class="descname">NpyIter_GotoMultiIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp*<em>&nbsp;multi_index</em><big>)</big><a class="headerlink" href="#NpyIter_GotoMultiIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjusts the iterator to point to the <tt class="docutils literal"><span class="pre">ndim</span></tt> indices
+pointed to by <tt class="docutils literal"><span class="pre">multi_index</span></tt>.  Returns an error if a multi-index
+is not being tracked, the indices are out of bounds,
+or inner loop iteration is disabled.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GotoIndex">
+int <tt class="descname">NpyIter_GotoIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp<em>&nbsp;index</em><big>)</big><a class="headerlink" href="#NpyIter_GotoIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjusts the iterator to point to the <tt class="docutils literal"><span class="pre">index</span></tt> specified.
+If the iterator was constructed with the flag
+<a class="reference internal" href="#NPY_ITER_C_INDEX" title="NPY_ITER_C_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_C_INDEX</span></tt></a>, <tt class="docutils literal"><span class="pre">index</span></tt> is the C-order index,
+and if the iterator was constructed with the flag
+<a class="reference internal" href="#NPY_ITER_F_INDEX" title="NPY_ITER_F_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_F_INDEX</span></tt></a>, <tt class="docutils literal"><span class="pre">index</span></tt> is the Fortran-order
+index.  Returns an error if there is no index being tracked,
+the index is out of bounds, or inner loop iteration is disabled.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetIterSize">
+npy_intp <tt class="descname">NpyIter_GetIterSize</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetIterSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of elements being iterated.  This is the product
+of all the dimensions in the shape.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetIterIndex">
+npy_intp <tt class="descname">NpyIter_GetIterIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetIterIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the <tt class="docutils literal"><span class="pre">iterindex</span></tt> of the iterator, which is an index matching
+the iteration order of the iterator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetIterIndexRange">
+void <tt class="descname">NpyIter_GetIterIndexRange</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp*<em>&nbsp;istart</em>, npy_intp*<em>&nbsp;iend</em><big>)</big><a class="headerlink" href="#NpyIter_GetIterIndexRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the <tt class="docutils literal"><span class="pre">iterindex</span></tt> sub-range that is being iterated.  If
+<a class="reference internal" href="#NPY_ITER_RANGED" title="NPY_ITER_RANGED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_RANGED</span></tt></a> was not specified, this always returns the
+range <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">NpyIter_IterSize(iter))</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GotoIterIndex">
+int <tt class="descname">NpyIter_GotoIterIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp<em>&nbsp;iterindex</em><big>)</big><a class="headerlink" href="#NpyIter_GotoIterIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjusts the iterator to point to the <tt class="docutils literal"><span class="pre">iterindex</span></tt> specified.
+The IterIndex is an index matching the iteration order of the iterator.
+Returns an error if the <tt class="docutils literal"><span class="pre">iterindex</span></tt> is out of bounds,
+buffering is enabled, or inner loop iteration is disabled.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_HasDelayedBufAlloc">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_HasDelayedBufAlloc</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_HasDelayedBufAlloc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if the flag <a class="reference internal" href="#NPY_ITER_DELAY_BUFALLOC" title="NPY_ITER_DELAY_BUFALLOC"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_DELAY_BUFALLOC</span></tt></a> was passed
+to the iterator constructor, and no call to one of the Reset
+functions has been done yet, 0 otherwise.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_HasExternalLoop">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_HasExternalLoop</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_HasExternalLoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if the caller needs to handle the inner-most 1-dimensional
+loop, or 0 if the iterator handles all looping. This is controlled
+by the constructor flag <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a> or
+<a class="reference internal" href="#NpyIter_EnableExternalLoop" title="NpyIter_EnableExternalLoop"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_EnableExternalLoop</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_HasMultiIndex">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_HasMultiIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_HasMultiIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if the iterator was created with the
+<a class="reference internal" href="#NPY_ITER_MULTI_INDEX" title="NPY_ITER_MULTI_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_MULTI_INDEX</span></tt></a> flag, 0 otherwise.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_HasIndex">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_HasIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_HasIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if the iterator was created with the
+<a class="reference internal" href="#NPY_ITER_C_INDEX" title="NPY_ITER_C_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_C_INDEX</span></tt></a> or <a class="reference internal" href="#NPY_ITER_F_INDEX" title="NPY_ITER_F_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_F_INDEX</span></tt></a>
+flag, 0 otherwise.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_RequiresBuffering">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_RequiresBuffering</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_RequiresBuffering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if the iterator requires buffering, which occurs
+when an operand needs conversion or alignment and so cannot
+be used directly.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_IsBuffered">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_IsBuffered</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_IsBuffered" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if the iterator was created with the
+<a class="reference internal" href="#NPY_ITER_BUFFERED" title="NPY_ITER_BUFFERED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_BUFFERED</span></tt></a> flag, 0 otherwise.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_IsGrowInner">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_IsGrowInner</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_IsGrowInner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if the iterator was created with the
+<a class="reference internal" href="#NPY_ITER_GROWINNER" title="NPY_ITER_GROWINNER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_GROWINNER</span></tt></a> flag, 0 otherwise.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetBufferSize">
+npy_intp <tt class="descname">NpyIter_GetBufferSize</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetBufferSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the iterator is buffered, returns the size of the buffer
+being used, otherwise returns 0.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetNDim">
+int <tt class="descname">NpyIter_GetNDim</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetNDim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of dimensions being iterated.  If a multi-index
+was not requested in the iterator constructor, this value
+may be smaller than the number of dimensions in the original
+objects.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetNOp">
+int <tt class="descname">NpyIter_GetNOp</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetNOp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of operands in the iterator.</p>
+<p>When <tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_USE_MASKNA</span></tt> is used on an operand, a new
+operand is added to the end of the operand list in the iterator
+to track that operand&#8217;s NA mask. Thus, this equals the number
+of construction operands plus the number of operands for
+which the flag <tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_USE_MASKNA</span></tt> was specified.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetFirstMaskNAOp">
+int <tt class="descname">NpyIter_GetFirstMaskNAOp</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetFirstMaskNAOp" title="Permalink to this definition">¶</a></dt>
+<dd><p class="versionadded">
+<span class="versionmodified">New in version 1.7.</span></p>
+<p>Returns the index of the first NA mask operand in the array. This
+value is equal to the number of operands passed into the constructor.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetAxisStrideArray">
+npy_intp* <tt class="descname">NpyIter_GetAxisStrideArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, int<em>&nbsp;axis</em><big>)</big><a class="headerlink" href="#NpyIter_GetAxisStrideArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the array of strides for the specified axis. Requires that
+the iterator be tracking a multi-index, and that buffering not
+be enabled.</p>
+<p>This may be used when you want to match up operand axes in
+some fashion, then remove them with <tt class="xref c c-func docutils literal"><span class="pre">NpyIter_RemoveAxis</span></tt> to
+handle their processing manually.  By calling this function
+before removing the axes, you can get the strides for the
+manual processing.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NULL</span></tt> on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetShape">
+int <tt class="descname">NpyIter_GetShape</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp*<em>&nbsp;outshape</em><big>)</big><a class="headerlink" href="#NpyIter_GetShape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the broadcast shape of the iterator in <tt class="docutils literal"><span class="pre">outshape</span></tt>.
+This can only be called on an iterator which is tracking a multi-index.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetDescrArray">
+<a class="reference internal" href="c-api.types-and-structures.html#PyArray_Descr" title="PyArray_Descr">PyArray_Descr</a>** <tt class="descname">NpyIter_GetDescrArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetDescrArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>This gives back a pointer to the <tt class="docutils literal"><span class="pre">nop</span></tt> data type Descrs for
+the objects being iterated.  The result points into <tt class="docutils literal"><span class="pre">iter</span></tt>,
+so the caller does not gain any references to the Descrs.</p>
+<p>This pointer may be cached before the iteration loop, calling
+<tt class="docutils literal"><span class="pre">iternext</span></tt> will not change it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetOperandArray">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.4)">PyObject</a>** <tt class="descname">NpyIter_GetOperandArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetOperandArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>This gives back a pointer to the <tt class="docutils literal"><span class="pre">nop</span></tt> operand PyObjects
+that are being iterated.  The result points into <tt class="docutils literal"><span class="pre">iter</span></tt>,
+so the caller does not gain any references to the PyObjects.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetMaskNAIndexArray">
+npy_int8* <tt class="descname">NpyIter_GetMaskNAIndexArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetMaskNAIndexArray" title="Permalink to this definition">¶</a></dt>
+<dd><p class="versionadded">
+<span class="versionmodified">New in version 1.7.</span></p>
+<p>This gives back a pointer to the <tt class="docutils literal"><span class="pre">nop</span></tt> indices which map
+construction operands with <tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_USE_MASKNA</span></tt> flagged
+to their corresponding NA mask operands and vice versa. For
+operands which were not flagged with <tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_USE_MASKNA</span></tt>,
+this array contains negative values.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetIterView">
+<a class="reference external" href="http://docs.python.org/dev/c-api/structures.html#PyObject" title="(in Python v3.4)">PyObject</a>* <tt class="descname">NpyIter_GetIterView</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp<em>&nbsp;i</em><big>)</big><a class="headerlink" href="#NpyIter_GetIterView" title="Permalink to this definition">¶</a></dt>
+<dd><p>This gives back a reference to a new ndarray view, which is a view
+into the i-th object in the array :cfunc:<a href="#id5"><span class="problematic" id="id6">`</span></a>NpyIter_GetOperandArray`(),
+whose dimensions and strides match the internal optimized
+iteration pattern.  A C-order iteration of this view is equivalent
+to the iterator&#8217;s iteration order.</p>
+<p>For example, if an iterator was created with a single array as its
+input, and it was possible to rearrange all its axes and then
+collapse it into a single strided iteration, this would return
+a view that is a one-dimensional array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetReadFlags">
+void <tt class="descname">NpyIter_GetReadFlags</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, char*<em>&nbsp;outreadflags</em><big>)</big><a class="headerlink" href="#NpyIter_GetReadFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills <tt class="docutils literal"><span class="pre">nop</span></tt> flags. Sets <tt class="docutils literal"><span class="pre">outreadflags[i]</span></tt> to 1 if
+<tt class="docutils literal"><span class="pre">op[i]</span></tt> can be read from, and to 0 if not.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetWriteFlags">
+void <tt class="descname">NpyIter_GetWriteFlags</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, char*<em>&nbsp;outwriteflags</em><big>)</big><a class="headerlink" href="#NpyIter_GetWriteFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills <tt class="docutils literal"><span class="pre">nop</span></tt> flags. Sets <tt class="docutils literal"><span class="pre">outwriteflags[i]</span></tt> to 1 if
+<tt class="docutils literal"><span class="pre">op[i]</span></tt> can be written to, and to 0 if not.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_CreateCompatibleStrides">
+int <tt class="descname">NpyIter_CreateCompatibleStrides</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp<em>&nbsp;itemsize</em>, npy_intp*<em>&nbsp;outstrides</em><big>)</big><a class="headerlink" href="#NpyIter_CreateCompatibleStrides" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a set of strides which are the same as the strides of an
+output array created using the <a class="reference internal" href="#NPY_ITER_ALLOCATE" title="NPY_ITER_ALLOCATE"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_ALLOCATE</span></tt></a> flag, where NULL
+was passed for op_axes.  This is for data packed contiguously,
+but not necessarily in C or Fortran order. This should be used
+together with <a class="reference internal" href="#NpyIter_GetShape" title="NpyIter_GetShape"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetShape</span></tt></a> and <a class="reference internal" href="#NpyIter_GetNDim" title="NpyIter_GetNDim"><tt class="xref c c-func docutils literal"><span class="pre">NpyIter_GetNDim</span></tt></a>
+with the flag <a class="reference internal" href="#NPY_ITER_MULTI_INDEX" title="NPY_ITER_MULTI_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_MULTI_INDEX</span></tt></a> passed into the constructor.</p>
+<p>A use case for this function is to match the shape and layout of
+the iterator and tack on one or more dimensions.  For example,
+in order to generate a vector per input value for a numerical gradient,
+you pass in ndim*itemsize for itemsize, then add another dimension to
+the end with size ndim and stride itemsize.  To do the Hessian matrix,
+you do the same thing but add two dimensions, or take advantage of
+the symmetry and pack it into 1 dimension with a particular encoding.</p>
+<p>This function may only be called if the iterator is tracking a multi-index
+and if <a class="reference internal" href="#NPY_ITER_DONT_NEGATE_STRIDES" title="NPY_ITER_DONT_NEGATE_STRIDES"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_DONT_NEGATE_STRIDES</span></tt></a> was used to prevent an axis
+from being iterated in reverse order.</p>
+<p>If an array is created with this method, simply adding &#8216;itemsize&#8217;
+for each iteration will traverse the new array matching the
+iterator.</p>
+<p>Returns <tt class="docutils literal"><span class="pre">NPY_SUCCEED</span></tt> or <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_IsFirstVisit">
+<a class="reference internal" href="c-api.dtype.html#npy_bool" title="npy_bool">npy_bool</a> <tt class="descname">NpyIter_IsFirstVisit</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, int<em>&nbsp;iop</em><big>)</big><a class="headerlink" href="#NpyIter_IsFirstVisit" title="Permalink to this definition">¶</a></dt>
+<dd><p class="versionadded">
+<span class="versionmodified">New in version 1.7.</span></p>
+<p>Checks to see whether this is the first time the elements of the
+specified reduction operand which the iterator points at are being
+seen for the first time. The function returns a reasonable answer
+for reduction operands and when buffering is disabled. The answer
+may be incorrect for buffered non-reduction operands.</p>
+<p>This function is intended to be used in EXTERNAL_LOOP mode only,
+and will produce some wrong answers when that mode is not enabled.</p>
+<p>If this function returns true, the caller should also check the inner
+loop stride of the operand, because if that stride is 0, then only
+the first element of the innermost external loop is being visited
+for the first time.</p>
+<p><em>WARNING</em>: For performance reasons, &#8216;iop&#8217; is not bounds-checked,
+it is not confirmed that &#8216;iop&#8217; is actually a reduction operand,
+and it is not confirmed that EXTERNAL_LOOP mode is enabled. These
+checks are the responsibility of the caller, and should be done
+outside of any inner loops.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="functions-for-iteration">
+<h2>Functions For Iteration<a class="headerlink" href="#functions-for-iteration" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="NpyIter_GetIterNext">
+<a class="reference internal" href="#NpyIter_IterNextFunc" title="NpyIter_IterNextFunc">NpyIter_IterNextFunc</a>* <tt class="descname">NpyIter_GetIterNext</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, char**<em>&nbsp;errmsg</em><big>)</big><a class="headerlink" href="#NpyIter_GetIterNext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function pointer for iteration.  A specialized version
+of the function pointer may be calculated by this function
+instead of being stored in the iterator structure. Thus, to
+get good performance, it is required that the function pointer
+be saved in a variable rather than retrieved for each loop iteration.</p>
+<p>Returns NULL if there is an error.  If errmsg is non-NULL,
+no Python exception is set when <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt> is returned.
+Instead, *errmsg is set to an error message.  When errmsg is
+non-NULL, the function may be safely called without holding
+the Python GIL.</p>
+<p>The typical looping construct is as follows.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">NpyIter_IterNextFunc</span> <span class="o">*</span><span class="n">iternext</span> <span class="o">=</span> <span class="n">NpyIter_GetIterNext</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="kt">char</span><span class="o">**</span> <span class="n">dataptr</span> <span class="o">=</span> <span class="n">NpyIter_GetDataPtrArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+
+<span class="k">do</span> <span class="p">{</span>
+    <span class="cm">/* use the addresses dataptr[0], ... dataptr[nop-1] */</span>
+<span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="n">iternext</span><span class="p">(</span><span class="n">iter</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>When <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a> is specified, the typical
+inner loop construct is as follows.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">NpyIter_IterNextFunc</span> <span class="o">*</span><span class="n">iternext</span> <span class="o">=</span> <span class="n">NpyIter_GetIterNext</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="kt">char</span><span class="o">**</span> <span class="n">dataptr</span> <span class="o">=</span> <span class="n">NpyIter_GetDataPtrArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+<span class="n">npy_intp</span><span class="o">*</span> <span class="n">stride</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerStrideArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+<span class="n">npy_intp</span><span class="o">*</span> <span class="n">size_ptr</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerLoopSizePtr</span><span class="p">(</span><span class="n">iter</span><span class="p">),</span> <span class="n">size</span><span class="p">;</span>
+<span class="n">npy_intp</span> <span class="n">iop</span><span class="p">,</span> <span class="n">nop</span> <span class="o">=</span> <span class="n">NpyIter_GetNOp</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+
+<span class="k">do</span> <span class="p">{</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="o">*</span><span class="n">size_ptr</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">size</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* use the addresses dataptr[0], ... dataptr[nop-1] */</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">iop</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">iop</span> <span class="o">&lt;</span> <span class="n">nop</span><span class="p">;</span> <span class="o">++</span><span class="n">iop</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">dataptr</span><span class="p">[</span><span class="n">iop</span><span class="p">]</span> <span class="o">+=</span> <span class="n">stride</span><span class="p">[</span><span class="n">iop</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">iternext</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>Observe that we are using the dataptr array inside the iterator, not
+copying the values to a local temporary.  This is possible because
+when <tt class="docutils literal"><span class="pre">iternext()</span></tt> is called, these pointers will be overwritten
+with fresh values, not incrementally updated.</p>
+<p>If a compile-time fixed buffer is being used (both flags
+<a class="reference internal" href="#NPY_ITER_BUFFERED" title="NPY_ITER_BUFFERED"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_BUFFERED</span></tt></a> and <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a>), the
+inner size may be used as a signal as well.  The size is guaranteed
+to become zero when <tt class="docutils literal"><span class="pre">iternext()</span></tt> returns false, enabling the
+following loop construct.  Note that if you use this construct,
+you should not pass <a class="reference internal" href="#NPY_ITER_GROWINNER" title="NPY_ITER_GROWINNER"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_GROWINNER</span></tt></a> as a flag, because it
+will cause larger sizes under some circumstances.</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* The constructor should have buffersize passed as this value */</span>
+<span class="cp">#define FIXED_BUFFER_SIZE 1024</span>
+
+<span class="n">NpyIter_IterNextFunc</span> <span class="o">*</span><span class="n">iternext</span> <span class="o">=</span> <span class="n">NpyIter_GetIterNext</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="kt">char</span> <span class="o">**</span><span class="n">dataptr</span> <span class="o">=</span> <span class="n">NpyIter_GetDataPtrArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+<span class="n">npy_intp</span> <span class="o">*</span><span class="n">stride</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerStrideArray</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+<span class="n">npy_intp</span> <span class="o">*</span><span class="n">size_ptr</span> <span class="o">=</span> <span class="n">NpyIter_GetInnerLoopSizePtr</span><span class="p">(</span><span class="n">iter</span><span class="p">),</span> <span class="n">size</span><span class="p">;</span>
+<span class="n">npy_intp</span> <span class="n">i</span><span class="p">,</span> <span class="n">iop</span><span class="p">,</span> <span class="n">nop</span> <span class="o">=</span> <span class="n">NpyIter_GetNOp</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+
+<span class="cm">/* One loop with a fixed inner size */</span>
+<span class="n">size</span> <span class="o">=</span> <span class="o">*</span><span class="n">size_ptr</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">size</span> <span class="o">==</span> <span class="n">FIXED_BUFFER_SIZE</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/*</span>
+<span class="cm">     * This loop could be manually unrolled by a factor</span>
+<span class="cm">     * which divides into FIXED_BUFFER_SIZE</span>
+<span class="cm">     */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">FIXED_BUFFER_SIZE</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* use the addresses dataptr[0], ... dataptr[nop-1] */</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">iop</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">iop</span> <span class="o">&lt;</span> <span class="n">nop</span><span class="p">;</span> <span class="o">++</span><span class="n">iop</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">dataptr</span><span class="p">[</span><span class="n">iop</span><span class="p">]</span> <span class="o">+=</span> <span class="n">stride</span><span class="p">[</span><span class="n">iop</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">iternext</span><span class="p">();</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="o">*</span><span class="n">size_ptr</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Finish-up loop with variable inner size */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="p">{</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="o">*</span><span class="n">size_ptr</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">size</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* use the addresses dataptr[0], ... dataptr[nop-1] */</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">iop</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">iop</span> <span class="o">&lt;</span> <span class="n">nop</span><span class="p">;</span> <span class="o">++</span><span class="n">iop</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">dataptr</span><span class="p">[</span><span class="n">iop</span><span class="p">]</span> <span class="o">+=</span> <span class="n">stride</span><span class="p">[</span><span class="n">iop</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">iternext</span><span class="p">());</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetGetMultiIndex">
+<a class="reference internal" href="#NpyIter_GetMultiIndexFunc" title="NpyIter_GetMultiIndexFunc">NpyIter_GetMultiIndexFunc</a> *<tt class="descname">NpyIter_GetGetMultiIndex</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, char**<em>&nbsp;errmsg</em><big>)</big><a class="headerlink" href="#NpyIter_GetGetMultiIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function pointer for getting the current multi-index
+of the iterator.  Returns NULL if the iterator is not tracking
+a multi-index.  It is recommended that this function
+pointer be cached in a local variable before the iteration
+loop.</p>
+<p>Returns NULL if there is an error.  If errmsg is non-NULL,
+no Python exception is set when <tt class="docutils literal"><span class="pre">NPY_FAIL</span></tt> is returned.
+Instead, *errmsg is set to an error message.  When errmsg is
+non-NULL, the function may be safely called without holding
+the Python GIL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetDataPtrArray">
+char** <tt class="descname">NpyIter_GetDataPtrArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetDataPtrArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>This gives back a pointer to the <tt class="docutils literal"><span class="pre">nop</span></tt> data pointers.  If
+<a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a> was not specified, each data
+pointer points to the current data item of the iterator.  If
+no inner iteration was specified, it points to the first data
+item of the inner loop.</p>
+<p>This pointer may be cached before the iteration loop, calling
+<tt class="docutils literal"><span class="pre">iternext</span></tt> will not change it.  This function may be safely
+called without holding the Python GIL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetInitialDataPtrArray">
+char** <tt class="descname">NpyIter_GetInitialDataPtrArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetInitialDataPtrArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the array of data pointers directly into the arrays (never
+into the buffers), corresponding to iteration index 0.</p>
+<p>These pointers are different from the pointers accepted by
+<tt class="docutils literal"><span class="pre">NpyIter_ResetBasePointers</span></tt>, because the direction along
+some axes may have been reversed.</p>
+<p>This function may be safely called without holding the Python GIL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetIndexPtr">
+npy_intp* <tt class="descname">NpyIter_GetIndexPtr</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetIndexPtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>This gives back a pointer to the index being tracked, or NULL
+if no index is being tracked.  It is only useable if one of
+the flags <a class="reference internal" href="#NPY_ITER_C_INDEX" title="NPY_ITER_C_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_C_INDEX</span></tt></a> or <a class="reference internal" href="#NPY_ITER_F_INDEX" title="NPY_ITER_F_INDEX"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_F_INDEX</span></tt></a>
+were specified during construction.</p>
+</dd></dl>
+
+<p>When the flag <a class="reference internal" href="#NPY_ITER_EXTERNAL_LOOP" title="NPY_ITER_EXTERNAL_LOOP"><tt class="xref c c-data docutils literal"><span class="pre">NPY_ITER_EXTERNAL_LOOP</span></tt></a> is used, the code
+needs to know the parameters for doing the inner loop.  These
+functions provide that information.</p>
+<dl class="function">
+<dt id="NpyIter_GetInnerStrideArray">
+npy_intp* <tt class="descname">NpyIter_GetInnerStrideArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetInnerStrideArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pointer to an array of the <tt class="docutils literal"><span class="pre">nop</span></tt> strides,
+one for each iterated object, to be used by the inner loop.</p>
+<p>This pointer may be cached before the iteration loop, calling
+<tt class="docutils literal"><span class="pre">iternext</span></tt> will not change it. This function may be safely
+called without holding the Python GIL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetInnerLoopSizePtr">
+npy_intp* <tt class="descname">NpyIter_GetInnerLoopSizePtr</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em><big>)</big><a class="headerlink" href="#NpyIter_GetInnerLoopSizePtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pointer to the number of iterations the
+inner loop should execute.</p>
+<p>This address may be cached before the iteration loop, calling
+<tt class="docutils literal"><span class="pre">iternext</span></tt> will not change it.  The value itself may change during
+iteration, in particular if buffering is enabled.  This function
+may be safely called without holding the Python GIL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="NpyIter_GetInnerFixedStrideArray">
+void <tt class="descname">NpyIter_GetInnerFixedStrideArray</tt><big>(</big><a class="reference internal" href="#NpyIter" title="NpyIter">NpyIter</a>*<em>&nbsp;iter</em>, npy_intp*<em>&nbsp;out_strides</em><big>)</big><a class="headerlink" href="#NpyIter_GetInnerFixedStrideArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets an array of strides which are fixed, or will not change during
+the entire iteration.  For strides that may change, the value
+NPY_MAX_INTP is placed in the stride.</p>
+<p>Once the iterator is prepared for iteration (after a reset if
+<tt class="xref c c-data docutils literal"><span class="pre">NPY_DELAY_BUFALLOC</span></tt> was used), call this to get the strides
+which may be used to select a fast inner loop function.  For example,
+if the stride is 0, that means the inner loop can always load its
+value into a variable once, then use the variable throughout the loop,
+or if the stride equals the itemsize, a contiguous version for that
+operand may be used.</p>
+<p>This function may be safely called without holding the Python GIL.</p>
+</dd></dl>
+
+<span class="target" id="index-1"></span></div>
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Nov 10, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>

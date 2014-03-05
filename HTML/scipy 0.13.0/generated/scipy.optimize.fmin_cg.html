@@ -1,0 +1,353 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>scipy.optimize.fmin_cg &mdash; SciPy v0.13.0 Reference Guide</title>
+    
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/spc-extend.css">
+    <link rel="stylesheet" type="text/css" href="../_static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../_static/scipy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.13.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SciPy v0.13.0 Reference Guide" href="../index.html" />
+    <link rel="up" title="Optimization and root finding (scipy.optimize)" href="../optimize.html" />
+    <link rel="next" title="scipy.optimize.fmin_bfgs" href="scipy.optimize.fmin_bfgs.html" />
+    <link rel="prev" title="scipy.optimize.fmin_powell" href="scipy.optimize.fmin_powell.html" /> 
+  </head>
+  <body>
+
+  <div class="container">
+    <div class="header">
+    </div>
+  </div>
+
+
+    <div class="container">
+      <div class="main">
+        
+	<div class="row-fluid">
+	  <div class="span12">
+	    <div class="spc-navbar">
+              
+    <ul class="nav nav-pills pull-left">
+	
+        <li class="active"><a href="../index.html">SciPy v0.13.0 Reference Guide</a></li>
+	
+          <li class="active"><a href="../optimize.html" accesskey="U">Optimization and root finding (<tt class="docutils literal"><span class="pre">scipy.optimize</span></tt>)</a></li> 
+    </ul>
+              
+              
+    <ul class="nav nav-pills pull-right">
+      <li class="active">
+        <a href="../genindex.html" title="General Index"
+           accesskey="I">index</a>
+      </li>
+      <li class="active">
+        <a href="../py-modindex.html" title="Python Module Index"
+           >modules</a>
+      </li>
+      <li class="active">
+        <a href="scipy.optimize.fmin_bfgs.html" title="scipy.optimize.fmin_bfgs"
+           accesskey="N">next</a>
+      </li>
+      <li class="active">
+        <a href="scipy.optimize.fmin_powell.html" title="scipy.optimize.fmin_powell"
+           accesskey="P">previous</a>
+      </li>
+    </ul>
+              
+	    </div>
+	  </div>
+	</div>
+        
+
+	<div class="row-fluid">
+      <div class="spc-rightsidebar span3">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/scipyshiny_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scipy.optimize.fmin_powell.html"
+                        title="previous chapter">scipy.optimize.fmin_powell</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scipy.optimize.fmin_bfgs.html"
+                        title="next chapter">scipy.optimize.fmin_bfgs</a></p>
+
+
+        </div>
+      </div>
+          <div class="span9">
+            
+        <div class="bodywrapper">
+          <div class="body" id="spc-section-body">
+            
+  <div class="section" id="scipy-optimize-fmin-cg">
+<h1>scipy.optimize.fmin_cg<a class="headerlink" href="#scipy-optimize-fmin-cg" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="scipy.optimize.fmin_cg">
+<tt class="descclassname">scipy.optimize.</tt><tt class="descname">fmin_cg</tt><big>(</big><em>f</em>, <em>x0</em>, <em>fprime=None</em>, <em>args=()</em>, <em>gtol=1e-05</em>, <em>norm=inf</em>, <em>epsilon=1.4901161193847656e-08</em>, <em>maxiter=None</em>, <em>full_output=0</em>, <em>disp=1</em>, <em>retall=0</em>, <em>callback=None</em><big>)</big><a class="reference external" href="http://github.com/scipy/scipy/blob/v0.13.0/scipy/optimize/optimize.py#L930"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#scipy.optimize.fmin_cg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimize a function using a nonlinear conjugate gradient algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>f</strong> : callable, <tt class="docutils literal"><span class="pre">f(x,</span> <span class="pre">*args)</span></tt></p>
+<blockquote>
+<div><p>Objective function to be minimized.  Here <em class="xref py py-obj">x</em> must be a 1-D array of
+the variables that are to be changed in the search for a minimum, and
+<em class="xref py py-obj">args</em> are the other (fixed) parameters of <em class="xref py py-obj">f</em>.</p>
+</div></blockquote>
+<p><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>A user-supplied initial estimate of <em class="xref py py-obj">xopt</em>, the optimal value of <em class="xref py py-obj">x</em>.
+It must be a 1-D array of values.</p>
+</div></blockquote>
+<p><strong>fprime</strong> : callable, <tt class="docutils literal"><span class="pre">fprime(x,</span> <span class="pre">*args)</span></tt>, optional</p>
+<blockquote>
+<div><p>A function that returns the gradient of <em class="xref py py-obj">f</em> at <em class="xref py py-obj">x</em>. Here <em class="xref py py-obj">x</em> and <em class="xref py py-obj">args</em>
+are as described above for <em class="xref py py-obj">f</em>. The returned value must be a 1-D array.
+Defaults to None, in which case the gradient is approximated
+numerically (see <em class="xref py py-obj">epsilon</em>, below).</p>
+</div></blockquote>
+<p><strong>args</strong> : tuple, optional</p>
+<blockquote>
+<div><p>Parameter values passed to <em class="xref py py-obj">f</em> and <em class="xref py py-obj">fprime</em>. Must be supplied whenever
+additional fixed parameters are needed to completely specify the
+functions <em class="xref py py-obj">f</em> and <em class="xref py py-obj">fprime</em>.</p>
+</div></blockquote>
+<p><strong>gtol</strong> : float, optional</p>
+<blockquote>
+<div><p>Stop when the norm of the gradient is less than <em class="xref py py-obj">gtol</em>.</p>
+</div></blockquote>
+<p><strong>norm</strong> : float, optional</p>
+<blockquote>
+<div><p>Order to use for the norm of the gradient
+(<tt class="docutils literal"><span class="pre">-np.Inf</span></tt> is min, <tt class="docutils literal"><span class="pre">np.Inf</span></tt> is max).</p>
+</div></blockquote>
+<p><strong>epsilon</strong> : float or ndarray, optional</p>
+<blockquote>
+<div><p>Step size(s) to use when <em class="xref py py-obj">fprime</em> is approximated numerically. Can be a
+scalar or a 1-D array.  Defaults to <tt class="docutils literal"><span class="pre">sqrt(eps)</span></tt>, with eps the
+floating point machine precision.  Usually <tt class="docutils literal"><span class="pre">sqrt(eps)</span></tt> is about
+1.5e-8.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum number of iterations to perform. Default is <tt class="docutils literal"><span class="pre">200</span> <span class="pre">*</span> <span class="pre">len(x0)</span></tt>.</p>
+</div></blockquote>
+<p><strong>full_output</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, return <em class="xref py py-obj">fopt</em>, <em class="xref py py-obj">func_calls</em>, <em class="xref py py-obj">grad_calls</em>, and <em class="xref py py-obj">warnflag</em> in
+addition to <em class="xref py py-obj">xopt</em>.  See the Returns section below for additional
+information on optional return values.</p>
+</div></blockquote>
+<p><strong>disp</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, return a convergence message, followed by <em class="xref py py-obj">xopt</em>.</p>
+</div></blockquote>
+<p><strong>retall</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, add to the returned values the results of each iteration.</p>
+</div></blockquote>
+<p><strong>callback</strong> : callable, optional</p>
+<blockquote>
+<div><p>An optional user-supplied function, called after each iteration.
+Called as <tt class="docutils literal"><span class="pre">callback(xk)</span></tt>, where <tt class="docutils literal"><span class="pre">xk</span></tt> is the current value of <em class="xref py py-obj">x0</em>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>xopt</strong> : ndarray</p>
+<blockquote>
+<div><p>Parameters which minimize f, i.e. <tt class="docutils literal"><span class="pre">f(xopt)</span> <span class="pre">==</span> <span class="pre">fopt</span></tt>.</p>
+</div></blockquote>
+<p><strong>fopt</strong> : float, optional</p>
+<blockquote>
+<div><p>Minimum value found, f(xopt).  Only returned if <em class="xref py py-obj">full_output</em> is True.</p>
+</div></blockquote>
+<p><strong>func_calls</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of function_calls made.  Only returned if <em class="xref py py-obj">full_output</em>
+is True.</p>
+</div></blockquote>
+<p><strong>grad_calls</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of gradient calls made. Only returned if <em class="xref py py-obj">full_output</em> is
+True.</p>
+</div></blockquote>
+<p><strong>warnflag</strong> : int, optional</p>
+<blockquote>
+<div><p>Integer value with warning status, only returned if <em class="xref py py-obj">full_output</em> is
+True.</p>
+<p>0 : Success.</p>
+<p>1 : The maximum number of iterations was exceeded.</p>
+<dl class="docutils">
+<dt>2 <span class="classifier-delimiter">:</span> <span class="classifier">Gradient and/or function calls were not changing.  May indicate</span></dt>
+<dd><p class="first last">that precision was lost, i.e., the routine did not converge.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>allvecs</strong> : list of ndarray, optional</p>
+<blockquote class="last">
+<div><p>List of arrays, containing the results at each iteration.
+Only returned if <em class="xref py py-obj">retall</em> is True.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="scipy.optimize.minimize.html#scipy.optimize.minimize" title="scipy.optimize.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a></dt>
+<dd>common interface to all <a class="reference internal" href="../optimize.html#module-scipy.optimize" title="scipy.optimize"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.optimize</span></tt></a> algorithms for unconstrained and constrained minimization of multivariate functions.  It provides an alternative way to call <tt class="docutils literal"><span class="pre">fmin_cg</span></tt>, by specifying <tt class="docutils literal"><span class="pre">method='CG'</span></tt>.</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>This conjugate gradient algorithm is based on that of Polak and Ribiere
+<a class="reference internal" href="#r92">[R92]</a>.</p>
+<p>Conjugate gradient methods tend to work better when:</p>
+<ol class="arabic simple">
+<li><em class="xref py py-obj">f</em> has a unique global minimizing point, and no local minima or
+other stationary points,</li>
+<li><em class="xref py py-obj">f</em> is, at least locally, reasonably well approximated by a
+quadratic function of the variables,</li>
+<li><em class="xref py py-obj">f</em> is continuous and has a continuous gradient,</li>
+<li><em class="xref py py-obj">fprime</em> is not too large, e.g., has a norm less than 1000,</li>
+<li>The initial guess, <em class="xref py py-obj">x0</em>, is reasonably close to <em class="xref py py-obj">f</em> &#8216;s global
+minimizing point, <em class="xref py py-obj">xopt</em>.</li>
+</ol>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r92" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R92]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Wright &amp; Nocedal, &#8220;Numerical Optimization&#8221;, 1999, pp. 120-122.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Example 1: seek the minimum value of the expression
+<tt class="docutils literal"><span class="pre">a*u**2</span> <span class="pre">+</span> <span class="pre">b*u*v</span> <span class="pre">+</span> <span class="pre">c*v**2</span> <span class="pre">+</span> <span class="pre">d*u</span> <span class="pre">+</span> <span class="pre">e*v</span> <span class="pre">+</span> <span class="pre">f</span></tt> for given values
+of the parameters and an initial guess <tt class="docutils literal"><span class="pre">(u,</span> <span class="pre">v)</span> <span class="pre">=</span> <span class="pre">(0,</span> <span class="pre">0)</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c"># parameter values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">x</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">args</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">u</span><span class="o">*</span><span class="n">v</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">v</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">u</span> <span class="o">+</span> <span class="n">e</span><span class="o">*</span><span class="n">v</span> <span class="o">+</span> <span class="n">f</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">gradf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">x</span>
+<span class="gp">... </span>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">args</span>
+<span class="gp">... </span>    <span class="n">gu</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">u</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">v</span> <span class="o">+</span> <span class="n">d</span>     <span class="c"># u-component of the gradient</span>
+<span class="gp">... </span>    <span class="n">gv</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span><span class="n">u</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">c</span><span class="o">*</span><span class="n">v</span> <span class="o">+</span> <span class="n">e</span>     <span class="c"># v-component of the gradient</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">((</span><span class="n">gu</span><span class="p">,</span> <span class="n">gv</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c"># Initial guess.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res1</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">fmin_cg</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">fprime</span><span class="o">=</span><span class="n">gradf</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;res1 = &#39;</span><span class="p">,</span> <span class="n">res1</span>
+<span class="go">Optimization terminated successfully.</span>
+<span class="go">         Current function value: 1.617021</span>
+<span class="go">         Iterations: 2</span>
+<span class="go">         Function evaluations: 5</span>
+<span class="go">         Gradient evaluations: 5</span>
+<span class="go">res1 =  [-1.80851064 -0.25531915]</span>
+</pre></div>
+</div>
+<p>Example 2: solve the same problem using the <a class="reference internal" href="scipy.optimize.minimize.html#scipy.optimize.minimize" title="scipy.optimize.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a> function.
+(This <em class="xref py py-obj">myopts</em> dictionary shows all of the available options,
+although in practice only non-default values would be needed.
+The returned value will be a dictionary.)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;maxiter&#39;</span> <span class="p">:</span> <span class="bp">None</span><span class="p">,</span>    <span class="c"># default value.</span>
+<span class="gp">... </span>        <span class="s">&#39;disp&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>    <span class="c"># non-default value.</span>
+<span class="gp">... </span>        <span class="s">&#39;gtol&#39;</span> <span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>    <span class="c"># default value.</span>
+<span class="gp">... </span>        <span class="s">&#39;norm&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>  <span class="c"># default value.</span>
+<span class="gp">... </span>        <span class="s">&#39;eps&#39;</span> <span class="p">:</span> <span class="mf">1.4901161193847656e-08</span><span class="p">}</span>  <span class="c"># default value.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res2</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">gradf</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="n">method</span><span class="o">=</span><span class="s">&#39;CG&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">opts</span><span class="p">)</span>
+<span class="go">Optimization terminated successfully.</span>
+<span class="go">        Current function value: 1.617021</span>
+<span class="go">        Iterations: 2</span>
+<span class="go">        Function evaluations: 5</span>
+<span class="go">        Gradient evaluations: 5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res2</span><span class="o">.</span><span class="n">x</span>  <span class="c"># minimum found</span>
+<span class="go">array([-1.80851064 -0.25531915])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container container-navbar-bottom">
+      <div class="spc-navbar">
+        
+      </div>
+    </div>
+    <div class="container">
+    <div class="footer">
+    <div class="row-fluid">
+    <ul class="inline pull-left">
+      <li>
+        &copy; Copyright 2008-2009, The Scipy community.
+      </li>
+      <li>
+      Last updated on Oct 21, 2013.
+      </li>
+      <li>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+<script type="text/javascript">
+        $('.dropdown-toggle').dropdown()
+</script>
+
+<script>
+$(document).ready(function()
+{
+  //Handles menu drop down
+  $('.dropdown-menu').find('form').click(function (e) {
+        e.stopPropagation();
+        });
+  });
+</script>
+
+<script type="text/javascript">
+        //handles accordion arrow-up and down in pages
+        $('.accordion-group').collapse();
+        $('.accordion-group').on('show hide', function(e)
+                { 
+                        $(e.target).siblings('.accordion-heading').find('.accordion-toggle i').toggleClass('icon-arrow-down icon-arrow-up', 200); 
+                });
+</script>
+
+  </body>
+</html>
