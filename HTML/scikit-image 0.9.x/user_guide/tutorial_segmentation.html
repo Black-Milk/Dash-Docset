@@ -1,0 +1,230 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Image Segmentation &mdash; skimage v0.9.0 docs</title>
+    
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link href="../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../_static/css/custom.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <link rel="top" title="skimage v0.9.0 docs" href="../index.html" />
+        <link rel="up" title="Tutorials" href="tutorials.html" />
+        <link rel="next" title="Getting help on using skimage" href="getting_help.html" />
+        <link rel="prev" title="Tutorials" href="tutorials.html" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="shortcut icon" href="../_static/favicon.ico">
+</head>
+<body class="container">
+    <a href="http://scikit-image.org" class="logo"><img src="../_static/img/logo.png" alt=""></a>
+    <div class="clearfix"></div>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+            </ul>
+            <form class="navbar-form pull-right" action="../search.html" method="get">
+                <input type="text" class="search span3" name="q" placeholder="Search documentation ...">
+                <input type="hidden" name="check_keywords" value="yes" >
+                <input type="hidden" name="area" value="default" >
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            
+  <div class="section" id="image-segmentation">
+<h1>Image Segmentation<a class="headerlink" href="#image-segmentation" title="Permalink to this headline">¶</a></h1>
+<p>Image segmentation is the task of labeling the pixels of objects of
+interest in an image.</p>
+<p>In this tutorial, we will see how to segment objects from a background.
+We use the <tt class="docutils literal"><span class="pre">coins</span></tt> image from <tt class="docutils literal"><span class="pre">skimage.data</span></tt>. This image shows
+several coins outlined against a darker background. The segmentation of
+the coins cannot be done directly from the histogram of grey values,
+because the background shares enough grey levels with the coins that a
+thresholding segmentation is not sufficient.</p>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_1.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_1.png" /></a>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coins</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">coins</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">histo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">coins</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Simply thresholding the image leads either to missing significant parts
+of the coins, or to merging parts of the background with the
+coins. This is due to the inhomogeneous lighting of the image.</p>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_2.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_2.png" /></a>
+<p>A first idea is to take advantage of the local contrast, that is, to
+use the gradients rather than the grey values.</p>
+<div class="section" id="edge-based-segmentation">
+<h2>Edge-based segmentation<a class="headerlink" href="#edge-based-segmentation" title="Permalink to this headline">¶</a></h2>
+<p>Let us first try to detect edges that enclose the coins. For edge
+detection, we use the <a class="reference external" href="http://en.wikipedia.org/wiki/Canny_edge_detector">Canny detector</a> of <tt class="docutils literal"><span class="pre">skimage.filter.canny</span></tt></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.filter</span> <span class="kn">import</span> <span class="n">canny</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="n">canny</span><span class="p">(</span><span class="n">coins</span><span class="o">/</span><span class="mf">255.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As the background is very smooth, almost all edges are found at the
+boundary of the coins, or inside the coins.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fill_coins</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_3.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_3.png" /></a>
+<p>Now that we have contours that delineate the outer boundary of the coins,
+we fill the inner part of the coins using the
+<tt class="docutils literal"><span class="pre">ndimage.binary_fill_holes</span></tt> function, which uses mathematical morphology
+to fill the holes.</p>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_4.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_4.png" /></a>
+<p>Most coins are well segmented out of the background. Small objects from
+the background can be easily removed using the <tt class="docutils literal"><span class="pre">ndimage.label</span></tt>
+function to remove objects smaller than a small threshold.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">label_objects</span><span class="p">,</span> <span class="n">nb_labels</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">fill_coins</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">label_objects</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask_sizes</span> <span class="o">=</span> <span class="n">sizes</span> <span class="o">&gt;</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coins_cleaned</span> <span class="o">=</span> <span class="n">mask_sizes</span><span class="p">[</span><span class="n">label_objects</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>However, the segmentation is not very satisfying, since one of the coins
+has not been segmented correctly at all. The reason is that the contour
+that we got from the Canny detector was not completely closed, therefore
+the filling function did not fill the inner part of the coin.</p>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_5.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_5.png" /></a>
+<p>Therefore, this segmentation method is not very robust: if we miss a
+single pixel of the contour of the object, we will not be able to fill
+it. Of course, we could try to dilate the contours in order to
+close them. However, it is preferable to try a more robust method.</p>
+</div>
+<div class="section" id="region-based-segmentation">
+<h2>Region-based segmentation<a class="headerlink" href="#region-based-segmentation" title="Permalink to this headline">¶</a></h2>
+<p>Let us first determine markers of the coins and the background. These
+markers are pixels that we can label unambiguously as either object or
+background. Here, the markers are found at the two extreme parts of the
+histogram of grey values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">coins</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span><span class="p">[</span><span class="n">coins</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span><span class="p">[</span><span class="n">coins</span> <span class="o">&gt;</span> <span class="mi">150</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>We will use these markers in a watershed segmentation. The name watershed
+comes from an analogy with hydrology. The <a class="reference external" href="http://en.wikipedia.org/wiki/Watershed_%28image_processing%29">watershed transform</a> floods
+an image of elevation starting from markers, in order to determine the catchment
+basins of these markers. Watershed lines separate these catchment basins,
+and correspond to the desired segmentation.</p>
+<p>The choice of the elevation map is critical for good segmentation.
+Here, the amplitude of the gradient provides a good elevation map. We
+use the Sobel operator for computing the amplitude of the gradient:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.filter</span> <span class="kn">import</span> <span class="n">sobel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elevation_map</span> <span class="o">=</span> <span class="n">sobel</span><span class="p">(</span><span class="n">coins</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>From the 3-D surface plot shown below, we see that high barriers effectively
+separate the coins from the background.</p>
+<img alt="../_images/elevation_map.jpg" class="align-center" src="../_images/elevation_map.jpg" />
+<p>and here is the corresponding 2-D plot:</p>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_6.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_6.png" /></a>
+<p>The next step is to find markers of the background and the coins based on the
+extreme parts of the histogram of grey values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">coins</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span><span class="p">[</span><span class="n">coins</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">markers</span><span class="p">[</span><span class="n">coins</span> <span class="o">&gt;</span> <span class="mi">150</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_7.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_7.png" /></a>
+<p>Let us now compute the watershed transform:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">watershed</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">segmentation</span> <span class="o">=</span> <span class="n">watershed</span><span class="p">(</span><span class="n">elevation_map</span><span class="p">,</span> <span class="n">markers</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_8.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_8.png" /></a>
+<p>With this method, the result is satisfying for all coins. Even if the
+markers for the background were not well distributed, the barriers in the
+elevation map were high enough for these markers to flood the entire
+background.</p>
+<p>We remove a few small holes with mathematical morphology:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">segmentation</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">segmentation</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can now label all the coins one by one using <tt class="docutils literal"><span class="pre">ndimage.label</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">labeled_coins</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">segmentation</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="../auto_examples/applications/plot_coins_segmentation.html"><img alt="user_guide/../../_images/plot_coins_segmentation_9.png" class="align-center" src="user_guide/../../_images/plot_coins_segmentation_9.png" /></a>
+</div>
+</div>
+
+
+        </div>
+        <div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <li><a href="../index.html">Documentation Home</a></li>
+    </ul>
+</div>
+    <h4 class="sidebar-box-heading">Previous topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="tutorials.html" title="previous chapter">Tutorials</a></li>
+        </ul>
+    </div>
+    <h4 class="sidebar-box-heading">Next topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="getting_help.html" title="next chapter">Getting help on using <tt class="docutils literal"><span class="pre">skimage</span></tt></a></li>
+        </ul>
+    </div>
+        <h4 class="sidebar-box-heading">Contents</h4>
+        <div class="well sidebar-box toc">
+            <ul class="nav nav-list">
+<li><a class="reference internal" href="#">Image Segmentation</a><ul class="nav nav-list">
+<li><a class="reference internal" href="#edge-based-segmentation">Edge-based segmentation</a></li>
+<li><a class="reference internal" href="#region-based-segmentation">Region-based segmentation</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <script src="../_static/docversions.js"></script>
+        <script type="text/javascript">
+            insert_version_links();
+        </script>
+    </ul>
+</div>
+        </div>
+    </div>
+    <div class="well footer">
+        <small>
+            &copy; Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+    </div>
+</body>
+</html>

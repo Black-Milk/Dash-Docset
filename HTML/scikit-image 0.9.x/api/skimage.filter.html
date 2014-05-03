@@ -1,0 +1,1603 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Module: filter &mdash; skimage v0.9.0 docs</title>
+    
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link href="../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../_static/css/custom.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <link rel="top" title="skimage v0.9.0 docs" href="../index.html" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="shortcut icon" href="../_static/favicon.ico">
+</head>
+<body class="container">
+    <a href="http://scikit-image.org" class="logo"><img src="../_static/img/logo.png" alt=""></a>
+    <div class="clearfix"></div>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+            </ul>
+            <form class="navbar-form pull-right" action="../search.html" method="get">
+                <input type="text" class="search span3" name="q" placeholder="Search documentation ...">
+                <input type="hidden" name="check_keywords" value="yes" >
+                <input type="hidden" name="area" value="default" >
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            
+  <div class="section" id="module-skimage.filter">
+<span id="module-filter"></span><h1>Module: <tt class="xref py py-mod docutils literal"><span class="pre">filter</span></tt><a class="headerlink" href="#module-skimage.filter" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="lpifilter2d">
+<h2><a class="reference internal" href="#skimage.filter.LPIFilter2D" title="skimage.filter.LPIFilter2D"><tt class="xref py py-class docutils literal"><span class="pre">LPIFilter2D</span></tt></a><a class="headerlink" href="#lpifilter2d" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skimage.filter.LPIFilter2D">
+<em class="property">class </em><tt class="descclassname">skimage.filter.</tt><tt class="descname">LPIFilter2D</tt><big>(</big><em>impulse_response</em>, <em>**filter_params</em><big>)</big><a class="headerlink" href="#skimage.filter.LPIFilter2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Linear Position-Invariant Filter (2-dimensional)</p>
+<dl class="method">
+<dt id="skimage.filter.LPIFilter2D.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>impulse_response</em>, <em>**filter_params</em><big>)</big><a class="headerlink" href="#skimage.filter.LPIFilter2D.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>impulse_response</strong> : callable <cite>f(r, c, **filter_params)</cite></p>
+<blockquote class="last">
+<div><p>Function that yields the impulse response.  <cite>r</cite> and <cite>c</cite> are
+1-dimensional vectors that represent row and column positions, in
+other words coordinates are (r[0],c[0]),(r[0],c[1]) etc.
+<cite>**filter_params</cite> are passed through.</p>
+<p>In other words, <cite>impulse_response</cite> would be called like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">impulse_response</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="o">**</span><span class="n">filter_params</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filter_params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;kw1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;kw2&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;kw3&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">impulse_response</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="o">**</span><span class="n">filter_params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<dl class="docutils">
+<dt>Gaussian filter:</dt>
+<dd>Use a 1-D gaussian in each direction without normalization
+coefficients.</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">filt_func</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">sigma</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">filter</span> <span class="o">=</span> <span class="n">LPIFilter2D</span><span class="p">(</span><span class="n">filt_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.canny" title="skimage.filter.canny"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.canny</span></tt></a>(image[,&nbsp;sigma,&nbsp;...])</td>
+<td>Edge filter an image using the Canny algorithm.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.denoise_bilateral" title="skimage.filter.denoise_bilateral"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.denoise_bilateral</span></tt></a></td>
+<td>Denoise image using bilateral filter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.denoise_tv_bregman" title="skimage.filter.denoise_tv_bregman"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.denoise_tv_bregman</span></tt></a></td>
+<td>Perform total-variation denoising using split-Bregman optimization.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.denoise_tv_chambolle" title="skimage.filter.denoise_tv_chambolle"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.denoise_tv_chambolle</span></tt></a>(im[,&nbsp;...])</td>
+<td>Perform total-variation denoising on 2D and 3D images.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.gabor_filter" title="skimage.filter.gabor_filter"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.gabor_filter</span></tt></a>(image,&nbsp;frequency)</td>
+<td>Return real and imaginary responses to Gabor filter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.gabor_kernel" title="skimage.filter.gabor_kernel"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.gabor_kernel</span></tt></a>(frequency[,&nbsp;...])</td>
+<td>Return complex 2D Gabor filter kernel.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.gaussian_filter" title="skimage.filter.gaussian_filter"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.gaussian_filter</span></tt></a>(image,&nbsp;sigma)</td>
+<td>Multi-dimensional Gaussian filter</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.hprewitt" title="skimage.filter.hprewitt"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.hprewitt</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the horizontal edges of an image using the Prewitt transform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.hscharr" title="skimage.filter.hscharr"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.hscharr</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the horizontal edges of an image using the Scharr transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.hsobel" title="skimage.filter.hsobel"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.hsobel</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the horizontal edges of an image using the Sobel transform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.inverse" title="skimage.filter.inverse"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.inverse</span></tt></a>(data[,&nbsp;...])</td>
+<td>Apply the filter in reverse to the given data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.median_filter" title="skimage.filter.median_filter"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.median_filter</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td><strong>Deprecated function</strong>. Use <tt class="docutils literal"><span class="pre">filter.rank.median</span></tt> instead.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.prewitt" title="skimage.filter.prewitt"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.prewitt</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the edge magnitude using the Prewitt transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.rank_order" title="skimage.filter.rank_order"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.rank_order</span></tt></a>(image)</td>
+<td>Return an image of the same shape where each pixel is the index of the pixel value in the ascending order of the unique values of <cite>image</cite>, aka the rank-order value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.roberts" title="skimage.filter.roberts"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.roberts</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the edge magnitude using Roberts&#8217; cross operator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.roberts_negative_diagonal" title="skimage.filter.roberts_negative_diagonal"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.roberts_negative_diagonal</span></tt></a>(image)</td>
+<td>Find the cross edges of an image using the Roberts&#8217; Cross operator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.roberts_positive_diagonal" title="skimage.filter.roberts_positive_diagonal"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.roberts_positive_diagonal</span></tt></a>(image)</td>
+<td>Find the cross edges of an image using Roberts&#8217; cross operator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.scharr" title="skimage.filter.scharr"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.scharr</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the edge magnitude using the Scharr transform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.sobel" title="skimage.filter.sobel"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.sobel</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the edge magnitude using the Sobel transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.threshold_adaptive" title="skimage.filter.threshold_adaptive"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.threshold_adaptive</span></tt></a>(image,&nbsp;...)</td>
+<td>Applies an adaptive threshold to an array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.threshold_otsu" title="skimage.filter.threshold_otsu"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.threshold_otsu</span></tt></a>(image[,&nbsp;nbins])</td>
+<td>Return threshold value based on Otsu&#8217;s method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.vprewitt" title="skimage.filter.vprewitt"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.vprewitt</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the vertical edges of an image using the Prewitt transform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.vscharr" title="skimage.filter.vscharr"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.vscharr</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the vertical edges of an image using the Scharr transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.filter.vsobel" title="skimage.filter.vsobel"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.vsobel</span></tt></a>(image[,&nbsp;mask])</td>
+<td>Find the vertical edges of an image using the Sobel transform.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.filter.wiener" title="skimage.filter.wiener"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.filter.wiener</span></tt></a>(data[,&nbsp;...])</td>
+<td>Minimum Mean Square Error (Wiener) inverse filter.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="canny">
+<h2>canny<a class="headerlink" href="#canny" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.canny">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">canny</tt><big>(</big><em>image</em>, <em>sigma=1.0</em>, <em>low_threshold=None</em>, <em>high_threshold=None</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.canny" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edge filter an image using the Canny algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2D array</p>
+<blockquote>
+<div><p>Greyscale input image to detect edges on; can be of any dtype.</p>
+</div></blockquote>
+<p><strong>sigma</strong> : float</p>
+<blockquote>
+<div><p>Standard deviation of the Gaussian filter.</p>
+</div></blockquote>
+<p><strong>low_threshold</strong> : float</p>
+<blockquote>
+<div><p>Lower bound for hysteresis thresholding (linking edges).
+If None, low_threshold is set to 10% of dtype&#8217;s max.</p>
+</div></blockquote>
+<p><strong>high_threshold</strong> : float</p>
+<blockquote>
+<div><p>Upper bound for hysteresis thresholding (linking edges).
+If None, high_threshold is set to 20% of dtype&#8217;s max.</p>
+</div></blockquote>
+<p><strong>mask</strong> : array, dtype=bool, optional</p>
+<blockquote>
+<div><p>Mask to limit the application of Canny to a certain area.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2D array (image)</p>
+<blockquote class="last">
+<div><p>The binary edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.sobel</span></tt></p>
+</div>
+<p class="rubric">Notes</p>
+<p>The steps of the algorithm are as follows:</p>
+<ul class="simple">
+<li>Smooth the image using a Gaussian with <tt class="docutils literal"><span class="pre">sigma</span></tt> width.</li>
+<li>Apply the horizontal and vertical Sobel operators to get the gradients
+within the image. The edge strength is the norm of the gradient.</li>
+<li>Thin potential edges to 1-pixel wide curves. First, find the normal
+to the edge at each point. This is done by looking at the
+signs and the relative magnitude of the X-Sobel and Y-Sobel
+to sort the points into 4 categories: horizontal, vertical,
+diagonal and antidiagonal. Then look in the normal and reverse
+directions to see if the values in either of those directions are
+greater than the point in question. Use interpolation to get a mix of
+points instead of picking the one that&#8217;s the closest to the normal.</li>
+<li>Perform a hysteresis thresholding: first label all points above the
+high threshold as edges. Then recursively label any point above the
+low threshold that is 8-connected to a labeled point as an edge.</li>
+</ul>
+<p class="rubric">References</p>
+<p>Canny, J., A Computational Approach To Edge Detection, IEEE Trans.
+Pattern Analysis and Machine Intelligence, 8:679-714, 1986</p>
+<p>William Green&#8217;s Canny tutorial
+<a class="reference external" href="http://dasl.mem.drexel.edu/alumni/bGreen/www.pages.drexel.edu/_weg22/can_tut.html">http://dasl.mem.drexel.edu/alumni/bGreen/www.pages.drexel.edu/_weg22/can_tut.html</a></p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="nb">filter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Generate noisy image of a square</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span><span class="p">[</span><span class="mi">64</span><span class="p">:</span><span class="o">-</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">:</span><span class="o">-</span><span class="mi">64</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span> <span class="o">+=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># First trial with the Canny filter, with the default smoothing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges1</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">canny</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Increase the smoothing for better results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges2</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">canny</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="denoise-bilateral">
+<h2>denoise_bilateral<a class="headerlink" href="#denoise-bilateral" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.denoise_bilateral">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">denoise_bilateral</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.filter.denoise_bilateral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Denoise image using bilateral filter.</p>
+<p>This is an edge-preserving and noise reducing denoising filter. It averages
+pixels based on their spatial closeness and radiometric similarity.</p>
+<p>Spatial closeness is measured by the gaussian function of the euclidian
+distance between two pixels and a certain standard deviation
+(<cite>sigma_spatial</cite>).</p>
+<p>Radiometric similarity is measured by the gaussian function of the euclidian
+distance between two color values and a certain standard deviation
+(<cite>sigma_range</cite>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : ndarray</p>
+<blockquote>
+<div><p>Input image.</p>
+</div></blockquote>
+<p><strong>win_size</strong> : int</p>
+<blockquote>
+<div><p>Window size for filtering.</p>
+</div></blockquote>
+<p><strong>sigma_range</strong> : float</p>
+<blockquote>
+<div><p>Standard deviation for grayvalue/color distance (radiometric
+similarity). A larger value results in averaging of pixels with larger
+radiometric differences. Note, that the image will be converted using
+the <cite>img_as_float</cite> function and thus the standard deviation is in
+respect to the range <cite>[0, 1]</cite>.</p>
+</div></blockquote>
+<p><strong>sigma_spatial</strong> : float</p>
+<blockquote>
+<div><p>Standard deviation for range distance. A larger value results in
+averaging of pixels with larger spatial differences.</p>
+</div></blockquote>
+<p><strong>bins</strong> : int</p>
+<blockquote>
+<div><p>Number of discrete values for gaussian weights of color filtering.
+A larger value results in improved accuracy.</p>
+</div></blockquote>
+<p><strong>mode</strong> : string</p>
+<blockquote>
+<div><p>How to handle values outside the image borders. See
+<cite>scipy.ndimage.map_coordinates</cite> for detail.</p>
+</div></blockquote>
+<p><strong>cval</strong> : string</p>
+<blockquote>
+<div><p>Used in conjunction with mode &#8216;constant&#8217;, the value outside
+the image boundaries.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>denoised</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Denoised image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r130" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R130]</a></td><td><a class="reference external" href="http://users.soe.ucsc.edu/~manduchi/Papers/ICCV98.pdf">http://users.soe.ucsc.edu/~manduchi/Papers/ICCV98.pdf</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="denoise-tv-bregman">
+<h2>denoise_tv_bregman<a class="headerlink" href="#denoise-tv-bregman" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.denoise_tv_bregman">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">denoise_tv_bregman</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.filter.denoise_tv_bregman" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform total-variation denoising using split-Bregman optimization.</p>
+<p>Total-variation denoising (also know as total-variation regularization)
+tries to find an image with less total-variation under the constraint
+of being similar to the input image, which is controlled by the
+regularization parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : ndarray</p>
+<blockquote>
+<div><p>Input data to be denoised (converted using img_as_float`).</p>
+</div></blockquote>
+<p><strong>weight</strong> : float, optional</p>
+<blockquote>
+<div><p>Denoising weight. The smaller the <cite>weight</cite>, the more denoising (at
+the expense of less similarity to the <cite>input</cite>). The regularization
+parameter <cite>lambda</cite> is chosen as <cite>2 * weight</cite>.</p>
+</div></blockquote>
+<p><strong>eps</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative difference of the value of the cost function that determines
+the stop criterion. The algorithm stops when:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">SUM</span><span class="p">((</span><span class="n">u</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="n">u</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>max_iter</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximal number of iterations used for the optimization.</p>
+</div></blockquote>
+<p><strong>isotropic</strong> : boolean, optional</p>
+<blockquote>
+<div><p>Switch between isotropic and anisotropic TV denoising.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>u</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Denoised image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r131" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[R131]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Total_variation_denoising">http://en.wikipedia.org/wiki/Total_variation_denoising</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r132" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[R132]</a></td><td>Tom Goldstein and Stanley Osher, &#8220;The Split Bregman Method For L1
+Regularized Problems&#8221;,
+<a class="reference external" href="ftp://ftp.math.ucla.edu/pub/camreport/cam08-29.pdf">ftp://ftp.math.ucla.edu/pub/camreport/cam08-29.pdf</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r133" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[R133]</a></td><td>Pascal Getreuer, &#8220;Rudin–Osher–Fatemi Total Variation Denoising
+using Split Bregman&#8221; in Image Processing On Line on 2012–05–19,
+<a class="reference external" href="http://www.ipol.im/pub/art/2012/g-tvd/article_lr.pdf">http://www.ipol.im/pub/art/2012/g-tvd/article_lr.pdf</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r134" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[R134]</a></td><td><a class="reference external" href="http://www.math.ucsb.edu/~cgarcia/UGProjects/BregmanAlgorithms_JacquelineBush.pdf">http://www.math.ucsb.edu/~cgarcia/UGProjects/BregmanAlgorithms_JacquelineBush.pdf</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="denoise-tv-chambolle">
+<h2>denoise_tv_chambolle<a class="headerlink" href="#denoise-tv-chambolle" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.denoise_tv_chambolle">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">denoise_tv_chambolle</tt><big>(</big><em>im</em>, <em>weight=50</em>, <em>eps=0.0002</em>, <em>n_iter_max=200</em>, <em>multichannel=False</em><big>)</big><a class="headerlink" href="#skimage.filter.denoise_tv_chambolle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform total-variation denoising on 2D and 3D images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>im</strong> : ndarray (2d or 3d) of ints, uints or floats</p>
+<blockquote>
+<div><p>Input data to be denoised. <cite>im</cite> can be of any numeric type,
+but it is cast into an ndarray of floats for the computation
+of the denoised image.</p>
+</div></blockquote>
+<p><strong>weight</strong> : float, optional</p>
+<blockquote>
+<div><p>Denoising weight. The greater <cite>weight</cite>, the more denoising (at
+the expense of fidelity to <cite>input</cite>).</p>
+</div></blockquote>
+<p><strong>eps</strong> : float, optional</p>
+<blockquote>
+<div><p>Relative difference of the value of the cost function that
+determines the stop criterion. The algorithm stops when:</p>
+<blockquote>
+<div><p>(E_(n-1) - E_n) &lt; eps * E_0</p>
+</div></blockquote>
+</div></blockquote>
+<p><strong>n_iter_max</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximal number of iterations used for the optimization.</p>
+</div></blockquote>
+<p><strong>multichannel</strong> : bool, optional</p>
+<blockquote>
+<div><p>Apply total-variation denoising separately for each channel. This
+option should be true for color images, otherwise the denoising is
+also applied in the 3rd dimension.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Denoised image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Make sure to set the multichannel parameter appropriately for color images.</p>
+<p>The principle of total variation denoising is explained in
+<a class="reference external" href="http://en.wikipedia.org/wiki/Total_variation_denoising">http://en.wikipedia.org/wiki/Total_variation_denoising</a></p>
+<p>The principle of total variation denoising is to minimize the
+total variation of the image, which can be roughly described as
+the integral of the norm of the image gradient. Total variation
+denoising tends to produce &#8220;cartoon-like&#8221; images, that is,
+piecewise-constant images.</p>
+<p>This code is an implementation of the algorithm of Rudin, Fatemi and Osher
+that was proposed by Chambolle in <a class="reference internal" href="#r135">[R135]</a>.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r135" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R135]</td><td><em>(<a class="fn-backref" href="#id6">1</a>, <a class="fn-backref" href="#id7">2</a>)</em> A. Chambolle, An algorithm for total variation minimization and
+applications, Journal of Mathematical Imaging and Vision,
+Springer, 2004, 20, 89-97.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>2D example on Lena image:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">color</span><span class="p">,</span> <span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lena</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">rgb2gray</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">lena</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lena</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">lena</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">lena</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">denoised_lena</span> <span class="o">=</span> <span class="n">denoise_tv_chambolle</span><span class="p">(</span><span class="n">lena</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>3D example on synthetic data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ogrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">22</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mi">20</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="mi">17</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="o">**</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">+=</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">denoise_tv_chambolle</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="gabor-filter">
+<h2>gabor_filter<a class="headerlink" href="#gabor-filter" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.gabor_filter">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">gabor_filter</tt><big>(</big><em>image</em>, <em>frequency</em>, <em>theta=0</em>, <em>bandwidth=1</em>, <em>sigma_x=None</em>, <em>sigma_y=None</em>, <em>offset=0</em>, <em>mode='reflect'</em>, <em>cval=0</em><big>)</big><a class="headerlink" href="#skimage.filter.gabor_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return real and imaginary responses to Gabor filter.</p>
+<p>The real and imaginary parts of the Gabor filter kernel are applied to the
+image and the response is returned as a pair of arrays.</p>
+<p>Frequency and orientation representations of the Gabor filter are similar
+to those of the human visual system. It is especially suitable for texture
+classification using Gabor filter banks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : array</p>
+<blockquote>
+<div><p>Input image.</p>
+</div></blockquote>
+<p><strong>frequency</strong> : float</p>
+<blockquote>
+<div><p>Frequency of the harmonic function.</p>
+</div></blockquote>
+<p><strong>theta</strong> : float</p>
+<blockquote>
+<div><p>Orientation in radians. If 0, the harmonic is in the x-direction.</p>
+</div></blockquote>
+<p><strong>bandwidth</strong> : float</p>
+<blockquote>
+<div><p>The bandwidth captured by the filter. For fixed bandwidth, <cite>sigma_x</cite>
+and <cite>sigma_y</cite> will decrease with increasing frequency. This value is
+ignored if <cite>sigma_x</cite> and <cite>sigma_y</cite> are set by the user.</p>
+</div></blockquote>
+<p><strong>sigma_x, sigma_y</strong> : float</p>
+<blockquote>
+<div><p>Standard deviation in x- and y-directions. These directions apply to
+the kernel <em>before</em> rotation. If <cite>theta = pi/2</cite>, then the kernel is
+rotated 90 degrees so that <cite>sigma_x</cite> controls the <em>vertical</em> direction.</p>
+</div></blockquote>
+<p><strong>offset</strong> : float, optional</p>
+<blockquote>
+<div><p>Phase offset of harmonic function in radians.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>real, imag</strong> : arrays</p>
+<blockquote class="last">
+<div><p>Filtered images using the real and imaginary parts of the Gabor filter
+kernel.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r136" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[R136]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Gabor_filter">http://en.wikipedia.org/wiki/Gabor_filter</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r137" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[R137]</a></td><td><a class="reference external" href="http://mplab.ucsd.edu/tutorials/gabor.pdf">http://mplab.ucsd.edu/tutorials/gabor.pdf</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="gabor-kernel">
+<h2>gabor_kernel<a class="headerlink" href="#gabor-kernel" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.gabor_kernel">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">gabor_kernel</tt><big>(</big><em>frequency</em>, <em>theta=0</em>, <em>bandwidth=1</em>, <em>sigma_x=None</em>, <em>sigma_y=None</em>, <em>offset=0</em><big>)</big><a class="headerlink" href="#skimage.filter.gabor_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return complex 2D Gabor filter kernel.</p>
+<p>Frequency and orientation representations of the Gabor filter are similar
+to those of the human visual system. It is especially suitable for texture
+classification using Gabor filter banks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>frequency</strong> : float</p>
+<blockquote>
+<div><p>Frequency of the harmonic function.</p>
+</div></blockquote>
+<p><strong>theta</strong> : float</p>
+<blockquote>
+<div><p>Orientation in radians. If 0, the harmonic is in the x-direction.</p>
+</div></blockquote>
+<p><strong>bandwidth</strong> : float</p>
+<blockquote>
+<div><p>The bandwidth captured by the filter. For fixed bandwidth, <cite>sigma_x</cite>
+and <cite>sigma_y</cite> will decrease with increasing frequency. This value is
+ignored if <cite>sigma_x</cite> and <cite>sigma_y</cite> are set by the user.</p>
+</div></blockquote>
+<p><strong>sigma_x, sigma_y</strong> : float</p>
+<blockquote>
+<div><p>Standard deviation in x- and y-directions. These directions apply to
+the kernel <em>before</em> rotation. If <cite>theta = pi/2</cite>, then the kernel is
+rotated 90 degrees so that <cite>sigma_x</cite> controls the <em>vertical</em> direction.</p>
+</div></blockquote>
+<p><strong>offset</strong> : float, optional</p>
+<blockquote>
+<div><p>Phase offset of harmonic function in radians.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>g</strong> : complex array</p>
+<blockquote class="last">
+<div><p>Complex filter kernel.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r138" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[R138]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Gabor_filter">http://en.wikipedia.org/wiki/Gabor_filter</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r139" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[R139]</a></td><td><a class="reference external" href="http://mplab.ucsd.edu/tutorials/gabor.pdf">http://mplab.ucsd.edu/tutorials/gabor.pdf</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="gaussian-filter">
+<h2>gaussian_filter<a class="headerlink" href="#gaussian-filter" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.gaussian_filter">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">gaussian_filter</tt><big>(</big><em>image</em>, <em>sigma</em>, <em>output=None</em>, <em>mode='nearest'</em>, <em>cval=0</em>, <em>multichannel=None</em><big>)</big><a class="headerlink" href="#skimage.filter.gaussian_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multi-dimensional Gaussian filter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : array-like</p>
+<blockquote>
+<div><p>input image (grayscale or color) to filter.</p>
+</div></blockquote>
+<p><strong>sigma</strong> : scalar or sequence of scalars</p>
+<blockquote>
+<div><p>standard deviation for Gaussian kernel. The standard
+deviations of the Gaussian filter are given for each axis as a
+sequence, or as a single number, in which case it is equal for
+all axes.</p>
+</div></blockquote>
+<p><strong>output</strong> : array, optional</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">output</span></tt> parameter passes an array in which to store the
+filter output.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {&#8216;reflect&#8217;, &#8216;constant&#8217;, &#8216;nearest&#8217;, &#8216;mirror&#8217;, &#8216;wrap&#8217;}, optional</p>
+<blockquote>
+<div><p>The <cite>mode</cite> parameter determines how the array borders are
+handled, where <cite>cval</cite> is the value when mode is equal to
+&#8216;constant&#8217;. Default is &#8216;nearest&#8217;.</p>
+</div></blockquote>
+<p><strong>cval</strong> : scalar, optional</p>
+<blockquote>
+<div><p>Value to fill past edges of input if <cite>mode</cite> is &#8216;constant&#8217;. Default
+is 0.0</p>
+</div></blockquote>
+<p><strong>multichannel</strong> : bool, optional (default: None)</p>
+<blockquote>
+<div><p>Whether the last axis of the image is to be interpreted as multiple
+channels. If True, each channel is filtered separately (channels are
+not mixed together). Only 3 channels are supported. If <cite>None</cite>,
+the function will attempt to guess this, and raise a warning if
+ambiguous, when the array has shape (M, N, 3).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>filtered_image</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>the filtered array</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This function is a wrapper around <tt class="xref py py-func docutils literal"><span class="pre">scipy.ndimage.gaussian_filter()</span></tt>.</p>
+<p>Integer arrays are converted to float.</p>
+<p>The multi-dimensional filter is implemented as a sequence of
+one-dimensional convolution filters. The intermediate arrays are
+stored in the same data type as the output. Therefore, for output
+types with a limited precision, the results may be imprecise
+because intermediate results may be stored with insufficient
+precision.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([[ 0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  1.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>  <span class="c"># mild smoothing</span>
+<span class="go">array([[ 0.00163116,  0.03712502,  0.00163116],</span>
+<span class="go">       [ 0.03712502,  0.84496158,  0.03712502],</span>
+<span class="go">       [ 0.00163116,  0.03712502,  0.00163116]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># more smooting</span>
+<span class="go">array([[ 0.05855018,  0.09653293,  0.05855018],</span>
+<span class="go">       [ 0.09653293,  0.15915589,  0.09653293],</span>
+<span class="go">       [ 0.05855018,  0.09653293,  0.05855018]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Several modes are possible for handling boundaries</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;reflect&#39;</span><span class="p">)</span>
+<span class="go">array([[ 0.08767308,  0.12075024,  0.08767308],</span>
+<span class="go">       [ 0.12075024,  0.16630671,  0.12075024],</span>
+<span class="go">       [ 0.08767308,  0.12075024,  0.08767308]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># For RGB images, each is filtered separately</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.data</span> <span class="kn">import</span> <span class="n">lena</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">lena</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filtered_lena</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">multichannel</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="hprewitt">
+<h2>hprewitt<a class="headerlink" href="#hprewitt" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.hprewitt">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">hprewitt</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.hprewitt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the horizontal edges of an image using the Prewitt transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Prewitt edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre> 1   1   1
+ 0   0   0
+-1  -1  -1</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="hscharr">
+<h2>hscharr<a class="headerlink" href="#hscharr" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.hscharr">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">hscharr</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.hscharr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the horizontal edges of an image using the Scharr transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Scharr edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre> 3   10   3
+ 0    0   0
+-3  -10  -3</pre>
+</div>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r140" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[R140]</a></td><td>D. Kroon, 2009, Short Paper University Twente, Numerical Optimization
+of Kernel Based Image Derivatives.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="hsobel">
+<h2>hsobel<a class="headerlink" href="#hsobel" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.hsobel">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">hsobel</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.hsobel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the horizontal edges of an image using the Sobel transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Sobel edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre> 1   2   1
+ 0   0   0
+-1  -2  -1</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="inverse">
+<h2>inverse<a class="headerlink" href="#inverse" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.inverse">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">inverse</tt><big>(</big><em>data</em>, <em>impulse_response=None</em>, <em>filter_params={}</em>, <em>max_gain=2</em>, <em>predefined_filter=None</em><big>)</big><a class="headerlink" href="#skimage.filter.inverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the filter in reverse to the given data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (M,N) ndarray</p>
+<blockquote>
+<div><p>Input data.</p>
+</div></blockquote>
+<p><strong>impulse_response</strong> : callable <cite>f(r, c, **filter_params)</cite></p>
+<blockquote>
+<div><p>Impulse response of the filter.  See LPIFilter2D.__init__.</p>
+</div></blockquote>
+<p><strong>filter_params</strong> : dict</p>
+<blockquote>
+<div><p>Additional keyword parameters to the impulse_response function.</p>
+</div></blockquote>
+<p><strong>max_gain</strong> : float</p>
+<blockquote class="last">
+<div><p>Limit the filter gain.  Often, the filter contains zeros, which would
+cause the inverse filter to have infinite gain.  High gain causes
+amplification of artefacts, so a conservative limit is recommended.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="median-filter">
+<h2>median_filter<a class="headerlink" href="#median-filter" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.median_filter">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">median_filter</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#skimage.filter.median_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Deprecated function</strong>. Use <tt class="docutils literal"><span class="pre">filter.rank.median</span></tt> instead.</p>
+<p>Masked median filter with octagon shape.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : (M, N) ndarray</p>
+<blockquote>
+<div><p>Input image.</p>
+</div></blockquote>
+<p><strong>radius</strong> : int</p>
+<blockquote>
+<div><p>Radius (in pixels) of a circle inscribed into the filtering
+octagon. Must be at least 2. Default radius is 2.</p>
+</div></blockquote>
+<p><strong>mask</strong> : (M, N) ndarray</p>
+<blockquote>
+<div><p>Mask with 1&#8217;s for significant pixels, 0&#8217;s for masked pixels.
+By default, all pixels are considered significant.</p>
+</div></blockquote>
+<p><strong>percent</strong> : int</p>
+<blockquote>
+<div><p>The unmasked pixels within the octagon are sorted, and the
+value at <cite>percent</cite> percent of the index range is chosen.
+Default value of 50 gives the median pixel.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>out</strong> : (M, N) ndarray</p>
+<blockquote class="last">
+<div><p>Filtered array. In areas where the median filter does
+not overlap the mask, the filtered result is undefined, but
+in practice, it will be the lowest value in the valid area.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Because of the histogram implementation, the number of unique values
+for the output is limited to 256.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="c"># introduce outlier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">median_filter</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="c"># the median filter is good at removing outliers</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="prewitt">
+<h2>prewitt<a class="headerlink" href="#prewitt" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.prewitt">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">prewitt</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.prewitt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the edge magnitude using the Prewitt transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Prewitt edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Return the square root of the sum of squares of the horizontal
+and vertical Prewitt transforms.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="rank-order">
+<h2>rank_order<a class="headerlink" href="#rank-order" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.rank_order">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">rank_order</tt><big>(</big><em>image</em><big>)</big><a class="headerlink" href="#skimage.filter.rank_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an image of the same shape where each pixel is the
+index of the pixel value in the ascending order of the unique
+values of <cite>image</cite>, aka the rank-order value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image: ndarray</strong> :</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>labels: ndarray of type np.uint32, of shape image.shape</strong> :</p>
+<blockquote>
+<div><p>New array where each pixel has the rank-order value of the
+corresponding pixel in <cite>image</cite>. Pixel values are between 0 and
+n - 1, where n is the number of distinct unique values in
+<cite>image</cite>.</p>
+</div></blockquote>
+<p><strong>original_values: 1-d ndarray</strong> :</p>
+<blockquote class="last">
+<div><p>Unique original values of <cite>image</cite></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([[1, 4, 5],</span>
+<span class="go">    [4, 4, 1],</span>
+<span class="go">    [5, 1, 1]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rank_order</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">(array([[0, 1, 2],</span>
+<span class="go">    [1, 1, 0],</span>
+<span class="go">    [2, 0, 0]], dtype=uint32), array([1, 4, 5]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rank_order</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="go">(array([0, 1, 2, 1], dtype=uint32), array([-1. ,  2.5,  3.1]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="roberts">
+<h2>roberts<a class="headerlink" href="#roberts" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.roberts">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">roberts</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.roberts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the edge magnitude using Roberts&#8217; cross operator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Roberts&#8217; Cross edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="roberts-negative-diagonal">
+<h2>roberts_negative_diagonal<a class="headerlink" href="#roberts-negative-diagonal" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.roberts_negative_diagonal">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">roberts_negative_diagonal</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.roberts_negative_diagonal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the cross edges of an image using the Roberts&#8217; Cross operator.</p>
+<p>The kernel is applied to the input image to produce separate measurements
+of the gradient component one orientation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Robert&#8217;s edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre> 0   1
+-1   0</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="roberts-positive-diagonal">
+<h2>roberts_positive_diagonal<a class="headerlink" href="#roberts-positive-diagonal" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.roberts_positive_diagonal">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">roberts_positive_diagonal</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.roberts_positive_diagonal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the cross edges of an image using Roberts&#8217; cross operator.</p>
+<p>The kernel is applied to the input image to produce separate measurements
+of the gradient component one orientation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Robert&#8217;s edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre>1   0
+0  -1</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="scharr">
+<h2>scharr<a class="headerlink" href="#scharr" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.scharr">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">scharr</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.scharr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the edge magnitude using the Scharr transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Scharr edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Take the square root of the sum of the squares of the horizontal and
+vertical Scharrs to get a magnitude that&#8217;s somewhat insensitive to
+direction.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r141" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id13">[R141]</a></td><td>D. Kroon, 2009, Short Paper University Twente, Numerical Optimization
+of Kernel Based Image Derivatives.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="sobel">
+<h2>sobel<a class="headerlink" href="#sobel" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.sobel">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">sobel</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.sobel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the edge magnitude using the Sobel transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Sobel edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Take the square root of the sum of the squares of the horizontal and
+vertical Sobels to get a magnitude that&#8217;s somewhat insensitive to
+direction.</p>
+<p>Note that <tt class="docutils literal"><span class="pre">scipy.ndimage.sobel</span></tt> returns a directional Sobel which
+has to be further processed to perform edge detection.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="threshold-adaptive">
+<h2>threshold_adaptive<a class="headerlink" href="#threshold-adaptive" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.threshold_adaptive">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">threshold_adaptive</tt><big>(</big><em>image</em>, <em>block_size</em>, <em>method='gaussian'</em>, <em>offset=0</em>, <em>mode='reflect'</em>, <em>param=None</em><big>)</big><a class="headerlink" href="#skimage.filter.threshold_adaptive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies an adaptive threshold to an array.</p>
+<p>Also known as local or dynamic thresholding where the threshold value is
+the weighted mean for the local neighborhood of a pixel subtracted by a
+constant. Alternatively the threshold can be determined dynamically by a a
+given function using the &#8216;generic&#8217; method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : (N, M) ndarray</p>
+<blockquote>
+<div><p>Input image.</p>
+</div></blockquote>
+<p><strong>block_size</strong> : int</p>
+<blockquote>
+<div><p>Uneven size of pixel neighborhood which is used to calculate the
+threshold value (e.g. 3, 5, 7, ..., 21, ...).</p>
+</div></blockquote>
+<p><strong>method</strong> : {&#8216;generic&#8217;, &#8216;gaussian&#8217;, &#8216;mean&#8217;, &#8216;median&#8217;}, optional</p>
+<blockquote>
+<div><p>Method used to determine adaptive threshold for local neighbourhood in
+weighted mean image.</p>
+<ul class="simple">
+<li>&#8216;generic&#8217;: use custom function (see <cite>param</cite> parameter)</li>
+<li>&#8216;gaussian&#8217;: apply gaussian filter (see <cite>param</cite> parameter for custom                      sigma value)</li>
+<li>&#8216;mean&#8217;: apply arithmetic mean filter</li>
+<li>&#8216;median&#8217;: apply median rank filter</li>
+</ul>
+<p>By default the &#8216;gaussian&#8217; method is used.</p>
+</div></blockquote>
+<p><strong>offset</strong> : float, optional</p>
+<blockquote>
+<div><p>Constant subtracted from weighted mean of neighborhood to calculate
+the local threshold value. Default offset is 0.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {&#8216;reflect&#8217;, &#8216;constant&#8217;, &#8216;nearest&#8217;, &#8216;mirror&#8217;, &#8216;wrap&#8217;}, optional</p>
+<blockquote>
+<div><p>The mode parameter determines how the array borders are handled, where
+cval is the value when mode is equal to &#8216;constant&#8217;.
+Default is &#8216;reflect&#8217;.</p>
+</div></blockquote>
+<p><strong>param</strong> : {int, function}, optional</p>
+<blockquote>
+<div><p>Either specify sigma for &#8216;gaussian&#8217; method or function object for
+&#8216;generic&#8217; method. This functions takes the flat array of local
+neighbourhood as a single argument and returns the calculated
+threshold for the centre pixel.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>threshold</strong> : (N, M) ndarray</p>
+<blockquote class="last">
+<div><p>Thresholded binary image</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r142" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id14">[R142]</a></td><td><a class="reference external" href="http://docs.opencv.org/modules/imgproc/doc/miscellaneous_transformations.html?highlight=threshold#adaptivethreshold">http://docs.opencv.org/modules/imgproc/doc/miscellaneous_transformations.html?highlight=threshold#adaptivethreshold</a></td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.data</span> <span class="kn">import</span> <span class="n">camera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">camera</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary_image1</span> <span class="o">=</span> <span class="n">threshold_adaptive</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s">&#39;mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">arr</span><span class="p">:</span> <span class="n">arr</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary_image2</span> <span class="o">=</span> <span class="n">threshold_adaptive</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="s">&#39;generic&#39;</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="threshold-otsu">
+<h2>threshold_otsu<a class="headerlink" href="#threshold-otsu" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.threshold_otsu">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">threshold_otsu</tt><big>(</big><em>image</em>, <em>nbins=256</em><big>)</big><a class="headerlink" href="#skimage.filter.threshold_otsu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return threshold value based on Otsu&#8217;s method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : array</p>
+<blockquote>
+<div><p>Input image.</p>
+</div></blockquote>
+<p><strong>nbins</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of bins used to calculate histogram. This value is ignored for
+integer arrays.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>threshold</strong> : float</p>
+<blockquote class="last">
+<div><p>Upper threshold value. All pixels intensities that less or equal of
+this value assumed as foreground.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r143" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id15">[R143]</a></td><td>Wikipedia, <a class="reference external" href="http://en.wikipedia.org/wiki/Otsu's_Method">http://en.wikipedia.org/wiki/Otsu&#8217;s_Method</a></td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.data</span> <span class="kn">import</span> <span class="n">camera</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">camera</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thresh</span> <span class="o">=</span> <span class="n">threshold_otsu</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary</span> <span class="o">=</span> <span class="n">image</span> <span class="o">&lt;=</span> <span class="n">thresh</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="vprewitt">
+<h2>vprewitt<a class="headerlink" href="#vprewitt" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.vprewitt">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">vprewitt</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.vprewitt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the vertical edges of an image using the Prewitt transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process.</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area.
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Prewitt edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre>1   0  -1
+1   0  -1
+1   0  -1</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="vscharr">
+<h2>vscharr<a class="headerlink" href="#vscharr" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.vscharr">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">vscharr</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.vscharr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the vertical edges of an image using the Scharr transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Scharr edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre> 3   0   -3
+10   0  -10
+ 3   0   -3</pre>
+</div>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r144" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id16">[R144]</a></td><td>D. Kroon, 2009, Short Paper University Twente, Numerical Optimization
+of Kernel Based Image Derivatives.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="vsobel">
+<h2>vsobel<a class="headerlink" href="#vsobel" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.vsobel">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">vsobel</tt><big>(</big><em>image</em>, <em>mask=None</em><big>)</big><a class="headerlink" href="#skimage.filter.vsobel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the vertical edges of an image using the Sobel transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2-D array</p>
+<blockquote>
+<div><p>Image to process</p>
+</div></blockquote>
+<p><strong>mask</strong> : 2-D array, optional</p>
+<blockquote>
+<div><p>An optional mask to limit the application to a certain area
+Note that pixels surrounding masked regions are also masked to
+prevent masked regions from affecting the result.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>output</strong> : 2-D array</p>
+<blockquote class="last">
+<div><p>The Sobel edge map.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>We use the following kernel and return the absolute value of the
+result at each point:</p>
+<div class="highlight-python"><pre>1   0  -1
+2   0  -2
+1   0  -1</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="wiener">
+<h2>wiener<a class="headerlink" href="#wiener" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.filter.wiener">
+<tt class="descclassname">skimage.filter.</tt><tt class="descname">wiener</tt><big>(</big><em>data</em>, <em>impulse_response=None</em>, <em>filter_params={}</em>, <em>K=0.25</em>, <em>predefined_filter=None</em><big>)</big><a class="headerlink" href="#skimage.filter.wiener" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum Mean Square Error (Wiener) inverse filter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (M,N) ndarray</p>
+<blockquote>
+<div><p>Input data.</p>
+</div></blockquote>
+<p><strong>K</strong> : float or (M,N) ndarray</p>
+<blockquote>
+<div><p>Ratio between power spectrum of noise and undegraded
+image.</p>
+</div></blockquote>
+<p><strong>impulse_response</strong> : callable <cite>f(r, c, **filter_params)</cite></p>
+<blockquote>
+<div><p>Impulse response of the filter.  See LPIFilter2D.__init__.</p>
+</div></blockquote>
+<p><strong>filter_params</strong> : dict</p>
+<blockquote class="last">
+<div><p>Additional keyword parameters to the impulse_response function.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+        </div>
+        <div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <li><a href="../index.html">Documentation Home</a></li>
+    </ul>
+</div>
+        <h4 class="sidebar-box-heading">Contents</h4>
+        <div class="well sidebar-box toc">
+            <ul class="nav nav-list">
+<li><a class="reference internal" href="#">Module: <tt class="docutils literal"><span class="pre">filter</span></tt></a><ul class="nav nav-list">
+<li><a class="reference internal" href="#lpifilter2d"><tt class="docutils literal"><span class="pre">LPIFilter2D</span></tt></a></li>
+<li><a class="reference internal" href="#canny">canny</a></li>
+<li><a class="reference internal" href="#denoise-bilateral">denoise_bilateral</a></li>
+<li><a class="reference internal" href="#denoise-tv-bregman">denoise_tv_bregman</a></li>
+<li><a class="reference internal" href="#denoise-tv-chambolle">denoise_tv_chambolle</a></li>
+<li><a class="reference internal" href="#gabor-filter">gabor_filter</a></li>
+<li><a class="reference internal" href="#gabor-kernel">gabor_kernel</a></li>
+<li><a class="reference internal" href="#gaussian-filter">gaussian_filter</a></li>
+<li><a class="reference internal" href="#hprewitt">hprewitt</a></li>
+<li><a class="reference internal" href="#hscharr">hscharr</a></li>
+<li><a class="reference internal" href="#hsobel">hsobel</a></li>
+<li><a class="reference internal" href="#inverse">inverse</a></li>
+<li><a class="reference internal" href="#median-filter">median_filter</a></li>
+<li><a class="reference internal" href="#prewitt">prewitt</a></li>
+<li><a class="reference internal" href="#rank-order">rank_order</a></li>
+<li><a class="reference internal" href="#roberts">roberts</a></li>
+<li><a class="reference internal" href="#roberts-negative-diagonal">roberts_negative_diagonal</a></li>
+<li><a class="reference internal" href="#roberts-positive-diagonal">roberts_positive_diagonal</a></li>
+<li><a class="reference internal" href="#scharr">scharr</a></li>
+<li><a class="reference internal" href="#sobel">sobel</a></li>
+<li><a class="reference internal" href="#threshold-adaptive">threshold_adaptive</a></li>
+<li><a class="reference internal" href="#threshold-otsu">threshold_otsu</a></li>
+<li><a class="reference internal" href="#vprewitt">vprewitt</a></li>
+<li><a class="reference internal" href="#vscharr">vscharr</a></li>
+<li><a class="reference internal" href="#vsobel">vsobel</a></li>
+<li><a class="reference internal" href="#wiener">wiener</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <script src="../_static/docversions.js"></script>
+        <script type="text/javascript">
+            insert_version_links();
+        </script>
+    </ul>
+</div>
+        </div>
+    </div>
+    <div class="well footer">
+        <small>
+            &copy; Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+    </div>
+</body>
+</html>

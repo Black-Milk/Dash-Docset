@@ -1,0 +1,179 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>I/O Plugin Infrastructure &mdash; skimage v0.9.0 docs</title>
+    
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link href="../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../_static/css/custom.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <link rel="top" title="skimage v0.9.0 docs" href="../index.html" />
+        <link rel="up" title="User Guide" href="../user_guide.html" />
+        <link rel="next" title="Tutorials" href="tutorials.html" />
+        <link rel="prev" title="Image data types and what they mean" href="data_types.html" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="shortcut icon" href="../_static/favicon.ico">
+</head>
+<body class="container">
+    <a href="http://scikit-image.org" class="logo"><img src="../_static/img/logo.png" alt=""></a>
+    <div class="clearfix"></div>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+            </ul>
+            <form class="navbar-form pull-right" action="../search.html" method="get">
+                <input type="text" class="search span3" name="q" placeholder="Search documentation ...">
+                <input type="hidden" name="check_keywords" value="yes" >
+                <input type="hidden" name="area" value="default" >
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            
+  <div class="section" id="i-o-plugin-infrastructure">
+<h1>I/O Plugin Infrastructure<a class="headerlink" href="#i-o-plugin-infrastructure" title="Permalink to this headline">¶</a></h1>
+<p>A plugin consists of two files, the source and the descriptor <tt class="docutils literal"><span class="pre">.ini</span></tt>.  Let&#8217;s
+say we&#8217;d like to provide a plugin for <tt class="docutils literal"><span class="pre">imshow</span></tt> using <tt class="docutils literal"><span class="pre">matplotlib</span></tt>.  We&#8217;ll
+call our plugin <tt class="docutils literal"><span class="pre">mpl</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">skimage</span><span class="o">/</span><span class="n">io</span><span class="o">/</span><span class="n">_plugins</span><span class="o">/</span><span class="n">mpl</span><span class="o">.</span><span class="n">py</span>
+<span class="n">skimage</span><span class="o">/</span><span class="n">io</span><span class="o">/</span><span class="n">_plugins</span><span class="o">/</span><span class="n">mpl</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+<p>The name of the <tt class="docutils literal"><span class="pre">.py</span></tt> and <tt class="docutils literal"><span class="pre">.ini</span></tt> files must correspond.  Inside the
+<tt class="docutils literal"><span class="pre">.ini</span></tt> file, we give the plugin meta-data:</p>
+<div class="highlight-python"><pre>[mpl] &lt;-- name of the plugin, may be anything
+description = Matplotlib image I/O plugin
+provides = imshow &lt;-- a comma-separated list, one or more of
+                      imshow, imsave, imread, _app_show</pre>
+</div>
+<p>The &#8220;provides&#8221;-line lists all the functions provided by the plugin.  Since our
+plugin provides <tt class="docutils literal"><span class="pre">imshow</span></tt>, we have to define it inside <tt class="docutils literal"><span class="pre">mpl.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># This is mpl.py</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that, by default, <tt class="docutils literal"><span class="pre">imshow</span></tt> is non-blocking, so a special function
+<tt class="docutils literal"><span class="pre">_app_show</span></tt> must be provided to block the GUI.  We can modify our plugin to
+provide it as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">mpl</span><span class="p">]</span>
+<span class="n">provides</span> <span class="o">=</span> <span class="n">imshow</span><span class="p">,</span> <span class="n">_app_show</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># This is mpl.py</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_app_show</span><span class="p">():</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Any plugin in the <tt class="docutils literal"><span class="pre">_plugins</span></tt> directory is automatically examined by
+<tt class="docutils literal"><span class="pre">skimage.io</span></tt> upon import.  You may list all the plugins on your
+system:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">skimage.io</span> <span class="kn">as</span> <span class="nn">io</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">plugins</span><span class="p">()</span>
+<span class="go">{&#39;gtk&#39;: [&#39;imshow&#39;],</span>
+<span class="go"> &#39;matplotlib&#39;: [&#39;imshow&#39;, &#39;imsave&#39;],</span>
+<span class="go"> &#39;pil&#39;: [&#39;imread&#39;],</span>
+<span class="go"> &#39;qt&#39;: [&#39;imshow&#39;],</span>
+<span class="go"> &#39;test&#39;: [&#39;imsave&#39;, &#39;imshow&#39;, &#39;imread&#39;]}</span>
+</pre></div>
+</div>
+<p>or only those already loaded:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">plugins</span><span class="p">(</span><span class="n">loaded</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">{&#39;pil&#39;: [&#39;imread&#39;]}</span>
+</pre></div>
+</div>
+<p>A plugin is loaded using the <tt class="docutils literal"><span class="pre">use_plugin</span></tt> command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">skimage.io</span> <span class="kn">as</span> <span class="nn">io</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">use_plugin</span><span class="p">(</span><span class="s">&#39;pil&#39;</span><span class="p">)</span> <span class="c"># Use all capabilities provided by PIL</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">use_plugin</span><span class="p">(</span><span class="s">&#39;pil&#39;</span><span class="p">,</span> <span class="s">&#39;imread&#39;</span><span class="p">)</span> <span class="c"># Use only the imread capability of PIL</span>
+</pre></div>
+</div>
+<p>Note that, if more than one plugin provides certain functionality, the
+last plugin loaded is used.</p>
+<p>To query a plugin&#8217;s capabilities, use <tt class="docutils literal"><span class="pre">plugin_info</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">io</span><span class="o">.</span><span class="n">plugin_info</span><span class="p">(</span><span class="s">&#39;pil&#39;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="go">{&#39;description&#39;: &#39;Image reading via the Python Imaging Library&#39;,</span>
+<span class="go"> &#39;provides&#39;: &#39;imread&#39;}</span>
+</pre></div>
+</div>
+</div>
+
+
+        </div>
+        <div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <li><a href="../index.html">Documentation Home</a></li>
+    </ul>
+</div>
+    <h4 class="sidebar-box-heading">Previous topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="data_types.html" title="previous chapter">Image data types and what they mean</a></li>
+        </ul>
+    </div>
+    <h4 class="sidebar-box-heading">Next topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="tutorials.html" title="next chapter">Tutorials</a></li>
+        </ul>
+    </div>
+
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <script src="../_static/docversions.js"></script>
+        <script type="text/javascript">
+            insert_version_links();
+        </script>
+    </ul>
+</div>
+        </div>
+    </div>
+    <div class="well footer">
+        <small>
+            &copy; Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+    </div>
+</body>
+</html>

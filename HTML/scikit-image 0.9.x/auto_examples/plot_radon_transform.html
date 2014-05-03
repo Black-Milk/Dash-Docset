@@ -1,0 +1,312 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Radon transform &mdash; skimage v0.9.0 docs</title>
+    
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link href="../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../_static/css/custom.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <link rel="top" title="skimage v0.9.0 docs" href="../index.html" />
+        <link rel="up" title="General examples" href="index.html" />
+        <link rel="next" title="Random walker segmentation" href="plot_random_walker_segmentation.html" />
+        <link rel="prev" title="Build image pyramids" href="plot_pyramid.html" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="shortcut icon" href="../_static/favicon.ico">
+</head>
+<body class="container">
+    <a href="http://scikit-image.org" class="logo"><img src="../_static/img/logo.png" alt=""></a>
+    <div class="clearfix"></div>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+            </ul>
+            <form class="navbar-form pull-right" action="../search.html" method="get">
+                <input type="text" class="search span3" name="q" placeholder="Search documentation ...">
+                <input type="hidden" name="check_keywords" value="yes" >
+                <input type="hidden" name="area" value="default" >
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            
+  <div class="section" id="radon-transform">
+<span id="example-plot-radon-transform-py"></span><h1>Radon transform<a class="headerlink" href="#radon-transform" title="Permalink to this headline">¶</a></h1>
+<p>In computed tomography, the tomography reconstruction problem is to obtain
+a tomographic slice image from a set of projections <a class="footnote-reference" href="#id7" id="id1">[1]</a>. A projection is formed
+by drawing a set of parallel rays through the 2D object of interest, assigning
+the integral of the object&#8217;s contrast along each ray to a single pixel in the
+projection. A single projection of a 2D object is one dimensional. To
+enable computed tomography reconstruction of the object, several projections
+must be acquired, each of them corresponding to a different angle between the
+rays with respect to the object. A collection of projections at several angles
+is called a sinogram, which is a linear transform of the original image.</p>
+<p>The inverse Radon transform is used in computed tomography to reconstruct
+a 2D image from the measured projections (the sinogram). A practical, exact
+implementation of the inverse Radon transform does not exist, but there are
+several good approximate algorithms available.</p>
+<p>As the inverse Radon transform reconstructs the object from a set of
+projections, the (forward) Radon transform can be used to simulate a
+tomography experiment.</p>
+<p>This script performs the Radon transform to simulate a tomography experiment
+and reconstructs the input image based on the resulting sinogram formed by
+the simulation. Two methods for performing the inverse Radon transform
+and reconstructing the original image are compared: The Filtered Back
+Projection (FBP) and the Simultaneous Algebraic Reconstruction
+Technique (SART).</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<ul class="last simple">
+<li>AC Kak, M Slaney, &#8220;Principles of Computerized Tomographic Imaging&#8221;,
+<a class="reference external" href="http://www.slaney.org/pct/pct-toc.html">http://www.slaney.org/pct/pct-toc.html</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Radon_transform">http://en.wikipedia.org/wiki/Radon_transform</a></li>
+</ul>
+</div>
+<div class="section" id="the-forward-transform">
+<h2>The forward transform<a class="headerlink" href="#the-forward-transform" title="Permalink to this headline">¶</a></h2>
+<p>As our original image, we will use the Shepp-Logan phantom. When calculating
+the Radon transform, we need to decide how many projection angles we wish
+to use. As a rule of thumb, the number of projections should be about the
+same as the number of pixels there are across the object (to see why this
+is so, consider how many unknown pixel values must be determined in the
+reconstruction process and compare this to the number of measurements
+provided by the projections), and we follow that rule here. Below is the
+original image and its Radon transform, often known as its _sinogram_:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">skimage.io</span> <span class="kn">import</span> <span class="n">imread</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">data_dir</span>
+<span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">radon</span><span class="p">,</span> <span class="n">rescale</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s">&quot;/phantom.png&quot;</span><span class="p">,</span> <span class="n">as_grey</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">rescale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Original&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">)</span>
+
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">180.</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">endpoint</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">sinogram</span> <span class="o">=</span> <span class="n">radon</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">circle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Radon transform</span><span class="se">\n</span><span class="s">(Sinogram)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Projection angle (deg)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Projection position (pixels)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sinogram</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">,</span>
+           <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sinogram</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">aspect</span><span class="o">=</span><span class="s">&#39;auto&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/plot_radon_transform_1.png" src="../_images/plot_radon_transform_1.png" />
+</div>
+<div class="section" id="reconstruction-with-the-filtered-back-projection-fbp">
+<h2>Reconstruction with the Filtered Back Projection (FBP)<a class="headerlink" href="#reconstruction-with-the-filtered-back-projection-fbp" title="Permalink to this headline">¶</a></h2>
+<p>The mathematical foundation of the filtered back projection is the Fourier
+slice theorem <a class="footnote-reference" href="#id8" id="id2">[2]</a>. It uses Fourier transform of the projection and
+interpolation in Fourier space to obtain the 2D Fourier transform of the image,
+which is then inverted to form the reconstructed image. The filtered back
+projection is among the fastest methods of performing the inverse Radon
+transform. The only tunable parameter for the FBP is the filter, which is
+applied to the Fourier transformed projections. It may be used to suppress
+high frequency noise in the reconstruction. <tt class="docutils literal"><span class="pre">skimage</span></tt> provides a few
+different options for the filter.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">iradon</span>
+
+<span class="n">reconstruction_fbp</span> <span class="o">=</span> <span class="n">iradon</span><span class="p">(</span><span class="n">sinogram</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">circle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">reconstruction_fbp</span> <span class="o">-</span> <span class="n">image</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;FBP rms reconstruction error: </span><span class="si">%.3g</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+
+<span class="n">imkwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Reconstruction</span><span class="se">\n</span><span class="s">Filtered back projection&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstruction_fbp</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Reconstruction error</span><span class="se">\n</span><span class="s">Filtered back projection&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstruction_fbp</span> <span class="o">-</span> <span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">,</span> <span class="o">**</span><span class="n">imkwargs</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/plot_radon_transform_2.png" src="../_images/plot_radon_transform_2.png" />
+</div>
+<div class="section" id="reconstruction-with-the-simultaneous-algebraic-reconstruction-technique">
+<h2>Reconstruction with the Simultaneous Algebraic Reconstruction Technique<a class="headerlink" href="#reconstruction-with-the-simultaneous-algebraic-reconstruction-technique" title="Permalink to this headline">¶</a></h2>
+<p>Algebraic reconstruction techniques for tomography are based on a
+straightforward idea: for a pixelated image the value of a single ray in a
+particular projection is simply a sum of all the pixels the ray passes through
+on its way through the object. This is a way of expressing the forward Radon
+transform. The inverse Radon transform can then be formulated as a (large) set
+of linear equations. As each ray passes through a small fraction of the pixels
+in the image, this set of equations is sparse, allowing iterative solvers for
+sparse linear systems to tackle the system of equations. One iterative method
+has been particularly popular, namely Kaczmarz&#8217; method <a class="footnote-reference" href="#id9" id="id3">[3]</a>, which has the
+property that the solution will approach a least-squares solution of the
+equation set.</p>
+<p>The combination of the formulation of the reconstruction problem as a set
+of linear equations and an iterative solver makes algebraic techniques
+relatively flexible, hence some forms of prior knowledge can be incorporated
+with relative ease.</p>
+<p><tt class="docutils literal"><span class="pre">skimage</span></tt> provides one of the more popular variations of the algebraic
+reconstruction techniques: the Simultaneous Algebraic Reconstruction Technique
+(SART) <a class="footnote-reference" href="#id7" id="id4">[1]</a> <a class="footnote-reference" href="#id10" id="id5">[4]</a>. It uses Kaczmarz&#8217; method <a class="footnote-reference" href="#id9" id="id6">[3]</a> as the iterative solver. A good
+reconstruction is normally obtained in a single iteration, making the method
+computationally effective. Running one or more extra iterations will normally
+improve the reconstruction of sharp, high frequency features and reduce the
+mean squared error at the expense of increased high frequency noise (the user
+will need to decide on what number of iterations is best suited to the problem
+at hand. The implementation in <tt class="docutils literal"><span class="pre">skimage</span></tt> allows prior information of the
+form of a lower and upper threshold on the reconstructed values to be supplied
+to the reconstruction.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">iradon_sart</span>
+
+<span class="n">reconstruction_sart</span> <span class="o">=</span> <span class="n">iradon_sart</span><span class="p">(</span><span class="n">sinogram</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">reconstruction_sart</span> <span class="o">-</span> <span class="n">image</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;SART (1 iteration) rms reconstruction error: </span><span class="si">%.3g</span><span class="s">&#39;</span>
+      <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Reconstruction</span><span class="se">\n</span><span class="s">SART&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstruction_sart</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Reconstruction error</span><span class="se">\n</span><span class="s">SART&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstruction_sart</span> <span class="o">-</span> <span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">,</span> <span class="o">**</span><span class="n">imkwargs</span><span class="p">)</span>
+
+<span class="c"># Run a second iteration of SART by supplying the reconstruction</span>
+<span class="c"># from the first iteration as an initial estimate</span>
+<span class="n">reconstruction_sart2</span> <span class="o">=</span> <span class="n">iradon_sart</span><span class="p">(</span><span class="n">sinogram</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+                                   <span class="n">image</span><span class="o">=</span><span class="n">reconstruction_sart</span><span class="p">)</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">reconstruction_sart2</span> <span class="o">-</span> <span class="n">image</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;SART (2 iterations) rms reconstruction error: </span><span class="si">%.3g</span><span class="s">&#39;</span>
+      <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Reconstruction</span><span class="se">\n</span><span class="s">SART, 2 iterations&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstruction_sart2</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Reconstruction error</span><span class="se">\n</span><span class="s">SART, 2 iterations&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstruction_sart2</span> <span class="o">-</span> <span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Greys_r</span><span class="p">,</span> <span class="o">**</span><span class="n">imkwargs</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/plot_radon_transform_3.png" src="../_images/plot_radon_transform_3.png" />
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> AC Kak, M Slaney, &#8220;Principles of Computerized Tomographic Imaging&#8221;,
+IEEE Press 1988. <a class="reference external" href="http://www.slaney.org/pct/pct-toc.html">http://www.slaney.org/pct/pct-toc.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Wikipedia, Radon transform,
+<a class="reference external" href="http://en.wikipedia.org/wiki/Radon_transform#Relationship_with_the_Fourier_transform">http://en.wikipedia.org/wiki/Radon_transform#Relationship_with_the_Fourier_transform</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> S Kaczmarz, &#8220;Angenaeherte Aufloesung von Systemen linearer
+Gleichungen&#8221;, Bulletin International de l&#8217;Academie Polonaise des
+Sciences et des Lettres 35 pp 355&#8211;357 (1937)</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td>AH Andersen, AC Kak, &#8220;Simultaneous algebraic reconstruction technique
+(SART): a superior implementation of the ART algorithm&#8221;, Ultrasonic
+Imaging 6 pp 81&#8211;94 (1984)</td></tr>
+</tbody>
+</table>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_radon_transform.py"><tt class="xref download docutils literal"><span class="pre">download</span></tt></a>
+(generated using <tt class="docutils literal"><span class="pre">skimage</span></tt> 0.9.0)</p>
+</div>
+</div>
+
+
+        </div>
+        <div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <li><a href="../index.html">Documentation Home</a></li>
+    </ul>
+</div>
+    <h4 class="sidebar-box-heading">Previous topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="plot_pyramid.html" title="previous chapter">Build image pyramids</a></li>
+        </ul>
+    </div>
+    <h4 class="sidebar-box-heading">Next topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="plot_random_walker_segmentation.html" title="next chapter">Random walker segmentation</a></li>
+        </ul>
+    </div>
+        <h4 class="sidebar-box-heading">Contents</h4>
+        <div class="well sidebar-box toc">
+            <ul class="nav nav-list">
+<li><a class="reference internal" href="#">Radon transform</a><ul class="nav nav-list">
+<li><a class="reference internal" href="#the-forward-transform">The forward transform</a></li>
+<li><a class="reference internal" href="#reconstruction-with-the-filtered-back-projection-fbp">Reconstruction with the Filtered Back Projection (FBP)</a></li>
+<li><a class="reference internal" href="#reconstruction-with-the-simultaneous-algebraic-reconstruction-technique">Reconstruction with the Simultaneous Algebraic Reconstruction Technique</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <script src="../_static/docversions.js"></script>
+        <script type="text/javascript">
+            insert_version_links();
+        </script>
+    </ul>
+</div>
+        </div>
+    </div>
+    <div class="well footer">
+        <small>
+            &copy; Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+    </div>
+</body>
+</html>

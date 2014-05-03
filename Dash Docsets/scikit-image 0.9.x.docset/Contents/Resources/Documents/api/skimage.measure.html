@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Module: measure — skimage v0.9.0 docs</title>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/custom.css" rel="stylesheet" type="text/css"/>
+<link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css"/>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="../_static/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="skimage v0.9.0 docs"/>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<link href="../_static/favicon.ico" rel="shortcut icon"/>
+</head>
+<body class="container">
+<a class="logo" href="http://scikit-image.org"><img alt="" src="../_static/img/logo.png"/></a>
+<div class="clearfix"></div>
+<div class="navbar">
+<div class="navbar-inner">
+<ul class="nav">
+<li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+</ul>
+<form action="../search.html" class="navbar-form pull-right" method="get">
+<input class="search span3" name="q" placeholder="Search documentation ..." type="text"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+</div>
+<div class="row">
+<div class="span9">
+<div class="section" id="module-skimage.measure">
+<span id="module-measure"></span><h1><a name="//apple_ref/cpp/Module/skimage.measure"></a>Module: <tt class="xref py py-mod docutils literal"><span class="pre">measure</span></tt><a class="headerlink" href="#module-skimage.measure" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="circlemodel">
+<h2><a class="reference internal" href="#skimage.measure.CircleModel" title="skimage.measure.CircleModel"><tt class="xref py py-class docutils literal"><span class="pre">CircleModel</span></tt></a><a class="headerlink" href="#circlemodel" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skimage.measure.CircleModel"><a name="//apple_ref/cpp/cl/skimage.measure.CircleModel"></a>
+<em class="property">class </em><tt class="descclassname">skimage.measure.</tt><tt class="descname">CircleModel</tt><a class="headerlink" href="#skimage.measure.CircleModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">skimage.measure.fit.BaseModel</span></tt></p>
+<p>Total least squares estimator for 2D circles.</p>
+<p>The functional model of the circle is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xc</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">yc</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>This estimator minimizes the squared distances from all points to the
+circle:</p>
+<div class="highlight-python"><pre>min{ sum((r - sqrt((x_i - xc)**2 + (y_i - yc)**2))**2) }</pre>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">_params</span></tt> attribute contains the parameters in the following order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">r</span>
+</pre></div>
+</div>
+<p>A minimum number of 3 points is required to solve for the parameters.</p>
+<dl class="method">
+<dt id="skimage.measure.CircleModel.__init__"><a name="//apple_ref/cpp/clm/skimage.measure.CircleModel.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.measure.CircleModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="skimage.measure.CircleModel.estimate"><a name="//apple_ref/cpp/clm/skimage.measure.CircleModel.estimate"></a>
+<tt class="descname">estimate</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#skimage.measure.CircleModel.estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate circle model from data using total least squares.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (N, 2) array</p>
+<blockquote class="last">
+<div><p>N points with <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> coordinates, respectively.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.measure.CircleModel.predict_xy"><a name="//apple_ref/cpp/clm/skimage.measure.CircleModel.predict_xy"></a>
+<tt class="descname">predict_xy</tt><big>(</big><em>t</em>, <em>params=None</em><big>)</big><a class="headerlink" href="#skimage.measure.CircleModel.predict_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict x- and y-coordinates using the estimated model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>t</strong> : array</p>
+<blockquote>
+<div><p>Angles in circle in radians. Angles start to count from positive
+x-axis to positive y-axis in a right-handed system.</p>
+</div></blockquote>
+<p><strong>params</strong> : (3, ) array, optional</p>
+<blockquote>
+<div><p>Optional custom parameter set.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>xy</strong> : (..., 2) array</p>
+<blockquote class="last">
+<div><p>Predicted x- and y-coordinates.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.measure.CircleModel.residuals"><a name="//apple_ref/cpp/clm/skimage.measure.CircleModel.residuals"></a>
+<tt class="descname">residuals</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#skimage.measure.CircleModel.residuals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine residuals of data to model.</p>
+<p>For each point the shortest distance to the circle is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (N, 2) array</p>
+<blockquote>
+<div><p>N points with <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> coordinates, respectively.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>residuals</strong> : (N, ) array</p>
+<blockquote class="last">
+<div><p>Residual for each data point.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="ellipsemodel">
+<h2><a class="reference internal" href="#skimage.measure.EllipseModel" title="skimage.measure.EllipseModel"><tt class="xref py py-class docutils literal"><span class="pre">EllipseModel</span></tt></a><a class="headerlink" href="#ellipsemodel" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skimage.measure.EllipseModel"><a name="//apple_ref/cpp/cl/skimage.measure.EllipseModel"></a>
+<em class="property">class </em><tt class="descclassname">skimage.measure.</tt><tt class="descname">EllipseModel</tt><a class="headerlink" href="#skimage.measure.EllipseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">skimage.measure.fit.BaseModel</span></tt></p>
+<p>Total least squares estimator for 2D ellipses.</p>
+<p>The functional model of the ellipse is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">xt</span> <span class="o">=</span> <span class="n">xc</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">yt</span> <span class="o">=</span> <span class="n">yc</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">xt</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">yt</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">(xt,</span> <span class="pre">yt)</span></tt> is the closest point on the ellipse to <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt>. Thus
+d is the shortest distance from the point to the ellipse.</p>
+<p>This estimator minimizes the squared distances from all points to the
+ellipse:</p>
+<div class="highlight-python"><pre>min{ sum(d_i**2) } = min{ sum((x_i - xt)**2 + (y_i - yt)**2) }</pre>
+</div>
+<p>Thus you have <tt class="docutils literal"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">N</span></tt> equations (x_i, y_i) for <tt class="docutils literal"><span class="pre">N</span> <span class="pre">+</span> <span class="pre">5</span></tt> unknowns (t_i,
+xc, yc, a, b, theta), which gives you an effective redundancy of <tt class="docutils literal"><span class="pre">N</span> <span class="pre">-</span> <span class="pre">5</span></tt>.</p>
+<p>The <tt class="docutils literal"><span class="pre">_params</span></tt> attribute contains the parameters in the following order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">theta</span>
+</pre></div>
+</div>
+<p>A minimum number of 5 points is required to solve for the parameters.</p>
+<dl class="method">
+<dt id="skimage.measure.EllipseModel.__init__"><a name="//apple_ref/cpp/clm/skimage.measure.EllipseModel.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.measure.EllipseModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="skimage.measure.EllipseModel.estimate"><a name="//apple_ref/cpp/clm/skimage.measure.EllipseModel.estimate"></a>
+<tt class="descname">estimate</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#skimage.measure.EllipseModel.estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate circle model from data using total least squares.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (N, 2) array</p>
+<blockquote class="last">
+<div><p>N points with <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> coordinates, respectively.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.measure.EllipseModel.predict_xy"><a name="//apple_ref/cpp/clm/skimage.measure.EllipseModel.predict_xy"></a>
+<tt class="descname">predict_xy</tt><big>(</big><em>t</em>, <em>params=None</em><big>)</big><a class="headerlink" href="#skimage.measure.EllipseModel.predict_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict x- and y-coordinates using the estimated model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>t</strong> : array</p>
+<blockquote>
+<div><p>Angles in circle in radians. Angles start to count from positive
+x-axis to positive y-axis in a right-handed system.</p>
+</div></blockquote>
+<p><strong>params</strong> : (5, ) array, optional</p>
+<blockquote>
+<div><p>Optional custom parameter set.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>xy</strong> : (..., 2) array</p>
+<blockquote class="last">
+<div><p>Predicted x- and y-coordinates.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.measure.EllipseModel.residuals"><a name="//apple_ref/cpp/clm/skimage.measure.EllipseModel.residuals"></a>
+<tt class="descname">residuals</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#skimage.measure.EllipseModel.residuals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine residuals of data to model.</p>
+<p>For each point the shortest distance to the ellipse is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (N, 2) array</p>
+<blockquote>
+<div><p>N points with <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> coordinates, respectively.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>residuals</strong> : (N, ) array</p>
+<blockquote class="last">
+<div><p>Residual for each data point.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="linemodel">
+<h2><a class="reference internal" href="#skimage.measure.LineModel" title="skimage.measure.LineModel"><tt class="xref py py-class docutils literal"><span class="pre">LineModel</span></tt></a><a class="headerlink" href="#linemodel" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skimage.measure.LineModel"><a name="//apple_ref/cpp/cl/skimage.measure.LineModel"></a>
+<em class="property">class </em><tt class="descclassname">skimage.measure.</tt><tt class="descname">LineModel</tt><a class="headerlink" href="#skimage.measure.LineModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">skimage.measure.fit.BaseModel</span></tt></p>
+<p>Total least squares estimator for 2D lines.</p>
+<p>Lines are parameterized using polar coordinates as functional model:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dist</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This parameterization is able to model vertical lines in contrast to the
+standard line model <tt class="docutils literal"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">a*x</span> <span class="pre">+</span> <span class="pre">b</span></tt>.</p>
+<p>This estimator minimizes the squared distances from all points to the
+line:</p>
+<div class="highlight-python"><pre>min{ sum((dist - x_i * cos(theta) + y_i * sin(theta))**2) }</pre>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">_params</span></tt> attribute contains the parameters in the following order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dist</span><span class="p">,</span> <span class="n">theta</span>
+</pre></div>
+</div>
+<p>A minimum number of 2 points is required to solve for the parameters.</p>
+<dl class="method">
+<dt id="skimage.measure.LineModel.__init__"><a name="//apple_ref/cpp/clm/skimage.measure.LineModel.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.measure.LineModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="skimage.measure.LineModel.estimate"><a name="//apple_ref/cpp/clm/skimage.measure.LineModel.estimate"></a>
+<tt class="descname">estimate</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#skimage.measure.LineModel.estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate line model from data using total least squares.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (N, 2) array</p>
+<blockquote class="last">
+<div><p>N points with <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> coordinates, respectively.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.measure.LineModel.predict_x"><a name="//apple_ref/cpp/clm/skimage.measure.LineModel.predict_x"></a>
+<tt class="descname">predict_x</tt><big>(</big><em>y</em>, <em>params=None</em><big>)</big><a class="headerlink" href="#skimage.measure.LineModel.predict_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict x-coordinates using the estimated model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>y</strong> : array</p>
+<blockquote>
+<div><p>y-coordinates.</p>
+</div></blockquote>
+<p><strong>params</strong> : (2, ) array, optional</p>
+<blockquote>
+<div><p>Optional custom parameter set.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>x</strong> : array</p>
+<blockquote class="last">
+<div><p>Predicted x-coordinates.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.measure.LineModel.predict_y"><a name="//apple_ref/cpp/clm/skimage.measure.LineModel.predict_y"></a>
+<tt class="descname">predict_y</tt><big>(</big><em>x</em>, <em>params=None</em><big>)</big><a class="headerlink" href="#skimage.measure.LineModel.predict_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict y-coordinates using the estimated model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>x</strong> : array</p>
+<blockquote>
+<div><p>x-coordinates.</p>
+</div></blockquote>
+<p><strong>params</strong> : (2, ) array, optional</p>
+<blockquote>
+<div><p>Optional custom parameter set.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>y</strong> : array</p>
+<blockquote class="last">
+<div><p>Predicted y-coordinates.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.measure.LineModel.residuals"><a name="//apple_ref/cpp/clm/skimage.measure.LineModel.residuals"></a>
+<tt class="descname">residuals</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#skimage.measure.LineModel.residuals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine residuals of data to model.</p>
+<p>For each point the shortest distance to the line is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : (N, 2) array</p>
+<blockquote>
+<div><p>N points with <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> coordinates, respectively.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>residuals</strong> : (N, ) array</p>
+<blockquote class="last">
+<div><p>Residual for each data point.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</dd></dl>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.measure.approximate_polygon" title="skimage.measure.approximate_polygon"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.approximate_polygon</span></tt></a>(coords, ...)</td>
+<td>Approximate a polygonal chain with the specified tolerance.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.measure.block_reduce" title="skimage.measure.block_reduce"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.block_reduce</span></tt></a>(image, block_size)</td>
+<td>Down-sample image by applying function to local blocks.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.measure.find_contours" title="skimage.measure.find_contours"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.find_contours</span></tt></a>(array, level)</td>
+<td>Find iso-valued contours in a 2D array for a given level value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.measure.marching_cubes" title="skimage.measure.marching_cubes"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.marching_cubes</span></tt></a>(volume, level)</td>
+<td>Marching cubes algorithm to find iso-valued surfaces in 3d volumetric data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.measure.mesh_surface_area" title="skimage.measure.mesh_surface_area"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.mesh_surface_area</span></tt></a>(verts, tris)</td>
+<td>Compute surface area, given vertices &amp; triangular faces</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.measure.moments" title="skimage.measure.moments"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.moments</span></tt></a></td>
+<td>Calculate all raw image moments up to a certain order.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.measure.moments_central" title="skimage.measure.moments_central"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.moments_central</span></tt></a></td>
+<td>Calculate all central image moments up to a certain order.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.measure.moments_hu" title="skimage.measure.moments_hu"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.moments_hu</span></tt></a></td>
+<td>Calculate Hu’s set of image moments.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.measure.moments_normalized" title="skimage.measure.moments_normalized"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.moments_normalized</span></tt></a></td>
+<td>Calculate all normalized central image moments up to a certain order.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.measure.perimeter" title="skimage.measure.perimeter"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.perimeter</span></tt></a>(image[, neighbourhood])</td>
+<td>Calculate total perimeter of all objects in binary image.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.measure.ransac" title="skimage.measure.ransac"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.ransac</span></tt></a>(data, model_class, ...)</td>
+<td>Fit a model to data with the RANSAC (random sample consensus) algorithm.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.measure.regionprops" title="skimage.measure.regionprops"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.regionprops</span></tt></a>(label_image[, ...])</td>
+<td>Measure properties of labelled image regions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.measure.structural_similarity" title="skimage.measure.structural_similarity"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.structural_similarity</span></tt></a>(X, Y)</td>
+<td>Compute the mean structural similarity index between two images.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.measure.subdivide_polygon" title="skimage.measure.subdivide_polygon"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.subdivide_polygon</span></tt></a>(coords[, ...])</td>
+<td>Subdivision of polygonal curves using B-Splines.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="approximate-polygon">
+<h2>approximate_polygon<a class="headerlink" href="#approximate-polygon" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.approximate_polygon"><a name="//apple_ref/cpp/func/skimage.measure.approximate_polygon"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">approximate_polygon</tt><big>(</big><em>coords</em>, <em>tolerance</em><big>)</big><a class="headerlink" href="#skimage.measure.approximate_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximate a polygonal chain with the specified tolerance.</p>
+<p>It is based on the Douglas-Peucker algorithm.</p>
+<p>Note that the approximated polygon is always within the convex hull of the
+original polygon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>coords</strong> : (N, 2) array</p>
+<blockquote>
+<div><p>Coordinate array.</p>
+</div></blockquote>
+<p><strong>tolerance</strong> : float</p>
+<blockquote>
+<div><p>Maximum distance from original points of polygon to approximated
+polygonal chain. If tolerance is 0, the original coordinate array
+is returned.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>coords</strong> : (M, 2) array</p>
+<blockquote class="last">
+<div><p>Approximated polygonal chain where M &lt;= N.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r175" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R175]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm">http://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="block-reduce">
+<h2>block_reduce<a class="headerlink" href="#block-reduce" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.block_reduce"><a name="//apple_ref/cpp/func/skimage.measure.block_reduce"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">block_reduce</tt><big>(</big><em>image</em>, <em>block_size</em>, <em>func=&lt;function sum at 0x333c500&gt;</em>, <em>cval=0</em><big>)</big><a class="headerlink" href="#skimage.measure.block_reduce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Down-sample image by applying function to local blocks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : ndarray</p>
+<blockquote>
+<div><p>N-dimensional input image.</p>
+</div></blockquote>
+<p><strong>block_size</strong> : array_like</p>
+<blockquote>
+<div><p>Array containing down-sampling integer factor along each axis.</p>
+</div></blockquote>
+<p><strong>func</strong> : callable</p>
+<blockquote>
+<div><p>Function object which is used to calculate the return value for each
+local block. This function must implement an <tt class="docutils literal"><span class="pre">axis</span></tt> parameter such as
+<tt class="docutils literal"><span class="pre">numpy.sum</span></tt> or <tt class="docutils literal"><span class="pre">numpy.min</span></tt>.</p>
+</div></blockquote>
+<p><strong>cval</strong> : float</p>
+<blockquote>
+<div><p>Constant padding value if image is not perfectly divisible by the
+block size.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>image</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Down-sampled image with same number of dimensions as input image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="kn">import</span> <span class="n">block_reduce</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span>
+<span class="go">array([[[ 0,  1,  2,  3],</span>
+<span class="go">        [ 4,  5,  6,  7],</span>
+<span class="go">        [ 8,  9, 10, 11]],</span>
+</pre></div>
+</div>
+<blockquote>
+<div><dl class="docutils">
+<dt>[[12, 13, 14, 15],</dt>
+<dd>[16, 17, 18, 19],
+[20, 21, 22, 23]],</dd>
+<dt>[[24, 25, 26, 27],</dt>
+<dd>[28, 29, 30, 31],
+[32, 33, 34, 35]]])</dd>
+</dl>
+</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">block_reduce</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+<span class="go">array([[[ 16.,  17.,  18.,  19.]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">block_reduce</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+<span class="go">array([[[11]],</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>[[23]],</p>
+<p>[[35]]])</p>
+</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">block_reduce</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+<span class="go">array([[[27],</span>
+<span class="go">        [31],</span>
+<span class="go">        [35]]])</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+<div class="section" id="find-contours">
+<h2>find_contours<a class="headerlink" href="#find-contours" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.find_contours"><a name="//apple_ref/cpp/func/skimage.measure.find_contours"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">find_contours</tt><big>(</big><em>array</em>, <em>level</em>, <em>fully_connected='low'</em>, <em>positive_orientation='low'</em><big>)</big><a class="headerlink" href="#skimage.measure.find_contours" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find iso-valued contours in a 2D array for a given level value.</p>
+<p>Uses the “marching squares” method to compute a the iso-valued contours of
+the input 2D array for a particular level value. Array values are linearly
+interpolated to provide better precision for the output contours.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>array</strong> : 2D ndarray of double</p>
+<blockquote>
+<div><p>Input data in which to find contours.</p>
+</div></blockquote>
+<p><strong>level</strong> : float</p>
+<blockquote>
+<div><p>Value along which to find contours in the array.</p>
+</div></blockquote>
+<p><strong>fully_connected</strong> : str, {‘low’, ‘high’}</p>
+<blockquote>
+<div><p>Indicates whether array elements below the given level value are to be
+considered fully-connected (and hence elements above the value will
+only be face connected), or vice-versa. (See notes below for details.)</p>
+</div></blockquote>
+<p><strong>positive_orientation</strong> : either ‘low’ or ‘high’</p>
+<blockquote>
+<div><p>Indicates whether the output contours will produce positively-oriented
+polygons around islands of low- or high-valued elements. If ‘low’ then
+contours will wind counter- clockwise around elements below the
+iso-value. Alternately, this means that low-valued elements are always
+on the left of the contour. (See below for details.)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>contours</strong> : list of (n,2)-ndarrays</p>
+<blockquote class="last">
+<div><p>Each contour is an ndarray of shape <tt class="docutils literal"><span class="pre">(n,</span> <span class="pre">2)</span></tt>,
+consisting of n <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> coordinates along the contour.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The marching squares algorithm is a special case of the marching cubes
+algorithm <a class="reference internal" href="#r176">[R176]</a>.  A simple explanation is available here:</p>
+<div class="highlight-python"><pre>http://www.essi.fr/~lingrand/MarchingCubes/algo.html</pre>
+</div>
+<p>There is a single ambiguous case in the marching squares algorithm: when
+a given <tt class="docutils literal"><span class="pre">2</span> <span class="pre">x</span> <span class="pre">2</span></tt>-element square has two high-valued and two low-valued
+elements, each pair diagonally adjacent. (Where high- and low-valued is
+with respect to the contour value sought.) In this case, either the
+high-valued elements can be ‘connected together’ via a thin isthmus that
+separates the low-valued elements, or vice-versa. When elements are
+connected together across a diagonal, they are considered ‘fully
+connected’ (also known as ‘face+vertex-connected’ or ‘8-connected’). Only
+high-valued or low-valued elements can be fully-connected, the other set
+will be considered as ‘face-connected’ or ‘4-connected’. By default,
+low-valued elements are considered fully-connected; this can be altered
+with the ‘fully_connected’ parameter.</p>
+<p>Output contours are not guaranteed to be closed: contours which intersect
+the array edge will be left open. All other contours will be closed. (The
+closed-ness of a contours can be tested by checking whether the beginning
+point is the same as the end point.)</p>
+<p>Contours are oriented. By default, array values lower than the contour
+value are to the left of the contour and values greater than the contour
+value are to the right. This means that contours will wind
+counter-clockwise (i.e. in ‘positive orientation’) around islands of
+low-valued pixels. This behavior can be altered with the
+‘positive_orientation’ parameter.</p>
+<p>The order of the contours in the output list is determined by the position
+of the smallest <tt class="docutils literal"><span class="pre">x,y</span></tt> (in lexicographical order) coordinate in the
+contour.  This is a side-effect of how the input array is traversed, but
+can be relied upon.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Array coordinates/values are assumed to refer to the <em>center</em> of the
+array element. Take a simple example input: <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">1]</span></tt>. The interpolated
+position of 0.5 in this array is midway between the 0-element (at
+<tt class="docutils literal"><span class="pre">x=0</span></tt>) and the 1-element (at <tt class="docutils literal"><span class="pre">x=1</span></tt>), and thus would fall at
+<tt class="docutils literal"><span class="pre">x=0.5</span></tt>.</p>
+</div>
+<p>This means that to find reasonable contours, it is best to find contours
+midway between the expected “light” and “dark” values. In particular,
+given a binarized array, <em>do not</em> choose to find contours at the low or
+high value of the array. This will often yield degenerate contours,
+especially around structures that are a single array element wide. Instead
+choose a middle value, as above.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r176" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R176]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Lorensen, William and Harvey E. Cline. Marching Cubes: A High
+Resolution 3D Surface Construction Algorithm. Computer Graphics
+(SIGGRAPH 87 Proceedings) 21(4) July 1987, p. 163-170).</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([[ 1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_contours</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">[array([[ 0. ,  0.5],</span>
+<span class="go">       [ 0.5,  0. ]])]</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+<div class="section" id="marching-cubes">
+<h2>marching_cubes<a class="headerlink" href="#marching-cubes" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.marching_cubes"><a name="//apple_ref/cpp/func/skimage.measure.marching_cubes"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">marching_cubes</tt><big>(</big><em>volume</em>, <em>level</em>, <em>spacing=(1.0</em>, <em>1.0</em>, <em>1.0)</em><big>)</big><a class="headerlink" href="#skimage.measure.marching_cubes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marching cubes algorithm to find iso-valued surfaces in 3d volumetric data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>volume</strong> : (M, N, P) array of doubles</p>
+<blockquote>
+<div><p>Input data volume to find isosurfaces. Will be cast to <cite>np.float64</cite>.</p>
+</div></blockquote>
+<p><strong>level</strong> : float</p>
+<blockquote>
+<div><p>Contour value to search for isosurfaces in <cite>volume</cite>.</p>
+</div></blockquote>
+<p><strong>spacing</strong> : length-3 tuple of floats</p>
+<blockquote>
+<div><p>Voxel spacing in spatial dimensions corresponding to numpy array
+indexing dimensions (M, N, P) as in <cite>volume</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>verts</strong> : (V, 3) array</p>
+<blockquote>
+<div><p>Spatial coordinates for V unique mesh vertices. Coordinate order
+matches input <cite>volume</cite> (M, N, P).</p>
+</div></blockquote>
+<p><strong>faces</strong> : (F, 3) array</p>
+<blockquote class="last">
+<div><p>Define triangular faces via referencing vertex indices from <tt class="docutils literal"><span class="pre">verts</span></tt>.
+This algorithm specifically outputs triangles, so each face has
+exactly three indices.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#skimage.measure.mesh_surface_area" title="skimage.measure.mesh_surface_area"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.mesh_surface_area</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>The marching cubes algorithm is implemented as described in <a class="reference internal" href="#r177">[R177]</a>.
+A simple explanation is available here:</p>
+<div class="highlight-python"><pre>http://www.essi.fr/~lingrand/MarchingCubes/algo.html</pre>
+</div>
+<p>There are several known ambiguous cases in the marching cubes algorithm.
+Using point labeling as in <a class="reference internal" href="#r177">[R177]</a>, Figure 4, as shown:</p>
+<div class="highlight-python"><pre>    v8 ------ v7
+   / |       / |        y
+  /  |      /  |        ^  z
+v4 ------ v3   |        | /
+ |  v5 ----|- v6        |/          (note: NOT right handed!)
+ |  /      |  /          ----&gt; x
+ | /       | /
+v1 ------ v2</pre>
+</div>
+<p>Most notably, if v4, v8, v2, and v6 are all &gt;= <cite>level</cite> (or any
+generalization of this case) two parallel planes are generated by this
+algorithm, separating v4 and v8 from v2 and v6. An equally valid
+interpretation would be a single connected thin surface enclosing all
+four points. This is the best known ambiguity, though there are others.</p>
+<p>This algorithm does not attempt to resolve such ambiguities; it is a naive
+implementation of marching cubes as in <a class="reference internal" href="#r177">[R177]</a>, but may be a good beginning
+for work with more recent techniques (Dual Marching Cubes, Extended
+Marching Cubes, Cubic Marching Squares, etc.).</p>
+<p>Because of interactions between neighboring cubes, the isosurface(s)
+generated by this algorithm are NOT guaranteed to be closed, particularly
+for complicated contours. Furthermore, this algorithm does not guarantee
+a single contour will be returned. Indeed, ALL isosurfaces which cross
+<cite>level</cite> will be found, regardless of connectivity.</p>
+<p>The output is a triangular mesh consisting of a set of unique vertices and
+connecting triangles. The order of these vertices and triangles in the
+output list is determined by the position of the smallest <tt class="docutils literal"><span class="pre">x,y,z</span></tt> (in
+lexicographical order) coordinate in the contour.  This is a side-effect
+of how the input array is traversed, but can be relied upon.</p>
+<p>To quantify the area of an isosurface generated by this algorithm, pass
+the outputs directly into <cite>skimage.measure.mesh_surface_area</cite>.</p>
+<p>Regarding visualization of algorithm output, the <tt class="docutils literal"><span class="pre">mayavi</span></tt> package
+is recommended. To contour a volume named <cite>myvolume</cite> about the level 0.0:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mayavi</span> <span class="kn">import</span> <span class="n">mlab</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">verts</span><span class="p">,</span> <span class="n">tris</span> <span class="o">=</span> <span class="n">marching_cubes</span><span class="p">(</span><span class="n">myvolume</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mlab</span><span class="o">.</span><span class="n">triangular_mesh</span><span class="p">([</span><span class="n">vert</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">vert</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">],</span>
+<span class="gp">... </span>                     <span class="p">[</span><span class="n">vert</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">vert</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">],</span>
+<span class="gp">... </span>                     <span class="p">[</span><span class="n">vert</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">vert</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">],</span>
+<span class="gp">... </span>                     <span class="n">tris</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mlab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r177" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R177]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id5">2</a>, <a class="fn-backref" href="#id6">3</a>, <a class="fn-backref" href="#id7">4</a>)</em> Lorensen, William and Harvey E. Cline. Marching Cubes: A High
+Resolution 3D Surface Construction Algorithm. Computer Graphics
+(SIGGRAPH 87 Proceedings) 21(4) July 1987, p. 163-170).</td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="mesh-surface-area">
+<h2>mesh_surface_area<a class="headerlink" href="#mesh-surface-area" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.mesh_surface_area"><a name="//apple_ref/cpp/func/skimage.measure.mesh_surface_area"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">mesh_surface_area</tt><big>(</big><em>verts</em>, <em>tris</em><big>)</big><a class="headerlink" href="#skimage.measure.mesh_surface_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute surface area, given vertices &amp; triangular faces</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>verts</strong> : (V, 3) array of floats</p>
+<blockquote>
+<div><p>Array containing (x, y, z) coordinates for V unique mesh vertices.</p>
+</div></blockquote>
+<p><strong>faces</strong> : (F, 3) array of ints</p>
+<blockquote>
+<div><p>List of length-3 lists of integers, referencing vertex coordinates as
+provided in <cite>verts</cite></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>area</strong> : float</p>
+<blockquote class="last">
+<div><p>Surface area of mesh. Units now [coordinate units] ** 2.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#skimage.measure.marching_cubes" title="skimage.measure.marching_cubes"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.measure.marching_cubes</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>The arguments expected by this function are the exact outputs from
+<cite>skimage.measure.marching_cubes</cite>. For unit correct output, ensure correct
+<cite>spacing</cite> was passed to <cite>skimage.measure.marching_cubes</cite>.</p>
+<p>This algorithm works properly only if the <tt class="docutils literal"><span class="pre">faces</span></tt> provided are all
+triangles.</p>
+</dd></dl>
+</div>
+<div class="section" id="moments">
+<h2>moments<a class="headerlink" href="#moments" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.moments"><a name="//apple_ref/cpp/func/skimage.measure.moments"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">moments</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.measure.moments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate all raw image moments up to a certain order.</p>
+<dl class="docutils">
+<dt>The following properties can be calculated from raw image moments:</dt>
+<dd><ul class="first last simple">
+<li>Area as <tt class="docutils literal"><span class="pre">m[0,</span> <span class="pre">0]</span></tt>.</li>
+<li>Centroid as {<tt class="docutils literal"><span class="pre">m[0,</span> <span class="pre">1]</span> <span class="pre">/</span> <span class="pre">m[0,</span> <span class="pre">0]</span></tt>, <tt class="docutils literal"><span class="pre">m[1,</span> <span class="pre">0]</span> <span class="pre">/</span> <span class="pre">m[0,</span> <span class="pre">0]</span></tt>}.</li>
+</ul>
+</dd>
+</dl>
+<p>Note that raw moments are whether translation, scale nor rotation
+invariant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2D double array</p>
+<blockquote>
+<div><p>Rasterized shape as image.</p>
+</div></blockquote>
+<p><strong>order</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum order of moments. Default is 3.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>m</strong> : (<tt class="docutils literal"><span class="pre">order</span> <span class="pre">+</span> <span class="pre">1</span></tt>, <tt class="docutils literal"><span class="pre">order</span> <span class="pre">+</span> <span class="pre">1</span></tt>) array</p>
+<blockquote class="last">
+<div><p>Raw image moments.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r178" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[R178]</a></td><td>Wilhelm Burger, Mark Burge. Principles of Digital Image Processing:
+Core Algorithms. Springer-Verlag, London, 2009.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r179" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[R179]</a></td><td>B. Jähne. Digital Image Processing. Springer-Verlag,
+Berlin-Heidelberg, 6. edition, 2005.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r180" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[R180]</a></td><td>T. H. Reiss. Recognizing Planar Objects Using Invariant Image
+Features, from Lecture notes in computer science, p. 676. Springer,
+Berlin, 1993.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r181" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id11">[R181]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Image_moment">http://en.wikipedia.org/wiki/Image_moment</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="moments-central">
+<h2>moments_central<a class="headerlink" href="#moments-central" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.moments_central"><a name="//apple_ref/cpp/func/skimage.measure.moments_central"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">moments_central</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.measure.moments_central" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate all central image moments up to a certain order.</p>
+<p>Note that central moments are translation invariant but not scale and
+rotation invariant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : 2D double array</p>
+<blockquote>
+<div><p>Rasterized shape as image.</p>
+</div></blockquote>
+<p><strong>cr</strong> : double</p>
+<blockquote>
+<div><p>Center row coordinate.</p>
+</div></blockquote>
+<p><strong>cc</strong> : double</p>
+<blockquote>
+<div><p>Center column coordinate.</p>
+</div></blockquote>
+<p><strong>order</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum order of moments. Default is 3.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>mu</strong> : (<tt class="docutils literal"><span class="pre">order</span> <span class="pre">+</span> <span class="pre">1</span></tt>, <tt class="docutils literal"><span class="pre">order</span> <span class="pre">+</span> <span class="pre">1</span></tt>) array</p>
+<blockquote class="last">
+<div><p>Central image moments.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r182" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[R182]</a></td><td>Wilhelm Burger, Mark Burge. Principles of Digital Image Processing:
+Core Algorithms. Springer-Verlag, London, 2009.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r183" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id13">[R183]</a></td><td>B. Jähne. Digital Image Processing. Springer-Verlag,
+Berlin-Heidelberg, 6. edition, 2005.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r184" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id14">[R184]</a></td><td>T. H. Reiss. Recognizing Planar Objects Using Invariant Image
+Features, from Lecture notes in computer science, p. 676. Springer,
+Berlin, 1993.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r185" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id15">[R185]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Image_moment">http://en.wikipedia.org/wiki/Image_moment</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="moments-hu">
+<h2>moments_hu<a class="headerlink" href="#moments-hu" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.moments_hu"><a name="//apple_ref/cpp/func/skimage.measure.moments_hu"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">moments_hu</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.measure.moments_hu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Hu’s set of image moments.</p>
+<p>Note that this set of moments is proofed to be translation, scale and
+rotation invariant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>nu</strong> : (M, M) array</p>
+<blockquote>
+<div><p>Normalized central image moments, where M must be &gt; 4.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>nu</strong> : (7, 1) array</p>
+<blockquote class="last">
+<div><p>Hu’s set of image moments.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r186" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id16">[R186]</a></td><td>M. K. Hu, “Visual Pattern Recognition by Moment Invariants”,
+IRE Trans. Info. Theory, vol. IT-8, pp. 179-187, 1962</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r187" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id17">[R187]</a></td><td>Wilhelm Burger, Mark Burge. Principles of Digital Image Processing:
+Core Algorithms. Springer-Verlag, London, 2009.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r188" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id18">[R188]</a></td><td>B. Jähne. Digital Image Processing. Springer-Verlag,
+Berlin-Heidelberg, 6. edition, 2005.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r189" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id19">[R189]</a></td><td>T. H. Reiss. Recognizing Planar Objects Using Invariant Image
+Features, from Lecture notes in computer science, p. 676. Springer,
+Berlin, 1993.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r190" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id20">[R190]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Image_moment">http://en.wikipedia.org/wiki/Image_moment</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="moments-normalized">
+<h2>moments_normalized<a class="headerlink" href="#moments-normalized" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.moments_normalized"><a name="//apple_ref/cpp/func/skimage.measure.moments_normalized"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">moments_normalized</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.measure.moments_normalized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate all normalized central image moments up to a certain order.</p>
+<p>Note that normalized central moments are translation and scale invariant
+but not rotation invariant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>mu</strong> : (M, M) array</p>
+<blockquote>
+<div><p>Central image moments, where M must be &gt; <tt class="docutils literal"><span class="pre">order</span></tt>.</p>
+</div></blockquote>
+<p><strong>order</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum order of moments. Default is 3.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>nu</strong> : (<tt class="docutils literal"><span class="pre">order</span> <span class="pre">+</span> <span class="pre">1</span></tt>, <tt class="docutils literal"><span class="pre">order</span> <span class="pre">+</span> <span class="pre">1</span></tt>) array</p>
+<blockquote class="last">
+<div><p>Normalized central image moments.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r191" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id21">[R191]</a></td><td>Wilhelm Burger, Mark Burge. Principles of Digital Image Processing:
+Core Algorithms. Springer-Verlag, London, 2009.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r192" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id22">[R192]</a></td><td>B. Jähne. Digital Image Processing. Springer-Verlag,
+Berlin-Heidelberg, 6. edition, 2005.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r193" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id23">[R193]</a></td><td>T. H. Reiss. Recognizing Planar Objects Using Invariant Image
+Features, from Lecture notes in computer science, p. 676. Springer,
+Berlin, 1993.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r194" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id24">[R194]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Image_moment">http://en.wikipedia.org/wiki/Image_moment</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="perimeter">
+<h2>perimeter<a class="headerlink" href="#perimeter" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.perimeter"><a name="//apple_ref/cpp/func/skimage.measure.perimeter"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">perimeter</tt><big>(</big><em>image</em>, <em>neighbourhood=4</em><big>)</big><a class="headerlink" href="#skimage.measure.perimeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate total perimeter of all objects in binary image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>image</strong> : array</p>
+<blockquote>
+<div><p>Binary image.</p>
+</div></blockquote>
+<p><strong>neighbourhood</strong> : 4 or 8, optional</p>
+<blockquote>
+<div><p>Neighborhood connectivity for border pixel determination.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>perimeter</strong> : float</p>
+<blockquote class="last">
+<div><p>Total perimeter of all objects in binary image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r195" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id25">[R195]</a></td><td>K. Benkrid, D. Crookes. Design and FPGA Implementation of
+a Perimeter Estimator. The Queen’s University of Belfast.
+<a class="reference external" href="http://www.cs.qub.ac.uk/~d.crookes/webpubs/papers/perimeter.doc">http://www.cs.qub.ac.uk/~d.crookes/webpubs/papers/perimeter.doc</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="ransac">
+<h2>ransac<a class="headerlink" href="#ransac" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.ransac"><a name="//apple_ref/cpp/func/skimage.measure.ransac"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">ransac</tt><big>(</big><em>data</em>, <em>model_class</em>, <em>min_samples</em>, <em>residual_threshold</em>, <em>is_data_valid=None</em>, <em>is_model_valid=None</em>, <em>max_trials=100</em>, <em>stop_sample_num=inf</em>, <em>stop_residuals_sum=0</em><big>)</big><a class="headerlink" href="#skimage.measure.ransac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit a model to data with the RANSAC (random sample consensus) algorithm.</p>
+<p>RANSAC is an iterative algorithm for the robust estimation of parameters
+from a subset of inliers from the complete data set. Each iteration
+performs the following tasks:</p>
+<ol class="arabic simple">
+<li>Select <cite>min_samples</cite> random samples from the original data and check
+whether the set of data is valid (see <cite>is_data_valid</cite>).</li>
+<li>Estimate a model to the random subset
+(<cite>model_cls.estimate(*data[random_subset]</cite>) and check whether the
+estimated model is valid (see <cite>is_model_valid</cite>).</li>
+<li>Classify all data as inliers or outliers by calculating the residuals
+to the estimated model (<cite>model_cls.residuals(*data)</cite>) - all data samples
+with residuals smaller than the <cite>residual_threshold</cite> are considered as
+inliers.</li>
+<li>Save estimated model as best model if number of inlier samples is
+maximal. In case the current estimated model has the same number of
+inliers, it is only considered as the best model if it has less sum of
+residuals.</li>
+</ol>
+<p>These steps are performed either a maximum number of times or until one of
+the special stop criteria are met. The final model is estimated using all
+inlier samples of the previously determined best model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : [list, tuple of] (N, D) array</p>
+<blockquote>
+<div><p>Data set to which the model is fitted, where N is the number of data
+points and D the dimensionality of the data.
+If the model class requires multiple input data arrays (e.g. source and
+destination coordinates of  <tt class="docutils literal"><span class="pre">skimage.transform.AffineTransform</span></tt>),
+they can be optionally passed as tuple or list. Note, that in this case
+the functions <tt class="docutils literal"><span class="pre">estimate(*data)</span></tt>, <tt class="docutils literal"><span class="pre">residuals(*data)</span></tt>,
+<tt class="docutils literal"><span class="pre">is_model_valid(model,</span> <span class="pre">*random_data)</span></tt> and
+<tt class="docutils literal"><span class="pre">is_data_valid(*random_data)</span></tt> must all take each data array as
+separate arguments.</p>
+</div></blockquote>
+<p><strong>model_class</strong> : object</p>
+<blockquote>
+<div><p>Object with the following object methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">estimate(*data)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">residuals(*data)</span></tt></li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p><strong>min_samples</strong> : int</p>
+<blockquote>
+<div><p>The minimum number of data points to fit a model to.</p>
+</div></blockquote>
+<p><strong>residual_threshold</strong> : float</p>
+<blockquote>
+<div><p>Maximum distance for a data point to be classified as an inlier.</p>
+</div></blockquote>
+<p><strong>is_data_valid</strong> : function, optional</p>
+<blockquote>
+<div><p>This function is called with the randomly selected data before the
+model is fitted to it: <cite>is_data_valid(*random_data)</cite>.</p>
+</div></blockquote>
+<p><strong>is_model_valid</strong> : function, optional</p>
+<blockquote>
+<div><p>This function is called with the estimated model and the randomly
+selected data: <cite>is_model_valid(model, *random_data)</cite>, .</p>
+</div></blockquote>
+<p><strong>max_trials</strong> : int, optional</p>
+<blockquote>
+<div><p>Maximum number of iterations for random sample selection.</p>
+</div></blockquote>
+<p><strong>stop_sample_num</strong> : int, optional</p>
+<blockquote>
+<div><p>Stop iteration if at least this number of inliers are found.</p>
+</div></blockquote>
+<p><strong>stop_residuals_sum</strong> : float, optional</p>
+<blockquote>
+<div><p>Stop iteration if sum of residuals is less equal than this threshold.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>model</strong> : object</p>
+<blockquote>
+<div><p>Best model with largest consensus set.</p>
+</div></blockquote>
+<p><strong>inliers</strong> : (N, ) array</p>
+<blockquote class="last">
+<div><p>Boolean mask of inliers classified as <tt class="docutils literal"><span class="pre">True</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r196" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id26">[R196]</a></td><td>“RANSAC”, Wikipedia, <a class="reference external" href="http://en.wikipedia.org/wiki/RANSAC">http://en.wikipedia.org/wiki/RANSAC</a></td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Generate ellipse data without tilt and add noise:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xc</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yc</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">xc</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">yc</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Add some faulty data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="mi">130</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">140</span><span class="p">,</span> <span class="mi">130</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Estimate ellipse model using all available data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">EllipseModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">_params</span>
+<span class="go">array([  4.85808595e+02,   4.51492793e+02,   1.15018491e+03,</span>
+<span class="go">         5.52428289e+00,   7.32420126e-01])</span>
+</pre></div>
+</div>
+<p>Estimate ellipse model using RANSAC:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ransac_model</span><span class="p">,</span> <span class="n">inliers</span> <span class="o">=</span> <span class="n">ransac</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">EllipseModel</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">max_trials</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># ransac_model._params, inliers</span>
+</pre></div>
+</div>
+<p>Should give the correct result estimated without the faulty data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span> <span class="mf">20.12762373</span><span class="p">,</span> <span class="mf">29.73563061</span><span class="p">,</span> <span class="mf">4.81499637</span><span class="p">,</span> <span class="mf">10.4743584</span><span class="p">,</span> <span class="mf">0.05217117</span><span class="p">]</span>
+<span class="p">[</span> <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span>
+ <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span>
+ <span class="mi">38</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">49</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Robustly estimate geometric transformation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">SimilarityTransform</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model0</span> <span class="o">=</span> <span class="n">SimilarityTransform</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">translation</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dst</span> <span class="o">=</span> <span class="n">model0</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dst</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="p">,</span> <span class="n">inliers</span> <span class="o">=</span> <span class="n">ransac</span><span class="p">((</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">),</span> <span class="n">SimilarityTransform</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inliers</span>
+<span class="go">array([ 3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,</span>
+<span class="go">   20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,</span>
+<span class="go">   37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49])</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+<div class="section" id="regionprops">
+<h2>regionprops<a class="headerlink" href="#regionprops" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.regionprops"><a name="//apple_ref/cpp/func/skimage.measure.regionprops"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">regionprops</tt><big>(</big><em>label_image</em>, <em>properties=None</em>, <em>intensity_image=None</em>, <em>cache=True</em><big>)</big><a class="headerlink" href="#skimage.measure.regionprops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure properties of labelled image regions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>label_image</strong> : (N, M) ndarray</p>
+<blockquote>
+<div><p>Labelled input image.</p>
+</div></blockquote>
+<p><strong>properties</strong> : {‘all’, list}</p>
+<blockquote>
+<div><p><strong>Deprecated parameter</strong></p>
+<p>This parameter is not needed any more since all properties are
+determined dynamically.</p>
+</div></blockquote>
+<p><strong>intensity_image</strong> : (N, M) ndarray, optional</p>
+<blockquote>
+<div><p>Intensity image with same size as labelled image. Default is None.</p>
+</div></blockquote>
+<p><strong>cache</strong> : bool, optional</p>
+<blockquote>
+<div><p>Determine whether to cache calculated properties. The computation is
+much faster for cached properties, whereas the memory consumption
+increases.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>properties</strong> : list</p>
+<blockquote class="last">
+<div><p>List containing a properties for each region. The properties of each
+region can be accessed as attributes and keys.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The following properties can be accessed as attributes or keys:</p>
+<dl class="docutils">
+<dt><strong>area</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of pixels of region.</dd>
+<dt><strong>bbox</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>Bounding box <tt class="docutils literal"><span class="pre">(min_row,</span> <span class="pre">min_col,</span> <span class="pre">max_row,</span> <span class="pre">max_col)</span></tt></dd>
+<dt><strong>centroid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd>Centroid coordinate tuple <tt class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></tt>.</dd>
+<dt><strong>convex_area</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of pixels of convex hull image.</dd>
+<dt><strong>convex_image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(H, J) ndarray</span></dt>
+<dd>Binary convex hull image which has the same size as bounding box.</dd>
+<dt><strong>coords</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(N, 2) ndarray</span></dt>
+<dd>Coordinate list <tt class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></tt> of the region.</dd>
+<dt><strong>eccentricity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Eccentricity of the ellipse that has the same second-moments as the
+region. The eccentricity is the ratio of the distance between its
+minor and major axis length. The value is between 0 and 1.</dd>
+<dt><strong>equivalent_diameter</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The diameter of a circle with the same area as the region.</dd>
+<dt><strong>euler_number</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Euler number of region. Computed as number of objects (= 1)
+subtracted by number of holes (8-connectivity).</dd>
+<dt><strong>extent</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Ratio of pixels in the region to pixels in the total bounding box.
+Computed as <tt class="docutils literal"><span class="pre">area</span> <span class="pre">/</span> <span class="pre">(rows</span> <span class="pre">*</span> <span class="pre">cols)</span></tt></dd>
+<dt><strong>filled_area</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of pixels of filled region.</dd>
+<dt><strong>filled_image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(H, J) ndarray</span></dt>
+<dd>Binary region image with filled holes which has the same size as
+bounding box.</dd>
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(H, J) ndarray</span></dt>
+<dd>Sliced binary region image which has the same size as bounding box.</dd>
+<dt><strong>inertia_tensor</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(2, 2) ndarray</span></dt>
+<dd>Inertia tensor of the region for the rotation around its mass.</dd>
+<dt><strong>inertia_tensor_eigvals</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>The two eigen values of the inertia tensor in decreasing order.</dd>
+<dt><strong>label</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The label in the labeled input image.</dd>
+<dt><strong>major_axis_length</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The length of the major axis of the ellipse that has the same
+normalized second central moments as the region.</dd>
+<dt><strong>min_intensity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Value with the greatest intensity in the region.</dd>
+<dt><strong>mean_intensity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Value with the mean intensity in the region.</dd>
+<dt><strong>min_intensity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Value with the least intensity in the region.</dd>
+<dt><strong>minor_axis_length</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The length of the minor axis of the ellipse that has the same
+normalized second central moments as the region.</dd>
+<dt><strong>moments</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Spatial moments up to 3rd order:</p>
+<div class="highlight-python"><pre>m_ji = sum{ array(x, y) * x^j * y^i }</pre>
+</div>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region.</p>
+</dd>
+<dt><strong>moments_central</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Central moments (translation invariant) up to 3rd order:</p>
+<div class="highlight-python"><pre>mu_ji = sum{ array(x, y) * (x - x_c)^j * (y - y_c)^i }</pre>
+</div>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region,
+and <cite>x_c</cite> and <cite>y_c</cite> are the coordinates of the region’s centroid.</p>
+</dd>
+<dt><strong>moments_hu</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>Hu moments (translation, scale and rotation invariant).</dd>
+<dt><strong>moments_normalized</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Normalized moments (translation and scale invariant) up to 3rd order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">nu_ji</span> <span class="o">=</span> <span class="n">mu_ji</span> <span class="o">/</span> <span class="n">m_00</span><span class="o">^</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="last">where <cite>m_00</cite> is the zeroth spatial moment.</p>
+</dd>
+<dt><strong>orientation</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Angle between the X-axis and the major axis of the ellipse that has
+the same second-moments as the region. Ranging from <cite>-pi/2</cite> to
+<cite>pi/2</cite> in counter-clockwise direction.</dd>
+<dt><strong>perimeter</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Perimeter of object which approximates the contour as a line
+through the centers of border pixels using a 4-connectivity.</dd>
+<dt><strong>solidity</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Ratio of pixels in the region to pixels of the convex hull image.</dd>
+<dt><strong>weighted_centroid</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd>Centroid coordinate tuple <tt class="docutils literal"><span class="pre">(row,</span> <span class="pre">col)</span></tt> weighted with intensity
+image.</dd>
+<dt><strong>weighted_moments</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Spatial moments of intensity image up to 3rd order:</p>
+<div class="highlight-python"><pre>wm_ji = sum{ array(x, y) * x^j * y^i }</pre>
+</div>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region.</p>
+</dd>
+<dt><strong>weighted_moments_central</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Central moments (translation invariant) of intensity image up to
+3rd order:</p>
+<div class="highlight-python"><pre>wmu_ji = sum{ array(x, y) * (x - x_c)^j * (y - y_c)^i }</pre>
+</div>
+<p class="last">where the sum is over the <cite>x</cite>, <cite>y</cite> coordinates of the region,
+and <cite>x_c</cite> and <cite>y_c</cite> are the coordinates of the region’s centroid.</p>
+</dd>
+<dt><strong>weighted_moments_hu</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>Hu moments (translation, scale and rotation invariant) of intensity
+image.</dd>
+<dt><strong>weighted_moments_normalized</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(3, 3) ndarray</span></dt>
+<dd><p class="first">Normalized moments (translation and scale invariant) of intensity
+image up to 3rd order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">wnu_ji</span> <span class="o">=</span> <span class="n">wmu_ji</span> <span class="o">/</span> <span class="n">wm_00</span><span class="o">^</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="last">where <cite>wm_00</cite> is the zeroth spatial moment (intensity-weighted area).</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r197" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id27">[R197]</a></td><td>Wilhelm Burger, Mark Burge. Principles of Digital Image Processing:
+Core Algorithms. Springer-Verlag, London, 2009.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r198" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id28">[R198]</a></td><td>B. Jähne. Digital Image Processing. Springer-Verlag,
+Berlin-Heidelberg, 6. edition, 2005.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r199" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id29">[R199]</a></td><td>T. H. Reiss. Recognizing Planar Objects Using Invariant Image
+Features, from Lecture notes in computer science, p. 676. Springer,
+Berlin, 1993.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r200" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id30">[R200]</a></td><td><a class="reference external" href="http://en.wikipedia.org/wiki/Image_moment">http://en.wikipedia.org/wiki/Image_moment</a></td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.data</span> <span class="kn">import</span> <span class="n">coins</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">label</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">coins</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">110</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">label_img</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">props</span> <span class="o">=</span> <span class="n">regionprops</span><span class="p">(</span><span class="n">label_img</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">centroid</span> <span class="c"># centroid of first labelled object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">'centroid'</span><span class="p">]</span> <span class="c"># centroid of first labelled object</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+<div class="section" id="structural-similarity">
+<h2>structural_similarity<a class="headerlink" href="#structural-similarity" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.structural_similarity"><a name="//apple_ref/cpp/func/skimage.measure.structural_similarity"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">structural_similarity</tt><big>(</big><em>X</em>, <em>Y</em>, <em>win_size=7</em>, <em>gradient=False</em>, <em>dynamic_range=None</em><big>)</big><a class="headerlink" href="#skimage.measure.structural_similarity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mean structural similarity index between two images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X, Y</strong> : (N,N) ndarray</p>
+<blockquote>
+<div><p>Images.</p>
+</div></blockquote>
+<p><strong>win_size</strong> : int</p>
+<blockquote>
+<div><p>The side-length of the sliding window used in comparison.  Must
+be an odd value.</p>
+</div></blockquote>
+<p><strong>gradient</strong> : bool</p>
+<blockquote>
+<div><p>If True, also return the gradient.</p>
+</div></blockquote>
+<p><strong>dynamic_range</strong> : int</p>
+<blockquote>
+<div><p>Dynamic range of the input image (distance between minimum and
+maximum possible values).  By default, this is estimated from
+the image data-type.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>s</strong> : float</p>
+<blockquote>
+<div><p>Strucutural similarity.</p>
+</div></blockquote>
+<p><strong>grad</strong> : (N * N,) ndarray</p>
+<blockquote class="last">
+<div><p>Gradient of the structural similarity index between X and Y.
+This is only returned if <cite>gradient</cite> is set to True.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r201" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id31">[R201]</a></td><td>Wang, Z., Bovik, A. C., Sheikh, H. R., &amp; Simoncelli, E. P.
+(2004). Image quality assessment: From error visibility to
+structural similarity. IEEE Transactions on Image Processing,
+13, 600-612.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+<div class="section" id="subdivide-polygon">
+<h2>subdivide_polygon<a class="headerlink" href="#subdivide-polygon" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.measure.subdivide_polygon"><a name="//apple_ref/cpp/func/skimage.measure.subdivide_polygon"></a>
+<tt class="descclassname">skimage.measure.</tt><tt class="descname">subdivide_polygon</tt><big>(</big><em>coords</em>, <em>degree=2</em>, <em>preserve_ends=False</em><big>)</big><a class="headerlink" href="#skimage.measure.subdivide_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subdivision of polygonal curves using B-Splines.</p>
+<p>Note that the resulting curve is always within the convex hull of the
+original polygon. Circular polygons stay closed after subdivision.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>coords</strong> : (N, 2) array</p>
+<blockquote>
+<div><p>Coordinate array.</p>
+</div></blockquote>
+<p><strong>degree</strong> : {1, 2, 3, 4, 5, 6, 7}, optional</p>
+<blockquote>
+<div><p>Degree of B-Spline. Default is 2.</p>
+</div></blockquote>
+<p><strong>preserve_ends</strong> : bool, optional</p>
+<blockquote>
+<div><p>Preserve first and last coordinate of non-circular polygon. Default is
+False.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>coords</strong> : (M, 2) array</p>
+<blockquote class="last">
+<div><p>Subdivided coordinate array.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r202" rules="none">
+<colgroup><col class="label"></col><col></col></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id32">[R202]</a></td><td><a class="reference external" href="http://mrl.nyu.edu/publications/subdiv-course2000/coursenotes00.pdf">http://mrl.nyu.edu/publications/subdiv-course2000/coursenotes00.pdf</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+<div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+<ul class="nav nav-list">
+<li><a href="../index.html">Documentation Home</a></li>
+</ul>
+</div>
+<h4 class="sidebar-box-heading">Contents</h4>
+<div class="well sidebar-box toc">
+<ul class="nav nav-list">
+<li><a class="reference internal" href="#">Module: <tt class="docutils literal"><span class="pre">measure</span></tt></a><ul class="nav nav-list">
+<li><a class="reference internal" href="#circlemodel"><tt class="docutils literal"><span class="pre">CircleModel</span></tt></a></li>
+<li><a class="reference internal" href="#ellipsemodel"><tt class="docutils literal"><span class="pre">EllipseModel</span></tt></a></li>
+<li><a class="reference internal" href="#linemodel"><tt class="docutils literal"><span class="pre">LineModel</span></tt></a></li>
+<li><a class="reference internal" href="#approximate-polygon">approximate_polygon</a></li>
+<li><a class="reference internal" href="#block-reduce">block_reduce</a></li>
+<li><a class="reference internal" href="#find-contours">find_contours</a></li>
+<li><a class="reference internal" href="#marching-cubes">marching_cubes</a></li>
+<li><a class="reference internal" href="#mesh-surface-area">mesh_surface_area</a></li>
+<li><a class="reference internal" href="#moments">moments</a></li>
+<li><a class="reference internal" href="#moments-central">moments_central</a></li>
+<li><a class="reference internal" href="#moments-hu">moments_hu</a></li>
+<li><a class="reference internal" href="#moments-normalized">moments_normalized</a></li>
+<li><a class="reference internal" href="#perimeter">perimeter</a></li>
+<li><a class="reference internal" href="#ransac">ransac</a></li>
+<li><a class="reference internal" href="#regionprops">regionprops</a></li>
+<li><a class="reference internal" href="#structural-similarity">structural_similarity</a></li>
+<li><a class="reference internal" href="#subdivide-polygon">subdivide_polygon</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+<ul class="nav nav-list">
+<script src="../_static/docversions.js"></script>
+<script type="text/javascript">
+            insert_version_links();
+        </script>
+</ul>
+</div>
+</div>
+</div>
+<div class="well footer">
+<small>
+            © Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+</div>
+</body>
+</html>
