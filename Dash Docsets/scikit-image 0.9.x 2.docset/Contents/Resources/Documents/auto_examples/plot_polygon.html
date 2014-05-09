@@ -1,0 +1,180 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Approximate and subdivide polygons &mdash; skimage v0.9.0 docs</title>
+    
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link href="../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../_static/css/custom.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <link rel="top" title="skimage v0.9.0 docs" href="../index.html" />
+        <link rel="up" title="General examples" href="index.html" />
+        <link rel="next" title="Build image pyramids" href="plot_pyramid.html" />
+        <link rel="prev" title="Piecewise Affine Transformation" href="plot_piecewise_affine.html" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="shortcut icon" href="../_static/favicon.ico">
+</head>
+<body class="container">
+    <a href="http://scikit-image.org" class="logo"><img src="../_static/img/logo.png" alt=""></a>
+    <div class="clearfix"></div>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+            </ul>
+            <form class="navbar-form pull-right" action="../search.html" method="get">
+                <input type="text" class="search span3" name="q" placeholder="Search documentation ...">
+                <input type="hidden" name="check_keywords" value="yes" >
+                <input type="hidden" name="area" value="default" >
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            
+  <div class="section" id="approximate-and-subdivide-polygons">
+<span id="example-plot-polygon-py"></span><h1>Approximate and subdivide polygons<a class="headerlink" href="#approximate-and-subdivide-polygons" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how to approximate (Douglas-Peucker algorithm) and subdivide
+(B-Splines) polygonal chains.</p>
+<img alt="../_images/plot_polygon_1.png" class="align-center" src="../_images/plot_polygon_1.png" />
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">skimage.draw</span> <span class="kn">import</span> <span class="n">ellipse</span>
+<span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="kn">import</span> <span class="n">find_contours</span><span class="p">,</span> <span class="n">approximate_polygon</span><span class="p">,</span> \
+    <span class="n">subdivide_polygon</span>
+
+
+<span class="n">hand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.64516129</span><span class="p">,</span> <span class="mf">1.16145833</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.64516129</span><span class="p">,</span> <span class="mf">1.59375</span>   <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.35080645</span><span class="p">,</span> <span class="mf">1.921875</span>  <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.375</span>     <span class="p">,</span> <span class="mf">2.18229167</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.68548387</span><span class="p">,</span> <span class="mf">1.9375</span>    <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.60887097</span><span class="p">,</span> <span class="mf">2.55208333</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.68548387</span><span class="p">,</span> <span class="mf">2.69791667</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.76209677</span><span class="p">,</span> <span class="mf">2.56770833</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.83064516</span><span class="p">,</span> <span class="mf">1.97395833</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.89516129</span><span class="p">,</span> <span class="mf">2.75</span>      <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.9516129</span> <span class="p">,</span> <span class="mf">2.84895833</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.01209677</span><span class="p">,</span> <span class="mf">2.76041667</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">1.99193548</span><span class="p">,</span> <span class="mf">1.99479167</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.11290323</span><span class="p">,</span> <span class="mf">2.63020833</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.2016129</span> <span class="p">,</span> <span class="mf">2.734375</span>  <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.25403226</span><span class="p">,</span> <span class="mf">2.60416667</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.14919355</span><span class="p">,</span> <span class="mf">1.953125</span>  <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.30645161</span><span class="p">,</span> <span class="mf">2.36979167</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.39112903</span><span class="p">,</span> <span class="mf">2.36979167</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.41532258</span><span class="p">,</span> <span class="mf">2.1875</span>    <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.1733871</span> <span class="p">,</span> <span class="mf">1.703125</span>  <span class="p">],</span>
+                 <span class="p">[</span><span class="mf">2.07782258</span><span class="p">,</span> <span class="mf">1.16666667</span><span class="p">]])</span>
+
+<span class="c"># subdivide polygon using 2nd degree B-Splines</span>
+<span class="n">new_hand</span> <span class="o">=</span> <span class="n">hand</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">new_hand</span> <span class="o">=</span> <span class="n">subdivide_polygon</span><span class="p">(</span><span class="n">new_hand</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">preserve_ends</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c"># approximate subdivided polygon with Douglas-Peucker algorithm</span>
+<span class="n">appr_hand</span> <span class="o">=</span> <span class="n">approximate_polygon</span><span class="p">(</span><span class="n">new_hand</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Number of coordinates:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">hand</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_hand</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">appr_hand</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hand</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">hand</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">new_hand</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">new_hand</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">appr_hand</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">appr_hand</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+
+
+<span class="c"># create two ellipses in image</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span> <span class="s">&#39;int32&#39;</span><span class="p">)</span>
+<span class="n">rr</span><span class="p">,</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">ellipse</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">img</span><span class="p">[</span><span class="n">rr</span><span class="p">,</span> <span class="n">cc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">rr</span><span class="p">,</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">ellipse</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">img</span><span class="p">[</span><span class="n">rr</span><span class="p">,</span> <span class="n">cc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">gray</span><span class="p">()</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="c"># approximate / simplify coordinates of the two ellipses</span>
+<span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">find_contours</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">approximate_polygon</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&#39;-r&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">coords2</span> <span class="o">=</span> <span class="n">approximate_polygon</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">39.5</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coords2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">coords2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&#39;-g&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Number of coordinates:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords2</span><span class="p">))</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">800</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_polygon.py"><tt class="xref download docutils literal"><span class="pre">download</span></tt></a>
+(generated using <tt class="docutils literal"><span class="pre">skimage</span></tt> 0.9.0)</p>
+</div>
+
+
+        </div>
+        <div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <li><a href="../index.html">Documentation Home</a></li>
+    </ul>
+</div>
+    <h4 class="sidebar-box-heading">Previous topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="plot_piecewise_affine.html" title="previous chapter">Piecewise Affine Transformation</a></li>
+        </ul>
+    </div>
+    <h4 class="sidebar-box-heading">Next topic</h4>
+    <div class="well sidebar-box">
+        <ul class="nav nav-list">
+            <li><a href="plot_pyramid.html" title="next chapter">Build image pyramids</a></li>
+        </ul>
+    </div>
+
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <script src="../_static/docversions.js"></script>
+        <script type="text/javascript">
+            insert_version_links();
+        </script>
+    </ul>
+</div>
+        </div>
+    </div>
+    <div class="well footer">
+        <small>
+            &copy; Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+    </div>
+</body>
+</html>

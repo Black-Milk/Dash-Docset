@@ -1,0 +1,54 @@
+.. _example_plot_circular_elliptical_hough_transform.py:
+
+
+========================================
+Circular and Elliptical Hough Transforms
+========================================
+
+The Hough transform in its simplest form is a `method to detect
+straight lines <http://en.wikipedia.org/wiki/Hough_transform>`__
+but it can also be used to detect circles or ellipses.
+The algorithm assumes that the edge is detected and it is robust against
+noise or missing points.
+
+Circle detection
+================
+
+In the following example, the Hough transform is used to detect
+coin positions and match their edges. We provide a range of
+plausible radii. For each radius, two circles are extracted and
+we finally keep the five most prominent candidates.
+The result shows that coin positions are well-detected.
+
+
+Algorithm overview
+------------------
+
+Given a black circle on a white background, we first guess its
+radius (or a range of radii) to construct a new circle.
+This circle is applied on each black pixel of the original picture
+and the coordinates of this circle are voting in an accumulator.
+From this geometrical construction, the original circle center
+position receives the highest score.
+
+Note that the accumulator size is built to be larger than the
+original picture in order to detect centers outside the frame.
+Its size is extended by two times the larger radius.
+
+
+.. image:: images/plot_circular_elliptical_hough_transform_1.png
+    :align: center
+
+
+.. image:: images/plot_circular_elliptical_hough_transform_2.png
+    :align: center
+
+
+.. literalinclude:: plot_circular_elliptical_hough_transform.py
+    :lines: 37-
+
+
+
+**Python source code:** :download:`download <plot_circular_elliptical_hough_transform.py>`
+(generated using ``skimage`` |version|)
+

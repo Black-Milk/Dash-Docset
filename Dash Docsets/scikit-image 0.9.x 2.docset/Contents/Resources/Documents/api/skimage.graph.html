@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Module: graph — skimage v0.9.0 docs</title>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/css/custom.css" rel="stylesheet" type="text/css"/>
+<link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css"/>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="../_static/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<link href="../index.html" rel="top" title="skimage v0.9.0 docs"/>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<link href="../_static/favicon.ico" rel="shortcut icon"/>
+</head>
+<body class="container">
+<a class="logo" href="http://scikit-image.org"><img alt="" src="../_static/img/logo.png"/></a>
+<div class="clearfix"></div>
+<div class="navbar">
+<div class="navbar-inner">
+<ul class="nav">
+<li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+</ul>
+<form action="../search.html" class="navbar-form pull-right" method="get">
+<input class="search span3" name="q" placeholder="Search documentation ..." type="text"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+</div>
+<div class="row">
+<div class="span9">
+<div class="section" id="module-skimage.graph">
+<span id="module-graph"></span><h1><a name="//apple_ref/cpp/Module/skimage.graph"></a>Module: <tt class="xref py py-mod docutils literal"><span class="pre">graph</span></tt><a class="headerlink" href="#module-skimage.graph" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mcp">
+<h2><a class="reference internal" href="#skimage.graph.MCP" title="skimage.graph.MCP"><tt class="xref py py-class docutils literal"><span class="pre">MCP</span></tt></a><a class="headerlink" href="#mcp" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skimage.graph.MCP"><a name="//apple_ref/cpp/cl/skimage.graph.MCP"></a>
+<em class="property">class </em><tt class="descclassname">skimage.graph.</tt><tt class="descname">MCP</tt><big>(</big><em>costs</em>, <em>offsets=None</em>, <em>fully_connected=True</em><big>)</big><a class="headerlink" href="#skimage.graph.MCP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A class for finding the minimum cost path through a given n-d costs array.</p>
+<p>Given an n-d costs array, this class can be used to find the minimum-cost
+path through that array from any set of points to any other set of points.
+Basic usage is to initialize the class and call find_costs() with a one
+or more starting indices (and an optional list of end indices). After
+that, call traceback() one or more times to find the path from any given
+end-position to the closest starting index. New paths through the same
+costs array can be found by calling find_costs() repeatedly.</p>
+<p>The cost of a path is calculated simply as the sum of the values of the
+<cite>costs</cite> array at each point on the path. The class MCP_Geometric, on the
+other hand, accounts for the fact that diagonal vs. axial moves are of
+different lengths, and weights the path cost accordingly.</p>
+<p>Array elements with infinite or negative costs will simply be ignored, as
+will paths whose cumulative cost overflows to infinite.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>costs</strong> : ndarray</p>
+<p><strong>offsets</strong> : iterable, optional</p>
+<blockquote>
+<div><p>A list of offset tuples: each offset specifies a valid move from a
+given n-d position.
+If not provided, offsets corresponding to a singly- or fully-connected
+n-d neighborhood will be constructed with make_offsets(), using the
+<cite>fully_connected</cite> parameter value.</p>
+</div></blockquote>
+<p><strong>fully_connected</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If no <cite>offsets</cite> are provided, this determines the connectivity of the
+generated neighborhood. If true, the path may go along diagonals
+between elements of the <cite>costs</cite> array; otherwise only axial moves are
+permitted.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.graph.MCP.offsets" title="skimage.graph.MCP.offsets"><tt class="xref py py-obj docutils literal"><span class="pre">offsets</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skimage.graph.MCP.__init__"><a name="//apple_ref/cpp/clm/skimage.graph.MCP.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><em>costs</em>, <em>offsets=None</em>, <em>fully_connected=True</em><big>)</big><a class="headerlink" href="#skimage.graph.MCP.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>See class documentation.</p>
+</dd></dl>
+<dl class="method">
+<dt id="skimage.graph.MCP.find_costs"><a name="//apple_ref/cpp/clm/skimage.graph.MCP.find_costs"></a>
+<tt class="descname">find_costs</tt><big>(</big><big>)</big><a class="headerlink" href="#skimage.graph.MCP.find_costs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the minimum-cost path from the given starting points.</p>
+<p>This method finds the minimum-cost path to the specified ending
+indices from any one of the specified starting indices. If no end
+positions are given, then the minimum-cost path to every position in
+the costs array will be found.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>starts</strong> : iterable</p>
+<blockquote>
+<div><p>A list of n-d starting indices (where n is the dimension of the
+<cite>costs</cite> array). The minimum cost path to the closest/cheapest
+starting point will be found.</p>
+</div></blockquote>
+<p><strong>ends</strong> : iterable, optional</p>
+<blockquote>
+<div><p>A list of n-d ending indices.</p>
+</div></blockquote>
+<p><strong>find_all_ends</strong> : bool, optional</p>
+<blockquote>
+<div><p>If ‘True’ (default), the minimum-cost-path to every specified
+end-position will be found; otherwise the algorithm will stop when
+a a path is found to any end-position. (If no <cite>ends</cite> were
+specified, then this parameter has no effect.)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>cumulative_costs</strong> : ndarray</p>
+<blockquote>
+<div><p>Same shape as the <cite>costs</cite> array; this array records the minimum
+cost path from the nearest/cheapest starting index to each index
+considered. (If <cite>ends</cite> were specified, not all elements in the
+array will necessarily be considered: positions not evaluated will
+have a cumulative cost of inf. If <cite>find_all_ends</cite> is ‘False’, only
+one of the specified end-positions will have a finite cumulative
+cost.)</p>
+</div></blockquote>
+<p><strong>traceback</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>Same shape as the <cite>costs</cite> array; this array contains the offset to
+any given index from its predecessor index. The offset indices
+index into the <cite>offsets</cite> attribute, which is a array of n-d
+offsets. In the 2-d case, if offsets[traceback[x, y]] is (-1, -1),
+that means that the predecessor of [x, y] in the minimum cost path
+to some start position is [x+1, y+1]. Note that if the
+offset_index is -1, then the given index was not considered.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="attribute">
+<dt id="skimage.graph.MCP.offsets"><a name="//apple_ref/cpp/Attribute/skimage.graph.MCP.offsets"></a>
+<tt class="descname">offsets</tt><a class="headerlink" href="#skimage.graph.MCP.offsets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="skimage.graph.MCP.traceback"><a name="//apple_ref/cpp/clm/skimage.graph.MCP.traceback"></a>
+<tt class="descname">traceback</tt><big>(</big><em>end</em><big>)</big><a class="headerlink" href="#skimage.graph.MCP.traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trace a minimum cost path through the pre-calculated traceback array.</p>
+<p>This convenience function reconstructs the the minimum cost path to a
+given end position from one of the starting indices provided to
+find_costs(), which must have been called previously. This function
+can be called as many times as desired after find_costs() has been
+run.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>end</strong> : iterable</p>
+<blockquote>
+<div><p>An n-d index into the <cite>costs</cite> array.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>traceback</strong> : list of n-d tuples</p>
+<blockquote class="last">
+<div><p>A list of indices into the <cite>costs</cite> array, starting with one of
+the start positions passed to find_costs(), and ending with the
+given <cite>end</cite> index. These indices specify the minimum-cost path
+from any given start index to the <cite>end</cite> index. (The total cost
+of that path can be read out from the <cite>cumulative_costs</cite> array
+returned by find_costs().)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</dd></dl>
+</div>
+<div class="section" id="mcp-geometric">
+<h2><a class="reference internal" href="#skimage.graph.MCP_Geometric" title="skimage.graph.MCP_Geometric"><tt class="xref py py-class docutils literal"><span class="pre">MCP_Geometric</span></tt></a><a class="headerlink" href="#mcp-geometric" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="skimage.graph.MCP_Geometric"><a name="//apple_ref/cpp/cl/skimage.graph.MCP_Geometric"></a>
+<em class="property">class </em><tt class="descclassname">skimage.graph.</tt><tt class="descname">MCP_Geometric</tt><big>(</big><em>costs</em>, <em>offsets=None</em>, <em>fully_connected=True</em><big>)</big><a class="headerlink" href="#skimage.graph.MCP_Geometric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">skimage.graph._mcp.MCP</span></tt></p>
+<p>Find distance-weighted minimum cost paths through an n-d costs array.</p>
+<p>See the documentation for MCP for full details. This class differs from
+MCP in that the cost of a path is not simply the sum of the costs along
+that path.</p>
+<p>This class instead assumes that the costs array contains at each position
+the “cost” of a unit distance of travel through that position. For
+example, a move (in 2-d) from (1, 1) to (1, 2) is assumed to originate in
+the center of the pixel (1, 1) and terminate in the center of (1, 2). The
+entire move is of distance 1, half through (1, 1) and half through (1, 2);
+thus the cost of that move is <cite>(1/2)*costs[1,1] + (1/2)*costs[1,2]</cite>.</p>
+<p>On the other hand, a move from (1, 1) to (2, 2) is along the diagonal and
+is sqrt(2) in length. Half of this move is within the pixel (1, 1) and the
+other half in (2, 2), so the cost of this move is calculated as
+<cite>(sqrt(2)/2)*costs[1,1] + (sqrt(2)/2)*costs[2,2]</cite>.</p>
+<p>These calculations don’t make a lot of sense with offsets of magnitude
+greater than 1.</p>
+<dl class="method">
+<dt id="skimage.graph.MCP_Geometric.__init__"><a name="//apple_ref/cpp/clm/skimage.graph.MCP_Geometric.__init__"></a>
+<tt class="descname">__init__</tt><big>(</big><em>costs</em>, <em>offsets=None</em>, <em>fully_connected=True</em><big>)</big><a class="headerlink" href="#skimage.graph.MCP_Geometric.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>See class documentation.</p>
+</dd></dl>
+</dd></dl>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%"></col>
+<col width="90%"></col>
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skimage.graph.route_through_array" title="skimage.graph.route_through_array"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.graph.route_through_array</span></tt></a>(array, ...)</td>
+<td>Simple example of how to use the MCP and MCP_Geometric classes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skimage.graph.shortest_path" title="skimage.graph.shortest_path"><tt class="xref py py-obj docutils literal"><span class="pre">skimage.graph.shortest_path</span></tt></a>(arr[, reach, ...])</td>
+<td>Find the shortest path through an n-d array from one side to another.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="route-through-array">
+<h2>route_through_array<a class="headerlink" href="#route-through-array" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.graph.route_through_array"><a name="//apple_ref/cpp/func/skimage.graph.route_through_array"></a>
+<tt class="descclassname">skimage.graph.</tt><tt class="descname">route_through_array</tt><big>(</big><em>array</em>, <em>start</em>, <em>end</em>, <em>fully_connected=True</em>, <em>geometric=True</em><big>)</big><a class="headerlink" href="#skimage.graph.route_through_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple example of how to use the MCP and MCP_Geometric classes.</p>
+<p>See the MCP and MCP_Geometric class documentation for explanation of the
+path-finding algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>array</strong> : ndarray</p>
+<blockquote>
+<div><p>Array of costs.</p>
+</div></blockquote>
+<p><strong>start</strong> : iterable</p>
+<blockquote>
+<div><p>n-d index into <cite>array</cite> defining the starting point</p>
+</div></blockquote>
+<p><strong>end</strong> : iterable</p>
+<blockquote>
+<div><p>n-d index into <cite>array</cite> defining the end point</p>
+</div></blockquote>
+<p><strong>fully_connected</strong> : bool (optional)</p>
+<blockquote>
+<div><p>If True, diagonal moves are permitted, if False, only axial moves.</p>
+</div></blockquote>
+<p><strong>geometric</strong> : bool (optional)</p>
+<blockquote>
+<div><p>If True, the MCP_Geometric class is used to calculate costs, if False,
+the MCP base class is used. See the class documentation for
+an explanation of the differences between MCP and MCP_Geometric.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>path</strong> : list</p>
+<blockquote>
+<div><p>List of n-d index tuples defining the path from <cite>start</cite> to <cite>end</cite>.</p>
+</div></blockquote>
+<p><strong>cost</strong> : float</p>
+<blockquote class="last">
+<div><p>Cost of the path. If <cite>geometric</cite> is False, the cost of the path is
+the sum of the values of <cite>array</cite> along the path. If <cite>geometric</cite> is
+True, a finer computation is made (see the documentation of the
+MCP_Geometric class).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#skimage.graph.MCP" title="skimage.graph.MCP"><tt class="xref py py-obj docutils literal"><span class="pre">MCP</span></tt></a>, <a class="reference internal" href="#skimage.graph.MCP_Geometric" title="skimage.graph.MCP_Geometric"><tt class="xref py py-obj docutils literal"><span class="pre">MCP_Geometric</span></tt></a></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage.graph</span> <span class="kn">import</span> <span class="n">route_through_array</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span>
+<span class="go">array([[ 1,  3],</span>
+<span class="go">       [10, 12]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Forbid diagonal steps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">route_through_array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">fully_connected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">([(0, 0), (0, 1), (1, 1)], 9.5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Now allow diagonal steps: the path goes directly from start to end</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">route_through_array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">([(0, 0), (1, 1)], 9.1923881554251192)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Cost is the sum of array values along the path (16 = 1 + 3 + 12)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">route_through_array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">fully_connected</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">geometric</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">([(0, 0), (0, 1), (1, 1)], 16.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Larger array where we display the path that is selected</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">((</span><span class="mi">36</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span>
+<span class="go">array([[ 0,  1,  2,  3,  4,  5],</span>
+<span class="go">       [ 6,  7,  8,  9, 10, 11],</span>
+<span class="go">       [12, 13, 14, 15, 16, 17],</span>
+<span class="go">       [18, 19, 20, 21, 22, 23],</span>
+<span class="go">       [24, 25, 26, 27, 28, 29],</span>
+<span class="go">       [30, 31, 32, 33, 34, 35]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Find the path with lowest cost</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">route_through_array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span>
+<span class="go">array([[1, 1, 1, 1, 1, 0],</span>
+<span class="go">       [0, 0, 0, 0, 0, 1],</span>
+<span class="go">       [0, 0, 0, 0, 0, 1],</span>
+<span class="go">       [0, 0, 0, 0, 0, 1],</span>
+<span class="go">       [0, 0, 0, 0, 0, 1],</span>
+<span class="go">       [0, 0, 0, 0, 0, 1]])</span>
+</pre></div>
+</div>
+</dd></dl>
+</div>
+<div class="section" id="shortest-path">
+<h2>shortest_path<a class="headerlink" href="#shortest-path" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="skimage.graph.shortest_path"><a name="//apple_ref/cpp/func/skimage.graph.shortest_path"></a>
+<tt class="descclassname">skimage.graph.</tt><tt class="descname">shortest_path</tt><big>(</big><em>arr</em>, <em>reach=1</em>, <em>axis=-1</em>, <em>output_indexlist=False</em><big>)</big><a class="headerlink" href="#skimage.graph.shortest_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the shortest path through an n-d array from one side to another.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"></col>
+<col class="field-body"></col>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>arr</strong> : ndarray of float64</p>
+<p><strong>reach</strong> : int, optional</p>
+<blockquote>
+<div><p>By default (<tt class="docutils literal"><span class="pre">reach</span> <span class="pre">=</span> <span class="pre">1</span></tt>), the shortest path can only move
+one row up or down for every step it moves forward (i.e.,
+the path gradient is limited to 1). <cite>reach</cite> defines the
+number of elements that can be skipped along each non-axis
+dimension at each step.</p>
+</div></blockquote>
+<p><strong>axis</strong> : int, optional</p>
+<blockquote>
+<div><p>The axis along which the path must always move forward (default -1)</p>
+</div></blockquote>
+<p><strong>output_indexlist: bool, optional</strong> :</p>
+<blockquote>
+<div><p>See return value <cite>p</cite> for explanation.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>p</strong> : iterable of int</p>
+<blockquote>
+<div><p>For each step along <cite>axis</cite>, the coordinate of the shortest path.
+If <cite>output_indexlist</cite> is True, then the path is returned as a list of
+n-d tuples that index into <cite>arr</cite>. If False, then the path is returned
+as an array listing the coordinates of the path along the non-axis
+dimensions for each step along the axis dimension. That is,
+<cite>p.shape == (arr.shape[axis], arr.ndim-1)</cite> except that p is squeezed
+before returning so if <cite>arr.ndim == 2</cite>, then
+<cite>p.shape == (arr.shape[axis],)</cite></p>
+</div></blockquote>
+<p><strong>cost</strong> : float</p>
+<blockquote class="last">
+<div><p>Cost of path.  This is the absolute sum of all the
+differences along the path.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+<div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+<ul class="nav nav-list">
+<li><a href="../index.html">Documentation Home</a></li>
+</ul>
+</div>
+<h4 class="sidebar-box-heading">Contents</h4>
+<div class="well sidebar-box toc">
+<ul class="nav nav-list">
+<li><a class="reference internal" href="#">Module: <tt class="docutils literal"><span class="pre">graph</span></tt></a><ul class="nav nav-list">
+<li><a class="reference internal" href="#mcp"><tt class="docutils literal"><span class="pre">MCP</span></tt></a><ul class="nav nav-list">
+</ul>
+</li>
+<li><a class="reference internal" href="#mcp-geometric"><tt class="docutils literal"><span class="pre">MCP_Geometric</span></tt></a></li>
+<li><a class="reference internal" href="#route-through-array">route_through_array</a></li>
+<li><a class="reference internal" href="#shortest-path">shortest_path</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+<ul class="nav nav-list">
+<script src="../_static/docversions.js"></script>
+<script type="text/javascript">
+            insert_version_links();
+        </script>
+</ul>
+</div>
+</div>
+</div>
+<div class="well footer">
+<small>
+            © Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+</div>
+</body>
+</html>

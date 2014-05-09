@@ -1,0 +1,321 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Morphological Filtering &mdash; skimage v0.9.0 docs</title>
+    
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link href="../../_static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../_static/css/custom.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../../_static/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <link rel="top" title="skimage v0.9.0 docs" href="../../index.html" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="shortcut icon" href="../../_static/favicon.ico">
+</head>
+<body class="container">
+    <a href="http://scikit-image.org" class="logo"><img src="../../_static/img/logo.png" alt=""></a>
+    <div class="clearfix"></div>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li><a href="/">Home</a></li>
+<li><a href="/download.html">Download</a></li>
+<li><a href="/docs/dev/auto_examples">Gallery</a></li>
+<li><a href="/docs/dev">Documentation</a></li>
+<li><a href="https://github.com/scikit-image/scikit-image">Source</a></li>
+            </ul>
+            <form class="navbar-form pull-right" action="../../search.html" method="get">
+                <input type="text" class="search span3" name="q" placeholder="Search documentation ...">
+                <input type="hidden" name="check_keywords" value="yes" >
+                <input type="hidden" name="area" value="default" >
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            
+  <div class="section" id="morphological-filtering">
+<span id="example-applications-plot-morphology-py"></span><h1>Morphological Filtering<a class="headerlink" href="#morphological-filtering" title="Permalink to this headline">¶</a></h1>
+<p>Morphological image processing is a collection of non-linear operations related
+to the shape or morphology of features in an image, such as boundaries,
+skeletons, etc. In any given technique, we probe an image with a small shape or
+template called a structuring element, which defines the region of interest or
+neighborhood around a pixel.</p>
+<p>In this document we outline the following basic morphological operations:</p>
+<ol class="arabic simple">
+<li>Erosion</li>
+<li>Dilation</li>
+<li>Opening</li>
+<li>Closing</li>
+<li>White Tophat</li>
+<li>Black Tophat</li>
+<li>Skeletonize</li>
+<li>Convex Hull</li>
+</ol>
+<p>To get started, let&#8217;s load an image using <tt class="docutils literal"><span class="pre">io.imread</span></tt>. Note that morphology
+functions only work on gray-scale or binary images, so we set <tt class="docutils literal"><span class="pre">as_grey=True</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">skimage.data</span> <span class="kn">import</span> <span class="n">data_dir</span>
+<span class="kn">from</span> <span class="nn">skimage.util</span> <span class="kn">import</span> <span class="n">img_as_ubyte</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">io</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">gray</span><span class="p">()</span>
+<span class="n">phantom</span> <span class="o">=</span> <span class="n">img_as_ubyte</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">data_dir</span><span class="o">+</span><span class="s">&#39;/phantom.png&#39;</span><span class="p">,</span> <span class="n">as_grey</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">phantom</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_1.png" src="../../_images/plot_morphology_1.png" />
+<p>Let&#8217;s also define a convenience function for plotting comparisons:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">plot_comparison</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">filtered</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">):</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">original</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;original&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">filter_name</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="erosion">
+<h2>Erosion<a class="headerlink" href="#erosion" title="Permalink to this headline">¶</a></h2>
+<p>Morphological <tt class="docutils literal"><span class="pre">erosion</span></tt> sets a pixel at (i, j) to the <em>minimum over all
+pixels in the neighborhood centered at (i, j)</em>. The structuring element,
+<tt class="docutils literal"><span class="pre">selem</span></tt>, passed to <tt class="docutils literal"><span class="pre">erosion</span></tt> is a boolean array that describes this
+neighborhood. Below, we use <tt class="docutils literal"><span class="pre">disk</span></tt> to create a circular structuring element,
+which we use for most of the following examples.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">erosion</span><span class="p">,</span> <span class="n">dilation</span><span class="p">,</span> <span class="n">opening</span><span class="p">,</span> <span class="n">closing</span><span class="p">,</span> <span class="n">white_tophat</span>
+<span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">black_tophat</span><span class="p">,</span> <span class="n">skeletonize</span><span class="p">,</span> <span class="n">convex_hull_image</span>
+<span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">disk</span>
+
+<span class="n">selem</span> <span class="o">=</span> <span class="n">disk</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">eroded</span> <span class="o">=</span> <span class="n">erosion</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">selem</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">eroded</span><span class="p">,</span> <span class="s">&#39;erosion&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_2.png" src="../../_images/plot_morphology_2.png" />
+<p>Notice how the white boundary of the image disappears or gets eroded as we
+increase the size of the disk. Also notice the increase in size of the two
+black ellipses in the center and the disappearance of the 3 light grey
+patches in the lower part of the image.</p>
+</div>
+<div class="section" id="dilation">
+<h2>Dilation<a class="headerlink" href="#dilation" title="Permalink to this headline">¶</a></h2>
+<p>Morphological <tt class="docutils literal"><span class="pre">dilation</span></tt> sets a pixel at (i, j) to the <em>maximum over all
+pixels in the neighborhood centered at (i, j)</em>. Dilation enlarges bright
+regions and shrinks dark regions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dilated</span> <span class="o">=</span> <span class="n">dilation</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">selem</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">dilated</span><span class="p">,</span> <span class="s">&#39;dilation&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_3.png" src="../../_images/plot_morphology_3.png" />
+<p>Notice how the white boundary of the image thickens, or gets dilated, as we
+increase the size of the disk. Also notice the decrease in size of the two
+black ellipses in the centre, and the thickening of the light grey circle in
+the center and the 3 patches in the lower part of the image.</p>
+</div>
+<div class="section" id="opening">
+<h2>Opening<a class="headerlink" href="#opening" title="Permalink to this headline">¶</a></h2>
+<p>Morphological <tt class="docutils literal"><span class="pre">opening</span></tt> on an image is defined as an <em>erosion followed by a
+dilation</em>. Opening can remove small bright spots (i.e. &#8220;salt&#8221;) and connect
+small dark cracks.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">opened</span> <span class="o">=</span> <span class="n">opening</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">selem</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">opened</span><span class="p">,</span> <span class="s">&#39;opening&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_4.png" src="../../_images/plot_morphology_4.png" />
+<p>Since <tt class="docutils literal"><span class="pre">opening</span></tt> an image starts with an erosion operation, light regions that
+are <em>smaller</em> than the structuring element are removed. The dilation operation
+that follows ensures that light regions that are <em>larger</em> than the structuring
+element retain their original size. Notice how the light and dark shapes in the
+center their original thickness but the 3 lighter patches in the bottom get
+completely eroded. The size dependence is highlighted by the outer white ring:
+The parts of the ring thinner than the structuring element were completely
+erased, while the thicker region at the top retains its original thickness.</p>
+</div>
+<div class="section" id="closing">
+<h2>Closing<a class="headerlink" href="#closing" title="Permalink to this headline">¶</a></h2>
+<p>Morphological <tt class="docutils literal"><span class="pre">closing</span></tt> on an image is defined as a <em>dilation followed by an
+erosion</em>. Closing can remove small dark spots (i.e. &#8220;pepper&#8221;) and connect
+small bright cracks.</p>
+<p>To illustrate this more clearly, let&#8217;s add a small crack to the white border:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phantom</span> <span class="o">=</span> <span class="n">img_as_ubyte</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">data_dir</span><span class="o">+</span><span class="s">&#39;/phantom.png&#39;</span><span class="p">,</span> <span class="n">as_grey</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="n">phantom</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span> <span class="mi">200</span><span class="p">:</span><span class="mi">210</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">closed</span> <span class="o">=</span> <span class="n">closing</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">selem</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">closed</span><span class="p">,</span> <span class="s">&#39;closing&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_5.png" src="../../_images/plot_morphology_5.png" />
+<p>Since <tt class="docutils literal"><span class="pre">closing</span></tt> an image starts with an dilation operation, dark regions
+that are <em>smaller</em> than the structuring element are removed. The dilation
+operation that follows ensures that dark regions that are <em>larger</em> than the
+structuring element retain their original size. Notice how the white ellipses
+at the bottom get connected because of dilation, but other dark region retain
+their original sizes. Also notice how the crack we added is mostly removed.</p>
+</div>
+<div class="section" id="white-tophat">
+<h2>White tophat<a class="headerlink" href="#white-tophat" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">white_tophat</span></tt> of an image is defined as the <em>image minus its
+morphological opening</em>. This operation returns the bright spots of the image
+that are smaller than the structuring element.</p>
+<p>To make things interesting, we&#8217;ll add bright and dark spots to the image:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phantom</span> <span class="o">=</span> <span class="n">img_as_ubyte</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">data_dir</span><span class="o">+</span><span class="s">&#39;/phantom.png&#39;</span><span class="p">,</span> <span class="n">as_grey</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="n">phantom</span><span class="p">[</span><span class="mi">340</span><span class="p">:</span><span class="mi">350</span><span class="p">,</span> <span class="mi">200</span><span class="p">:</span><span class="mi">210</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
+<span class="n">phantom</span><span class="p">[</span><span class="mi">100</span><span class="p">:</span><span class="mi">110</span><span class="p">,</span> <span class="mi">200</span><span class="p">:</span><span class="mi">210</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">w_tophat</span> <span class="o">=</span> <span class="n">white_tophat</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">selem</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">w_tophat</span><span class="p">,</span> <span class="s">&#39;white tophat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_6.png" src="../../_images/plot_morphology_6.png" />
+<p>As you can see, the 10-pixel wide white square is highlighted since it is
+smaller than the structuring element. Also, the thin, white edges around most
+of the ellipse are retained because they&#8217;re smaller than the structuring
+element, but the thicker region at the top disappears.</p>
+</div>
+<div class="section" id="black-tophat">
+<h2>Black tophat<a class="headerlink" href="#black-tophat" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">black_tophat</span></tt> of an image is defined as its morphological <strong>closing
+minus the original image</strong>. This operation returns the <em>dark spots of the
+image that are smaller than the structuring element</em>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">b_tophat</span> <span class="o">=</span> <span class="n">black_tophat</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">selem</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">phantom</span><span class="p">,</span> <span class="n">b_tophat</span><span class="p">,</span> <span class="s">&#39;black tophat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_7.png" src="../../_images/plot_morphology_7.png" />
+<p>As you can see, the 10-pixel wide black square is highlighted since it is
+smaller than the structuring element.</p>
+<div class="section" id="duality">
+<h3>Duality<a class="headerlink" href="#duality" title="Permalink to this headline">¶</a></h3>
+<p>As you should have noticed, many of these operations are simply the reverse
+of another operation. This duality can be summarized as follows:</p>
+<ol class="arabic simple">
+<li>Erosion &lt;-&gt; Dilation</li>
+<li>Opening &lt;-&gt; Closing</li>
+<li>White tophat &lt;-&gt; Black tophat</li>
+</ol>
+</div>
+</div>
+<div class="section" id="skeletonize">
+<h2>Skeletonize<a class="headerlink" href="#skeletonize" title="Permalink to this headline">¶</a></h2>
+<p>Thinning is used to reduce each connected component in a binary image to a
+<em>single-pixel wide skeleton</em>. It is important to note that this is performed
+on binary images only.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">img_as_bool</span>
+<span class="n">horse</span> <span class="o">=</span> <span class="o">~</span><span class="n">img_as_bool</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">data_dir</span><span class="o">+</span><span class="s">&#39;/horse.png&#39;</span><span class="p">,</span> <span class="n">as_grey</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+
+<span class="n">sk</span> <span class="o">=</span> <span class="n">skeletonize</span><span class="p">(</span><span class="n">horse</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">horse</span><span class="p">,</span> <span class="n">sk</span><span class="p">,</span> <span class="s">&#39;skeletonize&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_8.png" src="../../_images/plot_morphology_8.png" />
+<p>As the name suggests, this technique is used to thin the image to 1-pixel wide
+skeleton by applying thinning successively.</p>
+</div>
+<div class="section" id="convex-hull">
+<h2>Convex hull<a class="headerlink" href="#convex-hull" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">convex_hull_image</span></tt> is the <em>set of pixels included in the smallest
+convex polygon that surround all white pixels in the input image</em>. Again note
+that this is also performed on binary images.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">hull1</span> <span class="o">=</span> <span class="n">convex_hull_image</span><span class="p">(</span><span class="n">horse</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">horse</span><span class="p">,</span> <span class="n">hull1</span><span class="p">,</span> <span class="s">&#39;convex hull&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_9.png" src="../../_images/plot_morphology_9.png" />
+<p>As the figure illustrates, <tt class="docutils literal"><span class="pre">convex_hull_image</span></tt> gives the smallest polygon
+which covers the white or True completely in the image.</p>
+<p>If we add a small grain to the image, we can see how the convex hull adapts to
+enclose that grain:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">horse2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">horse</span><span class="p">)</span>
+<span class="n">horse2</span><span class="p">[</span><span class="mi">45</span><span class="p">:</span><span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">:</span><span class="mi">80</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">hull2</span> <span class="o">=</span> <span class="n">convex_hull_image</span><span class="p">(</span><span class="n">horse2</span><span class="p">)</span>
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">horse2</span><span class="p">,</span> <span class="n">hull2</span><span class="p">,</span> <span class="s">&#39;convex hull&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/plot_morphology_10.png" src="../../_images/plot_morphology_10.png" />
+</div>
+<div class="section" id="additional-resources">
+<h2>Additional Resources<a class="headerlink" href="#additional-resources" title="Permalink to this headline">¶</a></h2>
+<p>1. <a class="reference external" href="http://www.mathworks.com/help/images/morphology-fundamentals-dilation-and-erosion.html">MathWorks tutorial on morphological processing</a>
+2. <a class="reference external" href="http://www.cs.auckland.ac.nz/courses/compsci773s1c/lectures/ImageProcessing-html/topic4.htm">Auckland university&#8217;s tutorial on Morphological Image Processing</a>
+3. <a class="reference external" href="http://en.wikipedia.org/wiki/Mathematical_morphology">http://en.wikipedia.org/wiki/Mathematical_morphology</a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Python source code:</strong> <a class="reference download internal" href="../../_downloads/plot_morphology.py"><tt class="xref download docutils literal"><span class="pre">download</span></tt></a>
+(generated using <tt class="docutils literal"><span class="pre">skimage</span></tt> 0.9.0)</p>
+</div>
+</div>
+
+
+        </div>
+        <div class="span3"><h4 class="sidebar-box-heading">Navigation</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <li><a href="../../index.html">Documentation Home</a></li>
+    </ul>
+</div>
+        <h4 class="sidebar-box-heading">Contents</h4>
+        <div class="well sidebar-box toc">
+            <ul class="nav nav-list">
+<li><a class="reference internal" href="#">Morphological Filtering</a><ul class="nav nav-list">
+<li><a class="reference internal" href="#erosion">Erosion</a></li>
+<li><a class="reference internal" href="#dilation">Dilation</a></li>
+<li><a class="reference internal" href="#opening">Opening</a></li>
+<li><a class="reference internal" href="#closing">Closing</a></li>
+<li><a class="reference internal" href="#white-tophat">White tophat</a></li>
+<li><a class="reference internal" href="#black-tophat">Black tophat</a><ul class="nav nav-list">
+<li><a class="reference internal" href="#duality">Duality</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#skeletonize">Skeletonize</a></li>
+<li><a class="reference internal" href="#convex-hull">Convex hull</a></li>
+<li><a class="reference internal" href="#additional-resources">Additional Resources</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+<h4 class="sidebar-box-heading">Versions</h4>
+<div class="well sidebar-box">
+    <ul class="nav nav-list">
+        <script src="../../_static/docversions.js"></script>
+        <script type="text/javascript">
+            insert_version_links();
+        </script>
+    </ul>
+</div>
+        </div>
+    </div>
+    <div class="well footer">
+        <small>
+            &copy; Copyright the scikit-image development team.
+            Created using <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+        </small>
+    </div>
+</body>
+</html>
